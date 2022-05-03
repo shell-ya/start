@@ -1,0 +1,13 @@
+
+spring:
+  application:
+    name: ark
+  profiles:
+    active: dev
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.starnft.star: debug
