@@ -24,12 +24,12 @@
             <artifactId>star-common</artifactId>
         </dependency>
 
-         <dependency>
+        <dependency>
             <groupId>com.starnft.star</groupId>
             <artifactId>star-infrastructure</artifactId>
         </dependency>
 
-           <dependency>
+        <dependency>
             <groupId>com.starnft.star</groupId>
             <artifactId>star-domain</artifactId>
         </dependency>
