@@ -1,4 +1,4 @@
-package com.starnft.star.interfaces.util;
+package com.starnft.star.infrastructure.util;
 
 import com.alibaba.fastjson.JSONArray;
 import com.starnft.star.common.exception.StarError;

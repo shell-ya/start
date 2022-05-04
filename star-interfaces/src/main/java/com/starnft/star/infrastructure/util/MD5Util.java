@@ -1,4 +1,4 @@
-package com.starnft.star.interfaces.util;
+package com.starnft.star.infrastructure.util;
 
 import org.apache.tomcat.util.security.MD5Encoder;
 

@@ -1,4 +1,4 @@
-package com.starnft.star.interfaces.aop;
+package com.starnft.star.infrastructure.aop;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -26,7 +26,7 @@ import java.util.Map;
 @Slf4j
 public class LogAspect {
 
-    @Pointcut("execution(* com.starnft.star.interfaces.*.*(..))")
+    @Pointcut("execution(* com.starnft.star.infrastructure.*.*(..))")
     private void controllerAspect() {
     }
 
