@@ -17,6 +17,11 @@
             <artifactId>star-common</artifactId>
         </dependency>
 
+         <dependency>
+            <groupId>com.starnft.star</groupId>
+            <artifactId>star-domain</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>cn.afterturn</groupId>
             <artifactId>easypoi-base</artifactId>
