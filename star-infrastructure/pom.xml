@@ -12,6 +12,10 @@
     <artifactId>star-infrastructure</artifactId>
 
     <dependencies>
+        <dependency>
+            <groupId>com.starnft.star</groupId>
+            <artifactId>star-common</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>cn.afterturn</groupId>

@@ -8,20 +8,20 @@
         <module>star-domain</module>
         <module>star-infrastructure</module>
         <module>star-interfaces</module>
+        <module>star-common</module>
     </modules>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.1.10.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
+    <packaging>pom</packaging>
 
     <groupId>com.starnft.star</groupId>
     <artifactId>star</artifactId>
     <version>1.0-SNAPSHOT</version>
-
-    <packaging>pom</packaging>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -32,6 +32,30 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <dependency>
+                <groupId>com.starnft.star</groupId>
+                <artifactId>star-infrastructure</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.starnft.star</groupId>
+                <artifactId>star-domain</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.starnft.star</groupId>
+                <artifactId>star-application</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.starnft.star</groupId>
+                <artifactId>star-common</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
