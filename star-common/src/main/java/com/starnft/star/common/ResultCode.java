@@ -1,4 +1,4 @@
-package com.starnft.star.interfaces.common;
+package com.starnft.star.common;
 
 public enum ResultCode {
 

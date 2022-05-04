@@ -1,4 +1,4 @@
-package com.starnft.star.interfaces.common;
+package com.starnft.star.common;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
