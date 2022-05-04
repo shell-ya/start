@@ -28,6 +28,11 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <mysql-connector-java.version>5.1.38</mysql-connector-java.version>
         <druid.version>1.0.18</druid.version>
+        <fastjson.version>1.2.73</fastjson.version>
+        <spring-data-redis.version>2.1.5.RELEASE</spring-data-redis.version>
+        <easypoi.version>4.0.0</easypoi.version>
+        <hutool.version>5.3.1</hutool.version>
+        <leaf.version>1.0.1</leaf.version>
     </properties>
 
     <dependencyManagement>
@@ -102,9 +107,56 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
-                <version>1.2.73</version>
+                <version>${fastjson.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-redis</artifactId>
+                <version>${spring-data-redis.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.afterturn</groupId>
+                <artifactId>easypoi-web</artifactId>
+                <version>${easypoi.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.afterturn</groupId>
+                <artifactId>easypoi-base</artifactId>
+                <version>${easypoi.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>guava</artifactId>
+                        <groupId>com.google.guava</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.afterturn</groupId>
+                <artifactId>easypoi-annotation</artifactId>
+                <version>${easypoi.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.ant</groupId>
+                <artifactId>ant</artifactId>
+                <version>1.10.10</version>
+            </dependency>
+
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sankuai.inf.leaf</groupId>
+                <artifactId>leaf-core</artifactId>
+                <version>1.0.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

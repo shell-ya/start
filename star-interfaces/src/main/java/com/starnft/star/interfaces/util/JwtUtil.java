@@ -1,8 +1,8 @@
 package com.starnft.star.interfaces.util;
 
 import com.alibaba.fastjson.JSONArray;
-import com.starnft.star.interfaces.common.StarError;
-import com.starnft.star.interfaces.exception.StarException;
+import com.starnft.star.common.exception.StarError;
+import com.starnft.star.common.exception.StarException;
 import io.fusionauth.jwt.domain.JWT;
 import io.fusionauth.jwt.json.Mapper;
 import lombok.extern.slf4j.Slf4j;

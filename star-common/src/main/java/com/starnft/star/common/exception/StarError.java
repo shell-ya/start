@@ -1,4 +1,4 @@
-package com.starnft.star.interfaces.common;
+package com.starnft.star.common.exception;
 
 
 import lombok.extern.slf4j.Slf4j;

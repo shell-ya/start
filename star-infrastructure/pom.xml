@@ -20,7 +20,6 @@
         <dependency>
             <groupId>cn.afterturn</groupId>
             <artifactId>easypoi-base</artifactId>
-            <version>4.0.0</version>
             <exclusions>
                 <exclusion>
                     <artifactId>guava</artifactId>
@@ -32,35 +31,32 @@
         <dependency>
             <groupId>cn.afterturn</groupId>
             <artifactId>easypoi-web</artifactId>
-            <version>4.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>cn.afterturn</groupId>
             <artifactId>easypoi-annotation</artifactId>
-            <version>4.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
-            <version>1.10.10</version>
         </dependency>
 
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.3.1</version>
         </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-redis</artifactId>
-            <version>2.1.5.RELEASE</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

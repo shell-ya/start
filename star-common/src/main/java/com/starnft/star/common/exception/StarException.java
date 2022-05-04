@@ -1,7 +1,4 @@
-package com.starnft.star.interfaces.exception;
-
-
-import com.starnft.star.interfaces.common.StarError;
+package com.starnft.star.common.exception;
 
 
 public class StarException extends RuntimeException {

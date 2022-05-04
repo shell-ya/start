@@ -8,14 +8,11 @@ import javax.annotation.Resource;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author GW00206137
- */
 @Component
 @Slf4j
 public class RedisUtil {
 
-    @Resource(name = "redisTemplate")
+    @Resource
     private RedisTemplate<String, String> redisTemplate;
 
     public boolean exists(String key) {

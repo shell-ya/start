@@ -11,3 +11,8 @@ server:
 logging:
   level:
     com.starnft.star: debug
+
+
+leaf:
+  snowflake:
+    enable: false
