@@ -15,6 +15,5 @@ public class GoodController {
 
     //商品详情
 
-
     //todo 商品管理-后台
 }
