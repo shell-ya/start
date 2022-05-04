@@ -24,6 +24,16 @@
             <artifactId>star-common</artifactId>
         </dependency>
 
+         <dependency>
+            <groupId>com.starnft.star</groupId>
+            <artifactId>star-infrastructure</artifactId>
+        </dependency>
+
+           <dependency>
+            <groupId>com.starnft.star</groupId>
+            <artifactId>star-domain</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>io.fusionauth</groupId>
             <artifactId>fusionauth-jwt</artifactId>
