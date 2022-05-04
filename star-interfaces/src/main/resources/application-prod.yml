@@ -14,7 +14,7 @@ spring:
       min-idle: 5
       max-wait: 60000
   redis:
-    host: 10.0.12.14
+    host: 124.221.181.84
     database: 0
     port: 16379
     jedis:
@@ -23,6 +23,7 @@ spring:
         max-idle: 10
         max-wait: 100000
     timeout: 5000
+    password: wqd123456.
 
 server:
   port: 8080
