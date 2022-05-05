@@ -1,7 +1,7 @@
 package com.starnft.star.infrastructure.controller.user;
 
 import com.starnft.star.common.RopResponse;
-import com.starnft.star.common.Star;
+import com.starnft.star.common.StarConstants;
 import com.starnft.star.infrastructure.model.dto.PayPasswordDTO;
 import com.starnft.star.infrastructure.model.dto.SmsCodeDTO;
 import com.starnft.star.infrastructure.model.dto.UserLoginDTO;
@@ -35,13 +35,13 @@ public class UserController {
 
     @ApiOperation("用户退出")
     @PostMapping("/userinfo/logout")
-    public RopResponse logout(@RequestHeader(Star.USER_ID) Long userId){
+    public RopResponse logout(@RequestHeader(StarConstants.USER_ID) Long userId){
         return RopResponse.success(null);
     }
 
     @ApiOperation("查询用户信息")
     @PostMapping("/userinfo/queryuserinfo")
-    public RopResponse getUserInfo(@RequestHeader(Star.USER_ID) Long userId){
+    public RopResponse getUserInfo(@RequestHeader(StarConstants.USER_ID) Long userId){
         return RopResponse.success(null);
     }
 
@@ -53,7 +53,7 @@ public class UserController {
 
     @ApiOperation("设置支付密码")
     @PostMapping("/userinfo/setpaypassword")
-    public RopResponse setPayPassword(@RequestHeader(Star.USER_ID) Long userId, @RequestBody PayPasswordDTO req){
+    public RopResponse setPayPassword(@RequestHeader(StarConstants.USER_ID) Long userId, @RequestBody PayPasswordDTO req){
         return  RopResponse.successNoData();
     }
 

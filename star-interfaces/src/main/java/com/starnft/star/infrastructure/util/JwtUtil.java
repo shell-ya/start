@@ -47,7 +47,7 @@ public class JwtUtil {
                     throw new StarException(StarError.TOKEN_EXPIRED_ERROR);
                 }
 
-                String redisToken = redisUtil.get(accountNameKey);
+                String redisToken = (String) redisUtil.get(accountNameKey);
                 log.info("前端token：[{}], redis-token:[{}]", token, redisToken);
                 if (!token.equals(redisToken)) {
                     log.error("该账户已在其它地方登录:{}", accountName);

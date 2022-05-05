@@ -1,4 +1,4 @@
-package com.starnft.star.domain.service;
+package com.starnft.star.domain.user.service;
 
 /**
  * @author WeiChunLAI
