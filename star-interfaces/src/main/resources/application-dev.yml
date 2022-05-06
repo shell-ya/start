@@ -1,12 +1,12 @@
 spring:
   application:
-    name: ark
+    name: star
 
   datasource:
     username: root
     password: wqd1234.
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://sh-cynosdbmysql-grp-ibkpxd68.sql.tencentcdb.com:23543/wqdys_db?serverTimezone=GMT%2B8&characterEncoding=utf8
+    url: jdbc:mysql://sh-cynosdbmysql-grp-ibkpxd68.sql.tencentcdb.com:23543/star?serverTimezone=GMT%2B8&characterEncoding=utf8
     driver-class-name: com.mysql.jdbc.Driver
     druid:
       max-active: 20

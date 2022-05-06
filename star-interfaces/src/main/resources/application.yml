@@ -1,6 +1,6 @@
 spring:
   application:
-    name: ark
+    name: star
   profiles:
     active: dev
 

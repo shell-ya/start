@@ -1,6 +1,6 @@
 package com.starnft.star.domain.support.ids;
 
-import com.starnft.star.common.StarConstants;
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.support.ids.policy.RandomNumeric;
 import com.starnft.star.domain.support.ids.policy.SnowFlake;
 import org.springframework.context.annotation.Bean;

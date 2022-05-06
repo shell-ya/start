@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author WeiChunLai
  */
 @RestController
-@RequestMapping("/good")
+@RequestMapping("/order")
 public class OrderController {
 
     //订单查询

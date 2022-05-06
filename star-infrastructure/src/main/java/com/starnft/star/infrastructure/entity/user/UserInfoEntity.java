@@ -1,6 +1,7 @@
 package com.starnft.star.infrastructure.entity.user;
 
 import com.starnft.star.infrastructure.entity.BaseEntity;
+import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -11,6 +12,7 @@ import javax.persistence.Table;
  * @author WeiChunLAI
  */
 @Table(name = "account_user")
+@Data
 public class UserInfoEntity extends BaseEntity {
 
     @Id

@@ -1,4 +1,4 @@
-package com.starnft.star.common;
+package com.starnft.star.common.constant;
 
 /**
  * @author WeiChunLAI
@@ -17,4 +17,15 @@ public class StarConstants {
          */
         RandomNumeric;
     }
+
+    /**
+     * 服务名称
+     */
+    public static final String SERVICE_NAME = "star-service";
+
+
+    /**
+     * 密码错误重试机会
+     */
+    public static final Integer RETRY_COUNT = 5;
 }

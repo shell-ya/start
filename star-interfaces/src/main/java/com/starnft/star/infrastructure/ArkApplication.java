@@ -2,6 +2,7 @@ package com.starnft.star.infrastructure;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -19,6 +20,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableAspectJAutoProxy
 @SpringBootApplication
 @Configurable
+@MapperScan("com.starnft.star.infrastructure.mapper")
 @ComponentScan(basePackages = {"com.starnft.star"})
 public class ArkApplication {
 

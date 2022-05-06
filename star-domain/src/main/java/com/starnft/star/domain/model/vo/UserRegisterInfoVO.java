@@ -1,4 +1,4 @@
-package com.starnft.star.infrastructure.model.vo;
+package com.starnft.star.domain.model.vo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
