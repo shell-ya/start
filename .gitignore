@@ -33,4 +33,5 @@ hs_err_pid*
 /star-interfaces/target/
 /star-application/target/
 /star-rpc/target/
+/**/target/
 
