@@ -7,7 +7,6 @@ import com.starnft.star.domain.model.vo.UserInfoVO;
 import com.starnft.star.domain.user.repository.IUserRepository;
 import com.starnft.star.infrastructure.model.dto.PayPasswordDTO;
 import com.starnft.star.infrastructure.model.dto.SmsCodeDTO;
-import com.starnft.star.domain.model.dto.UserRegisterDTO;
 import com.starnft.star.domain.model.vo.UserRegisterInfoVO;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +25,10 @@ public class UserController {
     @Autowired
     IUserRepository userService;
 
-    @ApiOperation("用户注册")
-    @PostMapping("/userinfo/register")
-    public RopResponse<UserRegisterInfoVO> register(@Validated @RequestBody UserRegisterDTO req) {
-        return RopResponse.success(new UserRegisterInfoVO());
+    @ApiOperation("短信验证码登录/注册")
+    @PostMapping("/userinfo/loginbyphone")
+    public RopResponse<UserRegisterInfoVO> loginByPhone(@Validated @RequestBody UserLoginDTO req) {
+        return RopResponse.success(userService.loginByPhone(req));
     }
 
     @ApiOperation("用户登录")

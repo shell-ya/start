@@ -1,5 +1,6 @@
 package com.starnft.star.common;
 
+import com.starnft.star.common.exception.StarError;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -7,7 +8,7 @@ import lombok.Data;
 public class RopResponse<T> {
 
     @ApiModelProperty("返回码 0-成功")
-    private int code;
+    private String code;
 
     @ApiModelProperty("错误消息")
     private String msg;
@@ -23,9 +24,9 @@ public class RopResponse<T> {
      */
     public static <T> RopResponse<T> successNoData() {
         RopResponse<T> result = new RopResponse<T>();
-        result.setCode(ResultCode.SUCCESS.getCode());
+        result.setCode(StarError.SUCCESS_000000.getErrorCode());
         result.setMsg("Success");
-        result.setMsg(ResultCode.SUCCESS.getMsg());
+        result.setMsg(StarError.SUCCESS_000000.getErrorMessage());
         return result;
     }
 
@@ -38,7 +39,7 @@ public class RopResponse<T> {
      */
     public static <T> RopResponse<T> success(T t) {
         RopResponse<T> result = new RopResponse<T>();
-        result.setCode(ResultCode.SUCCESS.getCode());
+        result.setCode(StarError.SUCCESS_000000.getErrorCode());
         result.setMsg("Success");
         result.setData(t);
         return result;
@@ -51,11 +52,11 @@ public class RopResponse<T> {
      * @param <T>
      * @return
      */
-    public static <T> RopResponse<T> fail(ResultCode code) {
+    public static <T> RopResponse<T> fail(StarError code) {
         RopResponse<T> result = new RopResponse<T>();
-        result.setCode(code.getCode());
+        result.setCode(code.getErrorCode());
         result.setMsg("Fail");
-        result.setMsg(code.getMsg());
+        result.setMsg(code.getErrorMessage());
         return result;
     }
 
@@ -68,7 +69,22 @@ public class RopResponse<T> {
      */
     public static <T> RopResponse<T> fail(String msg) {
         RopResponse<T> result = new RopResponse<T>();
-        result.setCode(ResultCode.COMMON_ERROR.getCode());
+        result.setCode(StarError.SYSTEM_ERROR.getErrorCode());
+        result.setMsg("Fail");
+        result.setMsg(msg);
+        return result;
+    }
+
+    /**
+     * 失败，返回失败信息
+     *
+     * @param msg
+     * @param <T>
+     * @return
+     */
+    public static <T> RopResponse<T> fail(StarError starError , String msg) {
+        RopResponse<T> result = new RopResponse<T>();
+        result.setCode(starError.getErrorCode());
         result.setMsg("Fail");
         result.setMsg(msg);
         return result;

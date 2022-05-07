@@ -17,6 +17,7 @@ public class StatInterceptor implements HandlerInterceptor {
 
     /**
      * pre sin controller
+     *
      * @param request
      * @param response
      * @param handler
@@ -29,7 +30,7 @@ public class StatInterceptor implements HandlerInterceptor {
 
         //token验证
 
-        return false;
+        return true;
     }
 
     @Override

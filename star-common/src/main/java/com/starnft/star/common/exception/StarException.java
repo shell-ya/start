@@ -2,8 +2,8 @@ package com.starnft.star.common.exception;
 
 
 public class StarException extends RuntimeException {
-    private StarError arkError;
-    private String arkErrorCode;
+    private StarError starError;
+    private String starErrorCode;
     private String exMessage;
 
     public StarException() {
@@ -14,9 +14,9 @@ public class StarException extends RuntimeException {
         super(message);
     }
 
-    public StarException(StarError arkError, String... exMessage) {
-        super(arkError.getErrorMessage());
-        this.arkError = arkError;
+    public StarException(StarError starError, String... exMessage) {
+        super(starError.getErrorMessage());
+        this.starError = starError;
 
         if (exMessage.length > 0) {
             this.exMessage = exMessage[0];
@@ -25,7 +25,7 @@ public class StarException extends RuntimeException {
 
     public StarException(String code, String exMessage) {
         super(exMessage);
-        this.arkErrorCode = code;
+        this.starErrorCode = code;
         this.exMessage = exMessage;
     }
 
@@ -34,11 +34,11 @@ public class StarException extends RuntimeException {
     }
 
     public StarError getArkError() {
-        return arkError;
+        return starError;
     }
 
     public String getArkErrorCode() {
-        return arkErrorCode;
+        return starErrorCode;
     }
 
 }

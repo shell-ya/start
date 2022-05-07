@@ -24,9 +24,9 @@ import java.util.Base64;
 public class JwtUtil {
 
 
-    private  String privateKey = "hkyOuSZug4!";
+    private  String privateKey = "/pem/rsa_private_key_2048.pem";
 
-    private  String pubicKey = "OZdcTmqQTb!";
+    private  String pubicKey = "/pem/rsa_public_key_2048.pem";
 
     /**
      * 解析token
@@ -81,6 +81,5 @@ public class JwtUtil {
             throw new StarException(StarError.ACCOUNT_TOKEN_DECRYPT_ERROR);
         }
     }
-
 
 }

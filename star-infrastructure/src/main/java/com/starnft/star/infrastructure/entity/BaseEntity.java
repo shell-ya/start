@@ -1,5 +1,6 @@
 package com.starnft.star.infrastructure.entity;
 
+import cn.hutool.crypto.digest.MD5;
 import lombok.Data;
 
 import javax.persistence.Column;
