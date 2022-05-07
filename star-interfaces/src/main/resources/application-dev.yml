@@ -31,3 +31,8 @@ server:
 logging:
   level:
     com.starnft.ark: debug
+
+
+wallet:
+  file:
+    path: generator/english

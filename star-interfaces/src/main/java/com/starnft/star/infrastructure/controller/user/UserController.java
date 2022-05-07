@@ -1,5 +1,8 @@
 package com.starnft.star.infrastructure.controller.user;
 
+import com.starnft.star.application.process.user.UserTotalInfoCompose;
+import com.starnft.star.application.process.user.req.UserGatheringInfoReq;
+import com.starnft.star.application.process.user.res.UserGatheringInfoRes;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.model.dto.UserLoginDTO;
@@ -12,6 +15,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * 用户相关接口
@@ -46,7 +51,8 @@ public class UserController {
     @ApiOperation("查询用户信息")
     @PostMapping("/userinfo/queryuserinfo")
     public RopResponse getUserInfo(@RequestHeader(StarConstants.USER_ID) Long userId) {
-        return RopResponse.success(null);
+        UserGatheringInfoRes userGatheringInfoRes = userTotalInfoCompose.ObtainUserGatheringInfo(new UserGatheringInfoReq(userId));
+        return RopResponse.success(userGatheringInfoRes);
     }
 
     @ApiOperation("获取短信验证码")

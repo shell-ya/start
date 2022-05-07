@@ -1,4 +1,4 @@
-package com.starnft.star.infrastructure.repository.user;
+package com.starnft.star.infrastructure.repository;
 
 import cn.hutool.crypto.digest.MD5;
 import com.starnft.star.common.constant.RedisKey;

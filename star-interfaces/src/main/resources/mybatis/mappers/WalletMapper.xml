@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.wallet.WalletMapper">
+    <resultMap type="com.starnft.star.infrastructure.entity.wallet.Wallet" id="NftWalletMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="isDeleted" column="is_deleted" jdbcType="VARCHAR"/>
+        <result property="createdAt" column="created_at" jdbcType="DATE"/>
+        <result property="createdBy" column="created_by" jdbcType="VARCHAR"/>
+        <result property="modifiedAt" column="modified_at" jdbcType="DATE"/>
+        <result property="modifiedBy" column="modified_by" jdbcType="VARCHAR"/>
+        <result property="wId" column="w_id" jdbcType="VARCHAR"/>
+        <result property="uid" column="uid" jdbcType="BIGINT"/>
+        <result property="balance" column="balance" jdbcType="DECIMAL"/>
+        <result property="walletIncome" column="wallet_income" jdbcType="DECIMAL"/>
+        <result property="walletOutcome" column="wallet_outcome" jdbcType="DECIMAL"/>
+        <result property="frozen" column="frozen" jdbcType="VARCHAR"/>
+        <result property="frozenFee" column="frozen_fee" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <!--分页查询指定行数据-->
+    <select id="queryWalletByParams" parameterType="com.starnft.star.infrastructure.entity.wallet.Wallet"
+            resultMap="NftWalletMap">
+        select
+        id,is_deleted,created_at,created_by,modified_at,modified_by,w_id,uid,balance,wallet_income,wallet_outcome,frozen,frozen_fee
+        from nft_wallet
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                and is_deleted = #{isDeleted}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                and created_at = #{createdAt}
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                and modified_at = #{modifiedAt}
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                and modified_by = #{modifiedBy}
+            </if>
+            <if test="wId != null and wId != ''">
+                and w_id = #{wId}
+            </if>
+            <if test="uid != null and uid != ''">
+                and uid = #{uid}
+            </if>
+            <if test="balance != null and balance != ''">
+                and balance = #{balance}
+            </if>
+            <if test="walletIncome != null and walletIncome != ''">
+                and wallet_income = #{walletIncome}
+            </if>
+            <if test="walletOutcome != null and walletOutcome != ''">
+                and wallet_outcome = #{walletOutcome}
+            </if>
+            <if test="frozen != null and frozen != ''">
+                and frozen = #{frozen}
+            </if>
+            <if test="frozenFee != null and frozenFee != ''">
+                and frozen_fee = #{frozenFee}
+            </if>
+        </where>
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from nft_wallet
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                and is_deleted = #{isDeleted}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                and created_at = #{createdAt}
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                and modified_at = #{modifiedAt}
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                and modified_by = #{modifiedBy}
+            </if>
+            <if test="wId != null and wId != ''">
+                and w_id = #{wId}
+            </if>
+            <if test="uid != null and uid != ''">
+                and uid = #{uid}
+            </if>
+            <if test="balance != null and balance != ''">
+                and balance = #{balance}
+            </if>
+            <if test="walletIncome != null and walletIncome != ''">
+                and wallet_income = #{walletIncome}
+            </if>
+            <if test="walletOutcome != null and walletOutcome != ''">
+                and wallet_outcome = #{walletOutcome}
+            </if>
+            <if test="frozen != null and frozen != ''">
+                and frozen = #{frozen}
+            </if>
+            <if test="frozenFee != null and frozenFee != ''">
+                and frozen_fee = #{frozenFee}
+            </if>
+        </where>
+    </select>
+
+    <!--新增数据-->
+    <insert id="createWallet" useGeneratedKeys="true">
+        insert into nft_wallet(is_deleted, created_at, created_by, modified_at, modified_by, w_id, uid, balance,
+                               wallet_income, wallet_outcome, frozen, frozen_fee)
+        values (#{isDeleted}, #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{wId}, #{uid},
+                #{balance}, #{walletIncome}, #{walletOutcome}, #{frozen}, #{frozenFee})
+    </insert>
+
+    <!-- 批量新增数据 -->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into
+        nft_wallet(id,is_deleted,created_at,created_by,modified_at,modified_by,w_id,uid,balance,wallet_income,wallet_outcome,frozen,frozen_fee)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.wId},#{entity.uid},#{entity.balance},#{entity.walletIncome},#{entity.walletOutcome},#{entity.frozen},#{entity.frozenFee})
+        </foreach>
+    </insert>
+
+    <!-- 批量新增或按主键更新数据 -->
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into
+        nft_wallet(id,is_deleted,created_at,created_by,modified_at,modified_by,w_id,uid,balance,wallet_income,wallet_outcome,frozen,frozen_fee)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.wId},#{entity.uid},#{entity.balance},#{entity.walletIncome},#{entity.walletOutcome},#{entity.frozen},#{entity.frozenFee})
+        </foreach>
+        on duplicate key update
+        id=values(id),
+        is_deleted=values(is_deleted),
+        created_at=values(created_at),
+        created_by=values(created_by),
+        modified_at=values(modified_at),
+        modified_by=values(modified_by),
+        w_id=values(w_id),
+        uid=values(uid),
+        balance=values(balance),
+        wallet_income=values(wallet_income),
+        wallet_outcome=values(wallet_outcome),
+        frozen=values(frozen),
+        frozen_fee=values(frozen_fee)
+    </insert>
+
+    <!-- 更新数据 -->
+    <update id="update">
+        update nft_wallet
+        <set>
+            <if test="id != null and id != ''">
+                id = #{id},
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                is_deleted = #{isDeleted},
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                created_at = #{createdAt},
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                created_by = #{createdBy},
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                modified_at = #{modifiedAt},
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                modified_by = #{modifiedBy},
+            </if>
+            <if test="wId != null and wId != ''">
+                w_id = #{wId},
+            </if>
+            <if test="uid != null and uid != ''">
+                uid = #{uid},
+            </if>
+            <if test="balance != null and balance != ''">
+                balance = #{balance},
+            </if>
+            <if test="walletIncome != null and walletIncome != ''">
+                wallet_income = #{walletIncome},
+            </if>
+            <if test="walletOutcome != null and walletOutcome != ''">
+                wallet_outcome = #{walletOutcome},
+            </if>
+            <if test="frozen != null and frozen != ''">
+                frozen = #{frozen},
+            </if>
+            <if test="frozenFee != null and frozenFee != ''">
+                frozen_fee = #{frozenFee},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>
