@@ -1,4 +1,4 @@
-package com.starnft.star.infrastructure.util;
+package com.starnft.star.domain.component;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 /**
  * @author WeiChunLAI

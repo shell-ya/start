@@ -1,14 +1,14 @@
-package com.starnft.star.infrastructure.repository.user.strategy;
+package com.starnft.star.domain.user.service.strategy;
 
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.common.enums.LoginTypeEnum;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
-import com.starnft.star.domain.model.dto.UserLoginDTO;
-import com.starnft.star.infrastructure.entity.user.UserInfoEntity;
-import com.starnft.star.infrastructure.enums.LoginTypeEnum;
-import com.starnft.star.infrastructure.mapper.UserInfoMapper;
-import com.starnft.star.infrastructure.repository.user.UserAdapterService;
+import com.starnft.star.domain.user.model.dto.UserLoginDTO;
+import com.starnft.star.domain.user.model.vo.UserInfo;
+import com.starnft.star.domain.user.repository.IUserRepository;
+import com.starnft.star.domain.user.service.UserAdapterService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ import java.util.Objects;
 public class LoginByVerificationCodeStrategy extends UserLoginStrategy{
 
     @Autowired
-    private UserInfoMapper userInfoMapper;
+    private IUserRepository userRepository;
 
     @Autowired
     private UserAdapterService userAdapterService;
@@ -41,11 +41,7 @@ public class LoginByVerificationCodeStrategy extends UserLoginStrategy{
     public Long saveLoginInfo(UserLoginDTO userLoginDTO) {
         //todo 校验必填参数
 
-        UserInfoEntity queryUser = new UserInfoEntity();
-        queryUser.setIsDeleted(Boolean.FALSE);
-        queryUser.setPhone(userLoginDTO.getPhone());
-        UserInfoEntity userInfo = userInfoMapper.selectOne(queryUser);
-
+        UserInfo userInfo = userRepository.queryUserInfoByPhone(userLoginDTO.getPhone());
         Long userId = null;
         if (Objects.isNull(userInfo)) {
 

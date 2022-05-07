@@ -1,6 +1,10 @@
-package com.starnft.star.infrastructure.enums;
+package com.starnft.star.common.enums;
 
 import lombok.Getter;
+
+/**
+ * @author WeiChun
+ */
 
 @Getter
 public enum LoginTypeEnum {

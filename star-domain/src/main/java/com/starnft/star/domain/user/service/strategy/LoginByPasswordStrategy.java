@@ -1,16 +1,15 @@
-package com.starnft.star.infrastructure.repository.user.strategy;
+package com.starnft.star.domain.user.service.strategy;
 
 import cn.hutool.crypto.digest.MD5;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
-import com.starnft.star.domain.model.dto.UserLoginDTO;
-import com.starnft.star.infrastructure.entity.user.UserInfoEntity;
-import com.starnft.star.infrastructure.mapper.UserInfoMapper;
-import com.starnft.star.infrastructure.repository.user.UserAdapterService;
-import com.starnft.star.infrastructure.util.RedisUtil;
-import lombok.extern.slf4j.Slf4j;
+import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.user.model.dto.UserLoginDTO;
+import com.starnft.star.domain.user.model.vo.UserInfo;
+import com.starnft.star.domain.user.repository.IUserRepository;
+import com.starnft.star.domain.user.service.UserAdapterService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -25,7 +24,7 @@ import java.util.Objects;
 public class LoginByPasswordStrategy extends UserLoginStrategy{
 
     @Autowired
-    private UserInfoMapper userInfoMapper;
+    private IUserRepository userRepository;
 
     @Autowired
     private UserAdapterService userAdapterService;
@@ -41,22 +40,19 @@ public class LoginByPasswordStrategy extends UserLoginStrategy{
         //todo 必填参数校验
 
         //校验用户是否存在
-        UserInfoEntity userQuery = new UserInfoEntity();
-        userQuery.setIsDeleted(Boolean.FALSE);
-        userQuery.setPhone(userLoginDTO.getPhone());
-        UserInfoEntity userInfoEntity = userInfoMapper.selectOne(userQuery);
-        if (Objects.isNull(userInfoEntity)) {
+        UserInfo userInfo = userRepository.queryUserInfoByPhone(userLoginDTO.getPhone());
+        if (Objects.isNull(userInfo)) {
             throw new StarException(StarError.USER_NOT_EXISTS, "用户不存在，请先注册");
         }
 
-        Integer errorTimes = userAdapterService.checkUserFreezeByPassword(userInfoEntity.getAccount());
-        Integer verificationCodeErrorTimes = userAdapterService.checkUserFreezeByVerificationCode(userInfoEntity.getAccount());
+        Integer errorTimes = userAdapterService.checkUserFreezeByPassword(userInfo.getAccount());
+        Integer verificationCodeErrorTimes = userAdapterService.checkUserFreezeByVerificationCode(userInfo.getAccount());
 
         //校验密码是否正确
-        if (StringUtils.isNotBlank(userInfoEntity.getPassword())){
+        if (StringUtils.isNotBlank(userInfo.getPassword())){
             String passwordHash = MD5.create().digestHex(userLoginDTO.getPassword());
 
-            if (!passwordHash.equals(userInfoEntity.getPassword())){
+            if (!passwordHash.equals(userInfo.getPassword())){
                 if (null == errorTimes){
                     errorTimes = 1;
                 }else {
@@ -64,7 +60,7 @@ public class LoginByPasswordStrategy extends UserLoginStrategy{
                 }
 
                 //设置错误次数
-                String retryPwdKey = String.format(RedisKey.RETRY_PWD.getKey(),userInfoEntity.getAccount());
+                String retryPwdKey = String.format(RedisKey.RETRY_PWD.getKey(), userInfo.getAccount());
                 redisTemplate.opsForValue().set(retryPwdKey , errorTimes , RedisKey.RETRY_PWD.getTime() , RedisKey.RETRY_PWD.getTimeUnit());
 
                 if (StarConstants.RETRY_COUNT.equals(errorTimes)){
@@ -81,9 +77,9 @@ public class LoginByPasswordStrategy extends UserLoginStrategy{
         }
 
         //登录成功后，清除失败的次数
-        userAdapterService.clearLoginFailureRecord(userInfoEntity.getAccount() , errorTimes ,verificationCodeErrorTimes);
+        userAdapterService.clearLoginFailureRecord(userInfo.getAccount() , errorTimes ,verificationCodeErrorTimes);
 
-        return userInfoEntity.getAccount();
+        return userInfo.getAccount();
     }
 
 

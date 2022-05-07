@@ -1,16 +1,28 @@
 package com.starnft.star.domain.user.repository;
 
 
-import com.starnft.star.domain.model.dto.UserLoginDTO;
-import com.starnft.star.domain.model.vo.UserInfoVO;
-import com.starnft.star.domain.model.vo.UserRegisterInfoVO;
+import com.starnft.star.domain.user.model.dto.UserInfoAdd;
+import com.starnft.star.domain.user.model.dto.UserLoginDTO;
+import com.starnft.star.domain.user.model.vo.UserInfo;
+import com.starnft.star.domain.user.model.vo.UserInfoVO;
+import com.starnft.star.domain.user.model.vo.UserRegisterInfoVO;
 
 /**
  * @author Ryan z
  */
 public interface IUserRepository {
 
-    UserInfoVO login(UserLoginDTO req);
+    /**
+     * 根据手机号查询用户
+     * @param phone
+     * @return
+     */
+    UserInfo queryUserInfoByPhone(String phone);
 
-    UserRegisterInfoVO loginByPhone(UserLoginDTO req);
+    /**
+     * 新增用户
+     * @param req
+     * @return
+     */
+    Integer addUserInfo(UserInfoAdd req);
 }

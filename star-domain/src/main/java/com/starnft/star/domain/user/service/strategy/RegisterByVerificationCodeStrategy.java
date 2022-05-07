@@ -1,12 +1,13 @@
-package com.starnft.star.infrastructure.repository.user.strategy;
+package com.starnft.star.domain.user.service.strategy;
 
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.utils.SnowflakeWorker;
-import com.starnft.star.domain.model.dto.UserLoginDTO;
-import com.starnft.star.infrastructure.entity.user.UserInfoEntity;
-import com.starnft.star.infrastructure.mapper.UserInfoMapper;
+import com.starnft.star.domain.user.model.dto.UserInfoAdd;
+import com.starnft.star.domain.user.model.dto.UserLoginDTO;
+import com.starnft.star.domain.user.model.vo.UserInfo;
+import com.starnft.star.domain.user.repository.IUserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -23,10 +24,10 @@ import java.util.Objects;
 public class RegisterByVerificationCodeStrategy extends UserRegisterStrategy{
 
     @Autowired
-    private UserInfoMapper userInfoMapper;
+    private RedisTemplate redisTemplate;
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private IUserRepository userRepository;
 
     @Override
     public Long startSaveRegisterInfo(UserLoginDTO registerInfo) {
@@ -39,13 +40,8 @@ public class RegisterByVerificationCodeStrategy extends UserRegisterStrategy{
             throw new StarException(StarError.CODE_NOT_FUND);
         }
 
-
-
         //如果该账号已经注册，则报错
-        UserInfoEntity queryInfo  = new UserInfoEntity();
-        queryInfo.setPhone(registerInfo.getPhone());
-        queryInfo.setIsDeleted(Boolean.FALSE);
-        UserInfoEntity userInfo = userInfoMapper.selectOne(queryInfo);
+        UserInfo userInfo = userRepository.queryUserInfoByPhone(registerInfo.getPhone());
         if (Objects.nonNull(userInfo)){
             throw new StarException(StarError.USER_REPEATED);
         }
@@ -53,13 +49,11 @@ public class RegisterByVerificationCodeStrategy extends UserRegisterStrategy{
         Long userId = SnowflakeWorker.generateId();
 
         //用户信息入库
-        queryInfo.setNickName("一位聪明的NFT玩家");
-        queryInfo.setAccount(userId);
-        queryInfo.setCreatedBy(userId);
-        queryInfo.setCreatedAt(new Date());
-        queryInfo.setModifiedBy(userId);
-        queryInfo.setModifiedAt(new Date());
-        userInfoMapper.insert(queryInfo);
+        UserInfoAdd userInfoAdd = new UserInfoAdd();
+        userInfoAdd.setCreateBy(userId);
+        userInfoAdd.setNickName("耿直的NFT玩家");
+        userInfoAdd.setUserId(userId);
+        userRepository.addUserInfo(userInfoAdd);
 
         return userId;
     }

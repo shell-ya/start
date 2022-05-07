@@ -1,4 +1,4 @@
-package com.starnft.star.domain.model.dto;
+package com.starnft.star.domain.user.model.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

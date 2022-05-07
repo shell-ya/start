@@ -1,10 +1,10 @@
-package com.starnft.star.infrastructure.repository.user;
+package com.starnft.star.domain.user.service;
 
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
-import com.starnft.star.infrastructure.util.RedisUtil;
+import com.starnft.star.domain.component.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +18,6 @@ public class UserAdapterService {
 
     @Autowired
     RedisUtil redisUtil;
-
 
     public Integer checkUserFreezeByPassword(Long userId){
         //校验用户是否输入密码失败5次以上

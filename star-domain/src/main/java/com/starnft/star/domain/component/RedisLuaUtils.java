@@ -1,4 +1,4 @@
-package com.starnft.star.infrastructure.util;
+package com.starnft.star.domain.component;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.script.DefaultRedisScript;

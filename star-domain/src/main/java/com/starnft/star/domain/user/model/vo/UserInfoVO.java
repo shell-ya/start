@@ -1,4 +1,4 @@
-package com.starnft.star.infrastructure.model.vo;
+package com.starnft.star.domain.user.model.vo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -24,4 +24,7 @@ public class UserInfoVO {
 
     @ApiModelProperty("token")
     private String token;
+
+    @ApiModelProperty("是否实名认证")
+    private Boolean isCertified;
 }

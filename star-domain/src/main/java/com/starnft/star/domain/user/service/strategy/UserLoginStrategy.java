@@ -1,6 +1,6 @@
-package com.starnft.star.infrastructure.repository.user.strategy;
+package com.starnft.star.domain.user.service.strategy;
 
-import com.starnft.star.domain.model.dto.UserLoginDTO;
+import com.starnft.star.domain.user.model.dto.UserLoginDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

@@ -1,10 +1,10 @@
-package com.starnft.star.infrastructure.repository.user.strategy;
+package com.starnft.star.domain.user.service.strategy;
 
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
-import com.starnft.star.domain.model.dto.UserLoginDTO;
-import com.starnft.star.infrastructure.util.RedisLockUtils;
+import com.starnft.star.domain.component.RedisLockUtils;
+import com.starnft.star.domain.user.model.dto.UserLoginDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

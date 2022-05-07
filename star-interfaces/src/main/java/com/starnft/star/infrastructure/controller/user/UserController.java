@@ -5,12 +5,11 @@ import com.starnft.star.application.process.user.req.UserGatheringInfoReq;
 import com.starnft.star.application.process.user.res.UserGatheringInfoRes;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.constant.StarConstants;
-import com.starnft.star.domain.model.dto.UserLoginDTO;
-import com.starnft.star.domain.model.vo.UserInfoVO;
+import com.starnft.star.domain.user.model.dto.UserLoginDTO;
+import com.starnft.star.domain.user.model.vo.UserInfoVO;
 import com.starnft.star.domain.user.repository.IUserRepository;
-import com.starnft.star.infrastructure.model.dto.PayPasswordDTO;
-import com.starnft.star.infrastructure.model.dto.SmsCodeDTO;
-import com.starnft.star.domain.model.vo.UserRegisterInfoVO;
+import com.starnft.star.domain.user.model.vo.UserRegisterInfoVO;
+import com.starnft.star.domain.user.service.IUserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -28,7 +27,11 @@ import javax.annotation.Resource;
 public class UserController {
 
     @Autowired
-    IUserRepository userService;
+    IUserService userService;
+
+    @Resource
+    private UserTotalInfoCompose userTotalInfoCompose;
+
 
     @ApiOperation("短信验证码登录/注册")
     @PostMapping("/userinfo/loginbyphone")
@@ -53,18 +56,6 @@ public class UserController {
     public RopResponse getUserInfo(@RequestHeader(StarConstants.USER_ID) Long userId) {
         UserGatheringInfoRes userGatheringInfoRes = userTotalInfoCompose.ObtainUserGatheringInfo(new UserGatheringInfoReq(userId));
         return RopResponse.success(userGatheringInfoRes);
-    }
-
-    @ApiOperation("获取短信验证码")
-    @PostMapping("/userinfo/querysmscode")
-    public RopResponse getSMSCode(@Validated @RequestBody SmsCodeDTO req) {
-        return RopResponse.successNoData();
-    }
-
-    @ApiOperation("设置支付密码")
-    @PostMapping("/userinfo/setpaypassword")
-    public RopResponse setPayPassword(@RequestHeader(StarConstants.USER_ID) Long userId, @RequestBody PayPasswordDTO req) {
-        return RopResponse.successNoData();
     }
 
 }
