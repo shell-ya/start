@@ -29,7 +29,7 @@ public class StatInterceptor implements HandlerInterceptor {
 
         //token验证
 
-        return false;
+        return true;
     }
 
     @Override

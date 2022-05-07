@@ -1,5 +1,8 @@
 package com.starnft.star.infrastructure.controller.user;
 
+import com.starnft.star.application.process.user.UserTotalInfoCompose;
+import com.starnft.star.application.process.user.req.UserGatheringInfoReq;
+import com.starnft.star.application.process.user.res.UserGatheringInfoRes;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.StarConstants;
 import com.starnft.star.infrastructure.model.dto.PayPasswordDTO;
@@ -8,10 +11,11 @@ import com.starnft.star.infrastructure.model.dto.UserLoginDTO;
 import com.starnft.star.infrastructure.model.dto.UserRegisterDTO;
 import com.starnft.star.infrastructure.model.vo.UserInfoVO;
 import com.starnft.star.infrastructure.model.vo.UserRegisterInfoVO;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * 用户相关接口
@@ -20,6 +24,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
+    @Resource
+    private UserTotalInfoCompose userTotalInfoCompose;
 
     @ApiOperation("用户注册")
     @PostMapping("/userinfo/register")
@@ -42,7 +49,8 @@ public class UserController {
     @ApiOperation("查询用户信息")
     @PostMapping("/userinfo/queryuserinfo")
     public RopResponse getUserInfo(@RequestHeader(StarConstants.USER_ID) Long userId){
-        return RopResponse.success(null);
+        UserGatheringInfoRes userGatheringInfoRes = userTotalInfoCompose.ObtainUserGatheringInfo(new UserGatheringInfoReq(userId));
+        return RopResponse.success(userGatheringInfoRes);
     }
 
     @ApiOperation("获取短信验证码")
