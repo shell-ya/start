@@ -23,6 +23,7 @@ public class UserTotalInfoComposeImpl implements UserTotalInfoCompose {
         UserGatheringInfoRes userGatheringInfoRes = new UserGatheringInfoRes();
 
         //获取User信息
+
         //填充用户信息
 
         //获取钱包信息

@@ -27,12 +27,7 @@ public class StarConstants {
     /**
      * 密码错误重试机会
      */
-    public static final Integer RETRY_COUNT = 5;
-
-    /**
-     * 账号冻结时长
-     */
-    public static final Long LOCK_DURATION = 600L;
+    public static final Integer RETRY_COUNT = 10;
 
     /**
      * 验证码重试次数

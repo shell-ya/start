@@ -6,10 +6,9 @@ import com.starnft.star.domain.user.model.vo.UserInfoVO;
 import com.starnft.star.domain.user.model.vo.UserRegisterInfoVO;
 
 /**
- * @author Ryan z
+ * @author WeiChunLAI
  */
 public interface IUserService {
-
 
     UserInfoVO login(UserLoginDTO req);
 

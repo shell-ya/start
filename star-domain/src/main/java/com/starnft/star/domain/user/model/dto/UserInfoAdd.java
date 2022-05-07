@@ -13,4 +13,6 @@ public class UserInfoAdd {
     private String nickName;
 
     private Long createBy;
+
+    private String phone;
 }
