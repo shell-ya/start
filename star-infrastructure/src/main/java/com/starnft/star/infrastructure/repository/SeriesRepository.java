@@ -43,7 +43,6 @@ public class SeriesRepository implements ISeriesRepository {
         pageResult.setTotal(result.getTotal());
         pageResult.setSize(result.getSize());
         return pageResult;
-
     }
 
 }
