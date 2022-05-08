@@ -24,7 +24,7 @@
     </resultMap>
 
     <!--分页查询指定行数据-->
-    <select id="createWalletRecord" resultMap="StarNftWalletRecordMap" parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord">
+    <select id="selectByLimit" resultMap="StarNftWalletRecordMap" parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord">
         select
         id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time,fetch_status,fetch_time,check_status,check_time
         from star_nft_wallet_record
@@ -156,9 +156,9 @@
     </select>
 
     <!--新增数据-->
-    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into star_nft_wallet_record(id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time,fetch_status,fetch_time,check_status,check_time)
-        values (#{id},#{isDeleted},#{createdAt},#{createdBy},#{modifiedAt},#{modifiedBy},#{recordSn},#{fromUid},#{toUid},#{tsType},#{tsMoney},#{payChannel},#{remark},#{payStatus},#{payTime},#{fetchStatus},#{fetchTime},#{checkStatus},#{checkTime})
+    <insert id="createWalletRecord" keyProperty="id" useGeneratedKeys="true" parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord">
+        insert into star_nft_wallet_record(is_deleted,created_at,created_by,modified_at,modified_by,record_sn,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time,fetch_status,fetch_time,check_status,check_time)
+        values (#{isDeleted},#{createdAt},#{createdBy},#{modifiedAt},#{modifiedBy},#{recordSn},#{fromUid},#{toUid},#{tsType},#{tsMoney},#{payChannel},#{remark},#{payStatus},#{payTime},#{fetchStatus},#{fetchTime},#{checkStatus},#{checkTime})
     </insert>
 
     <!-- 批量新增数据 -->
