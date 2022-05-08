@@ -1,13 +1,14 @@
 package com.starnft.star.infrastructure.entity.wallet;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.starnft.star.infrastructure.entity.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.data.annotation.Id;
 
-import javax.persistence.Id;
-import javax.persistence.Table;
+
 import java.math.BigDecimal;
 
-@Table(name = "nft_wallet")
+@TableName( "nft_wallet")
 public class Wallet extends BaseEntity {
 
     /** id */

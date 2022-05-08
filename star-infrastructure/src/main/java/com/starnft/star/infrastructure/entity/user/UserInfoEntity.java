@@ -1,46 +1,44 @@
 package com.starnft.star.infrastructure.entity.user;
 
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.starnft.star.infrastructure.entity.BaseEntity;
 import lombok.Data;
-import org.springframework.stereotype.Component;
-
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.springframework.data.annotation.Id;
 
 /**
  * 用户信息
  * @author WeiChunLAI
  */
-@Table(name = "account_user")
+@TableName( "account_user")
 @Data
 public class UserInfoEntity extends BaseEntity {
 
     @Id
-    @Column(name = "id")
+    @TableField( "id")
     private Long id;
 
-    @Column(name = "account")
+    @TableField( "account")
     private Long account;
 
-    @Column(name = "password")
+    @TableField( "password")
     private String password;
 
-    @Column(name = "phone")
+    @TableField( "phone")
     private String phone;
 
-    @Column(name = "nick_name")
+    @TableField( "nick_name")
     private String nickName;
 
-    @Column(name = "avatar")
+    @TableField( "avatar")
     private String avatar;
 
-    @Column(name = "ply_password")
+    @TableField( "ply_password")
     private String plyPassword;
 
-    @Column(name = "is_active")
+    @TableField( "is_active")
     private Boolean isActive;
 
-    @Column(name = "is_auth")
+    @TableField( "is_auth")
     private Boolean isAuth;
 }

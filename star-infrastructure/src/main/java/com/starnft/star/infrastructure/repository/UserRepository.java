@@ -1,17 +1,16 @@
 package com.starnft.star.infrastructure.repository;
 
 
-import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.user.model.dto.UserInfoAdd;
 import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.domain.user.repository.IUserRepository;
 import com.starnft.star.infrastructure.entity.user.UserInfoEntity;
 import com.starnft.star.infrastructure.mapper.UserInfoMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.Objects;
 
@@ -22,7 +21,7 @@ import java.util.Objects;
 @Service
 public class UserRepository implements IUserRepository {
 
-    @Autowired
+    @Resource
     UserInfoMapper userInfoMapper;
 
     @Override
@@ -30,7 +29,7 @@ public class UserRepository implements IUserRepository {
         UserInfoEntity queryUser  = new UserInfoEntity();
         queryUser.setIsDeleted(Boolean.FALSE);
         queryUser.setPhone(phone);
-        UserInfoEntity userInfoEntity = userInfoMapper.selectOne(queryUser);
+        UserInfoEntity userInfoEntity = userInfoMapper.selectOne(new QueryWrapper<UserInfoEntity>().setEntity(queryUser));
         if (Objects.nonNull(userInfoEntity)){
             UserInfo userInfo = new UserInfo();
             userInfo.setAccount(userInfoEntity.getAccount());
