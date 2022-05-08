@@ -17,8 +17,14 @@
     </resultMap>
 
 
-    <!--条件查询-->
     <select id="loadAllWalletConfig"
+            resultType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletConfig">
+        SELECT *
+        FROM star_nft_wallet_config
+    </select>
+
+    <!--条件查询-->
+    <select id="queryByCondition"
             resultType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletConfig">
         select
         id,is_deleted,created_at,created_by,modified_at,modified_by,recharge_limit,withdraw_limit,charge_rate,stable_rate,identity_code,channel

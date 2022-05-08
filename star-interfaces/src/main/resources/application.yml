@@ -17,6 +17,10 @@ leaf:
     enable: false
 
 # Mybatis
-mybatis:
-  config-location:  classpath:/mybatis/config/mybatis-config.xml
-  mapper-locations: classpath*:mybatis/mappers/**/*Mapper.xml
+mybatis-plus:
+  type-aliases-package: com.starnft.star
+  mapper-locations: classpath*:mybatis/mappers/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+    log-impl: com.starnft.star.infrastructure.config.StdOutImpl
