@@ -1,9 +1,10 @@
 package com.starnft.star.infrastructure.entity;
 
-import cn.hutool.crypto.digest.MD5;
+
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
-import javax.persistence.Column;
+
 import java.util.Date;
 
 /**
@@ -12,18 +13,18 @@ import java.util.Date;
 @Data
 public class BaseEntity {
 
-    @Column(name = "is_deleted")
+    @TableField( "is_deleted")
     private Boolean isDeleted;
 
-    @Column(name = "created_at")
+    @TableField( "created_at")
     private Date createdAt;
 
-    @Column(name = "created_by")
+    @TableField( "created_by")
     private Long createdBy;
 
-    @Column(name = "modified_at")
+    @TableField( "modified_at")
     private Date  modifiedAt;
 
-    @Column(name = "modified_by")
+    @TableField("modified_by")
     private Long modifiedBy;
 }
