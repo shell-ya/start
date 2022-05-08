@@ -5,6 +5,7 @@ import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
+import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.user.model.dto.UserLoginDTO;
 import com.starnft.star.domain.user.model.vo.UserInfo;
@@ -50,7 +51,7 @@ public class LoginByPasswordStrategy extends UserLoginStrategy{
 
         //校验密码是否正确
         if (StringUtils.isNotBlank(userInfo.getPassword())){
-            String passwordHash = MD5.create().digestHex(userLoginDTO.getPassword());
+            String passwordHash = StarUtils.getSHA256Str(userInfo.getPassword());
 
             if (!passwordHash.equals(userInfo.getPassword())){
                 if (null == errorTimes){

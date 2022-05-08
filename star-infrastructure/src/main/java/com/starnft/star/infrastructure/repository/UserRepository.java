@@ -1,12 +1,14 @@
 package com.starnft.star.infrastructure.repository;
 
 
+import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.user.model.dto.UserInfoAdd;
 import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.domain.user.repository.IUserRepository;
 import com.starnft.star.infrastructure.entity.user.UserInfoEntity;
 import com.starnft.star.infrastructure.mapper.UserInfoMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,5 +60,21 @@ public class UserRepository implements IUserRepository {
         addUserInfo.setNickName(req.getNickName());
         addUserInfo.setPhone(req.getPhone());
         return userInfoMapper.insert(addUserInfo);
+    }
+
+    @Override
+    public Integer setUpPassword(UserInfo userInfo, String password) {
+        Integer updateRows = null;
+        if (StringUtils.isBlank(userInfo.getPassword())) {
+            UserInfoEntity updateUserInfo = new UserInfoEntity();
+            updateUserInfo.setId(updateUserInfo.getId());
+            updateUserInfo.setPassword(StarUtils.getSHA256Str(password));
+            updateRows = userInfoMapper.updateByPrimaryKey(updateUserInfo);
+
+            //todo 密码修改记录
+
+        }
+
+        return updateRows;
     }
 }

@@ -25,4 +25,12 @@ public interface IUserRepository {
      * @return
      */
     Integer addUserInfo(UserInfoAdd req);
+
+    /**
+     * 设置初始密码
+     * @param userInfo
+     * @param password
+     * @return
+     */
+    Integer setUpPassword(UserInfo userInfo , String password);
 }

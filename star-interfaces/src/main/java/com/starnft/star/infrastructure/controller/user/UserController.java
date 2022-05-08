@@ -1,8 +1,14 @@
 package com.starnft.star.infrastructure.controller.user;
 
+import com.starnft.star.application.process.user.UserCore;
 import com.starnft.star.application.process.user.UserTotalInfoCompose;
+import com.starnft.star.application.process.user.req.AuthMaterialReq;
 import com.starnft.star.application.process.user.req.UserGatheringInfoReq;
+import com.starnft.star.application.process.user.req.UserLoginReq;
+import com.starnft.star.application.process.user.req.UserVerifyCodeReq;
 import com.starnft.star.application.process.user.res.UserGatheringInfoRes;
+import com.starnft.star.application.process.user.res.UserInfoRes;
+import com.starnft.star.application.process.user.res.UserVerifyCodeRes;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.user.model.dto.UserLoginDTO;
@@ -27,7 +33,7 @@ import javax.annotation.Resource;
 public class UserController {
 
     @Autowired
-    IUserService userService;
+    private UserCore userCore;
 
     @Resource
     private UserTotalInfoCompose userTotalInfoCompose;
@@ -35,21 +41,40 @@ public class UserController {
 
     @ApiOperation("短信验证码登录/注册")
     @PostMapping("/userinfo/loginbyphone")
-    public RopResponse<UserRegisterInfoVO> loginByPhone(@Validated @RequestBody UserLoginDTO req) {
-        return RopResponse.success(userService.loginByPhone(req));
+    public RopResponse<UserInfoRes> loginByPhone(@Validated @RequestBody UserLoginReq req) {
+        return RopResponse.success(userCore.loginByPhoneAndRegister(req));
     }
 
-    @ApiOperation("用户登录")
-    @PostMapping("/userinfo/login")
-    public RopResponse<UserInfoVO> login(@Validated @RequestBody UserLoginDTO req) {
-        return RopResponse.success(userService.login(req));
+    @ApiOperation("账号密码登录")
+    @PostMapping("/userinfo/loginbypassword")
+    public RopResponse<UserInfoRes> loginByPassword(@Validated @RequestBody UserLoginReq req) {
+        return RopResponse.success(userCore.loginByPassword(req));
     }
 
     @ApiOperation("用户退出")
     @PostMapping("/userinfo/logout")
-    public RopResponse logout(@RequestHeader(StarConstants.USER_ID) Long userId) {
-        return RopResponse.success(null);
+    public RopResponse<Boolean> logout(@RequestHeader(StarConstants.USER_ID) Long userId) {
+        return RopResponse.success(userCore.logOut(userId));
     }
+
+    @ApiOperation("获取验证码")
+    @PostMapping("/userinfo/getverifycode")
+    public RopResponse<UserVerifyCodeRes> getVerifyCode(@Validated @RequestBody UserVerifyCodeReq req) {
+        return RopResponse.success(userCore.getVerifyCode(req));
+    }
+
+    @ApiOperation("设置初始密码")
+    @PostMapping("/userinfo/setuppwd")
+    public RopResponse<Boolean> setUpPassword(@Validated @RequestBody AuthMaterialReq req) {
+        return RopResponse.success(userCore.setUpPassword(req));
+    }
+
+    @ApiOperation("修改密码")
+    @PostMapping("/userinfo/changepwd")
+    public RopResponse<Boolean> changepwd(@Validated @RequestBody AuthMaterialReq req) {
+        return RopResponse.success(userCore.setUpPassword(req));
+    }
+
 
     @ApiOperation("查询用户信息")
     @PostMapping("/userinfo/queryuserinfo")
