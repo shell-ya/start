@@ -74,6 +74,10 @@ public class WalletRepository implements IWalletRepository {
         return null;
     }
 
+    private StarNftWalletRecord initWalletRecord(RechargeReq rechargeReq) {
+        return null;
+    }
+
     private Wallet initWallet(WalletInfoReq walletInfoReq) {
         Wallet wallet = new Wallet();
         wallet.setUid(walletInfoReq.getUid());
