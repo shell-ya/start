@@ -1,9 +1,13 @@
 package com.starnft.star.infrastructure.repository;
 
+import com.starnft.star.domain.wallet.model.req.RechargeReq;
 import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
 import com.starnft.star.domain.wallet.model.vo.WalletVO;
 import com.starnft.star.domain.wallet.repository.IWalletRepository;
+import com.starnft.star.infrastructure.entity.wallet.StarNftWalletLog;
+import com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord;
 import com.starnft.star.infrastructure.entity.wallet.Wallet;
+import com.starnft.star.infrastructure.mapper.wallet.StarNftWalletLogMapper;
 import com.starnft.star.infrastructure.mapper.wallet.WalletMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +21,9 @@ public class WalletRepository implements IWalletRepository {
 
     @Resource
     private WalletMapper walletMapper;
+
+    @Resource
+    private StarNftWalletLogMapper starNftWalletLogMapper;
 
     @Override
     public WalletVO queryWallet(WalletInfoReq walletInfoReq) {
@@ -55,6 +62,18 @@ public class WalletRepository implements IWalletRepository {
         return walletVO;
     }
 
+    @Override
+    public Integer createWalletLog(RechargeReq rechargeReq) {
+        StarNftWalletLog starNftWalletLog = initWalletLog(rechargeReq);
+        return starNftWalletLogMapper.createChargeLog(starNftWalletLog);
+    }
+
+    @Override
+    public Integer createWalletRecord(RechargeReq rechargeReq) {
+        StarNftWalletRecord starNftWalletRecord = initWalletRecord(rechargeReq);
+        return null;
+    }
+
     private Wallet initWallet(WalletInfoReq walletInfoReq) {
         Wallet wallet = new Wallet();
         wallet.setUid(walletInfoReq.getUid());
@@ -67,6 +86,22 @@ public class WalletRepository implements IWalletRepository {
         wallet.setFrozenFee(new BigDecimal("0.00"));
         wallet.setCreatedAt(new Date());
         return wallet;
+    }
+
+    private StarNftWalletLog initWalletLog(RechargeReq rechargeReq) {
+        StarNftWalletLog starNftWalletLog = new StarNftWalletLog();
+        starNftWalletLog.setUid(rechargeReq.getUserId());
+        starNftWalletLog.setwId(rechargeReq.getWalletId());
+        starNftWalletLog.setBalanceOffset(rechargeReq.getMoney());
+        starNftWalletLog.setCurrentBalance(rechargeReq.getCurrentMoney());
+        starNftWalletLog.setRecordSn(rechargeReq.getPayNo());
+        starNftWalletLog.setIsDeleted(false);
+        starNftWalletLog.setDisplay(0);
+        starNftWalletLog.setCreatedAt(new Date());
+        starNftWalletLog.setCreatedBy(rechargeReq.getUserId());
+        starNftWalletLog.setChannel(rechargeReq.getPayChannel());
+
+        return starNftWalletLog;
     }
 
     private boolean getStatus(String code) {

@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.wallet.StarNftWalletRecordMapper">
+    <resultMap type="com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord" id="StarNftWalletRecordMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="isDeleted" column="is_deleted" jdbcType="INTEGER"/>
+        <result property="createdAt" column="created_at" jdbcType="DATE"/>
+        <result property="createdBy" column="created_by" jdbcType="VARCHAR"/>
+        <result property="modifiedAt" column="modified_at" jdbcType="DATE"/>
+        <result property="modifiedBy" column="modified_by" jdbcType="VARCHAR"/>
+        <result property="recordSn" column="record_sn" jdbcType="VARCHAR"/>
+        <result property="fromUid" column="from_uid" jdbcType="INTEGER"/>
+        <result property="toUid" column="to_uid" jdbcType="INTEGER"/>
+        <result property="tsType" column="ts_type" jdbcType="VARCHAR"/>
+        <result property="tsMoney" column="ts_money" jdbcType="DECIMAL"/>
+        <result property="payChannel" column="pay_channel" jdbcType="INTEGER"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="payStatus" column="pay_status" jdbcType="INTEGER"/>
+        <result property="payTime" column="pay_time" jdbcType="DATE"/>
+        <result property="fetchStatus" column="fetch_status" jdbcType="INTEGER"/>
+        <result property="fetchTime" column="fetch_time" jdbcType="DATE"/>
+        <result property="checkStatus" column="check_status" jdbcType="INTEGER"/>
+        <result property="checkTime" column="check_time" jdbcType="DATE"/>
+    </resultMap>
+
+    <!--分页查询指定行数据-->
+    <select id="createWalletRecord" resultMap="StarNftWalletRecordMap" parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord">
+        select
+        id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time,fetch_status,fetch_time,check_status,check_time
+        from star_nft_wallet_record
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                and is_deleted = #{isDeleted}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                and created_at = #{createdAt}
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                and modified_at = #{modifiedAt}
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                and modified_by = #{modifiedBy}
+            </if>
+            <if test="recordSn != null and recordSn != ''">
+                and record_sn = #{recordSn}
+            </if>
+            <if test="fromUid != null and fromUid != ''">
+                and from_uid = #{fromUid}
+            </if>
+            <if test="toUid != null and toUid != ''">
+                and to_uid = #{toUid}
+            </if>
+            <if test="tsType != null and tsType != ''">
+                and ts_type = #{tsType}
+            </if>
+            <if test="tsMoney != null and tsMoney != ''">
+                and ts_money = #{tsMoney}
+            </if>
+            <if test="payChannel != null and payChannel != ''">
+                and pay_channel = #{payChannel}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+            <if test="payStatus != null and payStatus != ''">
+                and pay_status = #{payStatus}
+            </if>
+            <if test="payTime != null and payTime != ''">
+                and pay_time = #{payTime}
+            </if>
+            <if test="fetchStatus != null and fetchStatus != ''">
+                and fetch_status = #{fetchStatus}
+            </if>
+            <if test="fetchTime != null and fetchTime != ''">
+                and fetch_time = #{fetchTime}
+            </if>
+            <if test="checkStatus != null and checkStatus != ''">
+                and check_status = #{checkStatus}
+            </if>
+            <if test="checkTime != null and checkTime != ''">
+                and check_time = #{checkTime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from star_nft_wallet_record
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                and is_deleted = #{isDeleted}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                and created_at = #{createdAt}
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                and modified_at = #{modifiedAt}
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                and modified_by = #{modifiedBy}
+            </if>
+            <if test="recordSn != null and recordSn != ''">
+                and record_sn = #{recordSn}
+            </if>
+            <if test="fromUid != null and fromUid != ''">
+                and from_uid = #{fromUid}
+            </if>
+            <if test="toUid != null and toUid != ''">
+                and to_uid = #{toUid}
+            </if>
+            <if test="tsType != null and tsType != ''">
+                and ts_type = #{tsType}
+            </if>
+            <if test="tsMoney != null and tsMoney != ''">
+                and ts_money = #{tsMoney}
+            </if>
+            <if test="payChannel != null and payChannel != ''">
+                and pay_channel = #{payChannel}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+            <if test="payStatus != null and payStatus != ''">
+                and pay_status = #{payStatus}
+            </if>
+            <if test="payTime != null and payTime != ''">
+                and pay_time = #{payTime}
+            </if>
+            <if test="fetchStatus != null and fetchStatus != ''">
+                and fetch_status = #{fetchStatus}
+            </if>
+            <if test="fetchTime != null and fetchTime != ''">
+                and fetch_time = #{fetchTime}
+            </if>
+            <if test="checkStatus != null and checkStatus != ''">
+                and check_status = #{checkStatus}
+            </if>
+            <if test="checkTime != null and checkTime != ''">
+                and check_time = #{checkTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增数据-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into star_nft_wallet_record(id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time,fetch_status,fetch_time,check_status,check_time)
+        values (#{id},#{isDeleted},#{createdAt},#{createdBy},#{modifiedAt},#{modifiedBy},#{recordSn},#{fromUid},#{toUid},#{tsType},#{tsMoney},#{payChannel},#{remark},#{payStatus},#{payTime},#{fetchStatus},#{fetchTime},#{checkStatus},#{checkTime})
+    </insert>
+
+    <!-- 批量新增数据 -->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into star_nft_wallet_record(id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time,fetch_status,fetch_time,check_status,check_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.recordSn},#{entity.fromUid},#{entity.toUid},#{entity.tsType},#{entity.tsMoney},#{entity.payChannel},#{entity.remark},#{entity.payStatus},#{entity.payTime},#{entity.fetchStatus},#{entity.fetchTime},#{entity.checkStatus},#{entity.checkTime})
+        </foreach>
+    </insert>
+
+    <!-- 批量新增或按主键更新数据 -->
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into star_nft_wallet_record(id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time,fetch_status,fetch_time,check_status,check_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.recordSn},#{entity.fromUid},#{entity.toUid},#{entity.tsType},#{entity.tsMoney},#{entity.payChannel},#{entity.remark},#{entity.payStatus},#{entity.payTime},#{entity.fetchStatus},#{entity.fetchTime},#{entity.checkStatus},#{entity.checkTime})
+        </foreach>
+        on duplicate key update
+        id=values(id),
+        is_deleted=values(is_deleted),
+        created_at=values(created_at),
+        created_by=values(created_by),
+        modified_at=values(modified_at),
+        modified_by=values(modified_by),
+        record_sn=values(record_sn),
+        from_uid=values(from_uid),
+        to_uid=values(to_uid),
+        ts_type=values(ts_type),
+        ts_money=values(ts_money),
+        pay_channel=values(pay_channel),
+        remark=values(remark),
+        pay_status=values(pay_status),
+        pay_time=values(pay_time),
+        fetch_status=values(fetch_status),
+        fetch_time=values(fetch_time),
+        check_status=values(check_status),
+        check_time=values(check_time)
+    </insert>
+
+    <!-- 更新数据 -->
+    <update id="update">
+        update star_nft_wallet_record
+        <set>
+            <if test="id != null and id != ''">
+                id = #{id},
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                is_deleted = #{isDeleted},
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                created_at = #{createdAt},
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                created_by = #{createdBy},
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                modified_at = #{modifiedAt},
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                modified_by = #{modifiedBy},
+            </if>
+            <if test="recordSn != null and recordSn != ''">
+                record_sn = #{recordSn},
+            </if>
+            <if test="fromUid != null and fromUid != ''">
+                from_uid = #{fromUid},
+            </if>
+            <if test="toUid != null and toUid != ''">
+                to_uid = #{toUid},
+            </if>
+            <if test="tsType != null and tsType != ''">
+                ts_type = #{tsType},
+            </if>
+            <if test="tsMoney != null and tsMoney != ''">
+                ts_money = #{tsMoney},
+            </if>
+            <if test="payChannel != null and payChannel != ''">
+                pay_channel = #{payChannel},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+            <if test="payStatus != null and payStatus != ''">
+                pay_status = #{payStatus},
+            </if>
+            <if test="payTime != null and payTime != ''">
+                pay_time = #{payTime},
+            </if>
+            <if test="fetchStatus != null and fetchStatus != ''">
+                fetch_status = #{fetchStatus},
+            </if>
+            <if test="fetchTime != null and fetchTime != ''">
+                fetch_time = #{fetchTime},
+            </if>
+            <if test="checkStatus != null and checkStatus != ''">
+                check_status = #{checkStatus},
+            </if>
+            <if test="checkTime != null and checkTime != ''">
+                check_time = #{checkTime},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

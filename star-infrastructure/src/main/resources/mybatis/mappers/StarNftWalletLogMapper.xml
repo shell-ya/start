@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.wallet.StarNftWalletLogMapper">
+    <resultMap type="com.starnft.star.infrastructure.entity.wallet.StarNftWalletLog" id="StarNftWalletLogMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="isDeleted" column="is_deleted" jdbcType="INTEGER"/>
+        <result property="createdAt" column="created_at" jdbcType="DATE"/>
+        <result property="createdBy" column="created_by" jdbcType="VARCHAR"/>
+        <result property="modifiedAt" column="modified_at" jdbcType="DATE"/>
+        <result property="modifiedBy" column="modified_by" jdbcType="VARCHAR"/>
+        <result property="recordSn" column="record_sn" jdbcType="VARCHAR"/>
+        <result property="uid" column="uid" jdbcType="VARCHAR"/>
+        <result property="wId" column="w_id" jdbcType="VARCHAR"/>
+        <result property="balanceOffset" column="balance_offset" jdbcType="DECIMAL"/>
+        <result property="currentBalance" column="current_balance" jdbcType="DECIMAL"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="display" column="display" jdbcType="VARCHAR"/>
+        <result property="channel" column="channel" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 通过ID查询单条数据 -->
+    <select id="queryById" resultMap="StarNftWalletLogMap">
+        select
+            id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,uid,w_id,balance_offset,current_balance,remark,display,channel
+        from star_nft_wallet_log
+        where id = #{id}
+    </select>
+
+    <!--分页查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="StarNftWalletLogMap">
+        select
+        id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,uid,w_id,balance_offset,current_balance,remark,display,channel
+        from star_nft_wallet_log
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                and is_deleted = #{isDeleted}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                and created_at = #{createdAt}
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                and modified_at = #{modifiedAt}
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                and modified_by = #{modifiedBy}
+            </if>
+            <if test="recordSn != null and recordSn != ''">
+                and record_sn = #{recordSn}
+            </if>
+            <if test="uid != null and uid != ''">
+                and uid = #{uid}
+            </if>
+            <if test="wId != null and wId != ''">
+                and w_id = #{wId}
+            </if>
+            <if test="balanceOffset != null and balanceOffset != ''">
+                and balance_offset = #{balanceOffset}
+            </if>
+            <if test="currentBalance != null and currentBalance != ''">
+                and current_balance = #{currentBalance}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+            <if test="display != null and display != ''">
+                and display = #{display}
+            </if>
+            <if test="channel != null and channel != ''">
+                and channel = #{channel}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from star_nft_wallet_log
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                and is_deleted = #{isDeleted}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                and created_at = #{createdAt}
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                and modified_at = #{modifiedAt}
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                and modified_by = #{modifiedBy}
+            </if>
+            <if test="recordSn != null and recordSn != ''">
+                and record_sn = #{recordSn}
+            </if>
+            <if test="uid != null and uid != ''">
+                and uid = #{uid}
+            </if>
+            <if test="wId != null and wId != ''">
+                and w_id = #{wId}
+            </if>
+            <if test="balanceOffset != null and balanceOffset != ''">
+                and balance_offset = #{balanceOffset}
+            </if>
+            <if test="currentBalance != null and currentBalance != ''">
+                and current_balance = #{currentBalance}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+            <if test="display != null and display != ''">
+                and display = #{display}
+            </if>
+            <if test="channel != null and channel != ''">
+                and channel = #{channel}
+            </if>
+        </where>
+    </select>
+
+    <!--新增数据-->
+    <insert id="createChargeLog" useGeneratedKeys="true" parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletLog">
+        insert into star_nft_wallet_log(is_deleted,created_at,created_by,modified_at,modified_by,record_sn,uid,w_id,balance_offset,current_balance,remark,display,channel)
+        values (#{isDeleted},#{createdAt},#{createdBy},#{modifiedAt},#{modifiedBy},#{recordSn},#{uid},#{wId},#{balanceOffset},#{currentBalance},#{remark},#{display},#{channel})
+    </insert>
+
+    <!-- 批量新增数据 -->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into star_nft_wallet_log(id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,uid,w_id,balance_offset,current_balance,remark,display,channel)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.recordSn},#{entity.uid},#{entity.wId},#{entity.balanceOffset},#{entity.currentBalance},#{entity.remark},#{entity.display},#{entity.channel})
+        </foreach>
+    </insert>
+
+    <!-- 批量新增或按主键更新数据 -->
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into star_nft_wallet_log(id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,uid,w_id,balance_offset,current_balance,remark,display,channel)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.recordSn},#{entity.uid},#{entity.wId},#{entity.balanceOffset},#{entity.currentBalance},#{entity.remark},#{entity.display},#{entity.channel})
+        </foreach>
+        on duplicate key update
+        id=values(id),
+        is_deleted=values(is_deleted),
+        created_at=values(created_at),
+        created_by=values(created_by),
+        modified_at=values(modified_at),
+        modified_by=values(modified_by),
+        record_sn=values(record_sn),
+        uid=values(uid),
+        w_id=values(w_id),
+        balance_offset=values(balance_offset),
+        current_balance=values(current_balance),
+        remark=values(remark),
+        display=values(display)
+        channel=values(channel)
+    </insert>
+
+    <!-- 更新数据 -->
+    <update id="update">
+        update star_nft_wallet_log
+        <set>
+            <if test="id != null and id != ''">
+                id = #{id},
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                is_deleted = #{isDeleted},
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                created_at = #{createdAt},
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                created_by = #{createdBy},
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                modified_at = #{modifiedAt},
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                modified_by = #{modifiedBy},
+            </if>
+            <if test="recordSn != null and recordSn != ''">
+                record_sn = #{recordSn},
+            </if>
+            <if test="uid != null and uid != ''">
+                uid = #{uid},
+            </if>
+            <if test="wId != null and wId != ''">
+                w_id = #{wId},
+            </if>
+            <if test="balanceOffset != null and balanceOffset != ''">
+                balance_offset = #{balanceOffset},
+            </if>
+            <if test="currentBalance != null and currentBalance != ''">
+                current_balance = #{currentBalance},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+            <if test="display != null and display != ''">
+                display = #{display},
+            </if>
+            <if test="channel != null and channel != ''">
+                channel = #{channel},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>
