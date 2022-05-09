@@ -223,7 +223,6 @@ public class WalletRepository implements IWalletRepository {
         starNftWalletLog.setBalanceOffset(rechargeReq.getMoney());
         starNftWalletLog.setCurrentBalance(rechargeReq.getCurrentMoney());
         starNftWalletLog.setRecordSn(rechargeReq.getPayNo());
-        starNftWalletLog.setIsDeleted(false);
         starNftWalletLog.setDisplay(0);
         starNftWalletLog.setCreatedAt(new Date());
         starNftWalletLog.setCreatedBy(rechargeReq.getUserId());
