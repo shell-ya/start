@@ -34,6 +34,13 @@ public class UserCoreImpl implements UserCore {
 
     @Override
     public UserInfoRes loginByPassword(UserLoginReq req) {
+        Optional.ofNullable(req.getPhone())
+                .orElseThrow(() -> new  StarException(StarError.PARAETER_UNSUPPORTED , "phone 不能为空"));
+        Optional.ofNullable(req.getPassword())
+                .orElseThrow(() -> new  StarException(StarError.PARAETER_UNSUPPORTED , "password 不能为空"));
+        Optional.ofNullable(req.getLoginScenes())
+                .orElseThrow(() -> new  StarException(StarError.PARAETER_UNSUPPORTED , "loginScenes 不能为空"));
+
         UserLoginDTO userLoginDTO = BeanColverUtil.colver(req, UserLoginDTO.class);
         UserInfoVO userInfo = userService.login(userLoginDTO);
         return BeanColverUtil.colver(userInfo , UserInfoRes.class);
@@ -67,6 +74,8 @@ public class UserCoreImpl implements UserCore {
                 .orElseThrow(() -> new StarException(StarError.PARAETER_UNSUPPORTED , "password 不能为空"));
         Optional.ofNullable(req.getPhone())
                 .orElseThrow(() -> new StarException(StarError.PARAETER_UNSUPPORTED , "phone 不能为空"));
+        Optional.ofNullable(req.getVerificationCode())
+                .orElseThrow(() -> new StarException(StarError.PARAETER_UNSUPPORTED , "verificationCode 不能为空"));
 
         AuthMaterialDTO authMaterial = BeanColverUtil.colver(req, AuthMaterialDTO.class);
         return userService.setUpPassword(authMaterial);
@@ -88,6 +97,7 @@ public class UserCoreImpl implements UserCore {
                 .orElseThrow(() -> new StarException(StarError.PARAETER_UNSUPPORTED , "oldPassword 不能为空"));
 
 
-        return null;
+        AuthMaterialDTO authMaterialreq = BeanColverUtil.colver(req, AuthMaterialDTO.class);
+        return userService.changePassword(authMaterialreq);
     }
 }

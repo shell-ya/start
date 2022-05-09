@@ -3,6 +3,7 @@ package com.starnft.star.domain.user.service.strategy;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.enums.LoginTypeEnum;
+import com.starnft.star.common.enums.RegisterTypeEnum;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.domain.user.model.dto.UserLoginDTO;
@@ -17,6 +18,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author WeiChunLAI
@@ -39,22 +41,25 @@ public class LoginByVerificationCodeStrategy extends UserLoginStrategy{
 
     @Override
     public Long saveLoginInfo(UserLoginDTO userLoginDTO) {
-        //todo 校验必填参数
+        Optional.ofNullable(userLoginDTO.getPhone())
+                .orElseThrow(() -> new  StarException(StarError.PARAETER_UNSUPPORTED , "phone 不能为空"));
+        Optional.ofNullable(userLoginDTO.getCode())
+                .orElseThrow(() -> new  StarException(StarError.PARAETER_UNSUPPORTED , "code 不能为空"));
 
         UserInfo userInfo = userRepository.queryUserInfoByPhone(userLoginDTO.getPhone());
         Long userId = null;
         if (Objects.isNull(userInfo)) {
 
             //校验code
-            String key = String.format(RedisKey.REDIS_CODE_REGISIER.getKey(), userId);
+            String key = String.format(RedisKey.REDIS_CODE_REGISIER.getKey(), userLoginDTO.getPhone());
             String smsCode =  String.valueOf(redisTemplate.opsForValue().get(key));
 
-            if (smsCode.equals(userLoginDTO.getCode())){
+            if (!smsCode.equals(userLoginDTO.getCode())){
                 throw new StarException(StarError.CODE_NOT_FUND);
             }
 
             //注册账号
-            UserRegisterStrategy userRegisterStrategy = applicationContext.getBean(LoginTypeEnum.PHONE_CODE_LOGIN.getStrategy(), UserRegisterStrategy.class);
+            UserRegisterStrategy userRegisterStrategy = applicationContext.getBean(RegisterTypeEnum.SMS_CODE_REGISTER.getStrategy(), UserRegisterStrategy.class);
             userId = userRegisterStrategy.register(userLoginDTO);
 
         } else {
@@ -66,7 +71,7 @@ public class LoginByVerificationCodeStrategy extends UserLoginStrategy{
 
 
             //校验code
-            String key = String.format(RedisKey.REDIS_CODE_REGISIER.getKey(), userId);
+            String key = String.format(RedisKey.REDIS_CODE_REGISIER.getKey(), userLoginDTO.getPhone());
             String smsCode =  String.valueOf(redisTemplate.opsForValue().get(key));
 
             if (!StringUtils.equals(userLoginDTO.getCode(),smsCode)){
@@ -79,7 +84,8 @@ public class LoginByVerificationCodeStrategy extends UserLoginStrategy{
                 }
 
                 //设置错误次数
-                redisTemplate.opsForValue().set(key , verificationErrorTimes , RedisKey.REDIS_CODE_REGISIER.getTime() , RedisKey.REDIS_CODE_REGISIER.getTimeUnit());
+                String verificationErrorTimesKey = String.format(RedisKey.SMS_CODE.getKey() , userInfo.getAccount());
+                redisTemplate.opsForValue().set(verificationErrorTimesKey , verificationErrorTimes , RedisKey.SMS_CODE.getTime() , RedisKey.SMS_CODE.getTimeUnit());
 
                 if (StarConstants.VERIFY_CODE_ERROR_TIMES.equals(verificationErrorTimes)){
                     throw new StarException(StarError.USER_HAS_BEEN_FROZEN_BY_VERIFICATION_CODE_ERROR , String.format(StarError.USER_HAS_BEEN_FROZEN_BY_VERIFICATION_CODE_ERROR.getErrorMessage(), StarConstants.VERIFY_CODE_ERROR_TIMES));
@@ -88,6 +94,8 @@ public class LoginByVerificationCodeStrategy extends UserLoginStrategy{
                 if (4 <= verificationErrorTimes){
                     throw new StarException(StarError.CODE_NOT_FUND);
                 }
+
+                throw new StarException(StarError.CODE_NOT_FUND);
             }
 
             userAdapterService.clearLoginFailureRecord(userId, errorTimes , verificationErrorTimes);

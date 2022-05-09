@@ -49,4 +49,8 @@ public class StarUtils {
         }
         return encdeStr;
     }
+
+    public static void main(String[] args) {
+        System.out.println(StarUtils.getSHA256Str("654321"));
+    }
 }

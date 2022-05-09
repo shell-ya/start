@@ -9,10 +9,7 @@ import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.user.model.dto.AuthMaterialDTO;
 import com.starnft.star.domain.user.model.dto.UserLoginDTO;
 import com.starnft.star.domain.user.model.dto.UserVerifyCodeDTO;
-import com.starnft.star.domain.user.model.vo.UserInfo;
-import com.starnft.star.domain.user.model.vo.UserInfoVO;
-import com.starnft.star.domain.user.model.vo.UserRegisterInfoVO;
-import com.starnft.star.domain.user.model.vo.UserVerifyCode;
+import com.starnft.star.domain.user.model.vo.*;
 import com.starnft.star.domain.user.repository.IUserRepository;
 import com.starnft.star.domain.user.service.IUserService;
 import com.starnft.star.domain.user.service.strategy.UserLoginStrategy;
@@ -24,10 +21,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.file.OpenOption;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author WeiChunLAI
@@ -42,7 +44,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService{
     @Autowired
     private RedisTemplate redisTemplate;
 
-    @ApiModelProperty
+    @Autowired
     private IUserRepository userRepository;
 
     @Value("${star.sms.enable}")
@@ -61,7 +63,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService{
 
         UserInfoVO userInfo = new UserInfoVO();
         userInfo.setToken(createUserTokenAndSaveRedis(userId));
-        userInfo.setAccount(userId);
+        userInfo.setUserId(userId);
 
         return userInfo;
     }
@@ -78,14 +80,15 @@ public class UserServiceImpl extends BaseUserService implements IUserService{
         AccessToken accessToken = new AccessToken();
         accessToken.setUserId(userId);
         userRegisterInfoVO.setToken(createUserTokenAndSaveRedis(userId));
+        userRegisterInfoVO.setUserId(userId);
 
         return userRegisterInfoVO;
     }
 
+    @Transactional
     @Override
     public Boolean logOut(Long userId) {
-        //todo 保存登出日志
-
+        userRepository.deleteLoginLog(userId);
         return cleanUserToken(userId);
     }
 
@@ -102,6 +105,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService{
                 throw new StarException(StarError.VERIFYCODE_FREQUENCY_IS_TOO_HIGH);
             }
             //todo 调用服务商发送短信
+
         }
 
         //录入redis
@@ -124,9 +128,17 @@ public class UserServiceImpl extends BaseUserService implements IUserService{
         //校验用户是否存在
         UserInfo userInfo = userRepository.queryUserInfoByPhone(materialDTO.getPhone());
         if (Objects.isNull(userInfo)) {
-            log.error("设置初始密码，用户：{}不存在",userInfo.getAccount());
+            log.error("设置初始密码，用户：{}不存在",materialDTO.getPhone());
             throw new StarException(StarError.USER_NOT_EXISTS );
         }
+
+        //验证码校验
+        String verifiCodeKey = String.format(RedisKey.REDIS_CODE_LOGIN_CHANGE_PWD.getKey(), materialDTO.getPhone());
+        String code = String.valueOf(redisTemplate.opsForValue().get(verifiCodeKey));
+        if (!code.equals(materialDTO.getVerificationCode())){
+            throw new StarException(StarError.CODE_NOT_FUND);
+        }
+
         Integer updateRows = userRepository.setUpPassword(userInfo, materialDTO.getPassword());
         return Objects.nonNull(updateRows) ? Boolean.TRUE : Boolean.FALSE;
     }
@@ -136,7 +148,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService{
         //校验用户是否存在
         UserInfo userInfo = userRepository.queryUserInfoByPhone(materialDTO.getPhone());
         if (Objects.isNull(userInfo)) {
-            log.error("修改密码，用户：{}不存在",userInfo.getAccount());
+            log.error("修改密码，用户：{} 不存在", materialDTO.getPhone());
             throw new StarException(StarError.USER_NOT_EXISTS );
         }
 
@@ -145,7 +157,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService{
         String code = String.valueOf(redisTemplate.opsForValue().get(redisKey));
         Optional.ofNullable(materialDTO)
                 .filter(a -> a.getVerificationCode().equals(code))
-                .orElseThrow(() -> new StarException(StarError.VERIFICATION_CODE_ERROR));
+                .orElseThrow(() -> new StarException(StarError.CODE_NOT_FUND));
 
         //校验旧密码是否正确
         if (StringUtils.isNotBlank(userInfo.getPassword())) {
@@ -157,13 +169,25 @@ public class UserServiceImpl extends BaseUserService implements IUserService{
 
         //校验距离上次修改密码是否超过24小时
         String changgeSuccessKey = String.format(RedisKey.REDIS_CHANGE_PWD_SUCCESS_EXPIRED.getKey(), userInfo.getAccount());
-        Optional.ofNullable(redisTemplate.opsForValue().get(changgeSuccessKey))
-                .orElseThrow(() -> new StarException(StarError.CHANGE_PWD_FREQUENCY_IS_TOO_HIGH));
+        if (StringUtils.isNotBlank(changgeSuccessKey)){
+            new StarException(StarError.CHANGE_PWD_FREQUENCY_IS_TOO_HIGH);
+        }
 
         //校验新密码与最新十次的修改是否一致
         String newPassword = StarUtils.getSHA256Str(materialDTO.getPassword());
-        
+        UserPwdChangeLogsVO userPwdChangeLogsVO = userRepository.queryPwdLog(userInfo.getAccount());
+        Map<String, String> userPwdMap = Optional
+                .ofNullable(userPwdChangeLogsVO.getPasswords())
+                .orElse(new ArrayList<>())
+                .stream()
+                .collect(Collectors.toMap(Function.identity(), Function.identity()));
+        if (Objects.nonNull(userPwdMap.get(newPassword))){
+            throw new StarException(StarError.USER_HAS_BEEN_FROZEN_BY_VERIFICATION_CODE_ERROR);
+        }
 
-        return null;
+        //更新密码
+        Integer result = userRepository.changePwd(userInfo.getAccount(), materialDTO.getPassword());
+
+        return Objects.nonNull(result)  ? Boolean.TRUE : Boolean.FALSE;
     }
 }

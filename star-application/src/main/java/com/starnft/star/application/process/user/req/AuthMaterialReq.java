@@ -15,7 +15,7 @@ public class AuthMaterialReq {
     @NotBlank(message = "verificationCode 不能为空")
     private String verificationCode;
 
-    @ApiModelProperty("发送验证码场景：1=手机号注册 2=修改密码")
+    @ApiModelProperty("发送验证码场景：1=手机号注册 2=不登录修改密码 3=登录下修改密码")
     private Integer verificationScenes;
 
     @ApiModelProperty("新密码")

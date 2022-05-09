@@ -11,7 +11,8 @@ import lombok.Data;
 public class UserInfoVO {
 
     @ApiModelProperty("用户id")
-    private Long account;
+    private Long userId;
+
 
     @ApiModelProperty("手机号")
     private String phone;

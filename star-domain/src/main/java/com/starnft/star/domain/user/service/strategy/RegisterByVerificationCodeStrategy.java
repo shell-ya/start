@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -36,7 +35,7 @@ public class RegisterByVerificationCodeStrategy extends UserRegisterStrategy{
         //校验验证码
         String key = String.format(RedisKey.REDIS_CODE_REGISIER.getKey(), registerInfo.getPhone());
         String smsCode =  String.valueOf(redisTemplate.opsForValue().get(key));
-        if (smsCode.equals(registerInfo.getCode())){
+        if (!smsCode.equals(registerInfo.getCode())){
             throw new StarException(StarError.CODE_NOT_FUND);
         }
 
@@ -53,6 +52,7 @@ public class RegisterByVerificationCodeStrategy extends UserRegisterStrategy{
         userInfoAdd.setCreateBy(userId);
         userInfoAdd.setNickName("耿直的NFT玩家");
         userInfoAdd.setUserId(userId);
+        userInfoAdd.setPhone(registerInfo.getPhone());
         userRepository.addUserInfo(userInfoAdd);
 
         return userId;

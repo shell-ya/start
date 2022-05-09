@@ -72,7 +72,7 @@ public class UserController {
     @ApiOperation("修改密码")
     @PostMapping("/userinfo/changepwd")
     public RopResponse<Boolean> changepwd(@Validated @RequestBody AuthMaterialReq req) {
-        return RopResponse.success(userCore.setUpPassword(req));
+        return RopResponse.success(userCore.changePassword(req));
     }
 
 
