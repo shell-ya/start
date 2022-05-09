@@ -12,7 +12,7 @@ import lombok.Data;
 public class UserInfoRes {
 
     @ApiModelProperty("用户id")
-    private Long account;
+    private Long userId;
 
     @ApiModelProperty("手机号")
     private String phone;

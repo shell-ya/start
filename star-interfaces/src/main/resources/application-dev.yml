@@ -35,3 +35,8 @@ logging:
 wallet:
   file:
     path: generator/english
+
+# 发送短信验证码开关
+star:
+  sms:
+    enable: false

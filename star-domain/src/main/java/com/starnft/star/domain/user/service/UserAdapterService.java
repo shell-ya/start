@@ -41,7 +41,7 @@ public class UserAdapterService {
 
     public Integer checkUserFreezeByVerificationCode(Long userId){
         //校验用户是否输入验证码失败10次以上
-        String key = String.format(RedisKey.RETRY_PWD.getKey(), userId);
+        String key = String.format(RedisKey.SMS_CODE.getKey(), userId);
         Integer verificationErrorTimes = (Integer) redisUtil.get(key);
         if (Objects.nonNull(verificationErrorTimes) && StarConstants.VERIFY_CODE_ERROR_TIMES <= verificationErrorTimes){
             throw new StarException(StarError.USER_HAS_BEEN_FROZEN_BY_VERIFICATION_CODE_ERROR);

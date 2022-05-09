@@ -5,6 +5,7 @@ import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
+import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.user.model.dto.UserLoginDTO;
 import com.starnft.star.domain.user.model.vo.UserInfo;
@@ -16,6 +17,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * @author WeiChunLAI
@@ -30,14 +32,10 @@ public class LoginByPasswordStrategy extends UserLoginStrategy{
     private UserAdapterService userAdapterService;
 
     @Autowired
-    private RedisUtil redisUtil;
-
-    @Autowired
     private RedisTemplate redisTemplate;
 
     @Override
     public Long saveLoginInfo(UserLoginDTO userLoginDTO) {
-        //todo 必填参数校验
 
         //校验用户是否存在
         UserInfo userInfo = userRepository.queryUserInfoByPhone(userLoginDTO.getPhone());
@@ -50,7 +48,7 @@ public class LoginByPasswordStrategy extends UserLoginStrategy{
 
         //校验密码是否正确
         if (StringUtils.isNotBlank(userInfo.getPassword())){
-            String passwordHash = MD5.create().digestHex(userLoginDTO.getPassword());
+            String passwordHash = StarUtils.getSHA256Str(userLoginDTO.getPassword());
 
             if (!passwordHash.equals(userInfo.getPassword())){
                 if (null == errorTimes){
@@ -73,7 +71,7 @@ public class LoginByPasswordStrategy extends UserLoginStrategy{
                 throw new StarException(StarError.USER_NOT_EXISTS, "您输入的密码有误，请重试");
             }
         }else {
-            throw new StarException(StarError.USER_NOT_EXISTS, "您输入的密码有误，请重试");
+            throw new StarException(StarError.PWD_NOT_SETTING);
         }
 
         //登录成功后，清除失败的次数

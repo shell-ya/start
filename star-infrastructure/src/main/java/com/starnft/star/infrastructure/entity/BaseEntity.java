@@ -13,8 +13,8 @@ import java.util.Date;
 @Data
 public class BaseEntity {
 
-    @TableField( "is_deleted")
-    private Boolean isDeleted;
+    @TableField( "is_delete")
+    private Boolean isDelete;
 
     @TableField( "created_at")
     private Date createdAt;

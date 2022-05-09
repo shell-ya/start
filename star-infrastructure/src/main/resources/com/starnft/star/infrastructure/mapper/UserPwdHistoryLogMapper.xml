@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.UserPwdHistoryLogMapper">
+
+    <resultMap id="BaseresultMap" type="com.starnft.star.infrastructure.entity.user.UserPwdHistoryLogEntity">
+        <id property="id" column="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="password" property="password"/>
+        <result column="is_delete" property="isDelete"/>
+        <result column="created_at" property="createdAt"/>
+        <result column="created_by" property="createdBy"/>
+        <result column="modified_at" property="modifiedAt"/>
+        <result column="modified_by" property="modifiedBy"/>
+    </resultMap>
+
+    <select id="selectByParamAndLimiTen"
+            resultMap="BaseresultMap">
+        SELECT * FROM user_pwd_history_log
+        WHERE is_delete = 0 AND user_id = #{userId}
+        ORDER BY created_at desc LIMIT 10
+    </select>
+</mapper>

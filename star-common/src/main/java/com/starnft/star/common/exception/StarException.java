@@ -1,6 +1,8 @@
 package com.starnft.star.common.exception;
 
+import lombok.Getter;
 
+@Getter
 public class StarException extends RuntimeException {
     private StarError starError;
     private String starErrorCode;
