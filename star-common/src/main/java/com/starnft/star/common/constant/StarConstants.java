@@ -61,7 +61,7 @@ public class StarConstants {
         /**
          * 待支付
          */
-        WaitPay,
+        WAIT_PAY,
         /**
          * 支付中
          */
@@ -69,11 +69,15 @@ public class StarConstants {
         /**
          * 支付成功
          */
-        Pay_Success,
+        PAY_SUCCESS,
         /**
          * 支付失败
          */
-        PAY_FAILED;
+        PAY_FAILED,
+        /**
+         * 支付关闭
+         */
+        PAY_CLOSE;
 
     }
 

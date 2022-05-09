@@ -36,17 +36,11 @@ public class WalletAddrGenerator {
 
     @Value("${wallet.file.path: /tmp/wallet}")
     private String filePath;
-//    private String filePath = "generator/english";
-
+    //    private String filePath = "generator/english";
     private static final String[] dict =
             {"0000", "0001", "0010", "0011", "0100", "0101", "0110", "0111", "1000",
                     "1001", "1010", "1011", "1100", "1101", "1110", "1111"};
-
-    //TODO 线程安全问题 need fixed
-    private String[] wordlist = new String[2048];
-
     private static String password = "password";
-    private static WalletFile walletFile;
 
     public static void main(String[] args) {
         WalletAddrGenerator generator = new WalletAddrGenerator();
@@ -60,7 +54,8 @@ public class WalletAddrGenerator {
 
     public String generate() throws CipherException, InvalidKeySpecException, NoSuchAlgorithmException {
         String entropy = createEntropy();
-        String mnemonic = generateMnemonic(entropy);
+        String[] wordlist = new String[2048];
+        String mnemonic = generateMnemonic(entropy, wordlist);
         List<String> params = generateKeyPairs(mnemonic);
         return "0x" + params.get(2);
     }
@@ -75,7 +70,7 @@ public class WalletAddrGenerator {
         return randomDigits.toString();
     }
 
-    public String generateMnemonic(String entropy) {
+    public String generateMnemonic(String entropy, String[] wordlist) {
         System.out.println(entropy);
 
         //generate sha-256 from entropy
@@ -97,7 +92,7 @@ public class WalletAddrGenerator {
 
         //请修改文件的绝对路径
         String path = filePath;
-        readTextFile(path);
+        readTextFile(path, wordlist);
         String mnemonic = "";
 
         //generate mnemonic
@@ -108,7 +103,7 @@ public class WalletAddrGenerator {
         return mnemonic;
     }
 
-    public void readTextFile(String filePath) {
+    public void readTextFile(String filePath, String[] wordlist) {
         try {
             String encoding = "utf-8";
             File file = new File(filePath);
@@ -160,7 +155,7 @@ public class WalletAddrGenerator {
         // 4. get key pair
         byte[] privateKeyBytes = childPrivateKey.getKey(); //child private key
         ECKeyPair keyPair = ECKeyPair.create(privateKeyBytes);
-        walletFile = Wallet.createLight(password, keyPair);
+        WalletFile walletFile = Wallet.createLight(password, keyPair);//TODO: walletFile & password
         List<String> returnList = EthAddress(childPrivateKey, keyPair);
 
         childPrivateKey = rootKey.derive(btcAddressIndex, AddressIndex.DERIVATION);
@@ -211,7 +206,6 @@ public class WalletAddrGenerator {
         returnList.add(address);
         return returnList;
     }
-
 
 
     /**

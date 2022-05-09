@@ -25,6 +25,10 @@ public enum StarError {
     CHANGE_PWD_FREQUENCY_IS_TOO_HIGH("100012","距离最新一次修改密码未超过24小时，请缓缓再试呢"),
     PWD_NOT_CHANGE("100013","抱歉，您的密码设置与近期设置重复，请重新设置"),
     PWD_NOT_SETTING("100014","您未设置密码，请使用短信验证码登录设置密码后重试"),
+
+    DB_RECORD_UNEXPECTED_ERROR("200001","数据库记录异常"),
+
+    VALUE_COULD_NOT_BE_NULL("100010","必须值不能为空"),
     ;
 
     private String NS = "";

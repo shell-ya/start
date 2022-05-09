@@ -166,4 +166,5 @@ public class StarNftWalletRecord extends BaseEntity implements Serializable {
     public void setCheckTime(Date checkTime) {
         this.checkTime = checkTime;
     }
+
 }
