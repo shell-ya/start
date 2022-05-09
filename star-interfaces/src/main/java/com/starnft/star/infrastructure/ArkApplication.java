@@ -10,11 +10,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 
 @Slf4j
-@EnableSwagger2
+//@EnableSwagger2
 @EnableAspectJAutoProxy
 @SpringBootApplication
 @Configurable
