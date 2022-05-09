@@ -1,11 +1,15 @@
 package com.starnft.star.common.page;
 
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 
+@SuperBuilder
 @Data
-public class RequestPage  implements Serializable {
+@AllArgsConstructor
+@NoArgsConstructor
+public class RequestPage implements Serializable {
     private int page ;
     private  int size;
 }
