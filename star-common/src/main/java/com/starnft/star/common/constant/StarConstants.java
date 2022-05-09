@@ -7,17 +7,6 @@ public class StarConstants {
 
     public static final String USER_ID = "userId";
 
-    public enum Ids {
-        /**
-         * 雪花算法
-         */
-        SnowFlake,
-        /**
-         * 随机算法
-         */
-        RandomNumeric;
-    }
-
     /**
      * 服务名称
      */
@@ -33,4 +22,74 @@ public class StarConstants {
      * 验证码重试次数
      */
     public static final Integer VERIFY_CODE_ERROR_TIMES = 10;
+
+    public enum Ids {
+        /**
+         * 雪花算法
+         */
+        SnowFlake,
+        /**
+         * 随机算法
+         */
+        RandomNumeric;
+    }
+
+    public enum PayChannel {
+        /**
+         * 支付宝
+         */
+        AliPay,
+        /**
+         * 微信
+         */
+        WeChatPay,
+        /**
+         * 银行卡
+         */
+        BankCard,
+        /**
+         * 余额
+         */
+        Balance,
+        /**
+         * 其他
+         */
+        Other;
+    }
+
+    public enum Pay_Status {
+        /**
+         * 待支付
+         */
+        WaitPay,
+        /**
+         * 支付中
+         */
+        PAY_ING,
+        /**
+         * 支付成功
+         */
+        Pay_Success,
+        /**
+         * 支付失败
+         */
+        PAY_FAILED;
+
+    }
+
+    public enum Fetch_Status {
+        /**
+         * 待收款
+         */
+        WaitFetch,
+        /**
+         * 收款成功
+         */
+        Fetch_Success,
+        /**
+         * 收款失败
+         */
+        Fetch_Failed;
+    }
+
 }
