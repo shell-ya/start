@@ -17,4 +17,5 @@ public class SeriesVO implements Serializable {
     private Boolean seriesType;
     private String seriesImages;
     private String seriesModels;
+    private Integer seriesStatus;
 }

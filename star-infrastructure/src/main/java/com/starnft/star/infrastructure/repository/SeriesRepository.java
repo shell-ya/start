@@ -1,5 +1,4 @@
 package com.starnft.star.infrastructure.repository;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -32,9 +31,11 @@ public class SeriesRepository implements ISeriesRepository {
                                                     .seriesName(item.getSeriesName())
                                                     .seriesType(item.getSeriesType())
                                                     .seriesImages(item.getSeriesImages())
+                                                    .seriesStatus(item.getSeriesStatus())
                                                     .seriesModels(item.getSeriesModels())
                                                     .build()
-                                    ).collect(Collectors.toList());
+                                    )
+                                    .collect(Collectors.toList());
                         }
                 );
         ResponsePageResult<SeriesVO> pageResult = new ResponsePageResult<>();
@@ -44,5 +45,4 @@ public class SeriesRepository implements ISeriesRepository {
         pageResult.setSize(result.getSize());
         return pageResult;
     }
-
 }
