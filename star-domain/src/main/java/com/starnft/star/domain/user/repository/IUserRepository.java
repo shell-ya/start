@@ -1,12 +1,9 @@
 package com.starnft.star.domain.user.repository;
 
 
-import com.starnft.star.domain.user.model.dto.UserInfoAdd;
-import com.starnft.star.domain.user.model.dto.UserLoginDTO;
+import com.starnft.star.domain.user.model.dto.UserInfoAddDTO;
 import com.starnft.star.domain.user.model.vo.UserInfo;
-import com.starnft.star.domain.user.model.vo.UserInfoVO;
 import com.starnft.star.domain.user.model.vo.UserPwdChangeLogsVO;
-import com.starnft.star.domain.user.model.vo.UserRegisterInfoVO;
 
 /**
  * @author Ryan z
@@ -21,11 +18,18 @@ public interface IUserRepository {
     UserInfo queryUserInfoByPhone(String phone);
 
     /**
+     * 根据用户id查询用户
+     * @param userId
+     * @return
+     */
+    UserInfo queryUserInfoByUserId(Long userId);
+
+    /**
      * 新增用户
      * @param req
      * @return
      */
-    Integer addUserInfo(UserInfoAdd req);
+    Integer addUserInfo(UserInfoAddDTO req);
 
     /**
      * 设置初始密码
@@ -71,4 +75,12 @@ public interface IUserRepository {
      * @return
      */
     Integer deleteLoginLog(Long userId);
+
+    /**
+     * 修改支付密码
+     * @param userId
+     * @param payPassword
+     * @return
+     */
+    Boolean changePayPwd(Long userId , String payPassword);
 }

@@ -25,17 +25,22 @@ public enum RedisKey {
     /**
      * 短信验证码 - 注册场景
      */
-    REDIS_CODE_REGISIER(1 ,StarConstants.SERVICE_NAME.concat(".register.phone.code.%s"), 60L, TimeUnit.SECONDS),
+    REDIS_CODE_REGISIER(1 ,StarConstants.SERVICE_NAME.concat(".register.phone.code.%s"), 5L , TimeUnit.MINUTES),
 
     /**
      * 未登录修改密码验证码
      */
-    REDIS_CODE_LOGIN_CHANGE_PWD(2 , StarConstants.SERVICE_NAME.concat(".login.changpwd.%s") ,60L , TimeUnit.SECONDS),
+    REDIS_CODE_LOGIN_CHANGE_PWD(2 , StarConstants.SERVICE_NAME.concat(".login.changpwd.%s") ,5L , TimeUnit.MINUTES),
 
     /**
      * 登录后修改密码验证码
      */
-    REDIS_CODE_NOT_LOGIN_CHANGE_PWD(3 , StarConstants.SERVICE_NAME.concat(".notlogin.changpwd.%s") , 60L , TimeUnit.SECONDS),
+    REDIS_CODE_NOT_LOGIN_CHANGE_PWD(3 , StarConstants.SERVICE_NAME.concat(".notlogin.changpwd.%s") , 5L , TimeUnit.MINUTES),
+
+    /**
+     * 修改支付密码
+     */
+    REDIS_CODE_LOGIN_CHANGE_PAYPWD(4, StarConstants.SERVICE_NAME.concat(".login.changpaypwd.%s") , 60L , TimeUnit.SECONDS),
 
     /**
      * 分布式锁 - 注册场景
@@ -56,6 +61,11 @@ public enum RedisKey {
      * 修改密码成功的限制时间
      */
     REDIS_CHANGE_PWD_SUCCESS_EXPIRED(102, StarConstants.SERVICE_NAME.concat(".stint.changgepwd.succcess.%s") ,12L , TimeUnit.HOURS),
+
+    /**
+     * 修改支付密码成功的限制时间
+     */
+    REDIS_CHANGE_PAY_PWD_SUCCESS_EXPIRED(103, StarConstants.SERVICE_NAME.concat(".stint.changgepaypwd.succcess.%s") ,24L , TimeUnit.HOURS),
     ;
 
     private Integer code;

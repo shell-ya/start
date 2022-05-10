@@ -6,7 +6,7 @@ import lombok.Data;
  * @author WeiChunLAI
  */
 @Data
-public class UserInfoAdd {
+public class UserInfoAddDTO {
 
     private Long userId;
 
