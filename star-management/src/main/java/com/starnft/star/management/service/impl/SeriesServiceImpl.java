@@ -16,10 +16,10 @@ public class SeriesServiceImpl extends ServiceImpl<StarNftSeriesMapper, StarNftS
     @Override
     public PageInfo<StarNftSeries> querySeries(RequestConditionPage<StarNftSeries> page) {
         return PageHelper.startPage(page.getPage(), page.getSize()).doSelectPageInfo(() -> {
-            this.list(new QueryWrapper<StarNftSeries>().setEntity(page.getCondition()).eq(StarNftSeries.COL_IS_DELETE, Boolean.FALSE));
+            this.list(new QueryWrapper<StarNftSeries>().setEntity(page.getCondition()).
+                    eq(StarNftSeries.COL_IS_DELETE, Boolean.FALSE));
         });
     }
-
     @Override
     @Transactional
     public Boolean insertSeries(StarNftSeries series) {
@@ -36,5 +36,9 @@ public class SeriesServiceImpl extends ServiceImpl<StarNftSeriesMapper, StarNftS
     @Transactional
     public Boolean deleteSeries(Long id) {
         return this.removeById(id);
+    }
+    @Override
+    public StarNftSeries detailSeries(Long id) {
+      return  this.getById(id);
     }
 }

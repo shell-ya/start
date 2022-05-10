@@ -11,12 +11,13 @@ import javax.annotation.Resource;
 
 @RestController
 @RequestMapping("manager/series")
-public class SeriesManagerController {
+public class ThemeManagerController {
+
     @Resource
     private SeriesService seriesService;
     @PostMapping("/queryManagePageSeries")
     public RopResponse<PageInfo<StarNftSeries>> queryManagePageSeries(@RequestBody RequestConditionPage<StarNftSeries> requestConditionPage) {
-         return   RopResponse.success(seriesService.querySeries(requestConditionPage));
+        return   RopResponse.success(seriesService.querySeries(requestConditionPage));
     }
     @PostMapping("/insertManagePageSeries")
     public RopResponse<Boolean> insertManagePageSeries(@RequestBody StarNftSeries series) {

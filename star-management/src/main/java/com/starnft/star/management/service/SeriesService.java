@@ -10,4 +10,6 @@ public interface SeriesService extends IService<StarNftSeries> {
    Boolean insertSeries(StarNftSeries series);
    Boolean updateSeries(StarNftSeries series);
    Boolean  deleteSeries(Long id);
+   StarNftSeries detailSeries(Long id);
+
 }
