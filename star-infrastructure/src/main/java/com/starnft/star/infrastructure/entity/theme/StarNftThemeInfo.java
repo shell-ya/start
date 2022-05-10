@@ -22,6 +22,7 @@ public class StarNftThemeInfo implements Serializable {
     /**
      * 主键id
      */
+
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 

@@ -24,8 +24,8 @@ public class SeriesController {
     @ApiOperation("首页系列推荐接口")
     public RopResponse mainSeries(@RequestBody  RequestPage requestPage){
       return  RopResponse.success(
-               seriesService
-              .queryMainSeriesInfo(SeriesReq.builder()
+                seriesService
+               .queryMainSeriesInfo(SeriesReq.builder()
                       .page(requestPage.getPage())
                       .size(requestPage.getSize())
                       .build())
