@@ -18,19 +18,19 @@ public class SeriesManagerController {
     public RopResponse<PageInfo<StarNftSeries>> queryManagePageSeries(@RequestBody RequestConditionPage<StarNftSeries> requestConditionPage) {
          return   RopResponse.success(managerSeriesService.querySeries(requestConditionPage));
     }
-    @PostMapping("/insertManagePageSeries")
+    @PostMapping("/insertManageSeries")
     public RopResponse<Boolean> insertManagePageSeries(@RequestBody StarNftSeries series) {
         return   RopResponse.success(managerSeriesService.insertSeries(series));
     }
-    @PostMapping("/updateManagePageSeries")
+    @PostMapping("/updateManageSeries")
     public RopResponse<Boolean> updateManagePageSeries(@RequestBody StarNftSeries series) {
         return   RopResponse.success(managerSeriesService.updateSeries(series));
     }
-    @PostMapping("/deleteManagePageSeries/{id}")
+    @PostMapping("/deleteManageSeries/{id}")
     public RopResponse<Boolean> deleteManagePageSeries(@PathVariable Long id) {
         return   RopResponse.success(managerSeriesService.deleteSeries(id));
     }
-    @PostMapping("/detailManagePageSeries/{id}")
+    @PostMapping("/detailManageSeries/{id}")
     public RopResponse<StarNftSeries> detailManagePageSeries(@PathVariable Long id) {
         return   RopResponse.success(managerSeriesService.detailSeries(id));
     }

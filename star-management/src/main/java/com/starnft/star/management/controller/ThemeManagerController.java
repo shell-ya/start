@@ -10,27 +10,27 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
 @RestController
-@RequestMapping("manager/series")
+@RequestMapping("manager/theme")
 public class ThemeManagerController {
 @Resource
   private  ManagerThemeService managerThemeService;
-    @PostMapping("/queryManagePageSeries")
+    @PostMapping("/queryManagePageTheme")
     public RopResponse<PageInfo<StarNftThemeInfo>> queryManagePageSeries(@RequestBody RequestConditionPage<StarNftThemeInfo> requestConditionPage) {
         return   RopResponse.success(managerThemeService.queryTheme(requestConditionPage));
     }
-    @PostMapping("/insertManagePageSeries")
+    @PostMapping("/insertManageTheme")
     public RopResponse<Boolean> insertManagePageSeries(@RequestBody StarNftThemeInfo series) {
         return   RopResponse.success(managerThemeService.insertTheme(series));
     }
-    @PostMapping("/updateManagePageSeries")
+    @PostMapping("/updateManageTheme")
     public RopResponse<Boolean> updateManagePageSeries(@RequestBody StarNftThemeInfo series) {
         return   RopResponse.success(managerThemeService.updateTheme(series));
     }
-    @PostMapping("/deleteManagePageSeries/{id}")
+    @PostMapping("/deleteManageTheme/{id}")
     public RopResponse<Boolean> deleteManagePageSeries(@PathVariable Long id) {
         return   RopResponse.success(managerThemeService.deleteTheme(id));
     }
-    @PostMapping("/detailManagePageSeries/{id}")
+    @PostMapping("/detailManageTheme/{id}")
     public RopResponse<StarNftThemeInfo> detailManagePageSeries(@PathVariable Long id) {
         return   RopResponse.success(managerThemeService.detailTheme(id));
     }

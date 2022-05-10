@@ -1,5 +1,4 @@
-package com.starnft.star.infrastructure.config;
-
+package com.starnft.star.management.config;
 
 import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import com.google.common.base.Predicate;
@@ -19,7 +18,6 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-
 @Configuration
 @EnableSwagger2
 @EnableKnife4j
@@ -30,7 +28,7 @@ public class Knife4jConfiguration {
     private  String packages;
     @Bean
     public Docket createRestApi() {
-         log.info("---------{}----------",packages);
+        log.info("---------{}----------",packages);
         Predicate<RequestHandler> requestHandlerPredicate = RequestHandlerSelectors.basePackage(packages);
         return new Docket(DocumentationType.SWAGGER_2)
                 .useDefaultResponseMessages(false)

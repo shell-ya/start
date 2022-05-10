@@ -38,3 +38,5 @@ mybatis:
 wallet:
   file:
     path: generator/english
+swagger:
+  packages: com.starnft.star.management.controller
