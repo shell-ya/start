@@ -339,12 +339,13 @@
         where 1=1
         <if test="id != null and id != ''">
             AND
-            id = #{id},
+            id = #{id}
         </if>
         <if test="recordSn != null and recordSn != ''">
             AND
-            record_sn = #{recordSn},
+            record_sn = #{recordSn}
         </if>
+        ;
     </update>
 
 </mapper>

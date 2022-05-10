@@ -36,6 +36,12 @@ public interface IWalletRepository {
     boolean createWalletLog(RechargeReq rechargeReq);
 
     /**
+     * 修改钱包余额
+     * @param rechargeReq 修改请求
+     * @return 执行结果
+     */
+    boolean modifyWalletBalance(RechargeReq rechargeReq);
+    /**
      * 创建交易记录
      *
      * @param walletRecordReq 交易记录

@@ -1,5 +1,7 @@
 package com.starnft.star.domain.wallet.model.req;
 
+import com.starnft.star.common.constant.StarConstants;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -9,16 +11,18 @@ public class RechargeReq {
     private Long userId;
     /** 钱包id*/
     private String walletId;
-    /** 充值金额*/
+    /** 变动金额*/
     private BigDecimal money;
-    /** 充值后当前金额*/
+    /** 变动后当前金额*/
     private BigDecimal currentMoney;
-    /** 充值渠道*/
+    /** 渠道*/
     private String payChannel;
-    /** 充值流水号*/
+    /** 流水号*/
     private String payNo;
-    /** 充值时间*/
+    /** 变动时间*/
     private Date payTime;
+    /** 交易类型*/
+    private StarConstants.Transaction_Type transactionType;
 
     public Long getUserId() {
         return userId;

@@ -8,5 +8,7 @@ public interface WalletMapper {
 
     Wallet queryWalletByParams(Wallet wallet);
 
-    void createWallet(Wallet wallet);
+    Integer createWallet(Wallet wallet);
+
+    Integer updateWallet(Wallet wallet);
 }

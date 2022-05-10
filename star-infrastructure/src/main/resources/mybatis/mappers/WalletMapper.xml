@@ -13,7 +13,7 @@
         <result property="balance" column="balance" jdbcType="DECIMAL"/>
         <result property="walletIncome" column="wallet_income" jdbcType="DECIMAL"/>
         <result property="walletOutcome" column="wallet_outcome" jdbcType="DECIMAL"/>
-        <result property="frozen" column="frozen" jdbcType="VARCHAR"/>
+        <result property="frozen" column="frozen" jdbcType="TINYINT"/>
         <result property="frozenFee" column="frozen_fee" jdbcType="DECIMAL"/>
     </resultMap>
 
@@ -156,7 +156,7 @@
     </insert>
 
     <!-- 更新数据 -->
-    <update id="update">
+    <update id="updateWallet" parameterType="com.starnft.star.infrastructure.entity.wallet.Wallet">
         update nft_wallet
         <set>
             <if test="id != null and id != ''">
@@ -199,6 +199,19 @@
                 frozen_fee = #{frozenFee},
             </if>
         </set>
-        where id = #{id}
+            WHERE 1 = 1
+        <if test="id != null and id != ''">
+            AND
+            id = #{id}
+        </if>
+        <if test="uid != null and uid != ''">
+            AND
+            uid = #{uid}
+        </if>
+        <if test="wId != null and wId != ''">
+            AND
+            wId = #{wId}
+        </if>
+            ;
     </update>
 </mapper>

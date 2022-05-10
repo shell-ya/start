@@ -42,22 +42,31 @@ public class WalletRepository implements IWalletRepository {
 
     @Override
     public WalletVO queryWallet(WalletInfoReq walletInfoReq) {
-        Wallet wallet = new Wallet();
-        wallet.setUid(walletInfoReq.getUid());
-
-        Wallet walletInfo = walletMapper.queryWalletByParams(wallet);
+        Wallet walletInfo = getWallet(walletInfoReq);
 
         if (null == walletInfo) {
             return null;
         }
 
-        WalletVO walletVO = WalletVO.builder().walletId(walletInfo.getwId())
+        return WalletVO.builder().walletId(walletInfo.getwId())
                 .balance(walletInfo.getBalance())
-                .frozen(getStatus(walletInfo.getFrozen()))
+                .frozen(walletInfo.getFrozen() == 1)
                 .frozen_fee(walletInfo.getFrozenFee())
                 .wallet_income(walletInfo.getWalletIncome())
                 .wallet_outcome(walletInfo.getWalletOutcome()).build();
-        return walletVO;
+    }
+
+    /**
+     * 获取钱包信息po
+     *
+     * @param walletInfoReq
+     * @return
+     */
+    private Wallet getWallet(WalletInfoReq walletInfoReq) {
+        Wallet wallet = new Wallet();
+        wallet.setUid(walletInfoReq.getUid());
+
+        return walletMapper.queryWalletByParams(wallet);
     }
 
     @Override
@@ -82,6 +91,42 @@ public class WalletRepository implements IWalletRepository {
     public boolean createWalletLog(RechargeReq rechargeReq) {
         StarNftWalletLog starNftWalletLog = initWalletLog(rechargeReq);
         return starNftWalletLogMapper.createChargeLog(starNftWalletLog) == 1;
+    }
+
+    @Override
+    @Transactional
+    public boolean modifyWalletBalance(RechargeReq rechargeReq) {
+        Wallet wallet = getWallet(new WalletInfoReq(rechargeReq.getWalletId(), rechargeReq.getUserId()));
+
+        //正数代表收入
+        if (rechargeReq.getMoney().signum() >= 0) {
+            wallet.setBalance(wallet.getWalletIncome().add(rechargeReq.getMoney()));
+            wallet.setWalletIncome(wallet.getWalletIncome().add(rechargeReq.getMoney()));
+        } else {
+            //校验钱包余额
+            verifyWalletBalance(wallet, rechargeReq);
+
+            wallet.setBalance(wallet.getWalletIncome().subtract(rechargeReq.getMoney()));
+            wallet.setWalletOutcome(wallet.getWalletOutcome().subtract(rechargeReq.getMoney().abs()));
+        }
+
+        Integer isSuccess = walletMapper.updateWallet(wallet);
+
+        return isSuccess == 1;
+    }
+
+    private void verifyWalletBalance(Wallet wallet, RechargeReq rechargeReq) {
+        //资金未被冻结
+        if (wallet.getFrozen() == 0 && wallet.getBalance()
+                .subtract(rechargeReq.getMoney().abs()).signum() == -1) {
+            throw new StarException(StarError.BALANCE_NOT_ENOUGH, "钱包余额不足");
+        }
+        // 有被冻结资金
+        if (wallet.getFrozen() == 1 && wallet.getBalance()
+                .subtract(rechargeReq.getMoney().abs()).subtract(wallet.getFrozenFee().abs()).signum() == -1) {
+            throw new StarException(StarError.BALANCE_NOT_ENOUGH, "可能部分资金被冻结导致余额不足!");
+        }
+
     }
 
     @Override
@@ -113,7 +158,7 @@ public class WalletRepository implements IWalletRepository {
     @Override
     public WalletRecordVO queryWalletRecordBySerialNo(String serialNo, String payStatus) {
 
-        StarNftWalletRecord record =queryWalletRecordPO(serialNo,payStatus);
+        StarNftWalletRecord record = queryWalletRecordPO(serialNo, payStatus);
 
         if (null == record) {
             return null;
@@ -143,7 +188,7 @@ public class WalletRepository implements IWalletRepository {
 
         StarNftWalletRecord record = queryWalletRecordPO(serialNo, payStatus);
         if (null == record) {
-            throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR,"记录不存在");
+            throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "记录不存在");
         }
 
         StarNftWalletRecord update = new StarNftWalletRecord();
@@ -202,7 +247,7 @@ public class WalletRepository implements IWalletRepository {
         wallet.setwId(walletInfoReq.getWalletId());
         wallet.setCreatedBy(walletInfoReq.getUid());
         wallet.setBalance(new BigDecimal("0.00"));
-        wallet.setFrozen("0");
+        wallet.setFrozen(0);
         wallet.setWalletIncome(new BigDecimal("0.00"));
         wallet.setWalletOutcome(new BigDecimal("0.00"));
         wallet.setFrozenFee(new BigDecimal("0.00"));
@@ -231,7 +276,4 @@ public class WalletRepository implements IWalletRepository {
         return starNftWalletLog;
     }
 
-    private boolean getStatus(String code) {
-        return Integer.parseInt(code) == 1;
-    }
 }

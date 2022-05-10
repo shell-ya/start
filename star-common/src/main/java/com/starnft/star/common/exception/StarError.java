@@ -1,7 +1,6 @@
 package com.starnft.star.common.exception;
 
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -29,6 +28,8 @@ public enum StarError {
     DB_RECORD_UNEXPECTED_ERROR("200001","数据库记录异常"),
 
     VALUE_COULD_NOT_BE_NULL("100010","必须值不能为空"),
+
+    BALANCE_NOT_ENOUGH("300001","余额不足"),
     ;
 
     private String NS = "";

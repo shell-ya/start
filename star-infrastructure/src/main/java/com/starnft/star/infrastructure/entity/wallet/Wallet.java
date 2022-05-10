@@ -32,7 +32,7 @@ public class Wallet extends BaseEntity {
     private BigDecimal walletOutcome ;
     /** 是否被冻结 */
     @ApiModelProperty(name = "是否被冻结",notes = "")
-    private String frozen ;
+    private Integer frozen ;
     /** 冻结金额 */
     @ApiModelProperty(name = "冻结金额",notes = "")
     private BigDecimal frozenFee ;
@@ -85,11 +85,11 @@ public class Wallet extends BaseEntity {
         this.walletOutcome = walletOutcome;
     }
 
-    public String getFrozen() {
+    public Integer getFrozen() {
         return frozen;
     }
 
-    public void setFrozen(String frozen) {
+    public void setFrozen(Integer frozen) {
         this.frozen = frozen;
     }
 

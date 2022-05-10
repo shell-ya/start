@@ -96,4 +96,28 @@ public class StarConstants {
         Fetch_Failed;
     }
 
+    public enum Transaction_Type {
+        /**
+         * 充值
+         */
+        Recharge,
+        /**
+         * 提现
+         */
+        Withdraw,
+        /**
+         * 买入
+         */
+        Buy,
+        /**
+         * 卖出
+         */
+        Sell,
+        /**
+         * 退款
+         */
+        Refund;
+
+    }
+
 }
