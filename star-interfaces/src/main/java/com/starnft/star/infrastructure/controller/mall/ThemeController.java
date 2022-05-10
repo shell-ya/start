@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 @RestController
-@Api(tags = "系列相关接口「SeriesController」")
+@Api(tags = "主题相关接口「ThemeController」")
 @RequestMapping("/theme")
 public class ThemeController {
     @Resource

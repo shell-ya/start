@@ -1,5 +1,4 @@
 package com.starnft.star.infrastructure.repository;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -12,17 +11,14 @@ import com.starnft.star.infrastructure.entity.theme.StarNftThemeInfo;
 import com.starnft.star.infrastructure.mapper.theme.StarNftThemeInfoMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
-
 @Slf4j
 @Repository
 public class ThemeRepository  implements IThemeRepository {
     @Resource
     StarNftThemeInfoMapper starNftThemeInfoMapper;
-
     @Override
     public ResponsePageResult<ThemeVO> queryTheme(ThemeReq requestPage) {
         PageInfo<StarNftThemeInfo> result = PageHelper.startPage(requestPage.getPage(), requestPage.getSize())
