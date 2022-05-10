@@ -8,13 +8,13 @@ import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.infrastructure.entity.series.StarNftSeries;
 import com.starnft.star.infrastructure.entity.theme.StarNftThemeInfo;
 import com.starnft.star.infrastructure.mapper.theme.StarNftThemeInfoMapper;
-import com.starnft.star.management.service.ThemeService;
+import com.starnft.star.management.service.ManagerThemeService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
 @Service
-public class ThemeServiceImpl  extends ServiceImpl<StarNftThemeInfoMapper, StarNftThemeInfo> implements ThemeService {
+public class ManagerThemeServiceImpl extends ServiceImpl<StarNftThemeInfoMapper, StarNftThemeInfo> implements ManagerThemeService {
     @Resource
     StarNftThemeInfoMapper starNftThemeInfoMapper;
     @Override
@@ -37,7 +37,7 @@ public class ThemeServiceImpl  extends ServiceImpl<StarNftThemeInfoMapper, StarN
 
     @Override
     public Boolean deleteTheme(Long id) {
-        return this.removeById(id);
+         return this.updateById(StarNftThemeInfo.builder().id(id).isDelete(Boolean.TRUE).build());
     }
 
     @Override

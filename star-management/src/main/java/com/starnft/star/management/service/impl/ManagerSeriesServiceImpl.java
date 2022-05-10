@@ -7,12 +7,12 @@ import com.github.pagehelper.PageInfo;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.infrastructure.entity.series.StarNftSeries;
 import com.starnft.star.infrastructure.mapper.series.StarNftSeriesMapper;
-import com.starnft.star.management.service.SeriesService;
+import com.starnft.star.management.service.ManagerSeriesService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class SeriesServiceImpl extends ServiceImpl<StarNftSeriesMapper, StarNftSeries> implements SeriesService {
+public class ManagerSeriesServiceImpl extends ServiceImpl<StarNftSeriesMapper, StarNftSeries> implements ManagerSeriesService {
     @Override
     public PageInfo<StarNftSeries> querySeries(RequestConditionPage<StarNftSeries> page) {
         return PageHelper.startPage(page.getPage(), page.getSize()).doSelectPageInfo(() -> {
@@ -35,7 +35,7 @@ public class SeriesServiceImpl extends ServiceImpl<StarNftSeriesMapper, StarNftS
     @Override
     @Transactional
     public Boolean deleteSeries(Long id) {
-        return this.removeById(id);
+        return this.updateById(StarNftSeries.builder().id(id).isDelete(Boolean.TRUE).build());
     }
     @Override
     public StarNftSeries detailSeries(Long id) {
