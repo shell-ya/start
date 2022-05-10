@@ -1,8 +1,13 @@
 package com.starnft.star.domain.wallet.service.impl;
 
+import com.google.common.base.Strings;
+import com.starnft.star.common.exception.StarError;
+import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.utils.WalletAddrGenerator;
 import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
+import com.starnft.star.domain.wallet.model.req.WalletRecordReq;
 import com.starnft.star.domain.wallet.model.res.WalletResult;
+import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
 import com.starnft.star.domain.wallet.model.vo.WalletVO;
 import com.starnft.star.domain.wallet.repository.IWalletRepository;
 import com.starnft.star.domain.wallet.service.WalletService;
@@ -43,6 +48,23 @@ public class WalletServiceImpl implements WalletService {
         walletResult.setWallet_income(walletVO.getWallet_income());
         walletResult.setWallet_outcome(walletVO.getWallet_outcome());
         return walletResult;
+    }
+
+    @Override
+    public boolean rechargeRecordGenerate(WalletRecordReq walletRecordReq) {
+
+        if (Strings.isNullOrEmpty(walletRecordReq.getRecordSn())) {
+            throw new StarException(StarError.VALUE_COULD_NOT_BE_NULL, "交易流水号不能为空");
+        }
+
+        WalletRecordVO walletRecordVO = walletRepository.queryWalletRecordBySerialNo(walletRecordReq.getRecordSn(), null);
+
+        boolean isSuccess = false;
+        if (walletRecordVO == null) {
+            isSuccess = walletRepository.createWalletRecord(walletRecordReq);
+        }
+
+        return isSuccess;
     }
 
 }

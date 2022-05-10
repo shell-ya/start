@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 @RestController
-@Api("系列相关接口")
+@Api(tags = "系列相关接口「SeriesController」")
 @RequestMapping("/series")
 public class SeriesController {
     @Resource
@@ -23,6 +23,12 @@ public class SeriesController {
     @PostMapping("/main")
     @ApiOperation("首页系列推荐接口")
     public RopResponse mainSeries(@RequestBody  RequestPage requestPage){
-      return  RopResponse.success(seriesService.queryMainSeriesInfo((SeriesReq) requestPage));
+      return  RopResponse.success(
+               seriesService
+              .queryMainSeriesInfo(SeriesReq.builder()
+                      .page(requestPage.getPage())
+                      .size(requestPage.getSize())
+                      .build())
+      );
     }
 }

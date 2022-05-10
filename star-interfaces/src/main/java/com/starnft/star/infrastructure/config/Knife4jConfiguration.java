@@ -37,10 +37,10 @@ public class Knife4jConfiguration {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .description("knife4j在线API接口文档")
-                .contact(new Contact("Roc-xb", "https://yang-roc.blog.csdn.net/", "aida_pc@qq.com"))
+                .description("∞big")
+                .contact(new Contact("", " ", " "))
                 .version("v3.0.0")
-                .title("knife4j在线API接口文档")
+                .title("在线Api文档")
                 .build();
     }
 

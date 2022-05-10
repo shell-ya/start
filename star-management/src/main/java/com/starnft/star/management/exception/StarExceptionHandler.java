@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @NoArgsConstructor
 public class StarExceptionHandler {
-
     @ExceptionHandler({StarException.class})
     public RopResponse businessExceptionHandle(StarException e) {
         return RopResponse.fail(e.getArkError() , e.getExMessage());

@@ -24,7 +24,75 @@
     </resultMap>
 
     <!--分页查询指定行数据-->
-    <select id="selectByLimit" resultMap="StarNftWalletRecordMap" parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord">
+    <select id="selectByLimit" resultMap="StarNftWalletRecordMap"
+            parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord">
+        select
+        id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time,fetch_status,fetch_time,check_status,check_time
+        from star_nft_wallet_record
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                and is_deleted = #{isDeleted}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                and created_at = #{createdAt}
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                and modified_at = #{modifiedAt}
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                and modified_by = #{modifiedBy}
+            </if>
+            <if test="recordSn != null and recordSn != ''">
+                and record_sn = #{recordSn}
+            </if>
+            <if test="fromUid != null and fromUid != ''">
+                and from_uid = #{fromUid}
+            </if>
+            <if test="toUid != null and toUid != ''">
+                and to_uid = #{toUid}
+            </if>
+            <if test="tsType != null and tsType != ''">
+                and ts_type = #{tsType}
+            </if>
+            <if test="tsMoney != null and tsMoney != ''">
+                and ts_money = #{tsMoney}
+            </if>
+            <if test="payChannel != null and payChannel != ''">
+                and pay_channel = #{payChannel}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+            <if test="payStatus != null and payStatus != ''">
+                and pay_status = #{payStatus}
+            </if>
+            <if test="payTime != null and payTime != ''">
+                and pay_time = #{payTime}
+            </if>
+            <if test="fetchStatus != null and fetchStatus != ''">
+                and fetch_status = #{fetchStatus}
+            </if>
+            <if test="fetchTime != null and fetchTime != ''">
+                and fetch_time = #{fetchTime}
+            </if>
+            <if test="checkStatus != null and checkStatus != ''">
+                and check_status = #{checkStatus}
+            </if>
+            <if test="checkTime != null and checkTime != ''">
+                and check_time = #{checkTime}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <select id="selectByLimitPages" resultMap="StarNftWalletRecordMap"
+            parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord">
         select
         id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time,fetch_status,fetch_time,check_status,check_time
         from star_nft_wallet_record
@@ -156,14 +224,20 @@
     </select>
 
     <!--新增数据-->
-    <insert id="createWalletRecord" keyProperty="id" useGeneratedKeys="true" parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord">
-        insert into star_nft_wallet_record(is_deleted,created_at,created_by,modified_at,modified_by,record_sn,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time,fetch_status,fetch_time,check_status,check_time)
-        values (#{isDeleted},#{createdAt},#{createdBy},#{modifiedAt},#{modifiedBy},#{recordSn},#{fromUid},#{toUid},#{tsType},#{tsMoney},#{payChannel},#{remark},#{payStatus},#{payTime},#{fetchStatus},#{fetchTime},#{checkStatus},#{checkTime})
+    <insert id="createWalletRecord" keyProperty="id" useGeneratedKeys="true"
+            parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord">
+        insert into star_nft_wallet_record(is_deleted, created_at, created_by, modified_at, modified_by, record_sn,
+                                           from_uid, to_uid, ts_type, ts_money, pay_channel, remark, pay_status,
+                                           pay_time, fetch_status, fetch_time, check_status, check_time)
+        values (#{isDeleted}, #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{recordSn}, #{fromUid},
+                #{toUid}, #{tsType}, #{tsMoney}, #{payChannel}, #{remark}, #{payStatus}, #{payTime}, #{fetchStatus},
+                #{fetchTime}, #{checkStatus}, #{checkTime})
     </insert>
 
     <!-- 批量新增数据 -->
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
-        insert into star_nft_wallet_record(id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time,fetch_status,fetch_time,check_status,check_time)
+        insert into
+        star_nft_wallet_record(id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time,fetch_status,fetch_time,check_status,check_time)
         values
         <foreach collection="entities" item="entity" separator=",">
             (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.recordSn},#{entity.fromUid},#{entity.toUid},#{entity.tsType},#{entity.tsMoney},#{entity.payChannel},#{entity.remark},#{entity.payStatus},#{entity.payTime},#{entity.fetchStatus},#{entity.fetchTime},#{entity.checkStatus},#{entity.checkTime})
@@ -172,7 +246,8 @@
 
     <!-- 批量新增或按主键更新数据 -->
     <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
-        insert into star_nft_wallet_record(id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time,fetch_status,fetch_time,check_status,check_time)
+        insert into
+        star_nft_wallet_record(id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time,fetch_status,fetch_time,check_status,check_time)
         values
         <foreach collection="entities" item="entity" separator=",">
             (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.recordSn},#{entity.fromUid},#{entity.toUid},#{entity.tsType},#{entity.tsMoney},#{entity.payChannel},#{entity.remark},#{entity.payStatus},#{entity.payTime},#{entity.fetchStatus},#{entity.fetchTime},#{entity.checkStatus},#{entity.checkTime})
@@ -200,7 +275,7 @@
     </insert>
 
     <!-- 更新数据 -->
-    <update id="update">
+    <update id="updateRecord">
         update star_nft_wallet_record
         <set>
             <if test="id != null and id != ''">
@@ -261,7 +336,15 @@
                 check_time = #{checkTime},
             </if>
         </set>
-        where id = #{id}
+        where 1=1
+        <if test="id != null and id != ''">
+            AND
+            id = #{id},
+        </if>
+        <if test="recordSn != null and recordSn != ''">
+            AND
+            record_sn = #{recordSn},
+        </if>
     </update>
 
 </mapper>

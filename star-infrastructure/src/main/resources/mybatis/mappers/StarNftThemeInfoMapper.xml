@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.theme.StarNftThemeInfoMapper">
+  <resultMap id="BaseResultMap" type="com.starnft.star.infrastructure.entity.theme.StarNftThemeInfo">
+    <!--@mbg.generated-->
+    <!--@Table star_nft_theme_info-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="series_id" jdbcType="BIGINT" property="seriesId" />
+    <result column="theme_type" jdbcType="BOOLEAN" property="themeType" />
+    <result column="theme_name" jdbcType="VARCHAR" property="themeName" />
+    <result column="theme_pic" jdbcType="VARCHAR" property="themePic" />
+    <result column="publish_number" jdbcType="INTEGER" property="publishNumber" />
+    <result column="descrption" jdbcType="LONGVARCHAR" property="descrption" />
+    <result column="theme_level" jdbcType="TINYINT" property="themeLevel" />
+    <result column="stock" jdbcType="INTEGER" property="stock" />
+    <result column="lssue_price" jdbcType="DECIMAL" property="lssuePrice" />
+    <result column="create_at" jdbcType="TIMESTAMP" property="createAt" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_at" jdbcType="TIMESTAMP" property="updateAt" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="is_delete" jdbcType="BOOLEAN" property="isDelete" />
+    <result column="is_recommend" jdbcType="BOOLEAN" property="isRecommend" />
+    <result column="restrict_number" jdbcType="INTEGER" property="restrictNumber" />
+    <result column="tags" jdbcType="VARCHAR" property="tags" />
+    <result column="contract_address" jdbcType="VARCHAR" property="contractAddress" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, series_id, theme_type, theme_name, theme_pic, publish_number, descrption, theme_level, 
+    stock, lssue_price, create_at, create_by, update_at, update_by, is_delete, is_recommend, 
+    restrict_number, tags, contract_address
+  </sql>
+</mapper>
