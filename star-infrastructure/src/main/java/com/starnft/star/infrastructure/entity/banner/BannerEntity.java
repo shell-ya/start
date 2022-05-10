@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.starnft.star.infrastructure.entity.BaseEntity;
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -12,6 +13,7 @@ import lombok.Data;
  * @Author ： shellya
  */
 @Data
+@Builder
 @TableName("banner")
 public class BannerEntity extends BaseEntity {
 

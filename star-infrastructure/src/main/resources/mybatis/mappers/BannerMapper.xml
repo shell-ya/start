@@ -12,4 +12,27 @@
         ;
     </select>
 
+    <select id="selectBannerList" resultType="com.starnft.star.domain.banner.model.dto.BannerDto">
+        select
+            id,title,img_url as imgUrl,`position`,display,
+            sort,crawler_url as crawlersUrl ,url
+        from banner
+        <where>
+            1 = 1
+            <if test="condition.position != null and condition.position != ''">
+                and `position` = #{condition.position}
+            </if>
+            <if test="condition.display != null and condition.display != ''">
+                and `display` = #{display}
+            </if>
+            <if test="condition.title != null and condition.title != ''">
+                and `title` = conact('%',#{condition.title},'%')
+            </if>
+        </where>
+        order by sort
+        <if test="condition.sort != null and condition.sort == '0'">
+            asc
+        </if>
+    </select>
+
 </mapper>
