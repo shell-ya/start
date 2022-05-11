@@ -8,12 +8,12 @@ public class AuthenticationNameDTO {
     /**
      * 真实名字
      */
-    private String name;
+    private String fullName;
 
     /**
      * 身份证号
      */
-    private String cardId;
+    private String idNumber;
 
     /**
      * 验证码
@@ -24,4 +24,9 @@ public class AuthenticationNameDTO {
      * 手机号
      */
     private String phone;
+
+    /**
+     * 用户id
+     */
+    private Long userId;
 }

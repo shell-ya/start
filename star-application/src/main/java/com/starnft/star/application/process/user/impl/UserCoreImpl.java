@@ -10,8 +10,10 @@ import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.user.model.dto.AuthMaterialDTO;
+import com.starnft.star.domain.user.model.dto.AuthenticationNameDTO;
 import com.starnft.star.domain.user.model.dto.UserLoginDTO;
 import com.starnft.star.domain.user.model.dto.UserVerifyCodeDTO;
+import com.starnft.star.domain.user.model.vo.UserAuthenticationVO;
 import com.starnft.star.domain.user.model.vo.UserInfoVO;
 import com.starnft.star.domain.user.model.vo.UserRegisterInfoVO;
 import com.starnft.star.domain.user.model.vo.UserVerifyCode;
@@ -99,5 +101,15 @@ public class UserCoreImpl implements UserCore {
 
         AuthMaterialDTO authMaterialreq = BeanColverUtil.colver(req, AuthMaterialDTO.class);
         return userService.changePassword(authMaterialreq);
+    }
+
+    @Override
+    public Boolean realNameAuthentication(AuthenticationNameDTO req) {
+        return userService.realNameAuthentication(req);
+    }
+
+    @Override
+    public UserAuthenticationVO queryAuthentication(Long userId) {
+        return userService.queryAuthentication(userId);
     }
 }

@@ -43,6 +43,11 @@ public enum RedisKey {
     REDIS_CODE_LOGIN_CHANGE_PAYPWD(4, StarConstants.SERVICE_NAME.concat(".login.changpaypwd.%s") , 60L , TimeUnit.SECONDS),
 
     /**
+     * 实名认证验证码
+     */
+    REDIS_REAL_NAME_AUTHENTICATION(5 , StarConstants.SERVICE_NAME.concat(".realnameauthentication.%s") , 5L ,TimeUnit.MINUTES),
+
+    /**
      * 分布式锁 - 注册场景
      */
     REDIS_LOCK_USER_REGSIST(101 ,StarConstants.SERVICE_NAME.concat(".redislocak.register.%s"), 10L, TimeUnit.SECONDS),

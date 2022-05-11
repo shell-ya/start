@@ -2,9 +2,7 @@ package com.starnft.star.domain.user.service;
 
 
 import com.starnft.star.domain.user.model.dto.*;
-import com.starnft.star.domain.user.model.vo.UserInfoVO;
-import com.starnft.star.domain.user.model.vo.UserRegisterInfoVO;
-import com.starnft.star.domain.user.model.vo.UserVerifyCode;
+import com.starnft.star.domain.user.model.vo.*;
 
 /**
  * @author WeiChunLAI
@@ -81,15 +79,35 @@ public interface IUserService {
      */
     Boolean realNameAuthentication(AuthenticationNameDTO req);
 
-    //查询实名认证结果
+    /**
+     * 查询实名认证结果
+     * @param userId
+     * @return
+     */
+    UserAuthenticationVO queryAuthentication(Long userId);
+
+    /**
+     * 查询协议信息
+     * @param agreementId
+     * @return
+     */
+    AgreementVO queryAgreementContentById(String agreementId);
 
 
-    //查询协议信息
+    /**
+     * 根据协议类型查询最新协议
+     * @param agreementType
+     * @return
+     */
+    AgreementVO queryAgreementContentByType(Integer agreementType);
 
+    /**
+     * 保存用户同意协议的版本信息
+     * @param agreementIdDTO
+     * @return
+     */
+    Boolean saveUserAgreementHistoryByUserId(AgreementIdDTO agreementIdDTO);
 
-    //注册页面查询最新协议
-
-
-    //保存用户同意协议的版本信息
+    //查询是否签署最新协议
     
 }

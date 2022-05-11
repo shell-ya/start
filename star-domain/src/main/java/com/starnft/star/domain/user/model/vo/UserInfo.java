@@ -24,4 +24,6 @@ public class UserInfo {
     private String password;
 
     private Boolean isActive;
+
+    private Integer realPersonFlag;
 }

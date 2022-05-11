@@ -19,14 +19,14 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 @Configurable
 @MapperScan("com.starnft.star.infrastructure.mapper")
 @ComponentScan(basePackages = {"com.starnft.star"})
-public class ArkApplication {
+public class StarApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ArkApplication.class, args);
+        SpringApplication.run(StarApplication.class, args);
     }
 
     @Bean
     public ApplicationRunner runner() {
-        return args -> log.info("Ark server started！");
+        return args -> log.info("Star server started！");
     }
 }

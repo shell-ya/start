@@ -4,17 +4,21 @@ package com.starnft.star.infrastructure.repository;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.starnft.star.common.enums.LoginStatus;
+import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.user.model.dto.UserInfoAddDTO;
+import com.starnft.star.domain.user.model.dto.UserInfoUpdateDTO;
 import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.domain.user.model.vo.UserPwdChangeLogsVO;
 import com.starnft.star.domain.user.repository.IUserRepository;
+import com.starnft.star.infrastructure.entity.user.AccountUserEntity;
 import com.starnft.star.infrastructure.entity.user.UserInfoEntity;
 import com.starnft.star.infrastructure.entity.user.UserLoginLogEntity;
 import com.starnft.star.infrastructure.entity.user.UserPwdHistoryLogEntity;
-import com.starnft.star.infrastructure.mapper.UserInfoMapper;
-import com.starnft.star.infrastructure.mapper.UserLoginLogMapper;
-import com.starnft.star.infrastructure.mapper.UserPwdHistoryLogMapper;
+import com.starnft.star.infrastructure.mapper.user.AccountUserMapper;
+import com.starnft.star.infrastructure.mapper.user.UserInfoMapper;
+import com.starnft.star.infrastructure.mapper.user.UserLoginLogMapper;
+import com.starnft.star.infrastructure.mapper.user.UserPwdHistoryLogMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -37,6 +41,8 @@ public class UserRepository implements IUserRepository {
     UserPwdHistoryLogMapper userPwdHistoryLogMapper;
     @Resource
     UserLoginLogMapper userLoginLogMapper;
+    @Resource
+    AccountUserMapper accountUserMapper;
 
     @Override
     public UserInfo queryUserInfoByPhone(String phone) {
@@ -89,7 +95,6 @@ public class UserRepository implements IUserRepository {
         addUserInfo.setModifiedBy(req.getCreateBy());
         addUserInfo.setIsDeleted(Boolean.FALSE);
         addUserInfo.setIsActive(Boolean.FALSE);
-        addUserInfo.setIsAuth(Boolean.FALSE);
         addUserInfo.setAccount(req.getUserId());
         addUserInfo.setNickName(req.getNickName());
         addUserInfo.setPhone(req.getPhone());
@@ -206,6 +211,14 @@ public class UserRepository implements IUserRepository {
 
         int row = userInfoMapper.update(userInfo, updateWrapper);
         return row > 0 ? Boolean.TRUE : Boolean.FALSE;
+    }
+
+    @Override
+    public Integer updateUserInfo(UserInfoUpdateDTO req) {
+        AccountUserEntity userInfo = BeanColverUtil.colver(req, AccountUserEntity.class);
+        userInfo.setModifiedAt(new Date());
+        userInfo.setModifiedBy(req.getAccount());
+        return accountUserMapper.updateByPrimaryKeySelective(userInfo);
     }
 
 

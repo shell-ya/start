@@ -11,6 +11,12 @@ import com.starnft.star.application.process.user.res.UserInfoRes;
 import com.starnft.star.application.process.user.res.UserVerifyCodeRes;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.domain.user.model.dto.AuthenticationNameDTO;
+import com.starnft.star.domain.user.model.dto.UserLoginDTO;
+import com.starnft.star.domain.user.model.vo.UserInfoVO;
+import com.starnft.star.domain.user.repository.IUserRepository;
+import com.starnft.star.domain.user.model.vo.UserRegisterInfoVO;
+import com.starnft.star.domain.user.service.IUserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -76,6 +82,18 @@ public class UserController {
     public RopResponse getUserInfo(@RequestHeader(StarConstants.USER_ID) Long userId) {
         UserGatheringInfoRes userGatheringInfoRes = userTotalInfoCompose.ObtainUserGatheringInfo(new UserGatheringInfoReq(userId));
         return RopResponse.success(userGatheringInfoRes);
+    }
+
+    @ApiOperation("发起实名认证")
+    @PostMapping("/userinfo/authentication")
+    public RopResponse<Boolean> sponsorAuthentication(@Validated @RequestBody AuthenticationNameDTO req) {
+        return RopResponse.success(userCore.realNameAuthentication(req));
+    }
+
+    @ApiOperation("查询实名认证结果")
+    @GetMapping("/userinfo/authentication")
+    public RopResponse queryAuthentication(@RequestHeader(StarConstants.USER_ID) Long userId) {
+        return RopResponse.success(userCore.queryAuthentication(userId));
     }
 
 }

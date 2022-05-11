@@ -2,6 +2,7 @@ package com.starnft.star.domain.user.repository;
 
 
 import com.starnft.star.domain.user.model.dto.UserInfoAddDTO;
+import com.starnft.star.domain.user.model.dto.UserInfoUpdateDTO;
 import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.domain.user.model.vo.UserPwdChangeLogsVO;
 
@@ -83,4 +84,11 @@ public interface IUserRepository {
      * @return
      */
     Boolean changePayPwd(Long userId , String payPassword);
+
+    /**
+     * 修改用户信息
+     * @param req
+     * @return
+     */
+    Integer updateUserInfo(UserInfoUpdateDTO req);
 }

@@ -24,6 +24,8 @@ public enum StarError {
     CHANGE_PWD_FREQUENCY_IS_TOO_HIGH("100012","距离最新一次修改密码未超过24小时，请缓缓再试呢"),
     PWD_NOT_CHANGE("100013","抱歉，您的密码设置与近期设置重复，请重新设置"),
     PWD_NOT_SETTING("100014","您未设置密码，请使用短信验证码登录设置密码后重试"),
+    IS_REAL_NAME_AUTHENTICATION("100015","您已进行实名认证，请勿重复操作"),
+    NOT_AUTHENTICATION("100016","您还未进行实名认证操作"),
 
     DB_RECORD_UNEXPECTED_ERROR("200001","数据库记录异常"),
 

@@ -5,6 +5,8 @@ import com.starnft.star.application.process.user.req.UserLoginReq;
 import com.starnft.star.application.process.user.req.UserVerifyCodeReq;
 import com.starnft.star.application.process.user.res.UserInfoRes;
 import com.starnft.star.application.process.user.res.UserVerifyCodeRes;
+import com.starnft.star.domain.user.model.dto.AuthenticationNameDTO;
+import com.starnft.star.domain.user.model.vo.UserAuthenticationVO;
 
 public interface UserCore {
 
@@ -49,4 +51,18 @@ public interface UserCore {
      * @return
      */
     Boolean changePassword(AuthMaterialReq req);
+
+    /**
+     * 发起实名认证
+     * @param req
+     * @return
+     */
+    Boolean realNameAuthentication(AuthenticationNameDTO req);
+
+    /**
+     * 查询实名认证结果
+     * @param userId
+     * @return
+     */
+    UserAuthenticationVO queryAuthentication(Long userId);
 }
