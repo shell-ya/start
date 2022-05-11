@@ -1,4 +1,4 @@
-package com.starnft.star.infrastructure.assembler;
+package com.starnft.star.interfaces.assembler;
 
 import org.mapstruct.InheritConfiguration;
 import org.mapstruct.InheritInverseConfiguration;

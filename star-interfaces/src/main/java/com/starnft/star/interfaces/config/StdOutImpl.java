@@ -1,4 +1,4 @@
-package com.starnft.star.infrastructure.config;
+package com.starnft.star.interfaces.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.logging.Log;

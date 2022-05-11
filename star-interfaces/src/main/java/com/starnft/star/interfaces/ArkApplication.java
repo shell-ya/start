@@ -1,4 +1,4 @@
-package com.starnft.star.infrastructure;
+package com.starnft.star.interfaces;
 
 
 import lombok.extern.slf4j.Slf4j;

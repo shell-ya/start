@@ -1,8 +1,8 @@
 package com.starnft.star.infrastructure.mapper.wallet;
 
 import com.starnft.star.domain.wallet.service.WalletConfig;
-import com.starnft.star.infrastructure.entity.wallet.StarNftWalletConfig;
 import com.starnft.star.infrastructure.entity.wallet.dto.WalletConfigDTO;
+import com.starnft.star.infrastructure.entity.wallet.StarNftWalletConfig;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
