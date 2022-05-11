@@ -1,11 +1,16 @@
 package com.starnft.star.infrastructure.repository;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.db.PageResult;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
+import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.wallet.model.req.RechargeReq;
+import com.starnft.star.domain.wallet.model.req.TransactionRecordQueryReq;
 import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
 import com.starnft.star.domain.wallet.model.req.WalletRecordReq;
 import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
@@ -27,6 +32,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class WalletRepository implements IWalletRepository {
@@ -197,6 +203,18 @@ public class WalletRepository implements IWalletRepository {
         Integer integer = starNftWalletRecordMapper.updateRecord(update);
 
         return integer == 1;
+    }
+
+    @Override
+    public ResponsePageResult<WalletRecordVO> queryTransactionRecordByCondition(TransactionRecordQueryReq queryReq) {
+        PageInfo<StarNftWalletRecord> starNftWalletRecords = PageHelper.startPage(queryReq.getPage(), queryReq.getSize())
+                .doSelectPageInfo(() -> starNftWalletRecordMapper.queryRecordOnCondition(queryReq));
+
+        return new ResponsePageResult<WalletRecordVO>(starNftWalletRecords.getList()
+                .stream()
+                .map(this::walletRecordToVO)
+                .collect(Collectors.toList()),
+                queryReq.getPage(), queryReq.getSize(), starNftWalletRecords.getTotal());
     }
 
     private WalletRecordVO walletRecordToVO(StarNftWalletRecord record) {

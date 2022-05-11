@@ -11,7 +11,8 @@ public class PayingState extends AbstractState {
 
     @Override
     public Result waitPay(String orderNo, Enum<StarConstants.Pay_Status> payStatus) {
-        return Result.buildErrorResult("该状态不可修改为待支付");
+        boolean isSuccess = walletRepository.updateWalletRecordStatus(orderNo, StarConstants.Pay_Status.WAIT_PAY.name());
+        return isSuccess ? Result.buildSuccessResult() : Result.buildErrorResult("状态修改失败");
     }
 
     @Override
@@ -37,7 +38,6 @@ public class PayingState extends AbstractState {
 
     @Override
     public Result payClose(String orderNo, Enum<StarConstants.Pay_Status> payStatus) {
-        boolean isSuccess = walletRepository.updateWalletRecordStatus(orderNo, StarConstants.Pay_Status.PAY_CLOSE.name());
-        return isSuccess ? Result.buildSuccessResult() : Result.buildErrorResult("状态修改失败");
+        return Result.buildErrorResult("该状态不可修改为支付关闭");
     }
 }

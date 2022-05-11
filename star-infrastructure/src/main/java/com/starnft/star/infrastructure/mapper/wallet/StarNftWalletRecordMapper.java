@@ -1,5 +1,7 @@
 package com.starnft.star.infrastructure.mapper.wallet;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.starnft.star.domain.wallet.model.req.TransactionRecordQueryReq;
 import com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -13,4 +15,6 @@ public interface StarNftWalletRecordMapper {
     List<StarNftWalletRecord> selectByLimit(StarNftWalletRecord starNftWalletRecord);
 
     Integer updateRecord(StarNftWalletRecord starNftWalletRecord);
+
+    List<StarNftWalletRecord> queryRecordOnCondition(TransactionRecordQueryReq queryReq);
 }

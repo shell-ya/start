@@ -1,6 +1,9 @@
 package com.starnft.star.domain.wallet.repository;
 
+import cn.hutool.db.PageResult;
+import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.wallet.model.req.RechargeReq;
+import com.starnft.star.domain.wallet.model.req.TransactionRecordQueryReq;
 import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
 import com.starnft.star.domain.wallet.model.req.WalletRecordReq;
 import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
@@ -68,4 +71,6 @@ public interface IWalletRepository {
      * @return 执行结果
      */
     boolean updateWalletRecordStatus(String serialNo, String payStatus);
+
+    ResponsePageResult<WalletRecordVO> queryTransactionRecordByCondition(TransactionRecordQueryReq queryReq);
 }

@@ -3,7 +3,9 @@ package com.starnft.star.domain.wallet.service.impl;
 import com.google.common.base.Strings;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
+import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.WalletAddrGenerator;
+import com.starnft.star.domain.wallet.model.req.TransactionRecordQueryReq;
 import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
 import com.starnft.star.domain.wallet.model.req.WalletRecordReq;
 import com.starnft.star.domain.wallet.model.res.WalletResult;
@@ -66,5 +68,11 @@ public class WalletServiceImpl implements WalletService {
 
         return isSuccess;
     }
+
+    @Override
+    public ResponsePageResult<WalletRecordVO> queryTransactionRecord(TransactionRecordQueryReq queryReq) {
+        return walletRepository.queryTransactionRecordByCondition(queryReq);
+    }
+
 
 }

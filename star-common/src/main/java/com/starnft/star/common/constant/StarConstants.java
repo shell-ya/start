@@ -100,24 +100,48 @@ public class StarConstants {
         /**
          * 充值
          */
-        Recharge,
+        Recharge(1,"Recharge"),
         /**
          * 提现
          */
-        Withdraw,
+        Withdraw(2,"Withdraw"),
         /**
          * 买入
          */
-        Buy,
+        Buy(3,"Buy"),
         /**
          * 卖出
          */
-        Sell,
+        Sell(4,"Sell"),
         /**
          * 退款
          */
-        Refund;
+        Refund(5,"Refund");
 
+        private Integer code;
+
+        private String font;
+
+        Transaction_Type(Integer code, String font) {
+            this.code = code;
+            this.font = font;
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public void setCode(Integer code) {
+            this.code = code;
+        }
+
+        public String getFont() {
+            return font;
+        }
+
+        public void setFont(String font) {
+            this.font = font;
+        }
     }
 
 }
