@@ -1,4 +1,4 @@
-package com.starnft.star.infrastructure.controller.mall;
+package com.starnft.star.interfaces.controller.mall;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

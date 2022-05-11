@@ -1,6 +1,6 @@
-package com.starnft.star.infrastructure.config;
+package com.starnft.star.interfaces.config;
 
-import com.starnft.star.infrastructure.interceptor.StatInterceptor;
+import com.starnft.star.interfaces.interceptor.StatInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;

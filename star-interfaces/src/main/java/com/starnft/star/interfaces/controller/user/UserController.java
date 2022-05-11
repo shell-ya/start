@@ -1,4 +1,4 @@
-package com.starnft.star.infrastructure.controller.user;
+package com.starnft.star.interfaces.controller.user;
 
 import com.starnft.star.application.process.user.UserCore;
 import com.starnft.star.application.process.user.UserTotalInfoCompose;
@@ -11,11 +11,6 @@ import com.starnft.star.application.process.user.res.UserInfoRes;
 import com.starnft.star.application.process.user.res.UserVerifyCodeRes;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.constant.StarConstants;
-import com.starnft.star.domain.user.model.dto.UserLoginDTO;
-import com.starnft.star.domain.user.model.vo.UserInfoVO;
-import com.starnft.star.domain.user.repository.IUserRepository;
-import com.starnft.star.domain.user.model.vo.UserRegisterInfoVO;
-import com.starnft.star.domain.user.service.IUserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;

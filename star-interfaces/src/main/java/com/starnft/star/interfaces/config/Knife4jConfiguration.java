@@ -1,4 +1,4 @@
-package com.starnft.star.infrastructure.config;
+package com.starnft.star.interfaces.config;
 
 
 import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;

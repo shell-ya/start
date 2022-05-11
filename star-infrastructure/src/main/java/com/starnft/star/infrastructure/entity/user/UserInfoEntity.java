@@ -1,7 +1,5 @@
 package com.starnft.star.infrastructure.entity.user;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.starnft.star.infrastructure.entity.BaseEntity;

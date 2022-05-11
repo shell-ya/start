@@ -23,6 +23,6 @@ mybatis-plus:
   configuration:
     map-underscore-to-camel-case: true
     cache-enabled: true
-    log-impl: com.starnft.star.infrastructure.config.StdOutImpl
+    log-impl: com.starnft.star.interfaces.config.StdOutImpl
 swagger:
     packages: com.starnft.star.infrastructure.controller

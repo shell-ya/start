@@ -1,4 +1,4 @@
-package com.starnft.star.infrastructure.exception;
+package com.starnft.star.interfaces.exception;
 
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.exception.StarException;

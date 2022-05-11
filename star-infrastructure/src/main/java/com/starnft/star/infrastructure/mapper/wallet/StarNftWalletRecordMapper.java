@@ -1,6 +1,5 @@
 package com.starnft.star.infrastructure.mapper.wallet;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.starnft.star.domain.wallet.model.req.TransactionRecordQueryReq;
 import com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord;
 import org.apache.ibatis.annotations.Mapper;

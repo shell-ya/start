@@ -1,4 +1,4 @@
-package com.starnft.star.infrastructure.controller.mall;
+package com.starnft.star.interfaces.controller.mall;
 
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.page.RequestConditionPage;
