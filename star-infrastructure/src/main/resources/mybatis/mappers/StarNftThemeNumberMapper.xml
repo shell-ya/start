@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.number.StarNftThemeNumberMapper">
+  <resultMap id="BaseResultMap" type="com.starnft.star.infrastructure.entity.number.StarNftThemeNumber">
+    <!--@mbg.generated-->
+    <!--@Table star_nft_theme_number-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="series_theme_info_id" jdbcType="BIGINT" property="seriesThemeInfoId" />
+    <result column="theme_number" jdbcType="BIGINT" property="themeNumber" />
+    <result column=" contract_address" jdbcType="VARCHAR" property="contractAddress" />
+    <result column="chain_identification" jdbcType="VARCHAR" property="chainIdentification" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="status" jdbcType="BOOLEAN" property="status" />
+    <result column="owenr_by" jdbcType="VARCHAR" property="owenrBy" />
+    <result column="create_at" jdbcType="TIMESTAMP" property="createAt" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="update_at" jdbcType="TIMESTAMP" property="updateAt" />
+    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    <result column="is_delete" jdbcType="BOOLEAN" property="isDelete" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, series_theme_info_id, theme_number, ` contract_address`, chain_identification, 
+    price, `status`, owenr_by, create_at, create_by, update_at, update_by, is_delete
+  </sql>
+</mapper>

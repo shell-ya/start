@@ -1,4 +1,4 @@
-package com.starnft.star.domain.theme.model.service;
+package com.starnft.star.domain.theme.service;
 
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.theme.model.req.ThemeReq;

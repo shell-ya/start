@@ -4,6 +4,8 @@ import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.page.RequestPage;
 import com.starnft.star.domain.series.model.req.SeriesReq;
 import com.starnft.star.domain.series.service.SeriesService;
+import com.starnft.star.domain.theme.model.req.ThemeReq;
+import com.starnft.star.domain.theme.service.ThemeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,13 +16,28 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 @RestController
-@Api(tags = "系列相关接口「SeriesController」")
-@RequestMapping("/series")
-public class SeriesController {
+@Api(tags = "首页进入接口「CentralController」")
+@RequestMapping("/central")
+public class CentralController {
     @Resource
     SeriesService seriesService;
+
+    @Resource
+    ThemeService themeService;
+    @PostMapping("/theme")
+    @ApiOperation("首页系列推荐接口")
+    public RopResponse mainTheme(@RequestBody RequestPage requestPage){
+        return  RopResponse.success(
+                themeService
+                        .queryMainThemeInfo(ThemeReq.builder()
+                                .page(requestPage.getPage())
+                                .size(requestPage.getSize())
+                                .isRecommend(Boolean.TRUE)
+                                .build())
+        );
+    }
     //主页显示系列
-    @PostMapping("/main")
+    @PostMapping("/series")
     @ApiOperation("首页系列推荐接口")
     public RopResponse mainSeries(@RequestBody  RequestPage requestPage){
       return  RopResponse.success(

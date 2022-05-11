@@ -1,8 +1,8 @@
-package com.starnft.star.domain.theme.model.service.impl;
+package com.starnft.star.domain.theme.service.impl;
 
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.theme.model.req.ThemeReq;
-import com.starnft.star.domain.theme.model.service.ThemeService;
+import com.starnft.star.domain.theme.service.ThemeService;
 import com.starnft.star.domain.theme.model.vo.ThemeDetailVO;
 import com.starnft.star.domain.theme.model.vo.ThemeVO;
 import com.starnft.star.domain.theme.repository.IThemeRepository;
