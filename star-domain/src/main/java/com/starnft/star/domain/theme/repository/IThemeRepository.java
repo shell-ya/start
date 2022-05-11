@@ -7,8 +7,6 @@ import com.starnft.star.domain.theme.model.vo.ThemeVO;
 
 public interface IThemeRepository {
     ResponsePageResult<ThemeVO> queryTheme(ThemeReq requestPage);
-
-
     ThemeDetailVO queryThemeDetail(Long id);
 
 }

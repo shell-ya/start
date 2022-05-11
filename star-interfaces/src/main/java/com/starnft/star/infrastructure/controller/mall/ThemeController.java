@@ -44,9 +44,8 @@ public class ThemeController {
     }
 
     @PostMapping("/theme/detail/numbers/{id}")
-    @ApiOperation("主题详情")
+    @ApiOperation("主题商品编号列表")
     public RopResponse seriesThemeNumbers(@PathVariable @ApiParam("主题id") Long  id,@RequestBody RequestConditionPage<NumberDTO> page){
-
          return  RopResponse.success(numberService
                  .queryThemeNumber( NumberReq.builder()
                          .page(page.getPage())
