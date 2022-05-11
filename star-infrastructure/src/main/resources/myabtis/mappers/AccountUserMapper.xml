@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.AccountUserMapper">
+  <resultMap id="BaseResultMap" type="com.starnft.star.infrastructure.entity.user.AccountUserEntity">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="account" jdbcType="BIGINT" property="account" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+    <result column="avatar" jdbcType="VARCHAR" property="avatar" />
+    <result column="ply_password" jdbcType="VARCHAR" property="plyPassword" />
+    <result column="is_active" jdbcType="TINYINT" property="isActive" />
+    <result column="full_name" jdbcType="VARCHAR" property="fullName" />
+    <result column="id_number" jdbcType="VARCHAR" property="idNumber" />
+    <result column="real_person_flag" jdbcType="TINYINT" property="realPersonFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, account, `password`, phone, nick_name, avatar, ply_password, is_active, full_name, 
+    id_number, real_person_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from account_user
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from account_user
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.starnft.star.infrastructure.entity.user.AccountUserEntity" useGeneratedKeys="true">
+    insert into account_user (account, `password`, phone, 
+      nick_name, avatar, ply_password, 
+      is_active, full_name, id_number, 
+      real_person_flag)
+    values (#{account,jdbcType=BIGINT}, #{password,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+      #{nickName,jdbcType=VARCHAR}, #{avatar,jdbcType=VARCHAR}, #{plyPassword,jdbcType=VARCHAR}, 
+      #{isActive,jdbcType=TINYINT}, #{fullName,jdbcType=VARCHAR}, #{idNumber,jdbcType=VARCHAR}, 
+      #{realPersonFlag,jdbcType=TINYINT})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.starnft.star.infrastructure.entity.user.AccountUserEntity" useGeneratedKeys="true">
+    insert into account_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="account != null">
+        account,
+      </if>
+      <if test="password != null">
+        `password`,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="nickName != null">
+        nick_name,
+      </if>
+      <if test="avatar != null">
+        avatar,
+      </if>
+      <if test="plyPassword != null">
+        ply_password,
+      </if>
+      <if test="isActive != null">
+        is_active,
+      </if>
+      <if test="fullName != null">
+        full_name,
+      </if>
+      <if test="idNumber != null">
+        id_number,
+      </if>
+      <if test="realPersonFlag != null">
+        real_person_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="account != null">
+        #{account,jdbcType=BIGINT},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="nickName != null">
+        #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="avatar != null">
+        #{avatar,jdbcType=VARCHAR},
+      </if>
+      <if test="plyPassword != null">
+        #{plyPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="isActive != null">
+        #{isActive,jdbcType=TINYINT},
+      </if>
+      <if test="fullName != null">
+        #{fullName,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="realPersonFlag != null">
+        #{realPersonFlag,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.starnft.star.infrastructure.entity.user.AccountUserEntity">
+    update account_user
+    <set>
+      <if test="account != null">
+        account = #{account,jdbcType=BIGINT},
+      </if>
+      <if test="password != null">
+        `password` = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="nickName != null">
+        nick_name = #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="avatar != null">
+        avatar = #{avatar,jdbcType=VARCHAR},
+      </if>
+      <if test="plyPassword != null">
+        ply_password = #{plyPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="isActive != null">
+        is_active = #{isActive,jdbcType=TINYINT},
+      </if>
+      <if test="fullName != null">
+        full_name = #{fullName,jdbcType=VARCHAR},
+      </if>
+      <if test="idNumber != null">
+        id_number = #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="realPersonFlag != null">
+        real_person_flag = #{realPersonFlag,jdbcType=TINYINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.starnft.star.infrastructure.entity.user.AccountUserEntity">
+    update account_user
+    set account = #{account,jdbcType=BIGINT},
+      `password` = #{password,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      nick_name = #{nickName,jdbcType=VARCHAR},
+      avatar = #{avatar,jdbcType=VARCHAR},
+      ply_password = #{plyPassword,jdbcType=VARCHAR},
+      is_active = #{isActive,jdbcType=TINYINT},
+      full_name = #{fullName,jdbcType=VARCHAR},
+      id_number = #{idNumber,jdbcType=VARCHAR},
+      real_person_flag = #{realPersonFlag,jdbcType=TINYINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

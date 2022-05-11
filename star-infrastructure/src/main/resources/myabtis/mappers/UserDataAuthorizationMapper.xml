@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.UserDataAuthorizationMapper">
+  <resultMap id="BaseResultMap" type="com.starnft.star.infrastructure.entity.user.UserDataAuthorizationEntity">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="authorization_end_time" jdbcType="TIMESTAMP" property="authorizationEndTime" />
+    <result column="authorization_id" jdbcType="BIGINT" property="authorizationId" />
+    <result column="authorization_start_time" jdbcType="TIMESTAMP" property="authorizationStartTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, authorization_end_time, authorization_id, authorization_start_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_data_authorization
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user_data_authorization
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.starnft.star.infrastructure.entity.user.UserDataAuthorizationEntity" useGeneratedKeys="true">
+    insert into user_data_authorization (authorization_end_time, authorization_id, 
+      authorization_start_time)
+    values (#{authorizationEndTime,jdbcType=TIMESTAMP}, #{authorizationId,jdbcType=BIGINT}, 
+      #{authorizationStartTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.starnft.star.infrastructure.entity.user.UserDataAuthorizationEntity" useGeneratedKeys="true">
+    insert into user_data_authorization
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="authorizationEndTime != null">
+        authorization_end_time,
+      </if>
+      <if test="authorizationId != null">
+        authorization_id,
+      </if>
+      <if test="authorizationStartTime != null">
+        authorization_start_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="authorizationEndTime != null">
+        #{authorizationEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="authorizationId != null">
+        #{authorizationId,jdbcType=BIGINT},
+      </if>
+      <if test="authorizationStartTime != null">
+        #{authorizationStartTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.starnft.star.infrastructure.entity.user.UserDataAuthorizationEntity">
+    update user_data_authorization
+    <set>
+      <if test="authorizationEndTime != null">
+        authorization_end_time = #{authorizationEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="authorizationId != null">
+        authorization_id = #{authorizationId,jdbcType=BIGINT},
+      </if>
+      <if test="authorizationStartTime != null">
+        authorization_start_time = #{authorizationStartTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.starnft.star.infrastructure.entity.user.UserDataAuthorizationEntity">
+    update user_data_authorization
+    set authorization_end_time = #{authorizationEndTime,jdbcType=TIMESTAMP},
+      authorization_id = #{authorizationId,jdbcType=BIGINT},
+      authorization_start_time = #{authorizationStartTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

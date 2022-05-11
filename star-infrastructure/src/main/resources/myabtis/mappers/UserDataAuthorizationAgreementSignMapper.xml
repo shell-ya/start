@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.UserDataAuthorizationAgreementSignMapper">
+  <resultMap id="BaseResultMap" type="com.starnft.star.infrastructure.entity.user.UserDataAuthorizationAgreementSignEntity">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="agreement_id" jdbcType="VARCHAR" property="agreementId" />
+    <result column="authorization_id" jdbcType="BIGINT" property="authorizationId" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, agreement_id, authorization_id, user_id
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user_data_authorization_agreement_sign
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from user_data_authorization_agreement_sign
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.starnft.star.infrastructure.entity.user.UserDataAuthorizationAgreementSignEntity" useGeneratedKeys="true">
+    insert into user_data_authorization_agreement_sign (agreement_id, authorization_id, user_id
+      )
+    values (#{agreementId,jdbcType=VARCHAR}, #{authorizationId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}
+      )
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.starnft.star.infrastructure.entity.user.UserDataAuthorizationAgreementSignEntity" useGeneratedKeys="true">
+    insert into user_data_authorization_agreement_sign
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="agreementId != null">
+        agreement_id,
+      </if>
+      <if test="authorizationId != null">
+        authorization_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="agreementId != null">
+        #{agreementId,jdbcType=VARCHAR},
+      </if>
+      <if test="authorizationId != null">
+        #{authorizationId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.starnft.star.infrastructure.entity.user.UserDataAuthorizationAgreementSignEntity">
+    update user_data_authorization_agreement_sign
+    <set>
+      <if test="agreementId != null">
+        agreement_id = #{agreementId,jdbcType=VARCHAR},
+      </if>
+      <if test="authorizationId != null">
+        authorization_id = #{authorizationId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.starnft.star.infrastructure.entity.user.UserDataAuthorizationAgreementSignEntity">
+    update user_data_authorization_agreement_sign
+    set agreement_id = #{agreementId,jdbcType=VARCHAR},
+      authorization_id = #{authorizationId,jdbcType=BIGINT},
+      user_id = #{userId,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
