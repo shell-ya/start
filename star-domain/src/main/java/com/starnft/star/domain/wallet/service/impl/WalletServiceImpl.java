@@ -1,7 +1,6 @@
 package com.starnft.star.domain.wallet.service.impl;
 
 import com.google.common.base.Strings;
-import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;

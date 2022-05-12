@@ -51,7 +51,7 @@ public class WalletCore implements IWalletCore {
                 exist = 1;
             }
         }
-        if (exist == 1) {
+        if (exist == 0) {
             throw new StarException(StarError.PARAETER_UNSUPPORTED, "渠道代码不存在！");
         }
     }

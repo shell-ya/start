@@ -37,6 +37,12 @@ public class UserCoreImpl implements UserCore {
 
     @Override
     public UserInfoRes loginByPassword(@Valid UserLoginReq req) {
+        Optional.ofNullable(req.getPhone())
+                .orElseThrow(() -> new  StarException(StarError.PARAETER_UNSUPPORTED , "phone 不能为空"));
+        Optional.ofNullable(req.getPassword())
+                .orElseThrow(() -> new  StarException(StarError.PARAETER_UNSUPPORTED , "password 不能为空"));
+        Optional.ofNullable(req.getLoginScenes())
+                .orElseThrow(() -> new  StarException(StarError.PARAETER_UNSUPPORTED , "loginScenes 不能为空"));
 
         UserLoginDTO userLoginDTO = BeanColverUtil.colver(req, UserLoginDTO.class);
         UserInfoVO userInfo = userService.login(userLoginDTO);
