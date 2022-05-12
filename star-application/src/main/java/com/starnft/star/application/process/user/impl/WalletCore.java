@@ -64,18 +64,16 @@ public class WalletCore implements IWalletCore {
             RechargeCallbackRes rechargeCallbackRes = recordVOConvert(walletRecordVO);
             res.add(rechargeCallbackRes);
         }
-        ResponsePageResult<RechargeCallbackRes> pageResult = new ResponsePageResult<>();
-
         return ResponsePageResult.listReplace(walletRecordResult, res);
     }
 
 
     /**
-     * @author Ryan Z / haoran
-     * @description vo转化
-     * @date  2022/5/12
      * @param walletRecordVO
      * @return RechargeCallbackRes
+     * @author Ryan Z / haoran
+     * @description vo转化
+     * @date 2022/5/12
      */
     private RechargeCallbackRes recordVOConvert(WalletRecordVO walletRecordVO) {
         return RechargeCallbackRes.builder()
@@ -90,10 +88,10 @@ public class WalletCore implements IWalletCore {
     }
 
     /**
+     * @param rechargeFacadeReq
      * @author Ryan Z / haoran
      * @description 参数验证
-     * @date  2022/5/12
-     * @param rechargeFacadeReq
+     * @date 2022/5/12
      */
     private void verifyParam(RechargeFacadeReq rechargeFacadeReq) {
         String channel = rechargeFacadeReq.getChannel();
@@ -101,6 +99,7 @@ public class WalletCore implements IWalletCore {
         for (StarConstants.PayChannel channelName : StarConstants.PayChannel.values()) {
             if (channelName.name().equals(rechargeFacadeReq.getChannel())) {
                 exist = 1;
+                break;
             }
         }
         if (exist == 0) {
@@ -110,11 +109,11 @@ public class WalletCore implements IWalletCore {
 
 
     /**
-     * @author Ryan Z / haoran
-     * @description 参数初始化
-     * @date  2022/5/12
      * @param rechargeFacadeReq
      * @return WalletRecordReq
+     * @author Ryan Z / haoran
+     * @description 参数初始化
+     * @date 2022/5/12
      */
     private WalletRecordReq walletRecordInit(RechargeFacadeReq rechargeFacadeReq) {
         IIdGenerator iIdGenerator = idGeneratorMap.get(StarConstants.Ids.SnowFlake);
