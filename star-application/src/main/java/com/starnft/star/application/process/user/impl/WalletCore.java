@@ -1,7 +1,7 @@
 package com.starnft.star.application.process.user.impl;
 
 import com.starnft.star.application.process.user.IWalletCore;
-import com.starnft.star.application.process.user.req.RechargeReq;
+import com.starnft.star.application.process.user.req.RechargeFacadeReq;
 import com.starnft.star.application.process.user.res.RechargeReqResult;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import javax.validation.Validation;
-import javax.validation.Validator;
 import java.util.Date;
 import java.util.Map;
 
@@ -28,12 +26,12 @@ public class WalletCore implements IWalletCore {
     private Map<StarConstants.Ids, IIdGenerator> idGeneratorMap;
 
     @Override
-    public RechargeReqResult recharge(@Valid  RechargeReq rechargeReq) {
+    public RechargeReqResult recharge(@Valid RechargeFacadeReq rechargeFacadeReq) {
 
         //参数验证
-        verifyParam(rechargeReq);
+        verifyParam(rechargeFacadeReq);
         //钱包领域 生成待支付充值订单
-        WalletRecordReq walletRecordReq = walletRecordInit(rechargeReq);
+        WalletRecordReq walletRecordReq = walletRecordInit(rechargeFacadeReq);
         boolean isSuccess = walletService.rechargeRecordGenerate(walletRecordReq);
 
         //整合订单信息
@@ -45,11 +43,11 @@ public class WalletCore implements IWalletCore {
         return null;
     }
 
-    private void verifyParam(RechargeReq rechargeReq) {
-        String channel = rechargeReq.getChannel();
+    private void verifyParam(RechargeFacadeReq rechargeFacadeReq) {
+        String channel = rechargeFacadeReq.getChannel();
         int exist = 0;
         for (StarConstants.PayChannel channelName : StarConstants.PayChannel.values()) {
-            if (channelName.name().equals(rechargeReq.getChannel())) {
+            if (channelName.name().equals(rechargeFacadeReq.getChannel())) {
                 exist = 1;
             }
         }
@@ -58,15 +56,15 @@ public class WalletCore implements IWalletCore {
         }
     }
 
-    private WalletRecordReq walletRecordInit(RechargeReq rechargeReq) {
+    private WalletRecordReq walletRecordInit(RechargeFacadeReq rechargeFacadeReq) {
         IIdGenerator iIdGenerator = idGeneratorMap.get(StarConstants.Ids.SnowFlake);
         return WalletRecordReq.builder()
                 .recordSn(String.valueOf(iIdGenerator.nextId()))
                 .from_uid(0L) // 充值为0
-                .to_uid(rechargeReq.getUserId())
-                .payChannel(rechargeReq.getChannel())
+                .to_uid(rechargeFacadeReq.getUserId())
+                .payChannel(rechargeFacadeReq.getChannel())
                 .tsType(StarConstants.Transaction_Type.Recharge.getFont())
-                .tsMoney(rechargeReq.getMoney())
+                .tsMoney(rechargeFacadeReq.getMoney())
                 .payTime(new Date())
                 .payStatus(StarConstants.Pay_Status.WAIT_PAY.name())
                 .checkStatus(0)

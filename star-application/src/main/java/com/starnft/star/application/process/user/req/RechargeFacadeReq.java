@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
-public class RechargeReq implements Serializable {
+public class RechargeFacadeReq implements Serializable {
 
     private Long userId;
 
