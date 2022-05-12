@@ -1,7 +1,10 @@
 package com.starnft.star.application.process.user;
 
+import com.starnft.star.application.process.user.req.PayRecordReq;
 import com.starnft.star.application.process.user.req.RechargeFacadeReq;
+import com.starnft.star.application.process.user.res.RechargeCallbackRes;
 import com.starnft.star.application.process.user.res.RechargeReqResult;
+import com.starnft.star.common.page.ResponsePageResult;
 
 public interface IWalletCore {
 
@@ -13,6 +16,6 @@ public interface IWalletCore {
 
 
     //交易记录查询【带类型筛选】
-
+    ResponsePageResult<RechargeCallbackRes> walletRecordQuery(PayRecordReq recordReq);
 
 }

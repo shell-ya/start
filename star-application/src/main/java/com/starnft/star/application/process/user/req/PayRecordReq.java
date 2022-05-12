@@ -1,14 +1,16 @@
 package com.starnft.star.application.process.user.req;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.starnft.star.common.page.RequestPage;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
-public class PayRecordReq implements Serializable {
+public class PayRecordReq extends RequestPage implements Serializable {
 
     /** userId*/
     @NotBlank(message = "userId 不能为空")
@@ -22,5 +24,5 @@ public class PayRecordReq implements Serializable {
     /** 支付状态*/
     private String payStatus;
     /** 支付类型*/
-    private String payType;
+    private List<Integer> payType;
 }

@@ -1,12 +1,14 @@
 package com.starnft.star.application.process.user.res;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Data
+@Builder
 public class RechargeCallbackRes implements Serializable {
 
     private Long userId;
@@ -20,6 +22,8 @@ public class RechargeCallbackRes implements Serializable {
     private BigDecimal money;
     /** 支付渠道*/
     private String channel;
+    /** 支付类型*/
+    private String patType;
     /** 支付时间*/
     @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
     private String payTime;
