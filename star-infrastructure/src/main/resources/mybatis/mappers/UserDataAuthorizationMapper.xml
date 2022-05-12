@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.starnft.star.infrastructure.mapper.UserDataAuthorizationMapper">
+<mapper namespace="com.starnft.star.infrastructure.mapper.user.UserDataAuthorizationMapper">
   <resultMap id="BaseResultMap" type="com.starnft.star.infrastructure.entity.user.UserDataAuthorizationEntity">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="authorization_end_time" jdbcType="TIMESTAMP" property="authorizationEndTime" />

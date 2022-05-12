@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.starnft.star.infrastructure.mapper.AccountUserMapper">
+<mapper namespace="com.starnft.star.infrastructure.mapper.user.AccountUserMapper">
   <resultMap id="BaseResultMap" type="com.starnft.star.infrastructure.entity.user.AccountUserEntity">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="account" jdbcType="BIGINT" property="account" />

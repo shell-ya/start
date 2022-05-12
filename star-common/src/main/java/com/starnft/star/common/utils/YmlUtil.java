@@ -6,8 +6,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Map;
 
 /**
@@ -21,6 +20,7 @@ public class YmlUtil {
     private YmlUtil() {
     }
 
+    private static final Yaml YAML = new Yaml();
     private static final String BOOTSTRAP_YML = "bootstrap.yml";
     private static final String APPLICATION_YML = "application.yml";
 
@@ -95,6 +95,42 @@ public class YmlUtil {
             log.error("IO流处理失败", e);
         }
         return null;
+    }
+
+    /**
+     * parserYaml
+     *
+     * @Param: [file, clazz]
+     * @Return: T
+     * @Date: 2022/5/12
+     **/
+    public static <T> T parseYaml(File file, Class<T> clazz) {
+        try {
+            return parseYaml(new FileInputStream(file), clazz);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * parserYaml
+     *
+     * @Param: [input, clazz]
+     * @Return: T
+     * @Date: 2022/5/12
+     **/
+    public static <T> T parseYaml(InputStream input, Class<T> clazz) {
+        return YAML.loadAs(input, clazz);
+    }
+
+
+    public static <T> T parseYaml(String input, Class<T> clazz) {
+        return YAML.loadAs(input, clazz);
+    }
+
+
+    public static <T> T parseYaml(Reader io, Class<T> clazz) {
+        return YAML.loadAs(io, clazz);
     }
 
 }

@@ -24,6 +24,8 @@ public class RechargeReq {
     /** 交易类型*/
     private StarConstants.Transaction_Type transactionType;
 
+
+
     public Long getUserId() {
         return userId;
     }

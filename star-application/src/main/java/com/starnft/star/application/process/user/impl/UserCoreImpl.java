@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 /**
@@ -35,13 +36,7 @@ public class UserCoreImpl implements UserCore {
     IUserService userService;
 
     @Override
-    public UserInfoRes loginByPassword(UserLoginReq req) {
-        Optional.ofNullable(req.getPhone())
-                .orElseThrow(() -> new  StarException(StarError.PARAETER_UNSUPPORTED , "phone 不能为空"));
-        Optional.ofNullable(req.getPassword())
-                .orElseThrow(() -> new  StarException(StarError.PARAETER_UNSUPPORTED , "password 不能为空"));
-        Optional.ofNullable(req.getLoginScenes())
-                .orElseThrow(() -> new  StarException(StarError.PARAETER_UNSUPPORTED , "loginScenes 不能为空"));
+    public UserInfoRes loginByPassword(@Valid UserLoginReq req) {
 
         UserLoginDTO userLoginDTO = BeanColverUtil.colver(req, UserLoginDTO.class);
         UserInfoVO userInfo = userService.login(userLoginDTO);

@@ -1,9 +1,12 @@
 package com.starnft.star.domain.wallet.model.req;
 
+import lombok.Builder;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+@Builder
 public class WalletRecordReq implements Serializable {
 
     /**
