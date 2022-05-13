@@ -18,7 +18,7 @@
 
 
     <select id="loadAllWalletConfig"
-            resultType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletConfig">
+            resultType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletConfig" >
         SELECT *
         FROM star_nft_wallet_config
     </select>

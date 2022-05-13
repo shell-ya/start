@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.dict.StarNftDictMapper">
+    <resultMap type="com.starnft.star.infrastructure.entity.dict.StarNftDict" id="StarNftDictMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="isDeleted" column="is_deleted" jdbcType="INTEGER"/>
+        <result property="createdAt" column="created_at" jdbcType="DATE"/>
+        <result property="createdBy" column="created_by" jdbcType="VARCHAR"/>
+        <result property="modifiedAt" column="modified_at" jdbcType="DATE"/>
+        <result property="modifiedBy" column="modified_by" jdbcType="VARCHAR"/>
+        <result property="dictCode" column="dict_code" jdbcType="VARCHAR"/>
+        <result property="dictDesc" column="dict_desc" jdbcType="VARCHAR"/>
+        <result property="categoryCode" column="category_code" jdbcType="VARCHAR"/>
+        <result property="categoryDesc" column="category_desc" jdbcType="VARCHAR"/>
+        <result property="sortNo" column="sort_no" jdbcType="INTEGER"/>
+        <result property="dataType" column="data_type" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="locateCode" column="locate_code" jdbcType="VARCHAR"/>
+        <result property="version" column="version" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 通过ID查询单条数据 -->
+    <select id="queryById" resultMap="StarNftDictMap">
+        select id,
+               is_deleted,
+               created_at,
+               created_by,
+               modified_at,
+               modified_by,
+               dict_code,
+               dict_desc,
+               category_code,
+               category_desc,
+               sort_no,
+               data_type,
+               remark,
+               locate_code,
+               version
+        from star_nft_dict
+        where id = #{id}
+    </select>
+
+    <!--分页查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="StarNftDictMap">
+        select
+        id,is_deleted,created_at,created_by,modified_at,modified_by,dict_code,dict_desc,category_code,category_desc,sort_no,data_type,remark,locate_code,version
+        from star_nft_dict
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                and is_deleted = #{isDeleted}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                and created_at = #{createdAt}
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                and modified_at = #{modifiedAt}
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                and modified_by = #{modifiedBy}
+            </if>
+            <if test="dictCode != null and dictCode != ''">
+                and dict_code = #{dictCode}
+            </if>
+            <if test="dictDesc != null and dictDesc != ''">
+                and dict_desc = #{dictDesc}
+            </if>
+            <if test="categoryCode != null and categoryCode != ''">
+                and category_code = #{categoryCode}
+            </if>
+            <if test="categoryDesc != null and categoryDesc != ''">
+                and category_desc = #{categoryDesc}
+            </if>
+            <if test="sortNo != null and sortNo != ''">
+                and sort_no = #{sortNo}
+            </if>
+            <if test="dataType != null and dataType != ''">
+                and data_type = #{dataType}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+            <if test="locateCode != null and locateCode != ''">
+                and locate_code = #{locateCode}
+            </if>
+            <if test="version != null and version != ''">
+                and version = #{version}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from star_nft_dict
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                and is_deleted = #{isDeleted}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                and created_at = #{createdAt}
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                and modified_at = #{modifiedAt}
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                and modified_by = #{modifiedBy}
+            </if>
+            <if test="dictCode != null and dictCode != ''">
+                and dict_code = #{dictCode}
+            </if>
+            <if test="dictDesc != null and dictDesc != ''">
+                and dict_desc = #{dictDesc}
+            </if>
+            <if test="categoryCode != null and categoryCode != ''">
+                and category_code = #{categoryCode}
+            </if>
+            <if test="categoryDesc != null and categoryDesc != ''">
+                and category_desc = #{categoryDesc}
+            </if>
+            <if test="sortNo != null and sortNo != ''">
+                and sort_no = #{sortNo}
+            </if>
+            <if test="dataType != null and dataType != ''">
+                and data_type = #{dataType}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+            <if test="locateCode != null and locateCode != ''">
+                and locate_code = #{locateCode}
+            </if>
+            <if test="version != null and version != ''">
+                and version = #{version}
+            </if>
+        </where>
+    </select>
+
+    <!--新增数据-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into star_nft_dict(id, is_deleted, created_at, created_by, modified_at, modified_by, dict_code,
+                                  dict_desc, category_code, category_desc, sort_no, data_type, remark, locate_code,
+                                  version)
+        values (#{id}, #{isDeleted}, #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{dictCode}, #{dictDesc},
+                #{categoryCode}, #{categoryDesc}, #{sortNo}, #{dataType}, #{remark}, #{locateCode}, #{version})
+    </insert>
+
+    <!-- 批量新增数据 -->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into
+        star_nft_dict(is_deleted,created_at,created_by,modified_at,modified_by,dict_code,dict_desc,category_code,category_desc,sort_no,data_type,remark,locate_code,version)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.dictCode},#{entity.dictDesc},#{entity.categoryCode},#{entity.categoryDesc},#{entity.sortNo},#{entity.dataType},#{entity.remark},#{entity.locateCode},#{entity.version})
+        </foreach>
+    </insert>
+
+    <!-- 批量新增或按主键更新数据 -->
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into
+        star_nft_dict(id,is_deleted,created_at,created_by,modified_at,modified_by,dict_code,dict_desc,category_code,category_desc,sort_no,data_type,remark,locate_code,version)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.dictCode},#{entity.dictDesc},#{entity.categoryCode},#{entity.categoryDesc},#{entity.sortNo},#{entity.dataType},#{entity.remark},#{entity.locateCode},#{entity.version})
+        </foreach>
+        on duplicate key update
+        id=values(id),
+        is_deleted=values(is_deleted),
+        created_at=values(created_at),
+        created_by=values(created_by),
+        modified_at=values(modified_at),
+        modified_by=values(modified_by),
+        dict_code=values(dict_code),
+        dict_desc=values(dict_desc),
+        category_code=values(category_code),
+        category_desc=values(category_desc),
+        sort_no=values(sort_no),
+        data_type=values(data_type),
+        remark=values(remark),
+        locate_code=values(locate_code),
+        version=values(version)
+    </insert>
+
+    <!-- 更新数据 -->
+    <update id="update">
+        update star_nft_dict
+        <set>
+            <if test="id != null and id != ''">
+                id = #{id},
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                is_deleted = #{isDeleted},
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                created_at = #{createdAt},
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                created_by = #{createdBy},
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                modified_at = #{modifiedAt},
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                modified_by = #{modifiedBy},
+            </if>
+            <if test="dictCode != null and dictCode != ''">
+                dict_code = #{dictCode},
+            </if>
+            <if test="dictDesc != null and dictDesc != ''">
+                dict_desc = #{dictDesc},
+            </if>
+            <if test="categoryCode != null and categoryCode != ''">
+                category_code = #{categoryCode},
+            </if>
+            <if test="categoryDesc != null and categoryDesc != ''">
+                category_desc = #{categoryDesc},
+            </if>
+            <if test="sortNo != null and sortNo != ''">
+                sort_no = #{sortNo},
+            </if>
+            <if test="dataType != null and dataType != ''">
+                data_type = #{dataType},
+            </if>
+            <if test="remark != null and remark != ''">
+                remark = #{remark},
+            </if>
+            <if test="locateCode != null and locateCode != ''">
+                locate_code = #{locateCode},
+            </if>
+            <if test="version != null and version != ''">
+                version = #{version},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from star_nft_dict
+        where id = #{id}
+    </delete>
+</mapper>

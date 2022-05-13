@@ -20,6 +20,9 @@ public interface WalletService {
     //查询交易记录
     ResponsePageResult<WalletRecordVO> queryTransactionRecord(TransactionRecordQueryReq queryReq);
 
+    //支付成功 回调修改钱包余额 变动以及状态
+
+
 
 
 }
