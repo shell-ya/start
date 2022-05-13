@@ -20,7 +20,7 @@ public class ApiKeyConfig {
 
     @PostConstruct
     public void initApiKey() {
-        ApiKeyInfo apiKeyInfo = dictionaryRepository.getApiKeyInfo(categoryCode,ApiKeyInfo.class);
+        ApiKeyInfo apiKeyInfo = dictionaryRepository.getDictCodes(categoryCode,ApiKeyInfo.class);
         keys.put(categoryCode, apiKeyInfo);
     }
 

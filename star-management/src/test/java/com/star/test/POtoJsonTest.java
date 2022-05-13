@@ -32,7 +32,7 @@ public class POtoJsonTest {
 
     @Test
     public void repoTest() {
-        ApiKeyInfo apikeys = repository.getApiKeyInfo("APIKEY", ApiKeyInfo.class);
+        ApiKeyInfo apikeys = repository.getDictCodes("APIKEY", ApiKeyInfo.class);
         System.out.println(JSON.toJSONString(apikeys));
     }
 }

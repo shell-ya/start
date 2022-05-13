@@ -19,7 +19,7 @@ public class DictionaryRepository implements IDictionaryRepository {
     private StarNftDictMapper starNftDictMapper;
 
     @Override
-    public <T> T getApiKeyInfo(String categoryCode, Class<T> clazz) {
+    public <T> T getDictCodes(String categoryCode, Class<T> clazz) {
 
         List<StarNftDict> dicts = starNftDictMapper.queryApiKeys(categoryCode);
         T obj = null;
