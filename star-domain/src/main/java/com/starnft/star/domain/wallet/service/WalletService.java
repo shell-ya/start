@@ -17,11 +17,9 @@ public interface WalletService {
 
     //todo 提现
 
-    //查询充值记录
+    //查询交易记录
     ResponsePageResult<WalletRecordVO> queryTransactionRecord(TransactionRecordQueryReq queryReq);
-    //查询提现记录
 
-    //查询账单汇总
 
 
 }
