@@ -1,4 +1,4 @@
-package com.starnft.star.domain.message;
+package com.starnft.star.domain.sms;
 
 public interface MessageStrategyInterface {
     public boolean pullCheckCode(String mobile,String code);

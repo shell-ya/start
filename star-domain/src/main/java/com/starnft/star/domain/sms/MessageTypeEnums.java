@@ -1,4 +1,4 @@
-package com.starnft.star.domain.message;
+package com.starnft.star.domain.sms;
 
 public enum MessageTypeEnums {
     sw_message(1,"swMessageStrategy","首网短信发送策略");

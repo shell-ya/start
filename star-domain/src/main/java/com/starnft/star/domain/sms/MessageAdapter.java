@@ -1,4 +1,4 @@
-package com.starnft.star.domain.message;
+package com.starnft.star.domain.sms;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

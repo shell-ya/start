@@ -1,4 +1,4 @@
-package com.starnft.star.domain.message;
+package com.starnft.star.domain.sms;
 
 import cn.hutool.core.util.RandomUtil;
 import cn.lsnft.common.JsError;

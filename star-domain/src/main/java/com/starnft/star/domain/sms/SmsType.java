@@ -1,4 +1,4 @@
-package com.starnft.star.domain.message;
+package com.starnft.star.domain.sms;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 

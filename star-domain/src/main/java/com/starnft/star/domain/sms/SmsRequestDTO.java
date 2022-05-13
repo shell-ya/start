@@ -1,4 +1,4 @@
-package com.starnft.star.domain.message;
+package com.starnft.star.domain.sms;
 
 import cn.lsnft.enums.SmsType;
 import lombok.Builder;
