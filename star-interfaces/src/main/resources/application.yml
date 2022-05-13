@@ -26,3 +26,11 @@ mybatis-plus:
     log-impl: com.starnft.star.interfaces.config.StdOutImpl
 swagger:
     packages: com.starnft.star.infrastructure.controller
+
+
+sms:
+  swApi: http://106.15.1.248:9090/sms/batch/v1
+  swAppSecret: xByxaz
+  swAppCode: 1000
+  swAppKey: LSYSPT
+  swMsgHeader: 【链上艺术】

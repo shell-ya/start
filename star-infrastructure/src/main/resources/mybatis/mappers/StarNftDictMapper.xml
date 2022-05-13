@@ -17,6 +17,8 @@
         <result property="remark" column="remark" jdbcType="VARCHAR"/>
         <result property="locateCode" column="locate_code" jdbcType="VARCHAR"/>
         <result property="version" column="version" jdbcType="INTEGER"/>
+        <result property="enabled" column="enabled" jdbcType="INTEGER"/>
+        <result property="doSecret" column="do_secret" jdbcType="INTEGER"/>
     </resultMap>
 
     <!-- 通过ID查询单条数据 -->
@@ -35,7 +37,9 @@
                data_type,
                remark,
                locate_code,
-               version
+               version,
+               enabled,
+               do_secret
         from star_nft_dict
         where id = #{id}
     </select>
@@ -43,7 +47,8 @@
     <!--分页查询指定行数据-->
     <select id="queryAllByLimit" resultMap="StarNftDictMap">
         select
-        id,is_deleted,created_at,created_by,modified_at,modified_by,dict_code,dict_desc,category_code,category_desc,sort_no,data_type,remark,locate_code,version
+        id,is_deleted,created_at,created_by,modified_at,modified_by,dict_code,dict_desc,category_code,category_desc,sort_no,data_type,remark,locate_code,version,
+        enabled,do_secret
         from star_nft_dict
         <where>
             <if test="id != null and id != ''">
@@ -90,6 +95,12 @@
             </if>
             <if test="version != null and version != ''">
                 and version = #{version}
+            </if>
+            <if test=" enabled != null and enabled != ''">
+                and enabled = #{enabled}
+            </if>
+            <if test="doSecret != null and doSecret != ''">
+                and do_secret = #{doSecret}
             </if>
         </where>
         limit #{pageable.offset}, #{pageable.pageSize}
@@ -145,6 +156,21 @@
             <if test="version != null and version != ''">
                 and version = #{version}
             </if>
+            <if test="enabled != null and enabled != ''">
+                and enabled = #{enabled}
+            </if>
+            <if test="doSecret != null and doSecret != ''">
+                and do_secret = #{doSecret}
+            </if>
+        </where>
+    </select>
+    <select id="queryApiKeys" resultType="com.starnft.star.infrastructure.entity.dict.StarNftDict">
+        select * from star_nft_dict
+        <where>
+            <if test="apiKeys != null and apiKeys != ''">
+                and category_code = #{apiKeys}
+            </if>
+            and enabled = 1
         </where>
     </select>
 
@@ -152,28 +178,31 @@
     <insert id="insert" keyProperty="id" useGeneratedKeys="true">
         insert into star_nft_dict(id, is_deleted, created_at, created_by, modified_at, modified_by, dict_code,
                                   dict_desc, category_code, category_desc, sort_no, data_type, remark, locate_code,
-                                  version)
+                                  version, enabled, do_secret)
         values (#{id}, #{isDeleted}, #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{dictCode}, #{dictDesc},
-                #{categoryCode}, #{categoryDesc}, #{sortNo}, #{dataType}, #{remark}, #{locateCode}, #{version})
+                #{categoryCode}, #{categoryDesc}, #{sortNo}, #{dataType}, #{remark}, #{locateCode}, #{version},
+                #{enabled}, #{doSecret})
     </insert>
 
     <!-- 批量新增数据 -->
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
         insert into
-        star_nft_dict(is_deleted,created_at,created_by,modified_at,modified_by,dict_code,dict_desc,category_code,category_desc,sort_no,data_type,remark,locate_code,version)
+        star_nft_dict(is_deleted,created_at,created_by,modified_at,modified_by,dict_code,dict_desc,category_code,category_desc,sort_no,data_type,remark,locate_code,version,enabled,do_secret)
         values
         <foreach collection="entities" item="entity" separator=",">
-            (#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.dictCode},#{entity.dictDesc},#{entity.categoryCode},#{entity.categoryDesc},#{entity.sortNo},#{entity.dataType},#{entity.remark},#{entity.locateCode},#{entity.version})
+            (#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.dictCode},#{entity.dictDesc},#{entity.categoryCode},#{entity.categoryDesc},#{entity.sortNo},#{entity.dataType},#{entity.remark},#{entity.locateCode},#{entity.version},#{entity.enabled},#{entity.doSecret})
         </foreach>
     </insert>
 
     <!-- 批量新增或按主键更新数据 -->
     <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
         insert into
-        star_nft_dict(id,is_deleted,created_at,created_by,modified_at,modified_by,dict_code,dict_desc,category_code,category_desc,sort_no,data_type,remark,locate_code,version)
+        star_nft_dict(id,is_deleted,created_at,created_by,modified_at,modified_by,dict_code,dict_desc,category_code,category_desc,sort_no,data_type,remark,locate_code,version
+        ,enabled,do_secret)
         values
         <foreach collection="entities" item="entity" separator=",">
-            (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.dictCode},#{entity.dictDesc},#{entity.categoryCode},#{entity.categoryDesc},#{entity.sortNo},#{entity.dataType},#{entity.remark},#{entity.locateCode},#{entity.version})
+            (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.dictCode},#{entity.dictDesc},#{entity.categoryCode},#{entity.categoryDesc},#{entity.sortNo},#{entity.dataType},#{entity.remark},#{entity.locateCode},#{entity.version}
+            ,#{entity.enabled},#{entity.doSecret})
         </foreach>
         on duplicate key update
         id=values(id),
@@ -190,7 +219,9 @@
         data_type=values(data_type),
         remark=values(remark),
         locate_code=values(locate_code),
-        version=values(version)
+        version=values(version),
+        enabled=values(enabled),
+        do_secret=values(do_secret)
     </insert>
 
     <!-- 更新数据 -->
@@ -241,6 +272,12 @@
             </if>
             <if test="version != null and version != ''">
                 version = #{version},
+            </if>
+            <if test="enabled != null and enabled != ''">
+                enabled = #{enabled},
+            </if>
+            <if test="doSecret != null and doSecret != ''">
+                do_secret = #{doSecret},
             </if>
         </set>
         where id = #{id}

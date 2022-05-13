@@ -48,6 +48,11 @@ public class StarNftDict extends BaseEntity implements Serializable {
     @ApiModelProperty(name = "版本号",notes = "")
     private Integer version ;
 
+    @ApiModelProperty(name = "1启用 0停止",notes = "")
+    private Integer enabled;
+
+    @ApiModelProperty(name = "是否加密 0不加密 1加密",notes = "")
+    private Integer doSecret;
 
     public Long getId() {
         return id;
@@ -127,5 +132,21 @@ public class StarNftDict extends BaseEntity implements Serializable {
 
     public void setVersion(Integer version) {
         this.version = version;
+    }
+
+    public Integer getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Integer enabled) {
+        this.enabled = enabled;
+    }
+
+    public Integer getDoSecret() {
+        return doSecret;
+    }
+
+    public void setDoSecret(Integer doSecret) {
+        this.doSecret = doSecret;
     }
 }
