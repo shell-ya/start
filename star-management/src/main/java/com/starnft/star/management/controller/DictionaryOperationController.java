@@ -1,8 +1,6 @@
 package com.starnft.star.management.controller;
 
 import com.starnft.star.common.RopResponse;
-import com.starnft.star.common.constant.StarConstants;
-import com.starnft.star.common.utils.secure.Base64Util;
 import com.starnft.star.infrastructure.entity.dict.StarNftDict;
 import com.starnft.star.management.service.IDictManger;
 import org.springframework.beans.factory.annotation.Autowired;

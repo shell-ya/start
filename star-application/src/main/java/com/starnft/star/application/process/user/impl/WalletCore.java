@@ -18,12 +18,14 @@ import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
 import com.starnft.star.domain.wallet.service.WalletService;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.*;
 
 @Service
+@Validated
 public class WalletCore implements IWalletCore {
 
     @Resource

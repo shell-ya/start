@@ -1,6 +1,5 @@
 package com.starnft.star.management.service;
 
-import com.starnft.star.common.RopResponse;
 import com.starnft.star.infrastructure.entity.dict.StarNftDict;
 
 import java.util.List;
