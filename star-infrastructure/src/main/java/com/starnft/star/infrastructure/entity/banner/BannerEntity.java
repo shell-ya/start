@@ -36,7 +36,7 @@ public class BannerEntity extends BaseEntity {
     private String imgUrl;
 
     /**
-     * 展示位置：头部，TOP; 中间，MIDDLE；底部，BOTTOM;
+     * 展示位置：1头部; 2中间；3底部;
      */
     @TableField(value = "`position`")
     private Integer position;
@@ -54,15 +54,14 @@ public class BannerEntity extends BaseEntity {
     private Integer sort;
 
     /**
-     * 爬虫地址
-     */
-    @TableField(value = "jump_type")
-    private Integer jumpType;
-
-    /**
      * 外链地址
      */
     @TableField(value = "url")
     private String url;
 
+    /**
+     * 跳转类型 0 不跳转 1 外链接 2 内链接
+     */
+    @TableField(value = "jump_type")
+    private Integer jumpType;
 }

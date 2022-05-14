@@ -3,8 +3,7 @@
 <mapper namespace="com.starnft.star.infrastructure.mapper.banner.BannerMapper">
 
     <select id="queryBanner" resultType="com.starnft.star.infrastructure.entity.banner.BannerEntity">
-        select
-            id,title,img_url,`position`
+        select id,title,img_url,`position` as position
         from banner
         where is_deleted = 0
           and `position` = #{type}

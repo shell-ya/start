@@ -46,6 +46,7 @@ public class ManagerBannerServiceImpl extends ServiceImpl<BannerMapper,BannerEnt
                 .display(bannerDto.getDisplay())
                 .sort(bannerDto.getSort())
                 .url(bannerDto.getUrl())
+                .jumpType(bannerDto.getJumpType())
                 .build();
         return this.updateById(banner);
     }

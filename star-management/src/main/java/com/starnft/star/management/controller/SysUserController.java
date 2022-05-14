@@ -34,8 +34,11 @@ public class SysUserController {
     public RopResponse<SaTokenInfo> login(String username, String password){
         // TODO: 2022/5/11 密码加密
 //        SysUser sysUser = sysUserService.sysUserLogin(username, password);
-        StpUtil.login(1111);
-        StpUtil.getSession().set(SessionConstants.USER_INFO, new SysUser());
+
+        SysUser zhang = SysUser.builder().isDeleted(false)
+                .id(1111L).status(false).username("zhang").build();
+        StpUtil.login(1111);  StpUtil.getSession().set(SessionConstants.USER_INFO, zhang);
+
         return RopResponse.success(StpUtil.getTokenInfo());
     }
     @GetMapping("isLogin")

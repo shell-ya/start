@@ -1,6 +1,9 @@
 package com.starnft.star.domain.banner.model.dto;
 
+<<<<<<< HEAD
 import io.swagger.models.auth.In;
+=======
+>>>>>>> 4d98c34 (banner)
 import lombok.Builder;
 import lombok.Data;
 
@@ -29,7 +32,7 @@ public class BannerDto {
     private String imgUrl;
 
     /**
-     * 展示位置：头部，TOP; 中间，MIDDLE；底部，BOTTOM;
+     * 展示位置：1 头部，TOP; 2 中间，MIDDLE；3 底部，BOTTOM;
      */
     @NotBlank(message =  "展示位置")
     private Integer position;
@@ -45,14 +48,21 @@ public class BannerDto {
     private Integer sort;
 
     /**
+<<<<<<< HEAD
      * 跳转类型 0 不跳转 1 外链接 2 内链接
      */
     private Integer jumpType;
 
     /**
+=======
+>>>>>>> 4d98c34 (banner)
      * 外链地址
      */
-    @NotBlank(message =  "外链地址")
     private String url;
+
+    /**
+     * 跳转类型  0 不跳转 1 外链接 2 内链接
+     */
+    private Integer jumpType;
 
 }

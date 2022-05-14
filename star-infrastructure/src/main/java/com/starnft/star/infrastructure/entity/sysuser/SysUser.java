@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.starnft.star.infrastructure.entity.BaseEntity;
+import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 
@@ -12,8 +13,8 @@ import lombok.Getter;
  * @Date 2022/5/10 2:24 PM
  * @Author ： shellya
  */
-@Getter
 @Data
+@Builder
 @TableName("sys_user")
 public class SysUser extends BaseEntity {
 
@@ -31,4 +32,6 @@ public class SysUser extends BaseEntity {
 
     @TableField("`status`")
     private Boolean status;
+    @TableField( "is_deleted")
+    private Boolean isDeleted;
 }
