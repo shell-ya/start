@@ -38,8 +38,15 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     cache-enabled: true
     log-impl: com.starnft.star.management.config.StdOutImpl
+swagger:
+  packages: com.starnft.star.management.controller
+
+
+#自定义
+cos:
+  config:
+    region-name: ap-shanghai
 wallet:
   file:
     path: generator/english
-swagger:
-  packages: com.starnft.star.management.controller
+#自定义结束

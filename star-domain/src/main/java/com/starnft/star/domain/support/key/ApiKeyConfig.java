@@ -2,6 +2,7 @@ package com.starnft.star.domain.support.key;
 
 import com.starnft.star.domain.support.key.repo.IDictionaryRepository;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -24,15 +25,15 @@ public class ApiKeyConfig {
         keys.put(categoryCode, apiKeyInfo);
     }
 
-    public static String getAppId(String categoryCode) {
+    public static String getAppId() {
         return keys.get(categoryCode).getAppId();
     }
 
-    public static String getSecretId(String categoryCode) {
+    public static String getSecretId() {
         return keys.get(categoryCode).getSecretId();
     }
 
-    public static String setSecretId(String categoryCode) {
+    public static String getSecretKey() {
         return keys.get(categoryCode).getSecretKey();
     }
 

@@ -38,7 +38,7 @@ public class DictionaryRepository implements IDictionaryRepository {
                 }
             }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                 NoSuchMethodException e) {
+                NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
 
