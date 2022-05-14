@@ -6,6 +6,7 @@ import com.starnft.star.management.service.ICosSupport;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.InputStream;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -51,16 +52,23 @@ public class CosOperationService implements ICosOperationService {
         }
     }
 
+    @Override
+    public void fileUpload(InputStream in, String bucketName, String key) {
+        doCos(client -> {
+            cosSupport.fileUploadViaCos(in, bucketName, key, client);
+        });
+    }
+
     /**
      * 使用案例：
      public void main() {
 
      doCos(client -> {
-        fileDelete("a", "b",  COSClient client)
+     fileDelete("a", "b", client)
      });
 
      Bucket bucket = doCos(client -> {
-        return createBucket("a", "b", client);
+     return createBucket("a", "b", client);
      }, Bucket.class);
      }
      */
