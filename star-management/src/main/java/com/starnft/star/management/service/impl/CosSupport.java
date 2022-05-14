@@ -79,16 +79,16 @@ public class CosSupport extends ApiKeyConfig implements ICosSupport {
 
     /**
      * @param bucketPrefix 桶名称前缀
-     * @param type         最好使用桶下目录
+     * @param path         桶下目录
      * @return 桶
      * @author Ryan Z / haoran
      * @description 创建存储桶
      * @date 2022/5/14
      */
     @Override
-    public Bucket createBucket(String bucketPrefix, String type, COSClient client) {
+    public Bucket createBucket(String bucketPrefix, String path, COSClient client) {
 
-        String bucketName = new StringBuffer(bucketPrefix).append("-").append(getAppId()).toString();
+        String bucketName = getBucketName(bucketPrefix);
         CreateBucketRequest createBucketRequest = new CreateBucketRequest(bucketName);
 
         Bucket bucketResult = null;
@@ -96,7 +96,7 @@ public class CosSupport extends ApiKeyConfig implements ICosSupport {
         try {
             bucketResult = Optional.of(client).orElse(cosClient).createBucket(createBucketRequest);
 
-            if (!saveBucketMapping(bucketPrefix, type)) {
+            if (!saveBucketMapping(bucketPrefix, path)) {
                 throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "桶映射字典插入失败！");
             }
         } catch (CosClientException | StarException serverException) {
@@ -131,6 +131,11 @@ public class CosSupport extends ApiKeyConfig implements ICosSupport {
     @Override
     public List<Bucket> getBucketList(COSClient client) {
         return client.listBuckets();
+    }
+
+    @Override
+    public String getBucketName(String bucketPrefix) {
+        return new StringBuffer(bucketPrefix).append("-").append(getAppId()).toString();
     }
 
 

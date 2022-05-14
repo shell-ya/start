@@ -34,6 +34,9 @@ public enum StarError {
     VALUE_COULD_NOT_BE_NULL("100010","必须值不能为空"),
 
     BALANCE_NOT_ENOUGH("300001","余额不足"),
+
+
+    COS_ERROR("300001","cos异常"),
     ;
 
     private String NS = "";

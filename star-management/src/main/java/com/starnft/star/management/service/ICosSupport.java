@@ -22,8 +22,10 @@ public interface ICosSupport {
 
     ObjectMetadata fileDownloadViaCos(String bucketName, String key, COSClient client) throws IOException;
 
-    Bucket createBucket(String bucketPrefix, String type, COSClient client);
+    Bucket createBucket(String bucketPrefix, String path, COSClient client);
 
     List<Bucket> getBucketList(COSClient client);
+
+    String getBucketName(String bucketPrefix);
 
 }

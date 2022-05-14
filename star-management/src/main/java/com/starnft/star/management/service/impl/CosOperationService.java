@@ -1,12 +1,17 @@
 package com.starnft.star.management.service.impl;
 
 import com.qcloud.cos.COSClient;
+import com.qcloud.cos.model.Bucket;
+import com.starnft.star.common.exception.StarError;
+import com.starnft.star.common.exception.StarException;
 import com.starnft.star.management.service.ICosOperationService;
 import com.starnft.star.management.service.ICosSupport;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -53,10 +58,40 @@ public class CosOperationService implements ICosOperationService {
     }
 
     @Override
-    public void fileUpload(InputStream in, String bucketName, String key) {
+    public void fileUpload(InputStream in, String bucketPrefix, String key) {
         doCos(client -> {
-            cosSupport.fileUploadViaCos(in, bucketName, key, client);
+            cosSupport.fileUploadViaCos(in, cosSupport.getBucketName(bucketPrefix), key, client);
         });
+    }
+
+    @Override
+    public void fileDelete(String bucketPrefix, String key) {
+        doCos(client -> {
+            cosSupport.fileDelete(cosSupport.getBucketName(bucketPrefix), key, client);
+        });
+    }
+
+    @Override
+    public Bucket createBucket(String bucketPrefix, String path) {
+        return doCos(client -> {
+            return cosSupport.createBucket(bucketPrefix, path, client);
+        }, Bucket.class);
+    }
+
+    @Override
+    public void fileDownloadViaCos(String bucketPrefix, String key) {
+        doCos(client -> {
+            try {
+                cosSupport.fileDownloadViaCos(cosSupport.getBucketName(bucketPrefix), key, client);
+            } catch (IOException e) {
+                throw new StarException(StarError.COS_ERROR, e.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public List<Bucket> getBucketList() {
+        return doCos(COSClient::listBuckets, List.class);
     }
 
     /**
