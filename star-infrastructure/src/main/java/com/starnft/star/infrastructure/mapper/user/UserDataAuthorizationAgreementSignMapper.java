@@ -2,6 +2,9 @@ package com.starnft.star.infrastructure.mapper.user;
 
 import com.starnft.star.infrastructure.entity.user.UserDataAuthorizationAgreementSignEntity;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface UserDataAuthorizationAgreementSignMapper {
@@ -16,4 +19,6 @@ public interface UserDataAuthorizationAgreementSignMapper {
     int updateByPrimaryKeySelective(UserDataAuthorizationAgreementSignEntity record);
 
     int updateByPrimaryKey(UserDataAuthorizationAgreementSignEntity record);
+
+    List<String> batchSelectUserAgreementId(@Param("userId") Long userId);
 }

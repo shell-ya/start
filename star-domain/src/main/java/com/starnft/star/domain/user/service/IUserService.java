@@ -17,6 +17,13 @@ public interface IUserService {
     UserInfoVO login(UserLoginDTO req);
 
     /**
+     * 根据用户id获取用户信息
+     * @param userId
+     * @return
+     */
+    UserInfoVO queryUserInfo(Long userId);
+
+    /**
      * 手机验证码登录/注册
      * @param req
      * @return
@@ -109,5 +116,5 @@ public interface IUserService {
     Boolean saveUserAgreementHistoryByUserId(AgreementIdDTO agreementIdDTO);
 
     //查询是否签署最新协议
-    
+
 }

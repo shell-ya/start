@@ -3,9 +3,12 @@ package com.starnft.star.application.process.user;
 import com.starnft.star.application.process.user.req.AuthMaterialReq;
 import com.starnft.star.application.process.user.req.UserLoginReq;
 import com.starnft.star.application.process.user.req.UserVerifyCodeReq;
+import com.starnft.star.application.process.user.res.AgreementRes;
+import com.starnft.star.application.process.user.res.PopupAgreementRes;
 import com.starnft.star.application.process.user.res.UserInfoRes;
 import com.starnft.star.application.process.user.res.UserVerifyCodeRes;
 import com.starnft.star.domain.user.model.dto.AuthenticationNameDTO;
+import com.starnft.star.domain.user.model.vo.AgreementVO;
 import com.starnft.star.domain.user.model.vo.UserAuthenticationVO;
 
 public interface UserCore {
@@ -65,4 +68,19 @@ public interface UserCore {
      * @return
      */
     UserAuthenticationVO queryAuthentication(Long userId);
+
+    /**
+     * 根据协议类型查询最新协议内容
+     * @param agreementType
+     * @return
+     */
+    AgreementRes queryNewAgreement(Integer agreementType);
+
+    /**
+     * 判断用户是否弹窗
+     * @param userId
+     * @param authorizationSceneId
+     * @return
+     */
+    PopupAgreementRes checkAgreementPopup(Long userId, Integer authorizationSceneId);
 }

@@ -6,17 +6,14 @@ import com.starnft.star.application.process.user.req.AuthMaterialReq;
 import com.starnft.star.application.process.user.req.UserGatheringInfoReq;
 import com.starnft.star.application.process.user.req.UserLoginReq;
 import com.starnft.star.application.process.user.req.UserVerifyCodeReq;
+import com.starnft.star.application.process.user.res.AgreementRes;
 import com.starnft.star.application.process.user.res.UserGatheringInfoRes;
 import com.starnft.star.application.process.user.res.UserInfoRes;
 import com.starnft.star.application.process.user.res.UserVerifyCodeRes;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.user.model.dto.AuthenticationNameDTO;
-import com.starnft.star.domain.user.model.dto.UserLoginDTO;
-import com.starnft.star.domain.user.model.vo.UserInfoVO;
-import com.starnft.star.domain.user.repository.IUserRepository;
-import com.starnft.star.domain.user.model.vo.UserRegisterInfoVO;
-import com.starnft.star.domain.user.service.IUserService;
+import com.starnft.star.application.process.user.res.PopupAgreementRes;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -25,9 +22,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
 /**
- * 用户相关接口
- *
- * @author WeiChunLai
+ * @author WeiChunLAI
+ * @date 2022/5/13 10:49
  */
 @RestController
 @RequestMapping("/user")
@@ -95,5 +91,21 @@ public class UserController {
     public RopResponse queryAuthentication(@RequestHeader(StarConstants.USER_ID) Long userId) {
         return RopResponse.success(userCore.queryAuthentication(userId));
     }
+
+    @ApiOperation("查询最新的协议信息")
+    @GetMapping("/userinfo/queryopenagreement")
+    public RopResponse<AgreementRes> queryOpenAgreement(@RequestParam("agreementType") Integer agreementType){
+        return RopResponse.success(userCore.queryNewAgreement(agreementType));
+    }
+
+    @ApiOperation("判断用户是否弹协议窗口")
+    @GetMapping("/userinfo/queryopenagreement")
+    public RopResponse<PopupAgreementRes> checkAgreementPopup(@RequestHeader(StarConstants.USER_ID) Long userId ,
+                                                              @RequestParam("scene") Integer scene){
+
+        return RopResponse.successNoData();
+    }
+
+
 
 }

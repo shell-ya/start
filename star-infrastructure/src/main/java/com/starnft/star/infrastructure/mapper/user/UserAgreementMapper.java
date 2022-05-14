@@ -1,7 +1,10 @@
 package com.starnft.star.infrastructure.mapper.user;
 
 import com.starnft.star.infrastructure.entity.user.UserAgreementEntity;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface UserAgreementMapper {
@@ -18,4 +21,8 @@ public interface UserAgreementMapper {
     int updateByPrimaryKeyWithBLOBs(UserAgreementEntity record);
 
     int updateByPrimaryKey(UserAgreementEntity record);
+
+    UserAgreementEntity queryAgreementInfoByType(Integer agreementType);
+
+    List<UserAgreementEntity> queryNewAgreementByScene(@Param("scene") Integer scene);
 }

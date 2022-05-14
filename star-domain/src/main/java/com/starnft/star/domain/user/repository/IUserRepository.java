@@ -3,11 +3,13 @@ package com.starnft.star.domain.user.repository;
 
 import com.starnft.star.domain.user.model.dto.UserInfoAddDTO;
 import com.starnft.star.domain.user.model.dto.UserInfoUpdateDTO;
-import com.starnft.star.domain.user.model.vo.UserInfo;
-import com.starnft.star.domain.user.model.vo.UserPwdChangeLogsVO;
+import com.starnft.star.domain.user.model.vo.*;
+
+import java.util.List;
 
 /**
- * @author Ryan z
+ * @author WeiChunLAI
+ * @date 2022/5/13 10:50
  */
 public interface IUserRepository {
 
@@ -31,6 +33,13 @@ public interface IUserRepository {
      * @return
      */
     Integer addUserInfo(UserInfoAddDTO req);
+
+    /**
+     * 查询用户是否存在
+     * @param userId
+     * @return
+     */
+    Boolean doesUserExist(Long userId);
 
     /**
      * 设置初始密码
@@ -91,4 +100,32 @@ public interface IUserRepository {
      * @return
      */
     Integer updateUserInfo(UserInfoUpdateDTO req);
+
+    /**
+     * 根据协议类型查询最新协议
+     * @param agreementType
+     * @return
+     */
+    AgreementVO queryAgreementInfoByType(Integer agreementType);
+
+    /**
+     * 查询用户签署的协议id
+     * @param userId
+     * @return
+     */
+    List<String> queryUserSignAgreement(Long userId);
+
+    /**
+     * 根据场景查询最新协议
+     * @param scene
+     * @return
+     */
+    List<AgreementVO> queryNewAgreementByScene(Integer scene);
+
+    /**
+     * 根据协议场景查询协议弹窗信息
+     * @param scene
+     * @return
+     */
+    AgreementPopupInfoVO queryAgreementPopupByScene(Integer scene);
 }

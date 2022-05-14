@@ -8,23 +8,20 @@ import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.user.model.dto.UserInfoAddDTO;
 import com.starnft.star.domain.user.model.dto.UserInfoUpdateDTO;
+import com.starnft.star.domain.user.model.vo.AgreementPopupInfoVO;
+import com.starnft.star.domain.user.model.vo.AgreementVO;
 import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.domain.user.model.vo.UserPwdChangeLogsVO;
 import com.starnft.star.domain.user.repository.IUserRepository;
-import com.starnft.star.infrastructure.entity.user.AccountUserEntity;
-import com.starnft.star.infrastructure.entity.user.UserInfoEntity;
-import com.starnft.star.infrastructure.entity.user.UserLoginLogEntity;
-import com.starnft.star.infrastructure.entity.user.UserPwdHistoryLogEntity;
-import com.starnft.star.infrastructure.mapper.user.AccountUserMapper;
-import com.starnft.star.infrastructure.mapper.user.UserInfoMapper;
-import com.starnft.star.infrastructure.mapper.user.UserLoginLogMapper;
-import com.starnft.star.infrastructure.mapper.user.UserPwdHistoryLogMapper;
+import com.starnft.star.infrastructure.entity.user.*;
+import com.starnft.star.infrastructure.mapper.user.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,13 +33,20 @@ import java.util.stream.Collectors;
 public class UserRepository implements IUserRepository {
 
     @Resource
-    UserInfoMapper userInfoMapper;
+    private UserInfoMapper userInfoMapper;
     @Resource
-    UserPwdHistoryLogMapper userPwdHistoryLogMapper;
+    private UserPwdHistoryLogMapper userPwdHistoryLogMapper;
     @Resource
-    UserLoginLogMapper userLoginLogMapper;
+    private UserLoginLogMapper userLoginLogMapper;
     @Resource
-    AccountUserMapper accountUserMapper;
+    private AccountUserMapper accountUserMapper;
+    @Resource
+    private UserAgreementMapper userAgreementMapper;
+    @Resource
+    private UserDataAuthorizationAgreementSignMapper signMapper;
+    @Resource
+    private UserAgreementPopupMapper userAgreementPopupMapper;
+
 
     @Override
     public UserInfo queryUserInfoByPhone(String phone) {
@@ -221,5 +225,40 @@ public class UserRepository implements IUserRepository {
         return accountUserMapper.updateByPrimaryKeySelective(userInfo);
     }
 
+    @Override
+    public AgreementVO queryAgreementInfoByType(Integer agreementType) {
+        UserAgreementEntity userAgreementEntity = userAgreementMapper.queryAgreementInfoByType(agreementType);
+        return BeanColverUtil.colver(userAgreementEntity ,AgreementVO.class);
+    }
 
+    @Override
+    public List<String> queryUserSignAgreement(Long userId) {
+        return signMapper.batchSelectUserAgreementId(userId);
+    }
+
+    @Override
+    public List<AgreementVO> queryNewAgreementByScene(Integer scene) {
+        List<UserAgreementEntity> userAgreementEntity = userAgreementMapper.queryNewAgreementByScene(scene);
+        return BeanColverUtil.colverList(userAgreementEntity , AgreementVO.class);
+    }
+
+    @Override
+    public AgreementPopupInfoVO queryAgreementPopupByScene(Integer scene) {
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.eq("agreement_popup_scene" , scene);
+        wrapper.eq("is_delete" ,Boolean.FALSE);
+        wrapper.le("effective_time" , LocalDateTime.now());
+        wrapper.last("limit 1");
+        UserAgreementPopupEntity userAgreementPopupEntity = userAgreementPopupMapper.selectOne(wrapper);
+        return BeanColverUtil.colver(userAgreementPopupEntity, AgreementPopupInfoVO.class);
+    }
+
+    @Override
+    public Boolean doesUserExist(Long userId) {
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("account" , userId) ;
+        queryWrapper.eq("is_delete" ,Boolean.FALSE);
+        UserInfoEntity userInfoEntity = userInfoMapper.selectOne(queryWrapper);
+        return Objects.nonNull(userInfoEntity);
+    }
 }

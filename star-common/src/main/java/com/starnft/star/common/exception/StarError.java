@@ -26,6 +26,8 @@ public enum StarError {
     PWD_NOT_SETTING("100014","您未设置密码，请使用短信验证码登录设置密码后重试"),
     IS_REAL_NAME_AUTHENTICATION("100015","您已进行实名认证，请勿重复操作"),
     NOT_AUTHENTICATION("100016","您还未进行实名认证操作"),
+    AGREEMENT_NOT_FUND("100017","协议不存在"),
+    AGREEMENT_TYPE_UNKNOWN("13003","未知协议类型"),
 
     DB_RECORD_UNEXPECTED_ERROR("200001","数据库记录异常"),
 

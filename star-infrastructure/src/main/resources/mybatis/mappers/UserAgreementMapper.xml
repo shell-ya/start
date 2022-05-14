@@ -1,44 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.starnft.star.infrastructure.mapper.user.UserAgreementMapper">
-  <resultMap id="BaseResultMap" type="com.starnft.star.infrastructure.entity.user.UserAgreementEntity">
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="agreement_id" jdbcType="VARCHAR" property="agreementId" />
-    <result column="agreement_name" jdbcType="VARCHAR" property="agreementName" />
-    <result column="agreement_scene" jdbcType="TINYINT" property="agreementScene" />
-    <result column="agreement_type" jdbcType="TINYINT" property="agreementType" />
-    <result column="agreement_version" jdbcType="VARCHAR" property="agreementVersion" />
-    <result column="effective_time" jdbcType="TIMESTAMP" property="effectiveTime" />
-    <result column="submit_status" jdbcType="TINYINT" property="submitStatus" />
-    <result column="is_deleted" jdbcType="TINYINT" property="isDeleted" />
-    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
-    <result column="created_by" jdbcType="VARCHAR" property="createdBy" />
-    <result column="modified_at" jdbcType="TIMESTAMP" property="modifiedAt" />
-    <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy" />
-  </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.starnft.star.infrastructure.entity.user.UserAgreementEntity">
-    <result column="agreement_content" jdbcType="LONGVARCHAR" property="agreementContent" />
-  </resultMap>
-  <sql id="Base_Column_List">
+    <resultMap id="BaseResultMap" type="com.starnft.star.infrastructure.entity.user.UserAgreementEntity">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="agreement_id" jdbcType="VARCHAR" property="agreementId"/>
+        <result column="agreement_name" jdbcType="VARCHAR" property="agreementName"/>
+        <result column="agreement_scene" jdbcType="TINYINT" property="agreementScene"/>
+        <result column="agreement_type" jdbcType="TINYINT" property="agreementType"/>
+        <result column="agreement_version" jdbcType="VARCHAR" property="agreementVersion"/>
+        <result column="effective_time" jdbcType="TIMESTAMP" property="effectiveTime"/>
+        <result column="submit_status" jdbcType="TINYINT" property="submitStatus"/>
+        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="created_by" jdbcType="VARCHAR" property="createdBy"/>
+        <result column="modified_at" jdbcType="TIMESTAMP" property="modifiedAt"/>
+        <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs"
+               type="com.starnft.star.infrastructure.entity.user.UserAgreementEntity">
+        <result column="agreement_content" jdbcType="LONGVARCHAR" property="agreementContent"/>
+    </resultMap>
+    <sql id="Base_Column_List">
     id, agreement_id, agreement_name, agreement_scene, agreement_type, agreement_version, 
     effective_time, submit_status, is_deleted, created_at, created_by, modified_at, modified_by
   </sql>
-  <sql id="Blob_Column_List">
+    <sql id="Blob_Column_List">
     agreement_content
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
-    select 
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from user_agreement
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from user_agreement
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="queryAgreementInfoByType"
+            resultType="com.starnft.star.infrastructure.entity.user.UserAgreementEntity">
+      select
+      ua.*
+      from
+      (
+        select
+        agreement_type,
+        agreement_scene,
+        MAX (agreement_version+0) AS agreement_version
+        from
+        user_agreement
+        where
+        submit_status = 2
+        and agreement_scene = 1
+        and effective_time &lt;= NOW()
+        and is_delete = 0
+        and agreement_type = #{agreementType}
+        group by agreement_type , agreement_scene
+        )  as t
+        left join
+        user_agreement as ua on (t.agreement_type = ua.agreement_type
+        and t.agreement_scene = ua.agreement_scene
+        and t.agreement_version  = ua.agreement_version
+        );
+    </select>
+
+    <select id="queryNewAgreementByScene"
+            resultType="com.starnft.star.infrastructure.entity.user.UserAgreementEntity">
+        select
+        ua.*
+        from
+        (
+         agreement_type,
+         agreement_scene,
+         MAX(agreement_version + 0) as agreement_version
+         from
+         user_agreement
+         where
+         submit_status = 2
+         and agreement_scene = #{scene}
+         and effective_time &lt;= NOW()
+         and is_delete = 0
+         group by agreement_type , agreement_scene) as t
+         left join
+         user_agreement as ua on(
+            t.agreement_type = ua.agreement_type
+            and t.agreement_scene = ua.agreement_scene
+            and t.agreement_version = ua.agreement_version)
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+
     delete from user_agreement
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.starnft.star.infrastructure.entity.user.UserAgreementEntity" useGeneratedKeys="true">
+    <insert id="insert" keyColumn="id" keyProperty="id"
+            parameterType="com.starnft.star.infrastructure.entity.user.UserAgreementEntity" useGeneratedKeys="true">
     insert into user_agreement (agreement_id, agreement_name, agreement_scene, 
       agreement_type, agreement_version, effective_time, 
       submit_status, is_deleted, created_at, 
@@ -50,137 +105,140 @@
       #{createdBy,jdbcType=VARCHAR}, #{modifiedAt,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR}, 
       #{agreementContent,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.starnft.star.infrastructure.entity.user.UserAgreementEntity" useGeneratedKeys="true">
-    insert into user_agreement
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="agreementId != null">
-        agreement_id,
-      </if>
-      <if test="agreementName != null">
-        agreement_name,
-      </if>
-      <if test="agreementScene != null">
-        agreement_scene,
-      </if>
-      <if test="agreementType != null">
-        agreement_type,
-      </if>
-      <if test="agreementVersion != null">
-        agreement_version,
-      </if>
-      <if test="effectiveTime != null">
-        effective_time,
-      </if>
-      <if test="submitStatus != null">
-        submit_status,
-      </if>
-      <if test="isDeleted != null">
-        is_deleted,
-      </if>
-      <if test="createdAt != null">
-        created_at,
-      </if>
-      <if test="createdBy != null">
-        created_by,
-      </if>
-      <if test="modifiedAt != null">
-        modified_at,
-      </if>
-      <if test="modifiedBy != null">
-        modified_by,
-      </if>
-      <if test="agreementContent != null">
-        agreement_content,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="agreementId != null">
-        #{agreementId,jdbcType=VARCHAR},
-      </if>
-      <if test="agreementName != null">
-        #{agreementName,jdbcType=VARCHAR},
-      </if>
-      <if test="agreementScene != null">
-        #{agreementScene,jdbcType=TINYINT},
-      </if>
-      <if test="agreementType != null">
-        #{agreementType,jdbcType=TINYINT},
-      </if>
-      <if test="agreementVersion != null">
-        #{agreementVersion,jdbcType=VARCHAR},
-      </if>
-      <if test="effectiveTime != null">
-        #{effectiveTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="submitStatus != null">
-        #{submitStatus,jdbcType=TINYINT},
-      </if>
-      <if test="isDeleted != null">
-        #{isDeleted,jdbcType=TINYINT},
-      </if>
-      <if test="createdAt != null">
-        #{createdAt,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createdBy != null">
-        #{createdBy,jdbcType=VARCHAR},
-      </if>
-      <if test="modifiedAt != null">
-        #{modifiedAt,jdbcType=TIMESTAMP},
-      </if>
-      <if test="modifiedBy != null">
-        #{modifiedBy,jdbcType=VARCHAR},
-      </if>
-      <if test="agreementContent != null">
-        #{agreementContent,jdbcType=LONGVARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.starnft.star.infrastructure.entity.user.UserAgreementEntity">
-    update user_agreement
-    <set>
-      <if test="agreementId != null">
-        agreement_id = #{agreementId,jdbcType=VARCHAR},
-      </if>
-      <if test="agreementName != null">
-        agreement_name = #{agreementName,jdbcType=VARCHAR},
-      </if>
-      <if test="agreementScene != null">
-        agreement_scene = #{agreementScene,jdbcType=TINYINT},
-      </if>
-      <if test="agreementType != null">
-        agreement_type = #{agreementType,jdbcType=TINYINT},
-      </if>
-      <if test="agreementVersion != null">
-        agreement_version = #{agreementVersion,jdbcType=VARCHAR},
-      </if>
-      <if test="effectiveTime != null">
-        effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="submitStatus != null">
-        submit_status = #{submitStatus,jdbcType=TINYINT},
-      </if>
-      <if test="isDeleted != null">
-        is_deleted = #{isDeleted,jdbcType=TINYINT},
-      </if>
-      <if test="createdAt != null">
-        created_at = #{createdAt,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createdBy != null">
-        created_by = #{createdBy,jdbcType=VARCHAR},
-      </if>
-      <if test="modifiedAt != null">
-        modified_at = #{modifiedAt,jdbcType=TIMESTAMP},
-      </if>
-      <if test="modifiedBy != null">
-        modified_by = #{modifiedBy,jdbcType=VARCHAR},
-      </if>
-      <if test="agreementContent != null">
-        agreement_content = #{agreementContent,jdbcType=LONGVARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.starnft.star.infrastructure.entity.user.UserAgreementEntity">
+    <insert id="insertSelective" keyColumn="id" keyProperty="id"
+            parameterType="com.starnft.star.infrastructure.entity.user.UserAgreementEntity" useGeneratedKeys="true">
+        insert into user_agreement
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="agreementId != null">
+                agreement_id,
+            </if>
+            <if test="agreementName != null">
+                agreement_name,
+            </if>
+            <if test="agreementScene != null">
+                agreement_scene,
+            </if>
+            <if test="agreementType != null">
+                agreement_type,
+            </if>
+            <if test="agreementVersion != null">
+                agreement_version,
+            </if>
+            <if test="effectiveTime != null">
+                effective_time,
+            </if>
+            <if test="submitStatus != null">
+                submit_status,
+            </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="createdBy != null">
+                created_by,
+            </if>
+            <if test="modifiedAt != null">
+                modified_at,
+            </if>
+            <if test="modifiedBy != null">
+                modified_by,
+            </if>
+            <if test="agreementContent != null">
+                agreement_content,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="agreementId != null">
+                #{agreementId,jdbcType=VARCHAR},
+            </if>
+            <if test="agreementName != null">
+                #{agreementName,jdbcType=VARCHAR},
+            </if>
+            <if test="agreementScene != null">
+                #{agreementScene,jdbcType=TINYINT},
+            </if>
+            <if test="agreementType != null">
+                #{agreementType,jdbcType=TINYINT},
+            </if>
+            <if test="agreementVersion != null">
+                #{agreementVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="effectiveTime != null">
+                #{effectiveTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="submitStatus != null">
+                #{submitStatus,jdbcType=TINYINT},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted,jdbcType=TINYINT},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createdBy != null">
+                #{createdBy,jdbcType=VARCHAR},
+            </if>
+            <if test="modifiedAt != null">
+                #{modifiedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifiedBy != null">
+                #{modifiedBy,jdbcType=VARCHAR},
+            </if>
+            <if test="agreementContent != null">
+                #{agreementContent,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective"
+            parameterType="com.starnft.star.infrastructure.entity.user.UserAgreementEntity">
+        update user_agreement
+        <set>
+            <if test="agreementId != null">
+                agreement_id = #{agreementId,jdbcType=VARCHAR},
+            </if>
+            <if test="agreementName != null">
+                agreement_name = #{agreementName,jdbcType=VARCHAR},
+            </if>
+            <if test="agreementScene != null">
+                agreement_scene = #{agreementScene,jdbcType=TINYINT},
+            </if>
+            <if test="agreementType != null">
+                agreement_type = #{agreementType,jdbcType=TINYINT},
+            </if>
+            <if test="agreementVersion != null">
+                agreement_version = #{agreementVersion,jdbcType=VARCHAR},
+            </if>
+            <if test="effectiveTime != null">
+                effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="submitStatus != null">
+                submit_status = #{submitStatus,jdbcType=TINYINT},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{isDeleted,jdbcType=TINYINT},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createdBy != null">
+                created_by = #{createdBy,jdbcType=VARCHAR},
+            </if>
+            <if test="modifiedAt != null">
+                modified_at = #{modifiedAt,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifiedBy != null">
+                modified_by = #{modifiedBy,jdbcType=VARCHAR},
+            </if>
+            <if test="agreementContent != null">
+                agreement_content = #{agreementContent,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs"
+            parameterType="com.starnft.star.infrastructure.entity.user.UserAgreementEntity">
     update user_agreement
     set agreement_id = #{agreementId,jdbcType=VARCHAR},
       agreement_name = #{agreementName,jdbcType=VARCHAR},
@@ -197,7 +255,7 @@
       agreement_content = #{agreementContent,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.starnft.star.infrastructure.entity.user.UserAgreementEntity">
+    <update id="updateByPrimaryKey" parameterType="com.starnft.star.infrastructure.entity.user.UserAgreementEntity">
     update user_agreement
     set agreement_id = #{agreementId,jdbcType=VARCHAR},
       agreement_name = #{agreementName,jdbcType=VARCHAR},

@@ -14,8 +14,6 @@ public class UserGatheringInfoRes implements Serializable {
 
     private String avatar;
 
-    private Boolean isActive;
-
     /** ========= User Info END========= */
 
     /** ========= User WalletInfo ============ */
@@ -63,14 +61,6 @@ public class UserGatheringInfoRes implements Serializable {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
-    }
-
-    public Boolean getActive() {
-        return isActive;
-    }
-
-    public void setActive(Boolean active) {
-        isActive = active;
     }
 
     public String getWalletId() {

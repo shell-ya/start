@@ -2,10 +2,13 @@ package com.starnft.star.domain.user.service.impl;
 
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.YesOrNoStatusEnum;
+import com.starnft.star.common.enums.AgreementSceneEnum;
+import com.starnft.star.common.enums.AgreementTypeEnum;
 import com.starnft.star.common.enums.LoginTypeEnum;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.po.AccessToken;
+import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.user.model.dto.*;
 import com.starnft.star.domain.user.model.vo.*;
@@ -64,6 +67,12 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         userInfo.setUserId(userId);
 
         return userInfo;
+    }
+
+    @Override
+    public UserInfoVO queryUserInfo(Long userId) {
+        UserInfo userInfo = userRepository.queryUserInfoByUserId(userId);
+        return BeanColverUtil.colver(userInfo , UserInfoVO.class);
     }
 
     @Override
@@ -320,6 +329,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
     @Override
     public AgreementVO queryAgreementContentByType(Integer agreementType) {
+
         return null;
     }
 

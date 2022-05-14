@@ -51,12 +51,6 @@
             <artifactId>mapstruct-processor</artifactId>
             <version>1.4.2.Final</version>
         </dependency>
-        <!-- MapStruct end -->
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-log4j2</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -104,6 +98,11 @@
             <optional>true</optional>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.skywalking</groupId>
+            <artifactId>apm-toolkit-logback-1.x</artifactId>
+            <version>8.1.0</version>
+        </dependency>
     </dependencies>
 
 </project>
