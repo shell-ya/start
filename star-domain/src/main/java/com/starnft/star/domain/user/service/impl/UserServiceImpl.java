@@ -48,7 +48,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     @Autowired
     private IUserRepository userRepository;
 
-    @Value("${star.sms.enable}")
+    @Value("${star.sms.enable: false}")
     private Boolean smsEnable;
 
     @Override

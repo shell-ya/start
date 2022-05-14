@@ -5,6 +5,7 @@ import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.WalletAddrGenerator;
+import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.wallet.model.req.TransactionRecordQueryReq;
 import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
 import com.starnft.star.domain.wallet.model.req.WalletRecordReq;
@@ -13,8 +14,8 @@ import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
 import com.starnft.star.domain.wallet.model.vo.WalletVO;
 import com.starnft.star.domain.wallet.repository.IWalletRepository;
 import com.starnft.star.domain.wallet.service.WalletService;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.web3j.crypto.CipherException;
 
 import javax.annotation.Resource;
@@ -31,9 +32,10 @@ public class WalletServiceImpl implements WalletService {
     private WalletAddrGenerator walletAddrGenerator;
 
     @Resource
-    private RedisTemplate<String, Object> redisTemplate;
+    private RedisUtil redisUtil;
 
     @Override
+    @Transactional
     public WalletResult queryWalletInfo(WalletInfoReq walletInfoReq) {
         WalletVO walletVO = walletRepository.queryWallet(walletInfoReq);
         if (walletVO == null) {

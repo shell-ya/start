@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -83,11 +84,11 @@ public class WalletRepository implements IWalletRepository {
 
         WalletVO walletVO = WalletVO.builder()
                 .walletId(wallet.getwId())
-                .balance(new BigDecimal("0.00"))
+                .balance(new BigDecimal(BigDecimal.ZERO.intValue()))
                 .frozen(false)
-                .frozen_fee(new BigDecimal("0.00"))
-                .wallet_income(new BigDecimal("0.00"))
-                .wallet_outcome(new BigDecimal("0.00")).build();
+                .frozen_fee(new BigDecimal(BigDecimal.ZERO.intValue()))
+                .wallet_income(new BigDecimal(BigDecimal.ZERO.intValue()))
+                .wallet_outcome(new BigDecimal(BigDecimal.ZERO.intValue())).build();
         return walletVO;
     }
 
@@ -263,11 +264,11 @@ public class WalletRepository implements IWalletRepository {
         wallet.setUid(walletInfoReq.getUid());
         wallet.setwId(walletInfoReq.getWalletId());
         wallet.setCreatedBy(walletInfoReq.getUid());
-        wallet.setBalance(new BigDecimal("0.00"));
+        wallet.setBalance(new BigDecimal(BigDecimal.ZERO.intValue()));
         wallet.setFrozen(0);
-        wallet.setWalletIncome(new BigDecimal("0.00"));
-        wallet.setWalletOutcome(new BigDecimal("0.00"));
-        wallet.setFrozenFee(new BigDecimal("0.00"));
+        wallet.setWalletIncome(new BigDecimal(BigDecimal.ZERO.intValue()));
+        wallet.setWalletOutcome(new BigDecimal(BigDecimal.ZERO.intValue()));
+        wallet.setFrozenFee(new BigDecimal(BigDecimal.ZERO.intValue()));
         wallet.setCreatedAt(new Date());
         return wallet;
     }

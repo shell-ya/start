@@ -72,5 +72,13 @@ public interface IWalletRepository {
      */
     boolean updateWalletRecordStatus(String serialNo, String payStatus);
 
+
+    /**
+     * @author Ryan Z / haoran
+     * @description 查询交易记录
+     * @date  2022/5/12
+     * @param queryReq
+     * @return WalletRecordVO
+     */
     ResponsePageResult<WalletRecordVO> queryTransactionRecordByCondition(TransactionRecordQueryReq queryReq);
 }
