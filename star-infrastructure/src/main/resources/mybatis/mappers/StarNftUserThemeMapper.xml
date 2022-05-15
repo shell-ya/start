@@ -29,7 +29,7 @@
 
 
     <select id="selectUserThemeToSeriesByUserId"
-            resultType="com.starnft.star.domain.PersonalArticle.model.entity.UserSeriesEntity">
+            resultType="com.starnft.star.domain.article.model.entity.UserSeriesEntity">
         SELECT series_name, series_images, count(1) as nums
         FROM star_nft_user_theme u
                      LEFT JOIN star_nft_series s on u.series_id = s.id

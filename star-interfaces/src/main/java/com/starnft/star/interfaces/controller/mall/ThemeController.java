@@ -6,7 +6,7 @@ import com.starnft.star.common.page.RequestPage;
 import com.starnft.star.domain.numbers.model.OrderByEnum;
 import com.starnft.star.domain.numbers.model.dto.NumberDTO;
 import com.starnft.star.domain.numbers.model.req.NumberReq;
-import com.starnft.star.domain.numbers.model.serivce.NumberService;
+import com.starnft.star.domain.numbers.serivce.NumberService;
 import com.starnft.star.domain.theme.model.req.ThemeReq;
 import com.starnft.star.domain.theme.service.ThemeService;
 import io.swagger.annotations.Api;

@@ -1,4 +1,4 @@
-package com.starnft.star.domain.PersonalArticle.model.req;
+package com.starnft.star.domain.article.model.req;
 
 import lombok.Data;
 

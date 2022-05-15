@@ -91,7 +91,7 @@ public class CosOperationService implements ICosOperationService {
 
     @Override
     public List<Bucket> getBucketList() {
-        return doCos(COSClient::listBuckets, List.class);
+        return (List<Bucket>) doCos(COSClient::listBuckets, List.class);
     }
 
     /**

@@ -1,8 +1,8 @@
-package com.starnft.star.domain.numbers.model.serivce.impl;
+package com.starnft.star.domain.numbers.serivce.impl;
 
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.numbers.model.req.NumberReq;
-import com.starnft.star.domain.numbers.model.serivce.NumberService;
+import com.starnft.star.domain.numbers.serivce.NumberService;
 import com.starnft.star.domain.numbers.model.vo.NumberVO;
 import com.starnft.star.domain.numbers.repository.INumberRepository;
 import org.springframework.stereotype.Service;

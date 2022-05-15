@@ -1,7 +1,7 @@
 package com.starnft.star.infrastructure.repository;
 
-import com.starnft.star.domain.PersonalArticle.model.req.UserHaveSeriesReq;
-import com.starnft.star.domain.PersonalArticle.repository.IUserThemeRepository;
+import com.starnft.star.domain.article.model.req.UserHaveSeriesReq;
+import com.starnft.star.domain.article.repository.IUserThemeRepository;
 import com.starnft.star.infrastructure.mapper.user.StarNftUserThemeMapper;
 import org.springframework.stereotype.Repository;
 

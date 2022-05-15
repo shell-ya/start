@@ -1,4 +1,4 @@
-package com.starnft.star.domain.numbers.model.serivce;
+package com.starnft.star.domain.numbers.serivce;
 
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.numbers.model.req.NumberReq;
