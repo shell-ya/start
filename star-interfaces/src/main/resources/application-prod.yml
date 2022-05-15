@@ -30,4 +30,4 @@ server:
 
 logging:
   level:
-    com.starnft.ark: debug
+    com.starnft.star: debug

@@ -28,9 +28,8 @@ public class UserTotalInfoComposeImpl implements UserTotalInfoCompose {
 
         //获取User信息
         UserInfoVO userInfoVO = userService.queryUserInfo(req.getUid());
+        userInfoVO.setUserId(req.getUid());
         populateUserInfo(userGatheringInfoRes, userInfoVO);
-
-        //填充用户信息
 
         //获取钱包信息
         WalletResult walletResult = walletService.queryWalletInfo(new WalletInfoReq(req.getUid()));

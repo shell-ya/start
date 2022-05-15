@@ -99,7 +99,7 @@ public class UserController {
     }
 
     @ApiOperation("判断用户是否弹协议窗口")
-    @GetMapping("/userinfo/queryopenagreement")
+    @GetMapping("/userinfo/checkagreementpopup")
     public RopResponse<PopupAgreementRes> checkAgreementPopup(@RequestHeader(StarConstants.USER_ID) Long userId ,
                                                               @RequestParam("scene") Integer scene){
 

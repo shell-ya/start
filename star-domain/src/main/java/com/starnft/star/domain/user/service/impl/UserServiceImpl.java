@@ -2,8 +2,6 @@ package com.starnft.star.domain.user.service.impl;
 
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.YesOrNoStatusEnum;
-import com.starnft.star.common.enums.AgreementSceneEnum;
-import com.starnft.star.common.enums.AgreementTypeEnum;
 import com.starnft.star.common.enums.LoginTypeEnum;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
@@ -24,7 +22,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.nio.file.OpenOption;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
@@ -72,7 +69,10 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     @Override
     public UserInfoVO queryUserInfo(Long userId) {
         UserInfo userInfo = userRepository.queryUserInfoByUserId(userId);
-        return BeanColverUtil.colver(userInfo , UserInfoVO.class);
+        if (Objects.isNull(userInfo)) {
+            throw new StarException(StarError.USER_NOT_EXISTS);
+        }
+        return BeanColverUtil.colver(userInfo, UserInfoVO.class);
     }
 
     @Override
@@ -294,7 +294,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         }
 
         //校验用户是否实名认证
-        if (YesOrNoStatusEnum.YES.getCode().equals(userInfo.getRealPersonFlag())){
+        if (YesOrNoStatusEnum.YES.getCode().equals(userInfo.getRealPersonFlag())) {
             throw new StarException(StarError.IS_REAL_NAME_AUTHENTICATION);
         }
 
@@ -316,7 +316,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     public UserAuthenticationVO queryAuthentication(Long userId) {
         UserInfo userInfo = userRepository.queryUserInfoByUserId(userId);
         Optional.ofNullable(userInfo.getRealPersonFlag())
-                .filter(a -> Objects.equals(YesOrNoStatusEnum.YES , a))
+                .filter(a -> Objects.equals(YesOrNoStatusEnum.YES, a))
                 .orElseThrow(() -> new StarException(StarError.NOT_AUTHENTICATION));
 
         return UserAuthenticationVO.builder().authenticationData("您已实名认证").build();
