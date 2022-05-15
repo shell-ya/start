@@ -1,5 +1,6 @@
 package com.starnft.star.management.service.impl;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.ClientConfig;
@@ -18,7 +19,6 @@ import com.starnft.star.domain.support.key.ApiKeyConfig;
 import com.starnft.star.infrastructure.entity.dict.StarNftDict;
 import com.starnft.star.management.service.ICosSupport;
 import com.starnft.star.management.service.IDictManger;
-import jdk.internal.joptsimple.internal.Strings;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Value;

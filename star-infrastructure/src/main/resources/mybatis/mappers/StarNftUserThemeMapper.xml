@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.user.StarNftUserThemeMapper">
+    <resultMap id="BaseResultMap" type="com.starnft.star.infrastructure.entity.user.StarNftUserTheme">
+        <!--@mbg.generated-->
+        <!--@Table star_nft_user_theme-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="series_theme_info_id" jdbcType="BIGINT" property="seriesThemeInfoId"/>
+        <result column="series_theme_id" jdbcType="BIGINT" property="seriesThemeId"/>
+        <result column="status" jdbcType="BOOLEAN" property="status"/>
+        <result column="user_id" jdbcType="VARCHAR" property="userId"/>
+        <result column="source" jdbcType="BOOLEAN" property="source"/>
+        <result column="pre_tax_price" jdbcType="DECIMAL" property="preTaxPrice"/>
+        <result column="platform_tax" jdbcType="DECIMAL" property="platformTax"/>
+        <result column="copyright_tax" jdbcType="DECIMAL" property="copyrightTax"/>
+        <result column="after_tax_price" jdbcType="DECIMAL" property="afterTaxPrice"/>
+        <result column="create_at" jdbcType="TIMESTAMP" property="createAt"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="update_at" jdbcType="TIMESTAMP" property="updateAt"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="is_delete" jdbcType="BOOLEAN" property="isDelete"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, series_theme_info_id, series_theme_id, `status`, user_id, `source`, pre_tax_price,
+        platform_tax, copyright_tax, after_tax_price, create_at, create_by, update_at, update_by,
+        is_delete
+    </sql>
+
+
+    <select id="selectUserThemeToSeriesByUserId"
+            resultType="com.starnft.star.domain.PersonalArticle.model.entity.UserSeriesEntity">
+        SELECT series_name, series_images, count(1) as nums
+        FROM star_nft_user_theme u
+                     LEFT JOIN star_nft_series s on u.series_id = s.id
+        WHERE u.user_id = #{userId}
+          and u.`status` = #{themeStatus}
+          and u.`status` = #{themeType}
+          AND u.is_delete = 0
+        GROUP BY u.series_id
+    </select>
+</mapper>
