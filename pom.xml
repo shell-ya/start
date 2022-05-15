@@ -10,6 +10,7 @@
         <module>star-interfaces</module>
         <module>star-common</module>
         <module>star-rpc</module>
+        <module>star-management</module>
     </modules>
 
     <parent>
