@@ -5,7 +5,7 @@ import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.banner.model.dto.BannerConditionDto;
 import com.starnft.star.domain.banner.model.dto.BannerDto;
-import com.starnft.star.management.service.IBannerService;
+import com.starnft.star.management.service.ManagerBannerService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -15,11 +15,11 @@ import javax.annotation.Resource;
  * @Author ： shellya
  */
 @RestController
-@RequestMapping("/banner")
+@RequestMapping("/manager/banner")
 public class BannerController {
 
     @Resource
-    private IBannerService bannerService;
+    private ManagerBannerService bannerService;
 
     @PostMapping("/save")
     public RopResponse save(@RequestBody BannerDto dto){
@@ -37,7 +37,7 @@ public class BannerController {
     }
 
     @PostMapping("/page")
-    public ResponsePageResult<BannerDto> page(@RequestBody RequestConditionPage<BannerConditionDto> reqPage){
+    public ResponsePageResult<Object> page(@RequestBody RequestConditionPage<BannerConditionDto> reqPage){
         return bannerService.getBannerPage(reqPage);
     }
 }

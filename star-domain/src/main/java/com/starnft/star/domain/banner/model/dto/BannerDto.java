@@ -1,5 +1,7 @@
 package com.starnft.star.domain.banner.model.dto;
 
+import io.swagger.models.auth.In;
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -9,6 +11,7 @@ import javax.validation.constraints.NotBlank;
  * @Author ： shellya
  */
 @Data
+@Builder
 public class BannerDto {
 
 
@@ -29,7 +32,7 @@ public class BannerDto {
      * 展示位置：头部，TOP; 中间，MIDDLE；底部，BOTTOM;
      */
     @NotBlank(message =  "展示位置")
-    private String position;
+    private Integer position;
 
     /**
      * 是否展示：0，否；1，是
@@ -42,9 +45,9 @@ public class BannerDto {
     private Integer sort;
 
     /**
-     * 爬虫地址
+     * 跳转类型 0 不跳转 1 外链接 2 内链接
      */
-    private String crawlersUrl;
+    private Integer jumpType;
 
     /**
      * 外链地址

@@ -1,5 +1,6 @@
 package com.starnft.star.management;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configurable
 @EnableAspectJAutoProxy
 //@EnableSwagger2
+@MapperScan("com.starnft.star.infrastructure.mapper")
 @SpringBootApplication
 @ComponentScan(basePackages = {"com.starnft.star"})
 public class StarManagementApplication {

@@ -17,7 +17,7 @@ public class BannerVo {
     @ApiModelProperty("主图")
     private String imgUrl;
     @ApiModelProperty("展示位置")
-    private String position;
+    private Integer position;
     @ApiModelProperty("外链地址")
     private String url;
 }

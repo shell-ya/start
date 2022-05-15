@@ -1,5 +1,6 @@
 package com.starnft.star.management.exception;
 
+import cn.dev33.satoken.exception.NotLoginException;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.exception.StarException;
 import lombok.NoArgsConstructor;
@@ -38,6 +39,11 @@ public class StarExceptionHandler {
             }
         }
         return RopResponse.fail("参数有误");
+    }
+
+    @ExceptionHandler({NotLoginException.class})
+    public RopResponse loginExceptionHandle(NotLoginException e){
+        return RopResponse.fail(e.getMessage());
     }
 
 

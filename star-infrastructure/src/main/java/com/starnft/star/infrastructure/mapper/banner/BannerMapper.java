@@ -2,8 +2,6 @@ package com.starnft.star.infrastructure.mapper.banner;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.starnft.star.domain.banner.model.dto.BannerConditionDto;
-import com.starnft.star.domain.banner.model.dto.BannerDto;
-import com.starnft.star.domain.banner.model.req.BannerReq;
 import com.starnft.star.infrastructure.entity.banner.BannerEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -19,5 +17,5 @@ public interface BannerMapper extends BaseMapper<BannerEntity> {
 
     List<BannerEntity> queryBanner(@Param("type") String type, @Param("size") int size);
 
-    List<BannerDto> selectBannerList(@Param("condition") BannerConditionDto condition);
+    List<BannerEntity> selectBannerList(@Param("condition") BannerConditionDto condition);
 }

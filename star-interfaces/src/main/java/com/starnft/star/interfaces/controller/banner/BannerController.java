@@ -1,4 +1,4 @@
-package com.starnft.star.infrastructure.controller.banner;
+package com.starnft.star.interfaces.controller.banner;
 
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.domain.banner.model.req.BannerReq;

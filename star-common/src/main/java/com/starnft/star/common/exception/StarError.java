@@ -29,6 +29,7 @@ public enum StarError {
     AGREEMENT_NOT_FUND("100017","协议不存在"),
     AGREEMENT_TYPE_UNKNOWN("13003","未知协议类型"),
 
+    USER_NOT_LOGIN("100015","用户未登录"),
     DB_RECORD_UNEXPECTED_ERROR("200001","数据库记录异常"),
 
     VALUE_COULD_NOT_BE_NULL("100010","必须值不能为空"),
