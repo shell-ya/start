@@ -1,5 +1,7 @@
 package com.starnft.star.domain.sms;
 
+import java.util.Set;
+
 public interface MessageDistributor {
     /**
      * 单人短信投放
@@ -9,6 +11,6 @@ public interface MessageDistributor {
 
 
 
-     Integer deliveryBatch(String mobile,String context);
+     Integer deliveryBatch(Set<String> mobile, String context);
 
 }
