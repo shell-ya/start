@@ -1,9 +1,12 @@
 package com.starnft.star.domain.article.model.req;
 
+import com.starnft.star.common.page.RequestPage;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
 @Data
-public class UserHaveSeriesReq {
+@SuperBuilder
+public class UserHaveSeriesReq  extends RequestPage {
     //用户id
     private String userId;
     //类型

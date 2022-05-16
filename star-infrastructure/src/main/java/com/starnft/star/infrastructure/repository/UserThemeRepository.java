@@ -1,5 +1,6 @@
 package com.starnft.star.infrastructure.repository;
 
+import com.github.pagehelper.PageHelper;
 import com.starnft.star.domain.article.model.req.UserHaveSeriesReq;
 import com.starnft.star.domain.article.repository.IUserThemeRepository;
 import com.starnft.star.infrastructure.mapper.user.StarNftUserThemeMapper;
@@ -13,6 +14,9 @@ public class UserThemeRepository implements IUserThemeRepository {
     StarNftUserThemeMapper starNftUserThemeMapper;
     @Override
     public void queryUserArticleSeriesInfo(UserHaveSeriesReq userHaveSeriesReq) {
+        PageHelper.startPage(userHaveSeriesReq.getPage(), userHaveSeriesReq.getSize())
+                .doSelectPageInfo(()-> starNftUserThemeMapper
+                        .selectUserThemeToSeriesByUserId(userHaveSeriesReq));
 
     }
 }
