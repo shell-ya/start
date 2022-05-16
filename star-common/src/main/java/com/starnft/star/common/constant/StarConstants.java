@@ -100,23 +100,23 @@ public class StarConstants {
         /**
          * 充值
          */
-        Recharge(1,"Recharge"),
+        Recharge(1, "Recharge"),
         /**
          * 提现
          */
-        Withdraw(2,"Withdraw"),
+        Withdraw(2, "Withdraw"),
         /**
          * 买入
          */
-        Buy(3,"Buy"),
+        Buy(3, "Buy"),
         /**
          * 卖出
          */
-        Sell(4,"Sell"),
+        Sell(4, "Sell"),
         /**
          * 退款
          */
-        Refund(5,"Refund");
+        Refund(5, "Refund");
 
         private Integer code;
 
@@ -141,6 +141,37 @@ public class StarConstants {
 
         public void setFont(String font) {
             this.font = font;
+        }
+    }
+
+    public enum ProcessType {
+
+        WEBSERVICE("webservice", "ws"),
+        JSON("json", "json"),
+        UNKNOWN("unknown", "unknown");
+
+        private String name;
+        private String code;
+
+        ProcessType(String name, String code) {
+            this.name = name;
+            this.code = code;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
         }
     }
 

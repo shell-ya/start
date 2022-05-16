@@ -97,14 +97,14 @@ public class WalletCore implements IWalletCore {
      */
     private void verifyParam(RechargeFacadeReq rechargeFacadeReq) {
         String channel = rechargeFacadeReq.getChannel();
-        int exist = 0;
+        boolean exist = true;
         for (StarConstants.PayChannel channelName : StarConstants.PayChannel.values()) {
             if (channelName.name().equals(rechargeFacadeReq.getChannel())) {
-                exist = 1;
+                exist = false;
                 break;
             }
         }
-        if (exist == 0) {
+        if (exist) {
             throw new StarException(StarError.PARAETER_UNSUPPORTED, "渠道代码不存在！");
         }
     }
