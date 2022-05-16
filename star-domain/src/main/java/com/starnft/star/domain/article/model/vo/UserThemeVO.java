@@ -13,6 +13,6 @@ import java.io.Serializable;
 public class UserThemeVO  implements Serializable {
     private String seriesName;
     private Long seriesId;
-    private String seriesPic;
-    private Integer haveNums;
+    private String seriesImages;
+    private Integer nums;
 }

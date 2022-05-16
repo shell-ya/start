@@ -1,8 +1,10 @@
 package com.starnft.star.domain.article.repository;
 
+import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.article.model.req.UserHaveSeriesReq;
+import com.starnft.star.domain.article.model.vo.UserThemeVO;
 
 public interface IUserThemeRepository {
-    public void  queryUserArticleSeriesInfo(UserHaveSeriesReq userHaveSeriesReq);
+    public ResponsePageResult<UserThemeVO> queryUserArticleSeriesInfo(UserHaveSeriesReq userHaveSeriesReq);
 
 }

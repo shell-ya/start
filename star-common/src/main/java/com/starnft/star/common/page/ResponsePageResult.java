@@ -23,7 +23,6 @@ public class ResponsePageResult<T> {
         r.setPage(responsePageResult.getPage());
         r.setTotal(responsePageResult.getTotal());
         r.setSize(responsePageResult.getSize());
-
         return r;
     }
 }
