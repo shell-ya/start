@@ -17,8 +17,9 @@ public class UserThemeRepository implements IUserThemeRepository,PageHelperInter
     StarNftUserThemeMapper starNftUserThemeMapper;
     @Override
     public ResponsePageResult<UserThemeVO> queryUserArticleSeriesInfo(UserHaveSeriesReq userHaveSeriesReq) {
-        PageInfo<UserThemeVO> result = PageHelper.startPage(userHaveSeriesReq.getPage(), userHaveSeriesReq.getSize())
+        PageInfo<UserThemeVO> result = PageHelper
+                .startPage(userHaveSeriesReq.getPage(), userHaveSeriesReq.getSize())
                 .doSelectPageInfo(() -> starNftUserThemeMapper.selectUserThemeToSeriesByUserId(userHaveSeriesReq));
-            return  listReplace(result,result.getList());
+            return listReplace(result,result.getList());
     }
 }
