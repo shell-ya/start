@@ -1,6 +1,9 @@
 package com.starnft.star.domain.banner.model.dto;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5fd008e (dto)
 import lombok.Builder;
 import lombok.Data;
 
@@ -43,8 +46,6 @@ public class BannerDto {
      * 排序
      */
     private Integer sort;
-
-
 
     /**
      * 外链地址
