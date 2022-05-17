@@ -1,4 +1,4 @@
-package com.starnft.star.infrastructure.repository;
+package com.starnft.star.infrastructure.tools;
 
 import com.github.pagehelper.PageInfo;
 import com.starnft.star.common.page.ResponsePageResult;

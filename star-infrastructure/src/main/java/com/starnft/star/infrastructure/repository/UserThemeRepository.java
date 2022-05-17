@@ -9,12 +9,13 @@ import com.starnft.star.domain.article.model.vo.UserSeriesVO;
 import com.starnft.star.domain.article.model.vo.UserThemeVO;
 import com.starnft.star.domain.article.repository.IUserThemeRepository;
 import com.starnft.star.infrastructure.mapper.user.StarNftUserThemeMapper;
+import com.starnft.star.infrastructure.tools.PageHelperInterface;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 
 @Repository
-public class UserThemeRepository implements IUserThemeRepository,PageHelperInterface {
+public class UserThemeRepository implements IUserThemeRepository, PageHelperInterface {
     @Resource
     StarNftUserThemeMapper starNftUserThemeMapper;
     @Override

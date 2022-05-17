@@ -1,6 +1,5 @@
 package com.starnft.star.domain.support.aware;
 
-import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.domain.support.aware.context.ExtraConfiguration;
 import com.starnft.star.domain.support.aware.config.PaymentConfig;
@@ -31,10 +30,10 @@ public class ConfigurationHolder implements ApplicationContextAware {
 
     public static PaymentConfig getPayConfig() {
         if (null == configuration) {
-            throw new StarException(StarError.VALUE_COULD_NOT_BE_NULL, "[ExtraConfiguration] may not be loaded!");
+            throw new StarException("[ExtraConfiguration] may not be loaded!");
         }
         if (null == configuration.getPayConfig()) {
-            throw new StarException(StarError.VALUE_COULD_NOT_BE_NULL, "[payConfig] may not be loaded!");
+            throw new StarException("[payConfig] may not be loaded!");
         }
         return configuration.getPayConfig();
     }
