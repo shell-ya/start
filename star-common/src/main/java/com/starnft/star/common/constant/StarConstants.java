@@ -23,6 +23,11 @@ public class StarConstants {
      */
     public static final Integer VERIFY_CODE_ERROR_TIMES = 10;
 
+    /**
+     * token关键字
+     */
+    public static final String TOKEN = "token";
+
     public enum Ids {
         /**
          * 雪花算法

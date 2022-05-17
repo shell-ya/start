@@ -43,7 +43,7 @@ public class JwtUtil {
      * @param token token
      * @return userId
      */
-    public static String getAccountName(String token) {
+    public static String getAccountId(String token) {
         JWT jwt = parseJwt(token);
         //获取AccountName
         return jwt.getAllClaims().get("userId").toString();

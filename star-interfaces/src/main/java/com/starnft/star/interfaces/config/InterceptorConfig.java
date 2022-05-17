@@ -8,6 +8,9 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author WeiChunLAI
  */
@@ -21,7 +24,16 @@ public class InterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         InterceptorRegistration interceptorRegistration = registry.addInterceptor(statInterceptor);
         interceptorRegistration.addPathPatterns("/**");
-        interceptorRegistration.excludePathPatterns("star/v1/login");
+        //不拦截路径
+        List<String> irs = new ArrayList<String>();
+        irs.add("/star/v1/login");
+        irs.add("/api/*");
+        irs.add("/doc.html");
+        irs.add("/service-worker.js");
+        irs.add("/swagger-resources");
+        irs.add("/webjars/**");
+        irs.add("/swagger-ui.html");
+        interceptorRegistration.excludePathPatterns(irs);
     }
 
     @Override

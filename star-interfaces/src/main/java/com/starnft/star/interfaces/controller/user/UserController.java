@@ -7,6 +7,8 @@ import com.starnft.star.application.process.user.res.*;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.user.model.dto.AuthenticationNameDTO;
+import com.starnft.star.interfaces.interceptor.TokenIgnore;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +22,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @RequestMapping("/user")
+@Api(value = "UserController", tags = "用户管理")
 public class UserController {
 
     @Autowired
@@ -31,12 +34,14 @@ public class UserController {
 
     @ApiOperation("短信验证码登录/注册")
     @PostMapping("/userinfo/loginbyphone")
+    @TokenIgnore
     public RopResponse<UserInfoRes> loginByPhone(@Validated @RequestBody UserLoginReq req) {
         return RopResponse.success(userCore.loginByPhoneAndRegister(req));
     }
 
     @ApiOperation("账号密码登录")
     @PostMapping("/userinfo/loginbypassword")
+    @TokenIgnore
     public RopResponse<UserInfoRes> loginByPassword(@Validated @RequestBody UserLoginReq req) {
         return RopResponse.success(userCore.loginByPassword(req));
     }
@@ -49,6 +54,7 @@ public class UserController {
 
     @ApiOperation("获取验证码")
     @PostMapping("/userinfo/getverifycode")
+    @TokenIgnore
     public RopResponse<UserVerifyCodeRes> getVerifyCode(@Validated @RequestBody UserVerifyCodeReq req) {
         return RopResponse.success(userCore.getVerifyCode(req));
     }

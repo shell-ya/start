@@ -27,8 +27,10 @@ public enum StarError {
     IS_REAL_NAME_AUTHENTICATION("100015","您已进行实名认证，请勿重复操作"),
     NOT_AUTHENTICATION("100016","您还未进行实名认证操作"),
     AGREEMENT_NOT_FUND("100017","协议不存在"),
-    AGREEMENT_TYPE_UNKNOWN("13003","未知协议类型"),
-    AGREEMENT_ID_NULL("13004","协议id为空"),
+    AGREEMENT_TYPE_UNKNOWN("100018","未知协议类型"),
+    AGREEMENT_ID_NULL("100019","协议id为空"),
+    TOKEN_NOT_EXISTS_ERROR("100020", "token不存在"),
+    TOKEN_EXPIRED_ERROR("100020", "token已失效，请重新登录"),
 
     USER_NOT_LOGIN("100015","用户未登录"),
     DB_RECORD_UNEXPECTED_ERROR("200001","数据库记录异常"),
