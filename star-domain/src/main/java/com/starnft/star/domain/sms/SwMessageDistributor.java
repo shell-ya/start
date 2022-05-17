@@ -14,6 +14,7 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static com.starnft.star.domain.sms.MessageConstants.SwMessageConstants.*;
 
@@ -48,12 +49,13 @@ public class SwMessageDistributor implements MessageDistributor {
         return false;
     }
 
+    @Override
+    public Integer deliveryBatch(Set<String> mobile, String context) {
+        return null;
+    }
+
     private String getSign(long timestamp){
        return  SecureUtil.md5( sw_message_app_key.concat(sw_message_app_secret).concat(Long.toString(timestamp)));
     }
 
-    @Override
-    public Integer deliveryBatch(String mobile, String context) {
-        return null;
-    }
 }
