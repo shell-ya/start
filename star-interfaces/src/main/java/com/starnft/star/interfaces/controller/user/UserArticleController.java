@@ -3,6 +3,7 @@ package com.starnft.star.interfaces.controller.user;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.article.model.req.UserHaveSeriesReq;
+import com.starnft.star.domain.article.model.vo.UserSeriesVO;
 import com.starnft.star.domain.article.model.vo.UserThemeVO;
 import com.starnft.star.domain.article.service.UserThemeService;
 import io.swagger.annotations.ApiOperation;
@@ -20,7 +21,7 @@ public class UserArticleController {
 
     @ApiOperation("个人系列")
     @PostMapping("/series")
-    public RopResponse<ResponsePageResult<UserThemeVO>> series(@RequestBody UserHaveSeriesReq req) {
+    public RopResponse<ResponsePageResult<UserSeriesVO>> series(@RequestBody UserHaveSeriesReq req) {
         return RopResponse.success(userThemeService.queryUserArticleSeriesInfo(req));
     }
 }
