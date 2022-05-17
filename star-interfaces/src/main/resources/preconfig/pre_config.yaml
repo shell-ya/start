@@ -1,0 +1,4 @@
+extra-configuration:
+  payConfig:
+    notifyUrl: abcd
+    channel: wechat
