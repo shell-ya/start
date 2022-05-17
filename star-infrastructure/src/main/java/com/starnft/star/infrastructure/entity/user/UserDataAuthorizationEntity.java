@@ -1,6 +1,7 @@
 package com.starnft.star.infrastructure.entity.user;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.starnft.star.infrastructure.entity.BaseEntity;
@@ -17,11 +18,11 @@ public class UserDataAuthorizationEntity extends BaseEntity implements Serializa
      */
     private Long id;
 
-    private Date authorizationEndTime;
+    private LocalDateTime authorizationEndTime;
 
     private Long authorizationId;
 
-    private Date authorizationStartTime;
+    private LocalDateTime authorizationStartTime;
 
     private static final long serialVersionUID = 1L;
 }

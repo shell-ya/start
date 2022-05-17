@@ -4,6 +4,8 @@ package com.starnft.star.domain.user.service;
 import com.starnft.star.domain.user.model.dto.*;
 import com.starnft.star.domain.user.model.vo.*;
 
+import java.util.List;
+
 /**
  * @author WeiChunLAI
  */
@@ -115,6 +117,18 @@ public interface IUserService {
      */
     Boolean saveUserAgreementHistoryByUserId(AgreementIdDTO agreementIdDTO);
 
-    //查询是否签署最新协议
+    /**
+     * 根据协议id查询协议信息
+     * @param agreementIdList
+     * @return
+     */
+    List<AgreementVO> queryAgreementByAgreementId(List<String> agreementIdList);
 
+    /**
+     * 插入协议的授权信息
+     * @param list
+     * @param userId
+     * @param authorizationId
+     */
+    void batchInsertAgreementSign(List<AgreementSignDTO> list ,Long userId , Long authorizationId);
 }

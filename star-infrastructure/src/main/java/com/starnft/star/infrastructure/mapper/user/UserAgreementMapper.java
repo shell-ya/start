@@ -25,4 +25,6 @@ public interface UserAgreementMapper {
     UserAgreementEntity queryAgreementInfoByType(Integer agreementType);
 
     List<UserAgreementEntity> queryNewAgreementByScene(@Param("scene") Integer scene);
+
+    List<UserAgreementEntity> batchQueryAgreementById(@Param("list") List<String> list);
 }

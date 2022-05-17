@@ -28,6 +28,7 @@ public enum StarError {
     NOT_AUTHENTICATION("100016","您还未进行实名认证操作"),
     AGREEMENT_NOT_FUND("100017","协议不存在"),
     AGREEMENT_TYPE_UNKNOWN("13003","未知协议类型"),
+    AGREEMENT_ID_NULL("13004","协议id为空"),
 
     USER_NOT_LOGIN("100015","用户未登录"),
     DB_RECORD_UNEXPECTED_ERROR("200001","数据库记录异常"),

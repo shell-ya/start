@@ -3,13 +3,13 @@ package com.starnft.star.application.process.user;
 import com.starnft.star.application.process.user.req.AuthMaterialReq;
 import com.starnft.star.application.process.user.req.UserLoginReq;
 import com.starnft.star.application.process.user.req.UserVerifyCodeReq;
-import com.starnft.star.application.process.user.res.AgreementRes;
-import com.starnft.star.application.process.user.res.PopupAgreementRes;
-import com.starnft.star.application.process.user.res.UserInfoRes;
-import com.starnft.star.application.process.user.res.UserVerifyCodeRes;
+import com.starnft.star.application.process.user.res.*;
 import com.starnft.star.domain.user.model.dto.AuthenticationNameDTO;
 import com.starnft.star.domain.user.model.vo.AgreementVO;
 import com.starnft.star.domain.user.model.vo.UserAuthenticationVO;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 public interface UserCore {
 
@@ -83,4 +83,25 @@ public interface UserCore {
      * @return
      */
     PopupAgreementRes checkAgreementPopup(Long userId, Integer authorizationSceneId);
+
+    /**
+     * 保存用户签署协议历史信息
+     * @param agreementIds
+     * @param userId
+     */
+    void saveUserAgreementHistoryByUserId(List<String> agreementIds , Long userId);
+
+    /**
+     * 查询协议的信息
+     * @param agreementId
+     * @return
+     */
+    AgreementRes queryAgreementContent(String agreementId);
+
+    /**
+     * 根据协议场景查询协议信息
+     * @param agreementScene
+     * @return
+     */
+    AgreementAndNoticeRes queryAgreementAndNotice(@RequestParam("agreementScene") Integer agreementScene);
 }

@@ -22,10 +22,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -336,5 +333,18 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     @Override
     public Boolean saveUserAgreementHistoryByUserId(AgreementIdDTO agreementIdDTO) {
         return null;
+    }
+
+    @Override
+    public List<AgreementVO> queryAgreementByAgreementId(List<String> agreementIdList) {
+        List<AgreementVO> agreementInfos = userRepository.queryAgreementByAgreementId(agreementIdList);
+        return agreementInfos;
+    }
+
+    @Transactional
+    @Override
+    public void batchInsertAgreementSign(List<AgreementSignDTO> list, Long userId, Long authorizationId) {
+        userRepository.addAuthorizationId(userId,authorizationId);
+        userRepository.batchInsertAgreementSign(list);
     }
 }

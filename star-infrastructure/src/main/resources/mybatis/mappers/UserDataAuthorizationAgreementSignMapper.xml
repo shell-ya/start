@@ -22,6 +22,24 @@
         where user_id = #{userId} and is_delete = 0
     </select>
 
+    <select id="batchInsertAgreementSign" resultType="java.lang.Integer">
+        insert into user_data_authorization_agreement_sign
+        (agreement_id, authorization_id, user_id, is_deleted, created_at,created_by,modified_at,modified_by)
+        values 
+        <foreach collection="agreementSigns" item="item" separator=",">
+          (
+            #{item.agreementId},
+            #{item.authorizationId},
+            #{item.userId},
+            #{item.isDeleted},
+            #{item.createdAt},
+            #{item.createdBy},
+            #{item.modifiedAt},
+            #{item.modifiedBy}
+          )
+        </foreach>
+    </select>
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from user_data_authorization_agreement_sign
     where id = #{id,jdbcType=BIGINT}

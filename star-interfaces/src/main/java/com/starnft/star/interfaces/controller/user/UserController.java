@@ -2,18 +2,11 @@ package com.starnft.star.interfaces.controller.user;
 
 import com.starnft.star.application.process.user.UserCore;
 import com.starnft.star.application.process.user.UserTotalInfoCompose;
-import com.starnft.star.application.process.user.req.AuthMaterialReq;
-import com.starnft.star.application.process.user.req.UserGatheringInfoReq;
-import com.starnft.star.application.process.user.req.UserLoginReq;
-import com.starnft.star.application.process.user.req.UserVerifyCodeReq;
-import com.starnft.star.application.process.user.res.AgreementRes;
-import com.starnft.star.application.process.user.res.UserGatheringInfoRes;
-import com.starnft.star.application.process.user.res.UserInfoRes;
-import com.starnft.star.application.process.user.res.UserVerifyCodeRes;
+import com.starnft.star.application.process.user.req.*;
+import com.starnft.star.application.process.user.res.*;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.user.model.dto.AuthenticationNameDTO;
-import com.starnft.star.application.process.user.res.PopupAgreementRes;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -93,18 +86,38 @@ public class UserController {
     }
 
     @ApiOperation("查询最新的协议信息")
-    @GetMapping("/userinfo/queryopenagreement")
+    @GetMapping("/userinfo/agreement/queryopenagreement")
     public RopResponse<AgreementRes> queryOpenAgreement(@RequestParam("agreementType") Integer agreementType){
         return RopResponse.success(userCore.queryNewAgreement(agreementType));
     }
 
     @ApiOperation("判断用户是否弹协议窗口")
-    @GetMapping("/userinfo/checkagreementpopup")
+    @GetMapping("/userinfo/agreement/checkagreementpopup")
     public RopResponse<PopupAgreementRes> checkAgreementPopup(@RequestHeader(StarConstants.USER_ID) Long userId ,
                                                               @RequestParam("scene") Integer scene){
+        return RopResponse.success(userCore.checkAgreementPopup(userId , scene));
+    }
 
+    @ApiOperation("保存用户同意协议的版本信息")
+    @GetMapping("/userinfo/agreement/insertagreement")
+    public RopResponse saveUserAgreementHistoryByUserId(@RequestHeader(StarConstants.USER_ID) Long userId ,
+                                                        @RequestBody AgreementIdRequest request){
+        userCore.saveUserAgreementHistoryByUserId(request.getAgreementId(),userId);
         return RopResponse.successNoData();
     }
+
+    @ApiOperation("根据协议id查询协议的信息")
+    @GetMapping("/userinfo/agreement/querycontent")
+    public RopResponse<AgreementRes> queryAgreementContent(@RequestParam("agreementId") String agreementId){
+        return RopResponse.success(userCore.queryAgreementContent(agreementId));
+    }
+
+    @ApiOperation("根据协议场景查询最新的协议和弹窗信息")
+    @GetMapping("/userinfo/agreement/queryagreementinfo")
+    public RopResponse<AgreementAndNoticeRes> queryAgreementAndNotice(@RequestParam("agreementScene") Integer agreementScene){
+        return RopResponse.success(userCore.queryAgreementAndNotice(agreementScene));
+    }
+
 
 
 

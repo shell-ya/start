@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.starnft.star.common.enums.LoginStatus;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.common.utils.StarUtils;
+import com.starnft.star.domain.user.model.dto.AgreementSignDTO;
 import com.starnft.star.domain.user.model.dto.UserInfoAddDTO;
 import com.starnft.star.domain.user.model.dto.UserInfoUpdateDTO;
 import com.starnft.star.domain.user.model.vo.AgreementPopupInfoVO;
@@ -46,6 +47,8 @@ public class UserRepository implements IUserRepository {
     private UserDataAuthorizationAgreementSignMapper signMapper;
     @Resource
     private UserAgreementPopupMapper userAgreementPopupMapper;
+    @Resource
+    private UserDataAuthorizationMapper userDataAuthorizationMapper;
 
 
     @Override
@@ -251,6 +254,32 @@ public class UserRepository implements IUserRepository {
         wrapper.last("limit 1");
         UserAgreementPopupEntity userAgreementPopupEntity = userAgreementPopupMapper.selectOne(wrapper);
         return BeanColverUtil.colver(userAgreementPopupEntity, AgreementPopupInfoVO.class);
+    }
+
+    @Override
+    public List<AgreementVO> queryAgreementByAgreementId(List<String> agreementIdList) {
+        List<UserAgreementEntity> userAgreementEntities = userAgreementMapper.batchQueryAgreementById(agreementIdList);
+        return BeanColverUtil.colverList(userAgreementEntities , AgreementVO.class);
+    }
+
+    @Override
+    public Integer addAuthorizationId(Long userId, Long authorizationId) {
+        UserDataAuthorizationEntity userDataAuthorizationEntity = new UserDataAuthorizationEntity();
+        //协议无授权结束时间
+        userDataAuthorizationEntity.setAuthorizationEndTime(LocalDateTime.now().plusYears(200L));
+        userDataAuthorizationEntity.setAuthorizationStartTime(LocalDateTime.now());
+        userDataAuthorizationEntity.setAuthorizationId(authorizationId);
+        userDataAuthorizationEntity.setCreatedAt(new Date());
+        userDataAuthorizationEntity.setCreatedBy(userId);
+        userDataAuthorizationEntity.setModifiedAt(new Date());
+        userDataAuthorizationEntity.setModifiedBy(userId);
+        userDataAuthorizationEntity.setIsDeleted(Boolean.FALSE);
+        return userDataAuthorizationMapper.insert(userDataAuthorizationEntity);
+    }
+
+    @Override
+    public Integer batchInsertAgreementSign(List<AgreementSignDTO> list) {
+        return signMapper.batchInsertAgreementSign(list);
     }
 
     @Override

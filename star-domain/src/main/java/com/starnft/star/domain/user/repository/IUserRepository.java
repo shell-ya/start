@@ -1,6 +1,7 @@
 package com.starnft.star.domain.user.repository;
 
 
+import com.starnft.star.domain.user.model.dto.AgreementSignDTO;
 import com.starnft.star.domain.user.model.dto.UserInfoAddDTO;
 import com.starnft.star.domain.user.model.dto.UserInfoUpdateDTO;
 import com.starnft.star.domain.user.model.vo.*;
@@ -128,4 +129,26 @@ public interface IUserRepository {
      * @return
      */
     AgreementPopupInfoVO queryAgreementPopupByScene(Integer scene);
+
+    /**
+     * 根据协议id查询协议信息
+     * @param agreementIdList
+     * @return
+     */
+    List<AgreementVO> queryAgreementByAgreementId(List<String> agreementIdList);
+
+    /**
+     * 新增授权id
+     * @param userId
+     * @param authorizationId
+     * @return
+     */
+    Integer addAuthorizationId(Long userId,Long authorizationId);
+
+    /**
+     * 批量插入协议签署信息
+     * @param list
+     * @return
+     */
+    Integer batchInsertAgreementSign(List<AgreementSignDTO> list);
 }
