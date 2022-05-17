@@ -1,6 +1,7 @@
 package com.starnft.star.domain.support.process.context;
 
 import com.starnft.star.common.constant.StarConstants;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.io.Serializable;
 
 @Data
+@Builder
 public class ConnContext implements Serializable {
 
     private String url;

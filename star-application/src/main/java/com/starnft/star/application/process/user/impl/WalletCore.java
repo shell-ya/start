@@ -9,20 +9,20 @@ import com.starnft.star.application.process.user.res.RechargeReqResult;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
-import com.starnft.star.common.page.RequestPage;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.wallet.model.req.TransactionRecordQueryReq;
 import com.starnft.star.domain.wallet.model.req.WalletRecordReq;
 import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
 import com.starnft.star.domain.wallet.service.WalletService;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Validated
@@ -54,7 +54,8 @@ public class WalletCore implements IWalletCore {
 
     @Override
     public ResponsePageResult<RechargeCallbackRes> walletRecordQuery(@Valid PayRecordReq recordReq) {
-        ResponsePageResult<WalletRecordVO> walletRecordResult = walletService.queryTransactionRecord(TransactionRecordQueryReq.builder()
+        ResponsePageResult<WalletRecordVO> walletRecordResult = walletService
+                .queryTransactionRecord(TransactionRecordQueryReq.builder()
                 .page(recordReq.getPage()).size(recordReq.getSize())
                 .userId(recordReq.getUserId())
                 .startDate(recordReq.getStartTime())

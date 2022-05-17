@@ -1,18 +1,13 @@
 package com.starnft.star.domain.article.model.vo;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class UserThemeVO  implements Serializable {
-    private String seriesName;
-    private Long seriesId;
-    private String seriesPic;
-    private Integer haveNums;
+public class UserThemeVO implements Serializable {
+  private   Long   themeId;
+  private   String themeName;
+  private   String themeImages;
+  private   Integer nums;
 }
