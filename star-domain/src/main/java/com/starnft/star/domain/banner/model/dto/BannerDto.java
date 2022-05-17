@@ -44,8 +44,6 @@ public class BannerDto {
      */
     private Integer sort;
 
-
-
     /**
      * 外链地址
      */
