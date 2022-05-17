@@ -4,8 +4,8 @@ import com.google.common.collect.Lists;
 import com.starnft.star.application.process.user.IWalletCore;
 import com.starnft.star.application.process.user.req.PayRecordReq;
 import com.starnft.star.application.process.user.req.RechargeFacadeReq;
-import com.starnft.star.application.process.user.res.RechargeCallbackRes;
 import com.starnft.star.application.process.user.res.RechargeReqResult;
+import com.starnft.star.application.process.user.res.TransactionRecord;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
@@ -16,7 +16,6 @@ import com.starnft.star.domain.wallet.model.req.WalletRecordReq;
 import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
 import com.starnft.star.domain.wallet.service.WalletService;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -24,8 +23,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+
 @Service
-@Validated
 public class WalletCore implements IWalletCore {
 
     @Resource
@@ -53,19 +52,19 @@ public class WalletCore implements IWalletCore {
     }
 
     @Override
-    public ResponsePageResult<RechargeCallbackRes> walletRecordQuery(@Valid PayRecordReq recordReq) {
+    public ResponsePageResult<TransactionRecord> walletRecordQuery(@Valid PayRecordReq recordReq) {
         ResponsePageResult<WalletRecordVO> walletRecordResult = walletService
                 .queryTransactionRecord(TransactionRecordQueryReq.builder()
-                .page(recordReq.getPage()).size(recordReq.getSize())
-                .userId(recordReq.getUserId())
-                .startDate(recordReq.getStartTime())
-                .endDate(recordReq.getEndTime())
-                .transactionType(recordReq.getPayType()).build());
+                        .page(recordReq.getPage()).size(recordReq.getSize())
+                        .userId(recordReq.getUserId())
+                        .startDate(recordReq.getStartTime())
+                        .endDate(recordReq.getEndTime())
+                        .transactionType(recordReq.getPayType()).build());
 
-        List<RechargeCallbackRes> res = Lists.newArrayList();
+        List<TransactionRecord> res = Lists.newArrayList();
         for (WalletRecordVO walletRecordVO : walletRecordResult.getList()) {
-            RechargeCallbackRes rechargeCallbackRes = recordVOConvert(walletRecordVO);
-            res.add(rechargeCallbackRes);
+            TransactionRecord transactionRecord = recordVOConvert(walletRecordVO, recordReq.getUserId());
+            res.add(transactionRecord);
         }
         return ResponsePageResult.listReplace(walletRecordResult, res);
     }
@@ -73,19 +72,21 @@ public class WalletCore implements IWalletCore {
 
     /**
      * @param walletRecordVO
-     * @return RechargeCallbackRes
+     * @param userId
+     * @return TransactionRecord
      * @author Ryan Z / haoran
      * @description vo转化
      * @date 2022/5/12
      */
-    private RechargeCallbackRes recordVOConvert(WalletRecordVO walletRecordVO) {
-        return RechargeCallbackRes.builder()
+    private TransactionRecord recordVOConvert(WalletRecordVO walletRecordVO, Long userId) {
+        return TransactionRecord.builder()
+                .userId(userId)
                 .channel(walletRecordVO.getPayChannel())
                 .money(walletRecordVO.getTsMoney())
                 .orderSn(walletRecordVO.getRecordSn())//todo
                 .outTradeNo("TODO")
                 .status(walletRecordVO.getPayStatus())
-                .payTime(walletRecordVO.getPayTime().toString())
+                .payTime(walletRecordVO.getPayTime())
                 .patType(walletRecordVO.getTsType())
                 .transactionSn(walletRecordVO.getRecordSn()).build();
     }

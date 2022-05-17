@@ -6,10 +6,11 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
 @Builder
-public class RechargeCallbackRes implements Serializable {
+public class TransactionRecord implements Serializable {
 
     private Long userId;
     /** 平台交易流水号*/
@@ -25,8 +26,8 @@ public class RechargeCallbackRes implements Serializable {
     /** 支付类型*/
     private String patType;
     /** 支付时间*/
-    @JsonFormat(timezone = "GMT+8",pattern = "yyyy-MM-dd HH:mm:ss")
-    private String payTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date payTime;
     /** 支付状态*/
     private String status;
 

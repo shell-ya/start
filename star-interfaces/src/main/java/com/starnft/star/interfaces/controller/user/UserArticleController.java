@@ -4,7 +4,6 @@ import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.article.model.req.UserHaveSeriesReq;
 import com.starnft.star.domain.article.model.vo.UserSeriesVO;
-import com.starnft.star.domain.article.model.vo.UserThemeVO;
 import com.starnft.star.domain.article.service.UserThemeService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
