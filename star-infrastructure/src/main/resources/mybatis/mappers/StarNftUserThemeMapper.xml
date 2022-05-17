@@ -30,7 +30,10 @@
 
     <select id="selectUserThemeToSeriesByUserId"
             resultType="com.starnft.star.domain.article.model.vo.UserSeriesVO">
-        SELECT series_name, series_id,series_images, count(1) as nums
+        SELECT s.series_name   as series_name,
+               u.series_id     as series_id,
+               s.series_images as series_images,
+               count(1)        as nums
         FROM star_nft_user_theme u
                      LEFT JOIN star_nft_series s on u.series_id = s.id
         WHERE u.user_id = #{userId}
@@ -41,23 +44,36 @@
     </select>
 
     <select id="selectUserThemeToThemeByUserId" resultType="com.starnft.star.domain.article.model.vo.UserThemeVO">
-        SELECT s.theme_name as theme_name, series_theme_id as theme_id ,theme_pic as theme_images, count(1) as nums
+        SELECT s.theme_name as theme_name, series_theme_id as theme_id, theme_pic as theme_images, count(1) as nums
         FROM star_nft_user_theme u
-        LEFT JOIN star_nft_theme_info s on u.series_theme_id = s.id
-        WHERE
-
-            u.user_id = #{userId}
-        and u.`status` = #{themeStatus}
-        and u.source = #{themeType}
-        and u.series_id=#{seriesId}
-        AND u.is_delete = 0
+                     LEFT JOIN star_nft_theme_info s on u.series_theme_id = s.id
+        WHERE u.user_id = #{userId}
+          and u.`status` = #{themeStatus}
+          and u.source = #{themeType}
+          and u.series_id = #{seriesId}
+          AND u.is_delete = 0
         GROUP BY u.series_theme_id
-
-
     </select>
     <select
-     id="selectUserThemeToNumbersByUserId" resultType="com.starnft.star.domain.article.model.vo.UserSeriesVO">
+            id="selectUserThemeToNumbersByUserId" resultType="com.starnft.star.domain.article.model.vo.UserNumbersVO">
+        SELECT s.theme_name as theme_name, series_theme_id as theme_id, theme_pic as theme_images, count(1) as nums
+        FROM star_nft_user_theme u LEFT JOIN star_nft_theme_info s on u.series_theme_id = s.id
+        WHERE u.user_id = #{userId}
+          and u.`status` = #{themeStatus}
+          and u.source = #{themeType}
+          and u.series_theme_id = #{themeId}
+          AND u.is_delete = 0
+        GROUP BY u.series_theme_id
+        <!--        SELECT s.theme_name as theme_name, series_theme_id as theme_id ,theme_pic as theme_images, count(1) as nums-->
+        <!--        FROM star_nft_user_theme u-->
+        <!--        LEFT JOIN star_nft_theme_info s on u.series_theme_id = s.id-->
+        <!--        WHERE-->
 
-
+        <!--        u.user_id = #{userId}-->
+        <!--        and u.`status` = #{themeStatus}-->
+        <!--        and u.source = #{themeType}-->
+        <!--        and u.series_theme_id=#{seriesId}-->
+        <!--        AND u.is_delete = 0-->
+        <!--        GROUP BY u.series_theme_id-->
     </select>
 </mapper>
