@@ -3,9 +3,10 @@ package com.star.nft.test;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.starnft.star.application.mq.constant.TopicConstants;
 import com.starnft.star.application.process.user.req.PayRecordReq;
-import com.starnft.star.domain.support.aware.ConfigurationHolder;
 import com.starnft.star.interfaces.StarApplication;
+import com.starnft.star.application.aware.ConfigurationHolder;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -15,7 +16,8 @@ public class SpringTest {
 
     @Test
     public void repoTest() {
-        System.out.println(ConfigurationHolder.getPayConfig().getChannel());
+//        System.out.println(ConfigurationHolder.getPayConfig().getChannel());
+        System.out.println(String.format(TopicConstants.NOTICE_UNREAD_DESTINATION.getFormat(), TopicConstants.NOTICE_UNREAD_DESTINATION.getTag()));
     }
 
     @Test

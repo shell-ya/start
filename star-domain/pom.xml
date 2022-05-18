@@ -55,7 +55,7 @@
     </dependencies>
 
     <build>
-        <finalName>lottery-domain</finalName>
+        <finalName>star-domain</finalName>
         <plugins>
             <!-- 编译plugin -->
             <plugin>

@@ -1,6 +1,6 @@
-package com.starnft.star.domain.support.aware.context;
+package com.starnft.star.application.aware.context;
 
-import com.starnft.star.domain.support.aware.config.PaymentConfig;
+import com.starnft.star.application.aware.config.PaymentConfig;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

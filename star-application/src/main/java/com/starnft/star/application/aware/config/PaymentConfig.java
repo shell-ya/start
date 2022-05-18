@@ -1,4 +1,4 @@
-package com.starnft.star.domain.support.aware.config;
+package com.starnft.star.application.aware.config;
 
 import lombok.Data;
 

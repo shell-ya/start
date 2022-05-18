@@ -40,3 +40,19 @@ wallet:
 star:
   sms:
     enable: false
+
+rocketmq:
+  name-server: 47.99.42.39:9876
+  producer:
+    group: star-producer-group
+    isOnOff: on
+    sendMsgTimeout: 3000
+    maxMessageSize: 4096
+    retryTimesWhenSendFailed: 2
+  consumer:
+    isOnOff: on
+    group: star-consumer-group
+    topics: star~*
+    consumeThreadMin: 20
+    consumeThreadMax: 64
+    consumeMessageBatchMaxSize: 1

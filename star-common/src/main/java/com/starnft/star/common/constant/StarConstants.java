@@ -180,4 +180,14 @@ public class StarConstants {
         }
     }
 
+    public enum MESSAGE_TERMINAL{
+        Consumer,
+        Producer
+    }
+
+    public enum NORMAL_STATUS{
+        SUCCESS,
+        FAILURE
+    }
+
 }

@@ -18,7 +18,7 @@ public class ResponsePageResult<T> {
     private Long total;
 
     public static <S, R> ResponsePageResult<R> listReplace(ResponsePageResult<S> responsePageResult, List<R> expected) {
-        ResponsePageResult<R> r = new ResponsePageResult<R>();
+        ResponsePageResult<R> r = new ResponsePageResult<>();
         r.setList(expected);
         r.setPage(responsePageResult.getPage());
         r.setTotal(responsePageResult.getTotal());
