@@ -16,7 +16,7 @@
     <select id="selectByParamAndLimiTen"
             resultMap="BaseresultMap">
         SELECT * FROM user_pwd_history_log
-        WHERE is_delete = 0 AND user_id = #{userId}
+        WHERE is_deleted = 0 AND user_id = #{userId}
         ORDER BY created_at desc LIMIT 10
     </select>
 </mapper>

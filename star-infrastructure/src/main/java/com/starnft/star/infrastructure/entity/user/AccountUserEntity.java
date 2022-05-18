@@ -61,7 +61,7 @@ public class AccountUserEntity extends BaseEntity implements Serializable {
     /**
      * 是否实名认证
      */
-    private Byte realPersonFlag;
+    private Integer realPersonFlag;
 
     private static final long serialVersionUID = 1L;
 }

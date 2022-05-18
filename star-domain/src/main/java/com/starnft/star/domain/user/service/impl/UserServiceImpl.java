@@ -273,17 +273,17 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     }
 
     @Override
-    public Boolean realNameAuthentication(AuthenticationNameDTO req) {
+    public Boolean realNameAuthentication(Long userId , AuthenticationNameDTO req) {
 
         //校验用户信息
-        UserInfo userInfo = userRepository.queryUserInfoByUserId(req.getUserId());
+        UserInfo userInfo = userRepository.queryUserInfoByUserId(userId);
         if (Objects.isNull(userInfo)) {
             throw new StarException(StarError.USER_NOT_EXISTS);
         }
 
         if (smsEnable) {
             //校验验证码
-            String redisVerificationCodeKey = String.format(RedisKey.REDIS_REAL_NAME_AUTHENTICATION.getKey(), req.getUserId());
+            String redisVerificationCodeKey = String.format(RedisKey.REDIS_REAL_NAME_AUTHENTICATION.getKey(), userId);
             String code = String.valueOf(redisTemplate.opsForValue().get(redisVerificationCodeKey));
             if (StringUtils.isBlank(code)) {
                 throw new StarException(StarError.CODE_NOT_FUND);
@@ -313,7 +313,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     public UserAuthenticationVO queryAuthentication(Long userId) {
         UserInfo userInfo = userRepository.queryUserInfoByUserId(userId);
         Optional.ofNullable(userInfo.getRealPersonFlag())
-                .filter(a -> Objects.equals(YesOrNoStatusEnum.YES, a))
+                .filter(a -> Objects.equals(YesOrNoStatusEnum.YES.getCode(), a))
                 .orElseThrow(() -> new StarException(StarError.NOT_AUTHENTICATION));
 
         return UserAuthenticationVO.builder().authenticationData("您已实名认证").build();

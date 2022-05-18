@@ -1,8 +1,10 @@
 package com.starnft.star.interfaces.config;
 
 import com.starnft.star.interfaces.interceptor.StatInterceptor;
+import com.starnft.star.interfaces.interceptor.UserResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -19,6 +21,14 @@ public class InterceptorConfig implements WebMvcConfigurer {
 
     @Autowired
     private StatInterceptor statInterceptor;
+
+    @Autowired
+    private UserResolver userResolver;
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(userResolver);
+    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

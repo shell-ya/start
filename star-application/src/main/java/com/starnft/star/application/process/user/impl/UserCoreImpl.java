@@ -111,8 +111,8 @@ public class UserCoreImpl implements UserCore {
     }
 
     @Override
-    public Boolean realNameAuthentication(AuthenticationNameDTO req) {
-        return userService.realNameAuthentication(req);
+    public Boolean realNameAuthentication(Long userId  , AuthenticationNameDTO req) {
+        return userService.realNameAuthentication(userId,req);
     }
 
     @Override

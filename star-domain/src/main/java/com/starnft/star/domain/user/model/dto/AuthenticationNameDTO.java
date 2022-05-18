@@ -24,9 +24,4 @@ public class AuthenticationNameDTO {
      * 手机号
      */
     private String phone;
-
-    /**
-     * 用户id
-     */
-    private Long userId;
 }

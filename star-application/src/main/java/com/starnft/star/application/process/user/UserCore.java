@@ -60,7 +60,7 @@ public interface UserCore {
      * @param req
      * @return
      */
-    Boolean realNameAuthentication(AuthenticationNameDTO req);
+    Boolean realNameAuthentication(Long userId  ,AuthenticationNameDTO req);
 
     /**
      * 查询实名认证结果

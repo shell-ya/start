@@ -88,6 +88,7 @@ public class UserRepository implements IUserRepository {
             userInfo.setPassword(userInfoEntity.getPassword());
             userInfo.setPlyPassword(userInfoEntity.getPlyPassword());
             userInfo.setId(userInfoEntity.getId());
+            userInfo.setRealPersonFlag(userInfoEntity.getRealPersonFlag());
             return userInfo;
         }
         return null;
@@ -111,25 +112,20 @@ public class UserRepository implements IUserRepository {
     @Transactional
     @Override
     public Integer setUpPassword(UserInfo userInfo, String password) {
-        Integer updateRows = null;
-        if (StringUtils.isBlank(userInfo.getPassword())) {
+        UpdateWrapper updateWrapper = new UpdateWrapper();
+        updateWrapper.eq("account", userInfo.getAccount());
+        updateWrapper.eq("is_deleted", Boolean.FALSE);
 
-            UpdateWrapper updateWrapper  = new UpdateWrapper();
-            updateWrapper.eq("account",userInfo.getAccount());
-            updateWrapper.eq("is_delete", Boolean.FALSE);
+        UserInfoEntity updateUserInfo = new UserInfoEntity();
+        updateUserInfo.setId(updateUserInfo.getId());
+        String newPassword = StarUtils.getSHA256Str(password);
+        updateUserInfo.setPassword(newPassword);
+        updateUserInfo.setModifiedAt(new Date());
+        updateUserInfo.setModifiedBy(userInfo.getAccount());
 
-            UserInfoEntity updateUserInfo = new UserInfoEntity();
-            updateUserInfo.setId(updateUserInfo.getId());
-            String newPassword = StarUtils.getSHA256Str(password);
-            updateUserInfo.setPassword(newPassword);
-            updateUserInfo.setModifiedAt(new Date());
-            updateUserInfo.setModifiedBy(userInfo.getAccount());
-
-            updateRows = userInfoMapper.update(updateUserInfo ,updateWrapper);
-
-            //密码修改记录
-            addUserPwdLog(userInfo.getAccount(), newPassword);
-        }
+        Integer updateRows = userInfoMapper.update(updateUserInfo, updateWrapper);
+        //密码修改记录
+        addUserPwdLog(userInfo.getAccount(), newPassword);
         return updateRows;
     }
 
@@ -173,7 +169,7 @@ public class UserRepository implements IUserRepository {
 
         UpdateWrapper updateWrapper = new UpdateWrapper();
         updateWrapper.eq("account", userId);
-        updateWrapper.eq("is_delete" , Boolean.FALSE);
+        updateWrapper.eq("is_deleted", Boolean.FALSE);
         return userInfoMapper.update(userInfo, updateWrapper);
     }
 
@@ -207,8 +203,8 @@ public class UserRepository implements IUserRepository {
     @Override
     public Boolean changePayPwd(Long userId, String payPassword) {
         UpdateWrapper updateWrapper = new UpdateWrapper();
-        updateWrapper.eq("account",userId);
-        updateWrapper.eq("is_delete", Boolean.FALSE);
+        updateWrapper.eq("account", userId);
+        updateWrapper.eq("is_deleted", Boolean.FALSE);
 
         UserInfoEntity userInfo = new UserInfoEntity();
         userInfo.setPlyPassword(StarUtils.getSHA256Str(payPassword));
@@ -222,16 +218,19 @@ public class UserRepository implements IUserRepository {
 
     @Override
     public Integer updateUserInfo(UserInfoUpdateDTO req) {
-        AccountUserEntity userInfo = BeanColverUtil.colver(req, AccountUserEntity.class);
+        UserInfoEntity userInfo = BeanColverUtil.colver(req, UserInfoEntity.class);
         userInfo.setModifiedAt(new Date());
         userInfo.setModifiedBy(req.getAccount());
-        return accountUserMapper.updateByPrimaryKeySelective(userInfo);
+
+        UpdateWrapper updateWrapper = new UpdateWrapper();
+        updateWrapper.eq("account" , req.getAccount()) ;
+        return userInfoMapper.update(userInfo ,updateWrapper);
     }
 
     @Override
     public AgreementVO queryAgreementInfoByType(Integer agreementType) {
         UserAgreementEntity userAgreementEntity = userAgreementMapper.queryAgreementInfoByType(agreementType);
-        return BeanColverUtil.colver(userAgreementEntity ,AgreementVO.class);
+        return BeanColverUtil.colver(userAgreementEntity, AgreementVO.class);
     }
 
     @Override
@@ -242,15 +241,15 @@ public class UserRepository implements IUserRepository {
     @Override
     public List<AgreementVO> queryNewAgreementByScene(Integer scene) {
         List<UserAgreementEntity> userAgreementEntity = userAgreementMapper.queryNewAgreementByScene(scene);
-        return BeanColverUtil.colverList(userAgreementEntity , AgreementVO.class);
+        return BeanColverUtil.colverList(userAgreementEntity, AgreementVO.class);
     }
 
     @Override
     public AgreementPopupInfoVO queryAgreementPopupByScene(Integer scene) {
         QueryWrapper wrapper = new QueryWrapper();
-        wrapper.eq("agreement_popup_scene" , scene);
-        wrapper.eq("is_delete" ,Boolean.FALSE);
-        wrapper.le("effective_time" , LocalDateTime.now());
+        wrapper.eq("agreement_popup_scene", scene);
+        wrapper.eq("is_deleted", Boolean.FALSE);
+        wrapper.le("effective_time", LocalDateTime.now());
         wrapper.last("limit 1");
         UserAgreementPopupEntity userAgreementPopupEntity = userAgreementPopupMapper.selectOne(wrapper);
         return BeanColverUtil.colver(userAgreementPopupEntity, AgreementPopupInfoVO.class);
@@ -259,7 +258,7 @@ public class UserRepository implements IUserRepository {
     @Override
     public List<AgreementVO> queryAgreementByAgreementId(List<String> agreementIdList) {
         List<UserAgreementEntity> userAgreementEntities = userAgreementMapper.batchQueryAgreementById(agreementIdList);
-        return BeanColverUtil.colverList(userAgreementEntities , AgreementVO.class);
+        return BeanColverUtil.colverList(userAgreementEntities, AgreementVO.class);
     }
 
     @Override
@@ -285,8 +284,8 @@ public class UserRepository implements IUserRepository {
     @Override
     public Boolean doesUserExist(Long userId) {
         QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("account" , userId) ;
-        queryWrapper.eq("is_delete" ,Boolean.FALSE);
+        queryWrapper.eq("account", userId);
+        queryWrapper.eq("is_deleted", Boolean.FALSE);
         UserInfoEntity userInfoEntity = userInfoMapper.selectOne(queryWrapper);
         return Objects.nonNull(userInfoEntity);
     }

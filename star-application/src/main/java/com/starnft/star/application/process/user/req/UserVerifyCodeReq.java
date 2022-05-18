@@ -15,6 +15,6 @@ public class UserVerifyCodeReq {
     @NotBlank(message = "phone 不能为空")
     private String phone;
 
-    @ApiModelProperty("验证码场景： 1=手机验证码登录 2=不登录修改密码 3=登陆后修改密码")
+    @ApiModelProperty("验证码场景： 1=手机验证码登录 2=不登录修改密码 3=登陆后修改密码 4=修改支付密码 5=发起实名认证")
     private Integer verificationScenes;
 }
