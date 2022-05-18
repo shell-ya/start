@@ -40,3 +40,21 @@ wallet:
 star:
   sms:
     enable: false
+
+rocketmq:
+  name-server: 47.99.42.39:9876
+  producer:
+    group: star-producer-group
+    isOnOff: on
+    sendMsgTimeout: 30000
+    maxMessageSize: 4096
+    retryTimesWhenSendFailed: 2
+  consumer:
+    listeners: # 配置某个消费分组，是否监听指定 Topic 。结构为 Map<消费者分组, <Topic, Boolean>> 。默认情况下，不配置表示监听。
+      test-consumer-group:
+        topic1: false # 关闭 test-consumer-group 对 topic1 的监听消费
+#    isOnOff: on
+#    group: star-consumer-group
+#    consumeThreadMin: 20
+#    consumeThreadMax: 64
+#    consumeMessageBatchMaxSize: 1

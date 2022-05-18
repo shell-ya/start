@@ -1,8 +1,8 @@
-package com.starnft.star.domain.support.aware;
+package com.starnft.star.application.aware;
 
 import com.starnft.star.common.exception.StarException;
-import com.starnft.star.domain.support.aware.context.ExtraConfiguration;
-import com.starnft.star.domain.support.aware.config.PaymentConfig;
+import com.starnft.star.application.aware.context.ExtraConfiguration;
+import com.starnft.star.application.aware.config.PaymentConfig;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -40,7 +40,7 @@ public class ConfigurationHolder implements ApplicationContextAware {
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+        ConfigurationHolder.applicationContext = applicationContext;
     }
 
 }

@@ -9,6 +9,7 @@ import com.starnft.star.domain.numbers.model.req.NumberReq;
 import com.starnft.star.domain.numbers.serivce.NumberService;
 import com.starnft.star.domain.theme.model.req.ThemeReq;
 import com.starnft.star.domain.theme.service.ThemeService;
+import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -26,6 +27,7 @@ public class ThemeController {
     NumberService numberService;
     @PostMapping("/seriesTheme/{id}")
     @ApiOperation("依据系列ID查找主题")
+    @TokenIgnore
     public RopResponse seriesTheme(@PathVariable @ApiParam("系列id") Long  id, @RequestBody RequestPage requestPage){
         return  RopResponse.success(
                 themeService
@@ -39,12 +41,14 @@ public class ThemeController {
 
     @PostMapping("/theme/detail/{id}")
     @ApiOperation("主题详情")
+    @TokenIgnore
     public RopResponse seriesTheme(@PathVariable @ApiParam("主题id") Long  id){
         return  RopResponse.success( themeService.queryThemeDetail(id) );
     }
 
     @PostMapping("/theme/detail/numbers/{id}")
     @ApiOperation("主题商品编号列表")
+    @TokenIgnore
     public RopResponse seriesThemeNumbers(@PathVariable @ApiParam("主题id") Long  id,@RequestBody RequestConditionPage<NumberDTO> page){
          return  RopResponse.success(numberService
                  .queryThemeNumber( NumberReq.builder()

@@ -105,9 +105,9 @@
             </if>
             <if test="transactionType != null and transactionType != ''">
                 and ts_type in
-                <foreach collection="array" item="transactionType" index="index"
+                <foreach collection="transactionType" item="type" index="index"
                          open="(" close=")" separator=",">
-                    #{transactionType}
+                    #{type}
                 </foreach>
             </if>
         </where>
@@ -128,9 +128,9 @@
 
             <if test="transactionType != null and transactionType != ''">
                 and ts_type in
-                <foreach collection="array" item="transactionType" index="index"
+                <foreach collection="transactionType" item="type" index="index"
                          open="(" close=")" separator=",">
-                    #{transactionType}
+                    #{type}
                 </foreach>
             </if>
         </where>
