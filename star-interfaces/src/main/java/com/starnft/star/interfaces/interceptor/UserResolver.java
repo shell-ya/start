@@ -17,11 +17,11 @@ public class UserResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(MethodParameter methodParameter) {
         Class<?> clazz  = methodParameter.getParameterType();
-        return clazz == UserId.class;
+        return clazz == UserResolverInfo.class;
     }
 
     @Override
     public Object resolveArgument(MethodParameter methodParameter, ModelAndViewContainer modelAndViewContainer, NativeWebRequest nativeWebRequest, WebDataBinderFactory webDataBinderFactory) throws Exception {
-        return UserIdContext.getUserId();
+        return UserContext.getUserId();
     }
 }
