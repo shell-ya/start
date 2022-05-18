@@ -1,12 +1,11 @@
 package com.starnft.star.domain.article.model.req;
 
+import com.starnft.star.common.page.RequestPage;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
-
-import java.io.Serializable;
 @Data
 @SuperBuilder
-public class UserHaveNumbersReq implements Serializable {
+public class UserHaveNumbersReq extends RequestPage {
 
     private Long themeId;
     //用户id

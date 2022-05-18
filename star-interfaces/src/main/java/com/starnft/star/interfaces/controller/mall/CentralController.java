@@ -6,6 +6,7 @@ import com.starnft.star.domain.series.model.req.SeriesReq;
 import com.starnft.star.domain.series.service.SeriesService;
 import com.starnft.star.domain.theme.model.req.ThemeReq;
 import com.starnft.star.domain.theme.service.ThemeService;
+import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +27,7 @@ public class CentralController {
     ThemeService themeService;
     @PostMapping("/theme")
     @ApiOperation("首页系列推荐接口")
+    @TokenIgnore
     public RopResponse mainTheme(@RequestBody RequestPage requestPage){
         return  RopResponse.success(
                 themeService
@@ -39,6 +41,7 @@ public class CentralController {
     //主页显示系列
     @PostMapping("/series")
     @ApiOperation("首页系列推荐接口")
+    @TokenIgnore
     public RopResponse mainSeries(@RequestBody  RequestPage requestPage){
       return  RopResponse.success(
                 seriesService
