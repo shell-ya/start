@@ -42,9 +42,7 @@ public class RocketMQProducer implements IMessageSender {
      */
     @Override
     public <T> void send(final String topic, final Optional<T> message) {
-        if (!verifyFormat(topic)) {
-            throw new RuntimeException(StarError.MESSAGE_TOPIC_NOT_FOUND.getErrorMessage());
-        }
+        verifyFormat(topic);
         SendResult sendResult = template.syncSend(topic, JSONObject.toJSONString(message.get()));
         String msgId = sendResult.getMsgId();
         SendStatus sendStatus = sendResult.getSendStatus();
@@ -68,9 +66,7 @@ public class RocketMQProducer implements IMessageSender {
      */
     @Override
     public <T> void asyncSend(final String topic, final Optional<T> message) {
-        if (!verifyFormat(topic)) {
-            throw new RuntimeException(StarError.MESSAGE_TOPIC_NOT_FOUND.getErrorMessage());
-        }
+        verifyFormat(topic);
         template.asyncSend(topic, JSONObject.toJSONString(message.get()), new SendCallback() {
             @Override
             public void onSuccess(SendResult sendResult) {
@@ -106,9 +102,7 @@ public class RocketMQProducer implements IMessageSender {
      */
     @Override
     public <T> void syncSendDelay(final String topic, final Optional<T> message, long timeout, int delayLevel) {
-        if (!verifyFormat(topic)) {
-            throw new RuntimeException(StarError.MESSAGE_TOPIC_NOT_FOUND.getErrorMessage());
-        }
+        verifyFormat(topic);
         SendResult sendResult = template.syncSend(topic, MessageBuilder.withPayload(JSONObject.toJSONString(message.get())).build(), timeout, delayLevel);
         String msgId = sendResult.getMsgId();
         SendStatus sendStatus = sendResult.getSendStatus();
@@ -131,9 +125,7 @@ public class RocketMQProducer implements IMessageSender {
      */
     @Override
     public <T> void syncSendOrderly(final String topic, List<T> messages, String hashKey) {
-        if (!verifyFormat(topic)) {
-            throw new RuntimeException(StarError.MESSAGE_TOPIC_NOT_FOUND.getErrorMessage());
-        }
+        verifyFormat(topic);
         for (T message : messages) {
             SendResult sendResult = this.template.syncSendOrderly(topic,
                     MessageBuilder.withPayload(JSONObject.toJSONString(message)).build(), hashKey);
@@ -159,13 +151,13 @@ public class RocketMQProducer implements IMessageSender {
      * @description 规范检查
      * @date 2022/5/18
      */
-    private boolean verifyFormat(final String topic) {
+    private void verifyFormat(final String topic) {
         for (TopicConstants value : TopicConstants.values()) {
             if (String.format(value.getFormat(), value.getTag()).equals(topic)) {
-                return true;
+                return;
             }
         }
-        return false;
+        throw new RuntimeException(StarError.MESSAGE_TOPIC_NOT_FOUND.getErrorMessage());
     }
 
     private boolean writeLog(String topic, String message, String msgId, String sendStatus) {
