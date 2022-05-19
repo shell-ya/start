@@ -22,35 +22,11 @@
         <dependency>
             <groupId>com.starnft.star</groupId>
             <artifactId>star-common</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>core</artifactId>
-                    <groupId>com.madgag.spongycastle</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>guava</artifactId>
-                    <groupId>com.google.guava</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>javassist</artifactId>
-                    <groupId>org.javassist</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>okio</artifactId>
-                    <groupId>com.squareup.okio</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>com.starnft.star</groupId>
             <artifactId>star-infrastructure</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jsqlparser</artifactId>
-                    <groupId>com.github.jsqlparser</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
