@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
 @RestController
-@RequestMapping("manager/theme")
+@RequestMapping("theme")
 public class ThemeManagerController {
 @Resource
   private  ManagerThemeService managerThemeService;

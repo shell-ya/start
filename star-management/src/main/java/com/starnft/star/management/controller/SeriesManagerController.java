@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 
 @RestController
-@RequestMapping("manager/series")
+@RequestMapping("series")
 public class SeriesManagerController {
     @Resource
     private ManagerSeriesService managerSeriesService;

@@ -1,6 +1,9 @@
 package com.starnft.star.management.service;
 
+import cn.dev33.satoken.stp.SaTokenInfo;
 import com.starnft.star.infrastructure.entity.sysuser.SysUser;
+import com.starnft.star.management.model.dto.SysUserDto;
+import com.starnft.star.management.model.req.SysUserLoginReq;
 
 /**
  * @Date 2022/5/11 7:55 PM
@@ -16,9 +19,8 @@ public interface SysUserService {
 
     /**
      * 系统用户登录
-     * @param username
-     * @param password
+     * @param req
      * @return
      */
-    SysUser sysUserLogin(String username,String password);
+    SysUserDto sysUserLogin(SysUserLoginReq req);
 }

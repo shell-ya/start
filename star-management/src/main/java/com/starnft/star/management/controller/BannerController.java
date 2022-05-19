@@ -15,7 +15,7 @@ import javax.annotation.Resource;
  * @Author ： shellya
  */
 @RestController
-@RequestMapping("/manager/banner")
+@RequestMapping("/banner")
 public class BannerController {
 
     @Resource

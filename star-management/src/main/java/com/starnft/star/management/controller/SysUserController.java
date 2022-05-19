@@ -9,10 +9,10 @@ import com.starnft.star.common.exception.StarException;
 import com.starnft.star.infrastructure.entity.sysuser.SysUser;
 import com.starnft.star.management.annotation.Pass;
 import com.starnft.star.management.constants.SessionConstants;
+import com.starnft.star.management.model.dto.SysUserDto;
+import com.starnft.star.management.model.req.SysUserLoginReq;
 import com.starnft.star.management.service.SysUserService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Optional;
@@ -29,17 +29,11 @@ public class SysUserController {
     private SysUserService sysUserService;
 
 
-    @GetMapping("doLogin")
+    @PostMapping("doLogin")
     @Pass
-    public RopResponse<SaTokenInfo> login(String username, String password){
-        // TODO: 2022/5/11 密码加密
-//        SysUser sysUser = sysUserService.sysUserLogin(username, password);
+    public RopResponse<SysUserDto> login(@RequestBody SysUserLoginReq req){
 
-        SysUser zhang = SysUser.builder().isDeleted(false)
-                .id(1111L).status(false).username("zhang").build();
-        StpUtil.login(1111);  StpUtil.getSession().set(SessionConstants.USER_INFO, zhang);
-
-        return RopResponse.success(StpUtil.getTokenInfo());
+        return RopResponse.success(sysUserService.sysUserLogin(req));
     }
     @GetMapping("isLogin")
     public String isLogin() {
