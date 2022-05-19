@@ -36,10 +36,6 @@
                     <groupId>org.javassist</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>swagger-annotations</artifactId>
-                    <groupId>io.swagger</groupId>
-                </exclusion>
-                <exclusion>
                     <artifactId>okio</artifactId>
                     <groupId>com.squareup.okio</groupId>
                 </exclusion>
@@ -53,10 +49,6 @@
                 <exclusion>
                     <artifactId>jsqlparser</artifactId>
                     <groupId>com.github.jsqlparser</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>mybatis</artifactId>
-                    <groupId>org.mybatis</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
