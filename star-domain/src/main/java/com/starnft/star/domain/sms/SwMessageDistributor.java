@@ -18,8 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static com.starnft.star.domain.sms.MessageConstants.SwMessageConstants.*;
-
 
 @Component
 @Slf4j
@@ -27,6 +25,8 @@ public class SwMessageDistributor implements MessageDistributor, ProcessInteract
 
     @Resource
     Map<StarConstants.Ids, IIdGenerator> idGeneratorMap;
+    @Resource
+    SwMessageConfig swMessageConfig;
 
     @Override
     public Boolean delivery(String mobile, String context) {
@@ -35,14 +35,14 @@ public class SwMessageDistributor implements MessageDistributor, ProcessInteract
         Map<String, Object> requestMap = new HashMap<>();
         requestMap.put("timestamp", timestamp);
         requestMap.put("phone", mobile);
-        requestMap.put("appkey", sw_message_app_key);
-        requestMap.put("msg", sw_message_header.concat(context));
+        requestMap.put("appkey", SwMessageConfig.getSwMessageAppKey());
+        requestMap.put("msg", SwMessageConfig.getSwMessageHeader().concat(context));
         requestMap.put("extend", uuid);
-        requestMap.put("appcode", sw_message_app_code);
+        requestMap.put("appcode", SwMessageConfig.getSwMessageAppCode());
         requestMap.put("sign", getSign(timestamp));
         IInteract<?> iInteract = obtainProcessInteraction(StarConstants.ProcessType.JSON);
 //        iInteract.interact()
-        String post = HttpUtil.post(sw_message_api, JSONUtil.toJsonStr(requestMap));
+        String post = HttpUtil.post(SwMessageConfig.getSwMessageApi(), JSONUtil.toJsonStr(requestMap));
         JSONObject result = JSONUtil.parseObj(post);
         if (result.getStr("code").equals("00000")) {
             JSONArray array = result.getJSONArray("result");
@@ -60,7 +60,7 @@ public class SwMessageDistributor implements MessageDistributor, ProcessInteract
     }
 
     private String getSign(long timestamp) {
-        return SecureUtil.md5(sw_message_app_key.concat(sw_message_app_secret).concat(Long.toString(timestamp)));
+        return SecureUtil.md5(SwMessageConfig.getSwMessageAppKey().concat(SwMessageConfig.getSwMessageAppSecret()).concat(Long.toString(timestamp)));
     }
 
 }

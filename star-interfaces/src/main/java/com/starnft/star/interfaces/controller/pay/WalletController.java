@@ -4,6 +4,7 @@ import com.starnft.star.application.process.user.IWalletCore;
 import com.starnft.star.application.process.user.req.PayRecordReq;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
+import com.starnft.star.interfaces.interceptor.UserContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
@@ -26,6 +27,7 @@ public class WalletController {
     @PostMapping("/transactions")
     @TokenIgnore
     public RopResponse transactions(@Validated @RequestBody PayRecordReq req) {
+        req.setUserId(UserContext.getUserId().getUserId());
         return RopResponse.success(walletCore.walletRecordQuery(req));
     }
 

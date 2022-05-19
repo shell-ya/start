@@ -72,7 +72,6 @@ public enum RedisKey {
      */
     REDIS_CHANGE_PAY_PWD_SUCCESS_EXPIRED(103, StarConstants.SERVICE_NAME.concat(".stint.changgepaypwd.succcess.%s") ,24L , TimeUnit.HOURS),
     ;
-
     private Integer code;
 
     private String key;
