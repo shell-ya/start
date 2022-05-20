@@ -1,12 +1,14 @@
 package com.starnft.star.domain.sms;
 
 import com.starnft.star.domain.support.key.repo.IDictionaryRepository;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class SwMessageConfig {
     private static final String categoryCode = "swMessage";
     private final static Map<String, SwMessageInfo> keys = new HashMap<>();
