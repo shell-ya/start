@@ -1,4 +1,4 @@
-package com.starnft.star.domain.sms;
+package com.starnft.star.domain.sms.interfaces;
 
 import java.util.Set;
 
