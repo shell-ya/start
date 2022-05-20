@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public abstract class InteractBase<T> implements IInteract<T> {
+public abstract class InteractBase implements IInteract{
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Override
-    public T interact(ConnContext context, Supplier<Map<?, ?>> urlParams) {
+    public String interact(ConnContext context, Supplier<Map<?, ?>> urlParams) {
 
         //Rest接口 Get请求参数传递
         if (null != context.getRestMethod() && context.getRestMethod() == RequestMethod.GET) {
@@ -23,6 +23,6 @@ public abstract class InteractBase<T> implements IInteract<T> {
 
     }
 
-    protected abstract T doInteract(ConnContext context, Supplier<Map<?, ?>> urlParams);
+    protected abstract String doInteract(ConnContext context, Supplier<Map<?, ?>> urlParams);
 
 }

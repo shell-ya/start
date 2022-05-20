@@ -40,7 +40,6 @@ public class SwMessageDistributor implements MessageDistributor, ProcessInteract
         requestMap.put("extend", uuid);
         requestMap.put("appcode", SwMessageConfig.getSwMessageAppCode());
         requestMap.put("sign", getSign(timestamp));
-        IInteract<?> iInteract = obtainProcessInteraction(StarConstants.ProcessType.JSON);
 //        iInteract.interact()
         String post = HttpUtil.post(SwMessageConfig.getSwMessageApi(), JSONUtil.toJsonStr(requestMap));
         JSONObject result = JSONUtil.parseObj(post);

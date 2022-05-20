@@ -14,11 +14,11 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 @Component("restTemplateInteraction")
-public class RestTemplateInteraction extends InteractBase<ResponseEntity<?>> {
+public class RestTemplateInteraction extends InteractBase {
 
 
     @Override
-    protected ResponseEntity<?> doInteract(ConnContext context, Supplier<Map<?, ?>> urlParams) {
+    protected String doInteract(ConnContext context, Supplier<Map<?, ?>> urlParams) {
         switch (context.getRestMethod()) {
             case GET:
                 return doGetWithParams(context, urlParams.get());
@@ -36,8 +36,8 @@ public class RestTemplateInteraction extends InteractBase<ResponseEntity<?>> {
      *
      * @return ResponseEntity
      */
-    private ResponseEntity<?> doGet(ConnContext context) {
-        return RestTemplateHelper.simpleGet(new HttpHeaders(), context.getUrl());
+    private String doGet(ConnContext context) {
+        return RestTemplateHelper.simpleGet(new HttpHeaders(), context.getUrl()).getBody();
     }
 
     /**
@@ -45,11 +45,11 @@ public class RestTemplateInteraction extends InteractBase<ResponseEntity<?>> {
      *
      * @return ResponseEntity
      */
-    private ResponseEntity<?> doGetWithParams(ConnContext context, Map<?, ?> urlParams) {
+    private String doGetWithParams(ConnContext context, Map<?, ?> urlParams) {
         if (CollectionUtils.isEmpty(Collections.singleton(urlParams))) {
             return doGet(context);
         }
-        return RestTemplateHelper.executeGetParam(new HttpHeaders(), context.getUrl(), (Map<String, String>) urlParams);
+        return RestTemplateHelper.executeGetParam(new HttpHeaders(), context.getUrl(), (Map<String, String>) urlParams).getBody();
     }
 
     /**
@@ -57,8 +57,8 @@ public class RestTemplateInteraction extends InteractBase<ResponseEntity<?>> {
      *
      * @return ResponseEntity
      */
-    private ResponseEntity<?> doPost(ConnContext context, HttpHeaders httpHeaders) {
-        return RestTemplateHelper.executePostBodyParam(httpHeaders, context.getUrl(), context.getContent());
+    private String doPost(ConnContext context, HttpHeaders httpHeaders) {
+        return RestTemplateHelper.executePostBodyParam(httpHeaders, context.getUrl(), context.getContent()).getBody();
     }
 
     /**
@@ -66,8 +66,8 @@ public class RestTemplateInteraction extends InteractBase<ResponseEntity<?>> {
      *
      * @return ResponseEntity
      */
-    private ResponseEntity<?> doPut(ConnContext context, HttpHeaders httpHeaders) {
-        return RestTemplateHelper.executePutBodyParam(httpHeaders, context.getUrl(), context.getContent());
+    private String doPut(ConnContext context, HttpHeaders httpHeaders) {
+        return RestTemplateHelper.executePutBodyParam(httpHeaders, context.getUrl(), context.getContent()).getBody();
     }
 
     /**
@@ -75,7 +75,7 @@ public class RestTemplateInteraction extends InteractBase<ResponseEntity<?>> {
      *
      * @return ResponseEntity
      */
-    private ResponseEntity<?> doDelete() {
+    private String doDelete() {
         return null;
     }
 
