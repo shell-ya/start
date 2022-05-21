@@ -13,6 +13,13 @@
     <artifactId>star-domain</artifactId>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.tencentcloudapi</groupId>
+            <artifactId>tencentcloud-sdk-java</artifactId>
+            <version>4.0.11</version>
+        </dependency>
+
         <dependency>
             <groupId>com.starnft.star</groupId>
             <artifactId>star-common</artifactId>
