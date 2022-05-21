@@ -1,6 +1,5 @@
 package com.starnft.star.domain.wallet.repository;
 
-import cn.hutool.db.PageResult;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.wallet.model.req.RechargeReq;
 import com.starnft.star.domain.wallet.model.req.TransactionRecordQueryReq;
@@ -9,6 +8,7 @@ import com.starnft.star.domain.wallet.model.req.WalletRecordReq;
 import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
 import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
 import com.starnft.star.domain.wallet.model.vo.WalletVO;
+import com.starnft.star.domain.wallet.model.vo.WithdrawRecordVO;
 
 import java.util.List;
 
@@ -40,10 +40,10 @@ public interface IWalletRepository {
 
     /**
      * 修改钱包余额
-     * @param rechargeReq 修改请求
+     * @param walletVO 修改请求
      * @return 执行结果
      */
-    boolean modifyWalletBalance(RechargeReq rechargeReq);
+    boolean modifyWalletBalance(WalletVO walletVO);
     /**
      * 创建交易记录
      *
@@ -81,4 +81,11 @@ public interface IWalletRepository {
      * @return WalletRecordVO
      */
     ResponsePageResult<WalletRecordVO> queryTransactionRecordByCondition(TransactionRecordQueryReq queryReq);
+
+    /**
+     *  创建提现记录
+     * @param withdrawRecordVO
+     * @return
+     */
+    boolean createWithdrawRecord(WithdrawRecordVO withdrawRecordVO);
 }

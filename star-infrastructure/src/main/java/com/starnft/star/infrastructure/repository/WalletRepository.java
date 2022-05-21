@@ -4,10 +4,12 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
+import com.starnft.star.common.constant.DatePattern;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.common.utils.DateUtil;
 import com.starnft.star.domain.wallet.model.req.RechargeReq;
 import com.starnft.star.domain.wallet.model.req.TransactionRecordQueryReq;
 import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
@@ -15,21 +17,15 @@ import com.starnft.star.domain.wallet.model.req.WalletRecordReq;
 import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
 import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
 import com.starnft.star.domain.wallet.model.vo.WalletVO;
+import com.starnft.star.domain.wallet.model.vo.WithdrawRecordVO;
 import com.starnft.star.domain.wallet.repository.IWalletRepository;
-import com.starnft.star.infrastructure.mapper.wallet.StarNftWalletRecordMapper;
-import com.starnft.star.infrastructure.entity.wallet.StarNftWalletConfig;
-import com.starnft.star.infrastructure.entity.wallet.StarNftWalletLog;
-import com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord;
-import com.starnft.star.infrastructure.entity.wallet.Wallet;
-import com.starnft.star.infrastructure.mapper.wallet.StarNftWalletConfigMapper;
-import com.starnft.star.infrastructure.mapper.wallet.StarNftWalletLogMapper;
-import com.starnft.star.infrastructure.mapper.wallet.WalletMapper;
+import com.starnft.star.infrastructure.entity.wallet.*;
+import com.starnft.star.infrastructure.mapper.wallet.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,6 +41,8 @@ public class WalletRepository implements IWalletRepository {
     private StarNftWalletRecordMapper starNftWalletRecordMapper;
     @Resource
     private StarNftWalletConfigMapper starNftWalletConfigMapper;
+    @Resource
+    private StarNftWithdrawApplyMapper starNftWithdrawApplyMapper;
 
     @Override
     public WalletVO queryWallet(WalletInfoReq walletInfoReq) {
@@ -101,38 +99,20 @@ public class WalletRepository implements IWalletRepository {
 
     @Override
     @Transactional
-    public boolean modifyWalletBalance(RechargeReq rechargeReq) {
-        Wallet wallet = getWallet(new WalletInfoReq(rechargeReq.getWalletId(), rechargeReq.getUserId()));
+    public boolean modifyWalletBalance(WalletVO walletVO) {
+        Wallet wallet = new Wallet();
 
-        //正数代表收入
-        if (rechargeReq.getMoney().signum() >= 0) {
-            wallet.setBalance(wallet.getWalletIncome().add(rechargeReq.getMoney()));
-            wallet.setWalletIncome(wallet.getWalletIncome().add(rechargeReq.getMoney()));
-        } else {
-            //校验钱包余额
-            verifyWalletBalance(wallet, rechargeReq);
-
-            wallet.setBalance(wallet.getWalletIncome().subtract(rechargeReq.getMoney()));
-            wallet.setWalletOutcome(wallet.getWalletOutcome().subtract(rechargeReq.getMoney().abs()));
-        }
+        wallet.setUid(walletVO.getUid());
+        wallet.setwId(walletVO.getWalletId());
+        wallet.setBalance(walletVO.getBalance());
+        wallet.setWalletOutcome(walletVO.getWallet_outcome());
+        wallet.setWalletIncome(walletVO.getWallet_income());
+        wallet.setFrozen(walletVO.isFrozen() ? 1 : 0);
+        wallet.setFrozenFee(walletVO.getFrozen_fee());
 
         Integer isSuccess = walletMapper.updateWallet(wallet);
 
         return isSuccess == 1;
-    }
-
-    private void verifyWalletBalance(Wallet wallet, RechargeReq rechargeReq) {
-        //资金未被冻结
-        if (wallet.getFrozen() == 0 && wallet.getBalance()
-                .subtract(rechargeReq.getMoney().abs()).signum() == -1) {
-            throw new StarException(StarError.BALANCE_NOT_ENOUGH, "钱包余额不足");
-        }
-        // 有被冻结资金
-        if (wallet.getFrozen() == 1 && wallet.getBalance()
-                .subtract(rechargeReq.getMoney().abs()).subtract(wallet.getFrozenFee().abs()).signum() == -1) {
-            throw new StarException(StarError.BALANCE_NOT_ENOUGH, "可能部分资金被冻结导致余额不足!");
-        }
-
     }
 
     @Override
@@ -153,6 +133,7 @@ public class WalletRepository implements IWalletRepository {
                     .channel(StarConstants.PayChannel.valueOf(config.getChannel()))
                     .identityCode(config.getIdentityCode())
                     .rechargeLimit(config.getRechargeLimit())
+                    .withdrawTimes(config.getWithdrawTimes())
                     .withdrawLimit(config.getWithdrawLimit())
                     .build();
             configs.add(walletConfigVO);
@@ -217,6 +198,23 @@ public class WalletRepository implements IWalletRepository {
                 queryReq.getPage(), queryReq.getSize(), starNftWalletRecords.getTotal());
     }
 
+    @Override
+    public boolean createWithdrawRecord(WithdrawRecordVO withdrawRecordVO) {
+        StarNftWithdrawApply starNftWithdrawApply = new StarNftWithdrawApply();
+        starNftWithdrawApply.setApplyStatus(0);//0 提现中 1 已提现
+        starNftWithdrawApply.setApplyTime(DateUtil.getCurrentDate(DatePattern.YYYY_MM_DD_HH_MM_SS));
+        starNftWithdrawApply.setWithdrawBankNo(withdrawRecordVO.getBankNo());
+        starNftWithdrawApply.setBankMatchName(withdrawRecordVO.getCardName());
+        starNftWithdrawApply.setWithdrawChannel(withdrawRecordVO.getChannel());
+        starNftWithdrawApply.setWithdrawMoney(withdrawRecordVO.getMoney());
+        starNftWithdrawApply.setWithdrawUid(withdrawRecordVO.getUid());
+        starNftWithdrawApply.setWithdrawTradeNo(withdrawRecordVO.getWithdrawTradeNo());
+        starNftWithdrawApply.setCreatedBy(withdrawRecordVO.getUid());
+        starNftWithdrawApply.setCreatedAt(new Date());
+        starNftWithdrawApply.setIsDeleted(false);
+        return starNftWithdrawApplyMapper.insert(starNftWithdrawApply);
+    }
+
     private WalletRecordVO walletRecordToVO(StarNftWalletRecord record) {
         return WalletRecordVO.builder().recordSn(record.getRecordSn())
                 .checkStatus(record.getCheckStatus())
@@ -250,6 +248,9 @@ public class WalletRepository implements IWalletRepository {
         starNftWalletRecord.setPayTime(walletRecordReq.getPayTime());
         starNftWalletRecord.setCheckStatus(walletRecordReq.getCheckStatus());
         starNftWalletRecord.setCheckTime(walletRecordReq.getCheckTime());
+        starNftWalletRecord.setCreatedBy(walletRecordReq.getFrom_uid() == 0 ? walletRecordReq.getTo_uid() : walletRecordReq.getFrom_uid());
+        starNftWalletRecord.setCreatedAt(new Date());
+        starNftWalletRecord.setIsDeleted(false);
         return starNftWalletRecord;
     }
 

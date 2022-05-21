@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 @Builder
 public class WalletVO {
 
+    private Long uid;
+
     private String walletId;
 
     private BigDecimal balance;
@@ -18,6 +20,14 @@ public class WalletVO {
     private boolean frozen;
 
     private BigDecimal frozen_fee;
+
+    public Long getUid() {
+        return uid;
+    }
+
+    public void setUid(Long uid) {
+        this.uid = uid;
+    }
 
     public String getWalletId() {
         return walletId;

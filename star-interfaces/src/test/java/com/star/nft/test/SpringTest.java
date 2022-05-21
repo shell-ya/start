@@ -6,7 +6,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.starnft.star.application.mq.constant.TopicConstants;
 import com.starnft.star.application.mq.producer.notification.NotificationProducer;
 import com.starnft.star.application.process.notification.vo.NotificationVO;
-import com.starnft.star.application.process.user.req.PayRecordReq;
+import com.starnft.star.application.process.wallet.req.PayRecordReq;
 import com.starnft.star.interfaces.StarApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

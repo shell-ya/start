@@ -1,26 +1,37 @@
 package com.starnft.star.domain.wallet.service.impl;
 
 import com.google.common.base.Strings;
+import com.starnft.star.common.constant.RedisKey;
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.WalletAddrGenerator;
+import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.wallet.model.req.TransactionRecordQueryReq;
 import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
 import com.starnft.star.domain.wallet.model.req.WalletRecordReq;
+import com.starnft.star.domain.wallet.model.req.WithDrawReq;
 import com.starnft.star.domain.wallet.model.res.WalletResult;
+import com.starnft.star.domain.wallet.model.res.WithdrawResult;
+import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
 import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
 import com.starnft.star.domain.wallet.model.vo.WalletVO;
+import com.starnft.star.domain.wallet.model.vo.WithdrawRecordVO;
 import com.starnft.star.domain.wallet.repository.IWalletRepository;
+import com.starnft.star.domain.wallet.service.WalletConfig;
 import com.starnft.star.domain.wallet.service.WalletService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.web3j.crypto.CipherException;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Map;
 
 @Service
 public class WalletServiceImpl implements WalletService {
@@ -33,6 +44,12 @@ public class WalletServiceImpl implements WalletService {
 
     @Resource
     private RedisUtil redisUtil;
+
+    @Resource
+    private RedisLockUtils redisLockUtils;
+
+    @Resource
+    private Map<StarConstants.Ids, IIdGenerator> idGeneratorMap;
 
     @Override
     @Transactional
@@ -74,6 +91,100 @@ public class WalletServiceImpl implements WalletService {
 
         return isSuccess;
     }
+
+    private String verifyAndGetKey(WithDrawReq withDrawReq) {
+        //提现次数确认
+        WalletConfigVO config = WalletConfig.getConfig(StarConstants.PayChannel.valueOf(withDrawReq.getChannel()));
+        String withdrawTimesKey = String.format(RedisKey.REDIS_WITHDRAW_TIMES.getKey(),
+                new StringBuffer(String.valueOf(withDrawReq.getUid())).append(withDrawReq.getWalletId()));
+        //是否超过当日提现次数
+        if (redisUtil.hasKey(withdrawTimesKey) &&
+                config.getWithdrawTimes() <= Integer.parseInt((String) redisUtil.get(withdrawTimesKey))) {
+            throw new StarException(StarError.OVER_WITHDRAW_TIMES);
+        }
+        //是否超过限额
+        if (withDrawReq.getMoney().compareTo(config.getWithdrawLimit()) > 0) {
+            throw new StarException(StarError.OVER_WITHDRAW_MONEY);
+        }
+        //钱包交易状态中锁
+        String isTransactionKey = String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
+                new StringBuffer(String.valueOf(withDrawReq.getUid())).append(withDrawReq.getWalletId()));
+        //判断当前是否有其他交易正在进行
+        if (redisUtil.hasKey(isTransactionKey)) {
+            throw new StarException(StarError.IS_TRANSACTION);
+        }
+        return isTransactionKey;
+    }
+
+    @Override
+    @Transactional
+    public WithdrawResult withdraw(WithDrawReq withDrawReq) {
+        //校验提现规则
+        String isTransactionKey = verifyAndGetKey(withDrawReq);
+
+        long withdrawTradeNo = idGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId();
+
+        try {
+            //锁定当前钱包交易
+            if (redisLockUtils.lock(isTransactionKey, RedisKey.REDIS_TRANSACTION_ING.getTime())) {
+                //查询钱包余额是否足够并将提现金额先扣除
+                WalletResult walletResult = queryWalletInfo(new WalletInfoReq(withDrawReq.getUid()));
+                //余额是否足够提现
+                if (walletResult.getBalance().compareTo(withDrawReq.getMoney()) <= 0) {
+                    throw new StarException(StarError.BALANCE_NOT_ENOUGH);
+                }
+                //修改钱包余额
+                WalletVO walletVO = createWithdrawWalletVO(walletResult, withDrawReq);
+                boolean aSuccess = walletRepository.modifyWalletBalance(walletVO);
+                //记录提现记录 提现中
+                WithdrawRecordVO withdrawRecordVO = createWithdrawRecordVO(withDrawReq, withdrawTradeNo);
+                boolean bSuccess = walletRepository.createWithdrawRecord(withdrawRecordVO);
+                //记录交易记录
+                WalletRecordReq walletRecordReq = createWalletRecordReq(withDrawReq, withdrawTradeNo);
+                boolean cSuccess = walletRepository.createWalletRecord(walletRecordReq);
+                //缓存提现次数到Redis
+                if (aSuccess && bSuccess && cSuccess) {
+                    String withdrawTimesKey = String.format(RedisKey.REDIS_WITHDRAW_TIMES.getKey(),
+                            new StringBuffer(String.valueOf(withDrawReq.getUid())).append(withDrawReq.getWalletId()));
+                    redisUtil.incr(withdrawTimesKey, 1);
+                }
+
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("提现操作发生异常", e);
+        } finally {
+            redisLockUtils.unlock(isTransactionKey);
+        }
+        return new WithdrawResult(withdrawTradeNo, 0);
+    }
+
+    private WalletRecordReq createWalletRecordReq(WithDrawReq withDrawReq, long withdrawTradeNo) {
+        return WalletRecordReq.builder().from_uid(withDrawReq.getUid()).to_uid(0L)
+                .recordSn(String.valueOf(withdrawTradeNo)).checkStatus(0)
+                .payChannel(withDrawReq.getChannel()).payStatus(StarConstants.Pay_Status.PAY_ING.name())
+                .tsMoney(withDrawReq.getMoney()).tsType(StarConstants.Transaction_Type.Withdraw.getCode().toString())
+                .build();
+    }
+
+    private WithdrawRecordVO createWithdrawRecordVO(WithDrawReq withDrawReq, long withdrawTradeNo) {
+        return WithdrawRecordVO.builder().withdrawTradeNo(String.valueOf(withdrawTradeNo))
+                .walletId(withDrawReq.getWalletId()).bankNo(withDrawReq.getBankNo())
+                .cardName(withDrawReq.getCardName()).channel(withDrawReq.getChannel())
+                .money(withDrawReq.getMoney()).uid(withDrawReq.getUid()).build();
+    }
+
+    private WalletVO createWithdrawWalletVO(WalletResult walletResult, WithDrawReq withDrawReq) {
+        //提现后余额
+        BigDecimal balance = walletResult.getBalance().subtract(withDrawReq.getMoney().abs());
+        // 提现成功后 清除冻结金额
+        // 提现失败 或取消提现 余额加冻结资金 清除冻结资金还原支出金额
+        return WalletVO.builder().
+                balance(balance)
+                .frozen_fee(withDrawReq.getMoney().abs())
+                .wallet_outcome(walletResult.getWallet_outcome().add(withDrawReq.getMoney().abs())).
+                build();
+    }
+
 
     @Override
     public ResponsePageResult<WalletRecordVO> queryTransactionRecord(TransactionRecordQueryReq queryReq) {

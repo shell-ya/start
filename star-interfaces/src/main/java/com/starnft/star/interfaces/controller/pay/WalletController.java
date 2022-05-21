@@ -1,7 +1,7 @@
 package com.starnft.star.interfaces.controller.pay;
 
-import com.starnft.star.application.process.user.IWalletCore;
-import com.starnft.star.application.process.user.req.PayRecordReq;
+import com.starnft.star.application.process.wallet.IWalletCore;
+import com.starnft.star.application.process.wallet.req.PayRecordReq;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import com.starnft.star.interfaces.interceptor.UserContext;

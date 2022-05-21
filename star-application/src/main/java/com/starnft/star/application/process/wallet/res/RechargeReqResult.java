@@ -1,4 +1,4 @@
-package com.starnft.star.application.process.user.res;
+package com.starnft.star.application.process.wallet.res;
 
 import lombok.Data;
 

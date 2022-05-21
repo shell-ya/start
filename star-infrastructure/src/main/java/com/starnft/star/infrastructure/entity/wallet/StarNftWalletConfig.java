@@ -10,10 +10,12 @@ import java.math.BigDecimal;
 @TableName("star_nft_wallet_config")
 public class StarNftWalletConfig extends BaseEntity {
 
-    /** id */
-    @ApiModelProperty(name = "id",notes = "")
+    /**
+     * id
+     */
+    @ApiModelProperty(name = "id", notes = "")
     @TableId
-    private Long id ;
+    private Long id;
     /**
      * 充值限额
      */
@@ -24,6 +26,11 @@ public class StarNftWalletConfig extends BaseEntity {
      */
     @ApiModelProperty(name = "提现限额", notes = "")
     private BigDecimal withdrawLimit;
+    /**
+     * 提现次数
+     */
+    @ApiModelProperty(name = "提现次数")
+    private Integer withdrawTimes;
     /**
      * 手续费比例
      */
@@ -67,6 +74,14 @@ public class StarNftWalletConfig extends BaseEntity {
 
     public void setWithdrawLimit(BigDecimal withdrawLimit) {
         this.withdrawLimit = withdrawLimit;
+    }
+
+    public Integer getWithdrawTimes() {
+        return withdrawTimes;
+    }
+
+    public void setWithdrawTimes(Integer withdrawTimes) {
+        this.withdrawTimes = withdrawTimes;
     }
 
     public BigDecimal getChargeRate() {
