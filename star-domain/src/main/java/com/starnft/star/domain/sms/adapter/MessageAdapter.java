@@ -1,5 +1,6 @@
-package com.starnft.star.domain.sms;
+package com.starnft.star.domain.sms.adapter;
 
+import com.starnft.star.domain.sms.MessageTypeEnums;
 import com.starnft.star.domain.sms.interfaces.MessageStrategyInterface;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

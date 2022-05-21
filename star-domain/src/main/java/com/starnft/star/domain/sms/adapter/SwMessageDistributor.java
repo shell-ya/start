@@ -1,4 +1,4 @@
-package com.starnft.star.domain.sms;
+package com.starnft.star.domain.sms.adapter;
 
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.http.HttpUtil;
@@ -6,6 +6,7 @@ import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.domain.sms.SwMessageConfig;
 import com.starnft.star.domain.sms.interfaces.MessageDistributor;
 import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.support.process.ProcessInteractionHolder;
@@ -25,9 +26,6 @@ public class SwMessageDistributor implements MessageDistributor, ProcessInteract
 
     @Resource
     Map<StarConstants.Ids, IIdGenerator> idGeneratorMap;
-    @Resource
-    SwMessageConfig swMessageConfig;
-
     @Override
     public Boolean delivery(String mobile, String context) {
         String uuid = String.valueOf(idGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId());
@@ -40,7 +38,6 @@ public class SwMessageDistributor implements MessageDistributor, ProcessInteract
         requestMap.put("extend", uuid);
         requestMap.put("appcode", SwMessageConfig.getSwMessageAppCode());
         requestMap.put("sign", getSign(timestamp));
-//        iInteract.interact()
         String post = HttpUtil.post(SwMessageConfig.getSwMessageApi(), JSONUtil.toJsonStr(requestMap));
         JSONObject result = JSONUtil.parseObj(post);
         if (result.getStr("code").equals("00000")) {

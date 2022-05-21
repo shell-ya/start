@@ -1,4 +1,4 @@
-package com.starnft.star.domain.sms;
+package com.starnft.star.domain.sms.configs;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

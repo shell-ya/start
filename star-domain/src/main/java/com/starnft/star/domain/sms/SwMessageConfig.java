@@ -1,5 +1,6 @@
 package com.starnft.star.domain.sms;
 
+import com.starnft.star.domain.sms.configs.SwMessageInfo;
 import com.starnft.star.domain.support.key.repo.IDictionaryRepository;
 import org.springframework.stereotype.Component;
 
