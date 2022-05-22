@@ -151,4 +151,12 @@ public interface IUserRepository {
      * @return
      */
     Integer batchInsertAgreementSign(List<AgreementSignDTO> list);
+
+
+    /**
+     * 获取用户的真实信息
+     * @param userId
+     * @return
+     */
+    UserRealInfo getUserInfoAll(Long userId);
 }

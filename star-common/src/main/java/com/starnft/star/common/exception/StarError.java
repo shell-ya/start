@@ -48,6 +48,8 @@ public enum StarError {
 
     OVER_WITHDRAW_TIMES("300003", "已达到当日提现最大次数"),
     OVER_WITHDRAW_MONEY("300004", "超过限制提现金额"),
+
+    CARD_BINDING_FAILED("300005", "银行卡绑定失败"),
     ;
 
     private String NS = "";

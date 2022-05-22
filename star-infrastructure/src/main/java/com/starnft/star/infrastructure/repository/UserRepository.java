@@ -9,15 +9,11 @@ import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.user.model.dto.AgreementSignDTO;
 import com.starnft.star.domain.user.model.dto.UserInfoAddDTO;
 import com.starnft.star.domain.user.model.dto.UserInfoUpdateDTO;
-import com.starnft.star.domain.user.model.vo.AgreementPopupInfoVO;
-import com.starnft.star.domain.user.model.vo.AgreementVO;
-import com.starnft.star.domain.user.model.vo.UserInfo;
-import com.starnft.star.domain.user.model.vo.UserPwdChangeLogsVO;
+import com.starnft.star.domain.user.model.vo.*;
 import com.starnft.star.domain.user.repository.IUserRepository;
 import com.starnft.star.infrastructure.entity.user.*;
 import com.starnft.star.infrastructure.mapper.user.*;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,10 +70,7 @@ public class UserRepository implements IUserRepository {
 
     @Override
     public UserInfo queryUserInfoByUserId(Long userId) {
-        UserInfoEntity queryUser = new UserInfoEntity();
-        queryUser.setIsDeleted(Boolean.FALSE);
-        queryUser.setAccount(userId);
-        UserInfoEntity userInfoEntity = userInfoMapper.selectOne(new QueryWrapper<UserInfoEntity>().setEntity(queryUser));
+        UserInfoEntity userInfoEntity = getUserInfoEntity(userId);
         if (Objects.nonNull(userInfoEntity)) {
             UserInfo userInfo = new UserInfo();
             userInfo.setAccount(userInfoEntity.getAccount());
@@ -93,6 +86,15 @@ public class UserRepository implements IUserRepository {
         }
         return null;
     }
+
+    private UserInfoEntity getUserInfoEntity(Long userId) {
+        UserInfoEntity queryUser = new UserInfoEntity();
+        queryUser.setIsDeleted(Boolean.FALSE);
+        queryUser.setAccount(userId);
+        return userInfoMapper.selectOne(new QueryWrapper<UserInfoEntity>().setEntity(queryUser));
+    }
+
+
 
     @Override
     public Integer addUserInfo(UserInfoAddDTO req) {
@@ -279,6 +281,15 @@ public class UserRepository implements IUserRepository {
     @Override
     public Integer batchInsertAgreementSign(List<AgreementSignDTO> list) {
         return signMapper.batchInsertAgreementSign(list);
+    }
+
+    @Override
+    public UserRealInfo getUserInfoAll(Long userId) {
+        UserInfoEntity queryUser = new UserInfoEntity();
+        queryUser.setIsDeleted(Boolean.FALSE);
+        queryUser.setAccount(userId);
+        UserInfoEntity userInfoEntity = userInfoMapper.selectOne(new QueryWrapper<UserInfoEntity>().setEntity(queryUser));
+        return BeanColverUtil.colver(userInfoEntity, UserRealInfo.class);
     }
 
     @Override

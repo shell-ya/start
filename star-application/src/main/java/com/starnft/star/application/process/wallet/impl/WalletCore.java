@@ -13,9 +13,13 @@ import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.support.ids.IIdGenerator;
+import com.starnft.star.domain.user.model.vo.UserInfoVO;
+import com.starnft.star.domain.user.service.IUserService;
+import com.starnft.star.domain.wallet.model.req.CardBindReq;
 import com.starnft.star.domain.wallet.model.req.TransactionRecordQueryReq;
 import com.starnft.star.domain.wallet.model.req.WalletRecordReq;
 import com.starnft.star.domain.wallet.model.req.WithDrawReq;
+import com.starnft.star.domain.wallet.model.res.CardBindResult;
 import com.starnft.star.domain.wallet.model.res.WithdrawResult;
 import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
 import com.starnft.star.domain.wallet.service.WalletService;
@@ -32,6 +36,9 @@ public class WalletCore implements IWalletCore {
 
     @Resource
     private WalletService walletService;
+
+    @Resource
+    private IUserService userService;
 
     @Resource
     private RedisLockUtils redisLockUtils;
@@ -83,6 +90,17 @@ public class WalletCore implements IWalletCore {
         return walletService.withdraw(withDrawReq);
     }
 
+    @Override
+    public boolean cardBinding(CardBindReq cardBindReq) {
+        UserInfoVO userInfoVO = userService.queryUserInfo(cardBindReq.getUid());
+        cardBindReq.setNickname(userInfoVO.getNickName());
+        return walletService.cardBind(cardBindReq);
+    }
+
+    @Override
+    public List<CardBindResult> obtainCardBinds(Long uid) {
+        return walletService.obtainCards(uid);
+    }
 
     /**
      * @param walletRecordVO

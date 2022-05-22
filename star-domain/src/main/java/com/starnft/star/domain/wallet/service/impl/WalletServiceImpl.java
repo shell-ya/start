@@ -1,6 +1,7 @@
 package com.starnft.star.domain.wallet.service.impl;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
@@ -10,19 +11,15 @@ import com.starnft.star.common.utils.WalletAddrGenerator;
 import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.support.ids.IIdGenerator;
-import com.starnft.star.domain.wallet.model.req.TransactionRecordQueryReq;
-import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
-import com.starnft.star.domain.wallet.model.req.WalletRecordReq;
-import com.starnft.star.domain.wallet.model.req.WithDrawReq;
+import com.starnft.star.domain.wallet.model.req.*;
+import com.starnft.star.domain.wallet.model.res.CardBindResult;
 import com.starnft.star.domain.wallet.model.res.WalletResult;
 import com.starnft.star.domain.wallet.model.res.WithdrawResult;
-import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
-import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
-import com.starnft.star.domain.wallet.model.vo.WalletVO;
-import com.starnft.star.domain.wallet.model.vo.WithdrawRecordVO;
+import com.starnft.star.domain.wallet.model.vo.*;
 import com.starnft.star.domain.wallet.repository.IWalletRepository;
 import com.starnft.star.domain.wallet.service.WalletConfig;
 import com.starnft.star.domain.wallet.service.WalletService;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.web3j.crypto.CipherException;
@@ -31,6 +28,8 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -176,8 +175,7 @@ public class WalletServiceImpl implements WalletService {
     private WalletVO createWithdrawWalletVO(WalletResult walletResult, WithDrawReq withDrawReq) {
         //提现后余额
         BigDecimal balance = walletResult.getBalance().subtract(withDrawReq.getMoney().abs());
-        // 提现成功后 清除冻结金额
-        // 提现失败 或取消提现 余额加冻结资金 清除冻结资金还原支出金额
+        // 提现成功后 清除冻结金额 提现失败 或取消提现 余额加冻结资金 清除冻结资金还原支出金额
         return WalletVO.builder().
                 balance(balance)
                 .frozen_fee(withDrawReq.getMoney().abs())
@@ -189,6 +187,23 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public ResponsePageResult<WalletRecordVO> queryTransactionRecord(TransactionRecordQueryReq queryReq) {
         return walletRepository.queryTransactionRecordByCondition(queryReq);
+    }
+
+    @Override
+    public boolean cardBind(CardBindReq cardBindReq) {
+        return walletRepository.cardBinding(BankRelationVO.builder().uid(cardBindReq.getUid()).cardNo(cardBindReq.getCardNo().toString())
+                .cardName(cardBindReq.getCardName()).Nickname(cardBindReq.getNickname())
+                .bankShortName(cardBindReq.getBankShortName()).build());
+    }
+
+    @Override
+    public List<CardBindResult> obtainCards(Long uid) {
+        List<BankRelationVO> relations = walletRepository.queryCardBindings(uid);
+        ArrayList<@Nullable CardBindResult> results = Lists.newArrayList();
+        for (BankRelationVO relation : relations) {
+            results.add(new CardBindResult(relation.getCardNo(), relation.getCardName(), relation.getBankShortName()));
+        }
+        return results;
     }
 
 

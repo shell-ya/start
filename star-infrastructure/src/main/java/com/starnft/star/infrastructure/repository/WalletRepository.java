@@ -10,22 +10,22 @@ import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.DateUtil;
+import com.starnft.star.common.utils.secure.AESUtil;
 import com.starnft.star.domain.wallet.model.req.RechargeReq;
 import com.starnft.star.domain.wallet.model.req.TransactionRecordQueryReq;
 import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
 import com.starnft.star.domain.wallet.model.req.WalletRecordReq;
-import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
-import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
-import com.starnft.star.domain.wallet.model.vo.WalletVO;
-import com.starnft.star.domain.wallet.model.vo.WithdrawRecordVO;
+import com.starnft.star.domain.wallet.model.vo.*;
 import com.starnft.star.domain.wallet.repository.IWalletRepository;
 import com.starnft.star.infrastructure.entity.wallet.*;
 import com.starnft.star.infrastructure.mapper.wallet.*;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,6 +43,9 @@ public class WalletRepository implements IWalletRepository {
     private StarNftWalletConfigMapper starNftWalletConfigMapper;
     @Resource
     private StarNftWithdrawApplyMapper starNftWithdrawApplyMapper;
+
+    @Resource
+    private StarNftBankRelationMapper starNftBankRelationMapper;
 
     @Override
     public WalletVO queryWallet(WalletInfoReq walletInfoReq) {
@@ -213,6 +216,36 @@ public class WalletRepository implements IWalletRepository {
         starNftWithdrawApply.setCreatedAt(new Date());
         starNftWithdrawApply.setIsDeleted(false);
         return starNftWithdrawApplyMapper.insert(starNftWithdrawApply);
+    }
+
+    @Override
+    @Transactional
+    public boolean cardBinding(BankRelationVO bankRelationVO) {
+        StarNftBankRelation starNftBankRelation = new StarNftBankRelation();
+        starNftBankRelation.setUid(bankRelationVO.getUid());
+        starNftBankRelation.setNickname(bankRelationVO.getNickname());
+        starNftBankRelation.setCardNo(AESUtil.encrypt(bankRelationVO.getCardNo()));
+        starNftBankRelation.setCardName(bankRelationVO.getCardName());
+        starNftBankRelation.setBankNameShort(bankRelationVO.getBankShortName());
+        starNftBankRelation.setCreatedBy(bankRelationVO.getUid());
+        starNftBankRelation.setCreatedAt(new Date());
+        return starNftBankRelationMapper.insert(starNftBankRelation) == 1;
+    }
+
+    @Override
+    public List<BankRelationVO> queryCardBindings(Long uid) {
+        StarNftBankRelation starNftBankRelation = new StarNftBankRelation();
+        starNftBankRelation.setUid(uid);
+        List<StarNftBankRelation> starNftBankRelations = starNftBankRelationMapper.queryByCondition(starNftBankRelation);
+        ArrayList<@Nullable BankRelationVO> relations = Lists.newArrayList();
+        for (StarNftBankRelation nftBankRelation : starNftBankRelations) {
+            relations.add(BankRelationVO.builder()
+                    .cardNo(AESUtil.decrypt(nftBankRelation.getCardNo()))
+                    .cardName(nftBankRelation.getCardName())
+                    .bankShortName(nftBankRelation.getBankNameShort()).build());
+        }
+
+        return relations;
     }
 
     private WalletRecordVO walletRecordToVO(StarNftWalletRecord record) {
