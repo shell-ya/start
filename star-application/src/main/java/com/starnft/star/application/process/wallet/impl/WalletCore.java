@@ -94,6 +94,10 @@ public class WalletCore implements IWalletCore {
     public boolean cardBinding(CardBindReq cardBindReq) {
         UserInfoVO userInfoVO = userService.queryUserInfo(cardBindReq.getUid());
         cardBindReq.setNickname(userInfoVO.getNickName());
+        List<CardBindResult> cardBindResults = obtainCardBinds(cardBindReq.getUid());
+        if (cardBindResults.size() >= 5) {
+            throw new StarException("银行卡超过绑定5张上限");
+        }
         return walletService.cardBind(cardBindReq);
     }
 
