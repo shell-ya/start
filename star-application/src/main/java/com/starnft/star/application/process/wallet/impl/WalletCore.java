@@ -74,6 +74,7 @@ public class WalletCore implements IWalletCore {
                         .page(recordReq.getPage()).size(recordReq.getSize())
                         .userId(recordReq.getUserId())
                         .startDate(recordReq.getStartTime())
+                        .payStatus(recordReq.getPayStatus())
                         .endDate(recordReq.getEndTime())
                         .transactionType(recordReq.getPayType()).build());
 

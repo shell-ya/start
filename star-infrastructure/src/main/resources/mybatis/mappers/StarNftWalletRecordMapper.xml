@@ -101,8 +101,13 @@
                 from_uid = #{userId}
             </if>
             <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
-            and pay_time between #{startDate} and #{endDate}
+                and pay_time between #{startDate} and #{endDate}
             </if>
+
+            <if test="payStatus != null and payStatus != ''">
+                and pay_status = #{payStatus}
+            </if>
+
             <if test="transactionType != null and transactionType != ''">
                 and ts_type in
                 <foreach collection="transactionType" item="type" index="index"
@@ -125,6 +130,9 @@
                 and pay_time between #{startDate} and #{endDate}
             </if>
 
+            <if test="payStatus != null and payStatus != ''">
+                and pay_status = #{payStatus}
+            </if>
 
             <if test="transactionType != null and transactionType != ''">
                 and ts_type in

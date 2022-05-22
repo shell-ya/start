@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,7 +22,7 @@ import java.lang.reflect.Method;
  */
 @Component
 @Slf4j
-public class StatInterceptor extends HandlerInterceptorAdapter{
+public class StatInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired
     BaseUserService baseUserService;
@@ -47,6 +48,9 @@ public class StatInterceptor extends HandlerInterceptorAdapter{
         //todo 签名验证
 
         //token验证
+        if (handler instanceof ResourceHttpRequestHandler) {
+            return true;
+        }
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         Class<?> beanType = handlerMethod.getBeanType();
         TokenIgnore classAnnotation = beanType.getAnnotation(TokenIgnore.class);

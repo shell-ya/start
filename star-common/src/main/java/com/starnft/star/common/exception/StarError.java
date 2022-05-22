@@ -50,6 +50,7 @@ public enum StarError {
     OVER_WITHDRAW_MONEY("300004", "超过限制提现金额"),
 
     CARD_BINDING_FAILED("300005", "银行卡绑定失败"),
+    CARD_NOT_BINDING_FAILED("300006", "你还没有绑定银行卡"),
     ;
 
     private String NS = "";

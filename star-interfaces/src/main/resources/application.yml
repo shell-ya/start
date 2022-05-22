@@ -25,4 +25,4 @@ mybatis-plus:
     cache-enabled: true
     log-impl: com.starnft.star.interfaces.config.StdOutImpl
 swagger:
-    packages: com.starnft.star.infrastructure.controller
+    packages: com.starnft.star
