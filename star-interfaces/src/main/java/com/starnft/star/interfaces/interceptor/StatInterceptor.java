@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,21 +49,25 @@ public class StatInterceptor extends HandlerInterceptorAdapter {
 
         //todo 签名验证
 
-        if (request.getMethod().equals( RequestMethod.POST) ){
+        if (request.getMethod().equals(RequestMethod.POST)) {
             String postData = getPostData(request);
         }
 
         //token验证
-        HandlerMethod handlerMethod = (HandlerMethod) handler;
-        Class<?> beanType = handlerMethod.getBeanType();
-        TokenIgnore classAnnotation = beanType.getAnnotation(TokenIgnore.class);
-        if (classAnnotation != null) {
-            return true;
-        }
+        if (handler instanceof HandlerMethod) {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
+            Class<?> beanType = handlerMethod.getBeanType();
+            TokenIgnore classAnnotation = beanType.getAnnotation(TokenIgnore.class);
+            if (classAnnotation != null) {
+                return true;
+            }
 
-        Method method = handlerMethod.getMethod();
-        TokenIgnore methodAnnotation = method.getAnnotation(TokenIgnore.class);
-        if (methodAnnotation != null) {
+            Method method = handlerMethod.getMethod();
+            TokenIgnore methodAnnotation = method.getAnnotation(TokenIgnore.class);
+            if (methodAnnotation != null) {
+                return true;
+            }
+        } else {
             return true;
         }
 
@@ -73,7 +76,7 @@ public class StatInterceptor extends HandlerInterceptorAdapter {
         if (StringUtils.isBlank(token)) {
             throw new StarException(StarError.TOKEN_NOT_EXISTS_ERROR);
         } else {
-            Long userId = baseUserService.checkTokenAndReturnUserId(token);
+            Long userId = this.baseUserService.checkTokenAndReturnUserId(token);
             UserContext.setUserId(UserResolverInfo.builder().userId(userId).build());
         }
 
@@ -94,10 +97,11 @@ public class StatInterceptor extends HandlerInterceptorAdapter {
     /**
      * If the parameter data was sent in the request body, such as occurs
      * with an HTTP POST request, then reading the body directly via
-     * @see javax.servlet.ServletRequest#getInputStream or
-     * @see javax.servlet.ServletRequest#getReader
+     *
      * @param request HttpServletRequest
      * @return String
+     * @see javax.servlet.ServletRequest#getInputStream or
+     * @see javax.servlet.ServletRequest#getReader
      */
     public static String getPostData(HttpServletRequest request) {
         StringBuilder data = new StringBuilder();
