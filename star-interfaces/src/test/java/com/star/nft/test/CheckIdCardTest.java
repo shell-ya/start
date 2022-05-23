@@ -9,8 +9,9 @@ import javax.annotation.Resource;
 
 @SpringBootTest(classes = {StarApplication.class})
 public class CheckIdCardTest {
-@Resource
+    @Resource
     SwIdentifyStrategy swIdentifyStrategy;
+
     @Test
     public void repoTest() {
 
