@@ -13,17 +13,17 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ProcessFactory {
 
     @Resource(name = "restTemplateInteraction")
-    IInteract<ResponseEntity<?>> jsonDataTransfer;
+    IInteract jsonDataTransfer;
 
     //渠道调用方式缓存
-    protected static final Map<StarConstants.ProcessType, IInteract<?>> typeDataTransferMap = new ConcurrentHashMap<>(8);
+    protected static final Map<StarConstants.ProcessType, IInteract> typeDataTransferMap = new ConcurrentHashMap<>(8);
 
     @PostConstruct
     public void init() {
         typeDataTransferMap.put(jsonDataTransfer.getSerSerializationType(), jsonDataTransfer);
     }
 
-    public static IInteract<?> getTypeDataTransferMap(StarConstants.ProcessType type) {
+    public static IInteract getTypeDataTransferMap(StarConstants.ProcessType type) {
         return typeDataTransferMap.get(type);
     }
 

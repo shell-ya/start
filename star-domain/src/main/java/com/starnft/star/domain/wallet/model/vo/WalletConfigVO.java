@@ -21,6 +21,11 @@ public class WalletConfigVO implements Serializable {
     @ApiModelProperty(name = "提现限额", notes = "")
     private BigDecimal withdrawLimit;
     /**
+     * 提现次数
+     */
+    @ApiModelProperty(name = "提现次数")
+    private Integer withdrawTimes;
+    /**
      * 手续费比例
      */
     @ApiModelProperty(name = "手续费比例", notes = "")
@@ -55,6 +60,14 @@ public class WalletConfigVO implements Serializable {
 
     public void setWithdrawLimit(BigDecimal withdrawLimit) {
         this.withdrawLimit = withdrawLimit;
+    }
+
+    public Integer getWithdrawTimes() {
+        return withdrawTimes;
+    }
+
+    public void setWithdrawTimes(Integer withdrawTimes) {
+        this.withdrawTimes = withdrawTimes;
     }
 
     public BigDecimal getChargeRate() {

@@ -1,7 +1,6 @@
 package com.starnft.star.domain.wallet.model.req;
 
 import com.starnft.star.common.page.RequestPage;
-import lombok.Builder;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -16,6 +15,8 @@ public class TransactionRecordQueryReq extends RequestPage implements Serializab
     private Date startDate;
     /** 结束时间*/
     private Date endDate;
+    /** 交易状态*/
+    private String payStatus;
     /** 交易类型*/
     private List<Integer> transactionType;
 

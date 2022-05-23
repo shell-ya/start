@@ -9,6 +9,7 @@
         <result property="modifiedAt" column="modified_at" jdbcType="DATE"/>
         <result property="modifiedBy" column="modified_by" jdbcType="VARCHAR"/>
         <result property="rechargeLimit" column="recharge_limit" jdbcType="DECIMAL"/>
+        <result property="withdrawTimes" column="withdraw_times" jdbcType="INTEGER"/>
         <result property="withdrawLimit" column="withdraw_limit" jdbcType="DECIMAL"/>
         <result property="chargeRate" column="charge_rate" jdbcType="DECIMAL"/>
         <result property="stableRate" column="stable_rate" jdbcType="DECIMAL"/>
@@ -18,191 +19,19 @@
 
 
     <select id="loadAllWalletConfig"
-            resultType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletConfig" >
+            resultType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletConfig">
         SELECT *
         FROM star_nft_wallet_config
-    </select>
-
-    <!--条件查询-->
-    <select id="queryByCondition"
-            resultType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletConfig">
-        select
-        id,is_deleted,created_at,created_by,modified_at,modified_by,recharge_limit,withdraw_limit,charge_rate,stable_rate,identity_code,channel
-        from star_nft_wallet_config
-        <where>
-            <if test="id != null and id != ''">
-                and id = #{id}
-            </if>
-            <if test="isDeleted != null and isDeleted != ''">
-                and is_deleted = #{isDeleted}
-            </if>
-            <if test="createdAt != null and createdAt != ''">
-                and created_at = #{createdAt}
-            </if>
-            <if test="createdBy != null and createdBy != ''">
-                and created_by = #{createdBy}
-            </if>
-            <if test="modifiedAt != null and modifiedAt != ''">
-                and modified_at = #{modifiedAt}
-            </if>
-            <if test="modifiedBy != null and modifiedBy != ''">
-                and modified_by = #{modifiedBy}
-            </if>
-            <if test="rechargeLimit != null and rechargeLimit != ''">
-                and recharge_limit = #{rechargeLimit}
-            </if>
-            <if test="withdrawLimit != null and withdrawLimit != ''">
-                and withdraw_limit = #{withdrawLimit}
-            </if>
-            <if test="chargeRate != null and chargeRate != ''">
-                and charge_rate = #{chargeRate}
-            </if>
-            <if test="stableRate != null and stableRate != ''">
-                and stable_rate = #{stableRate}
-            </if>
-            <if test="identityCode != null and identityCode != ''">
-                and identity_code = #{identityCode}
-            </if>
-            <if test="channel != null and channel != ''">
-                and channel = #{channel}
-            </if>
-        </where>
-    </select>
-
-    <!--统计总行数-->
-    <select id="count" resultType="java.lang.Long">
-        select count(1)
-        from star_nft_wallet_config
-        <where>
-            <if test="id != null and id != ''">
-                and id = #{id}
-            </if>
-            <if test="isDeleted != null and isDeleted != ''">
-                and is_deleted = #{isDeleted}
-            </if>
-            <if test="createdAt != null and createdAt != ''">
-                and created_at = #{createdAt}
-            </if>
-            <if test="createdBy != null and createdBy != ''">
-                and created_by = #{createdBy}
-            </if>
-            <if test="modifiedAt != null and modifiedAt != ''">
-                and modified_at = #{modifiedAt}
-            </if>
-            <if test="modifiedBy != null and modifiedBy != ''">
-                and modified_by = #{modifiedBy}
-            </if>
-            <if test="rechargeLimit != null and rechargeLimit != ''">
-                and recharge_limit = #{rechargeLimit}
-            </if>
-            <if test="withdrawLimit != null and withdrawLimit != ''">
-                and withdraw_limit = #{withdrawLimit}
-            </if>
-            <if test="chargeRate != null and chargeRate != ''">
-                and charge_rate = #{chargeRate}
-            </if>
-            <if test="stableRate != null and stableRate != ''">
-                and stable_rate = #{stableRate}
-            </if>
-            <if test="identityCode != null and identityCode != ''">
-                and identity_code = #{identityCode}
-            </if>
-            <if test="channel != null and channel != ''">
-                and channel = #{channel}
-            </if>
-        </where>
     </select>
 
     <!--新增数据-->
     <insert id="walletConfigRegister" keyProperty="id" useGeneratedKeys="true"
             parameterType="com.starnft.star.infrastructure.entity.wallet.dto.WalletConfigDTO">
         insert into star_nft_wallet_config(is_deleted, created_at, created_by, modified_at, modified_by, recharge_limit,
+                                           withdraw_times,
                                            withdraw_limit, charge_rate, stable_rate, identity_code, channel)
         values (#{isDeleted}, #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{rechargeLimit},
+                #{withdrawTimes},
                 #{withdrawLimit}, #{chargeRate}, #{stableRate}, #{identityCode}, #{channel})
     </insert>
-
-    <!-- 批量新增数据 -->
-    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
-        insert into
-        star_nft_wallet_config(id,is_deleted,created_at,created_by,modified_at,modified_by,recharge_limit,withdraw_limit,charge_rate,stable_rate,identity_code,channel)
-        values
-        <foreach collection="entities" item="entity" separator=",">
-            (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.rechargeLimit},#{entity.withdrawLimit},#{entity.chargeRate},#{entity.stableRate},#{identityCode},#{entity.channel})
-        </foreach>
-    </insert>
-
-    <!-- 批量新增或按主键更新数据 -->
-    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
-        insert into
-        star_nft_wallet_config(id,is_deleted,created_at,created_by,modified_at,modified_by,recharge_limit,withdraw_limit,charge_rate,stable_rate,identity_code,channel)
-        values
-        <foreach collection="entities" item="entity" separator=",">
-            (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.rechargeLimit},#{entity.withdrawLimit},#{entity.chargeRate},#{entity.stableRate},#{identityCode},#{entity.channel})
-        </foreach>
-        on duplicate key update
-        id=values(id),
-        is_deleted=values(is_deleted),
-        created_at=values(created_at),
-        created_by=values(created_by),
-        modified_at=values(modified_at),
-        modified_by=values(modified_by),
-        recharge_limit=values(recharge_limit),
-        withdraw_limit=values(withdraw_limit),
-        charge_rate=values(charge_rate),
-        stable_rate=values(stable_rate),
-        identity_code=values(identityCode),
-        channel=values(channel)
-    </insert>
-
-    <!-- 更新数据 -->
-    <update id="update">
-        update star_nft_wallet_config
-        <set>
-            <if test="id != null and id != ''">
-                id = #{id},
-            </if>
-            <if test="isDeleted != null and isDeleted != ''">
-                is_deleted = #{isDeleted},
-            </if>
-            <if test="createdAt != null and createdAt != ''">
-                created_at = #{createdAt},
-            </if>
-            <if test="createdBy != null and createdBy != ''">
-                created_by = #{createdBy},
-            </if>
-            <if test="modifiedAt != null and modifiedAt != ''">
-                modified_at = #{modifiedAt},
-            </if>
-            <if test="modifiedBy != null and modifiedBy != ''">
-                modified_by = #{modifiedBy},
-            </if>
-            <if test="rechargeLimit != null and rechargeLimit != ''">
-                recharge_limit = #{rechargeLimit},
-            </if>
-            <if test="withdrawLimit != null and withdrawLimit != ''">
-                withdraw_limit = #{withdrawLimit},
-            </if>
-            <if test="chargeRate != null and chargeRate != ''">
-                charge_rate = #{chargeRate},
-            </if>
-            <if test="stableRate != null and stableRate != ''">
-                stable_rate = #{stableRate},
-            </if>
-            <if test="identityCode != null and identityCode != ''">
-                identity_code = #{identityCode},
-            </if>
-            <if test="channel != null and channel != ''">
-                channel = #{channel},
-            </if>
-        </set>
-        where id = #{id}
-    </update>
-
-    <!--通过主键删除-->
-    <delete id="deleteById">
-        delete
-        from star_nft_wallet_config
-        where id = #{id}
-    </delete>
 </mapper>

@@ -5,7 +5,7 @@ spring:
     active: dev
 
 server:
-  port: 8080
+  port: 8089
 
 logging:
   level:
@@ -25,4 +25,4 @@ mybatis-plus:
     cache-enabled: true
     log-impl: com.starnft.star.interfaces.config.StdOutImpl
 swagger:
-    packages: com.starnft.star.infrastructure.controller
+    packages: com.starnft.star

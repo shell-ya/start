@@ -1,14 +1,11 @@
 package com.starnft.star.domain.wallet.repository;
 
-import cn.hutool.db.PageResult;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.wallet.model.req.RechargeReq;
 import com.starnft.star.domain.wallet.model.req.TransactionRecordQueryReq;
 import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
 import com.starnft.star.domain.wallet.model.req.WalletRecordReq;
-import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
-import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
-import com.starnft.star.domain.wallet.model.vo.WalletVO;
+import com.starnft.star.domain.wallet.model.vo.*;
 
 import java.util.List;
 
@@ -40,10 +37,12 @@ public interface IWalletRepository {
 
     /**
      * 修改钱包余额
-     * @param rechargeReq 修改请求
+     *
+     * @param walletVO 修改请求
      * @return 执行结果
      */
-    boolean modifyWalletBalance(RechargeReq rechargeReq);
+    boolean modifyWalletBalance(WalletVO walletVO);
+
     /**
      * 创建交易记录
      *
@@ -66,19 +65,43 @@ public interface IWalletRepository {
 
     /**
      * 更新交易记录状态
-     * @param serialNo 流水号
-     * @param payStatus  状态
+     *
+     * @param serialNo  流水号
+     * @param payStatus 状态
      * @return 执行结果
      */
     boolean updateWalletRecordStatus(String serialNo, String payStatus);
 
 
     /**
-     * @author Ryan Z / haoran
-     * @description 查询交易记录
-     * @date  2022/5/12
      * @param queryReq
      * @return WalletRecordVO
+     * @author Ryan Z / haoran
+     * @description 查询交易记录
+     * @date 2022/5/12
      */
     ResponsePageResult<WalletRecordVO> queryTransactionRecordByCondition(TransactionRecordQueryReq queryReq);
+
+    /**
+     * 创建提现记录
+     *
+     * @param withdrawRecordVO
+     * @return
+     */
+    boolean createWithdrawRecord(WithdrawRecordVO withdrawRecordVO);
+
+
+    /**
+     * 银行卡绑定
+     */
+    boolean cardBinding(BankRelationVO bankRelationVO);
+
+    /**
+     * 查询用户下绑卡信息
+     *
+     * @param uid uid
+     * @return BankRelationVO
+     */
+    List<BankRelationVO> queryCardBindings(Long uid);
+
 }

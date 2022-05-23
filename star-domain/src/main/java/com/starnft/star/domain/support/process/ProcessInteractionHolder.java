@@ -10,7 +10,7 @@ public interface ProcessInteractionHolder {
      * @description //获取对应的协议调用类
      * @date 2022/3/21
      */
-    default IInteract<?> obtainProcessInteraction(StarConstants.ProcessType type) {
+    default IInteract obtainProcessInteraction(StarConstants.ProcessType type) {
         return ProcessFactory.getTypeDataTransferMap(type);
     }
 }

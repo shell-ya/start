@@ -1,6 +1,5 @@
 package com.starnft.star.application.aware.context;
 
-import com.starnft.star.application.aware.config.PaymentConfig;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -10,5 +9,4 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "extra-configuration")
 public class ExtraConfiguration {
 
-    private PaymentConfig payConfig;
 }

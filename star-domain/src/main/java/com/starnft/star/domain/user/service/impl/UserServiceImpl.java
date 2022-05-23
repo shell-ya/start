@@ -347,4 +347,9 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         userRepository.addAuthorizationId(userId,authorizationId);
         userRepository.batchInsertAgreementSign(list);
     }
+
+    @Override
+    public UserRealInfo getUserRealInfo(Long uid) {
+        return userRepository.getUserInfoAll(uid);
+    }
 }

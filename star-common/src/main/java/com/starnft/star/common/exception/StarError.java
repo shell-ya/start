@@ -40,9 +40,17 @@ public enum StarError {
     BALANCE_NOT_ENOUGH("300001", "余额不足"),
 
 
-    COS_ERROR("300001", "cos异常"),
+    COS_ERROR("500001", "cos异常"),
     MESSAGE_TOPIC_NOT_FOUND("400001", "TopicConstants 未找到响应topic,请检查配置"),
     PERSISTENT_FAIL("200002", "数据保存失败"),
+
+    IS_TRANSACTION("300002", "有其他交易正在进行，请先完成正在进行的交易"),
+
+    OVER_WITHDRAW_TIMES("300003", "已达到当日提现最大次数"),
+    OVER_WITHDRAW_MONEY("300004", "超过限制提现金额"),
+
+    CARD_BINDING_FAILED("300005", "银行卡绑定失败"),
+    CARD_NOT_BINDING_FAILED("300006", "你还没有绑定银行卡"),
     ;
 
     private String NS = "";

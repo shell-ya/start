@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.wallet.StarNftWithdrawApplyMapper">
+    <resultMap type="com.starnft.star.infrastructure.entity.wallet.StarNftWithdrawApply" id="StarNftWithdrawApplyMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="isDeleted" column="is_deleted" jdbcType="INTEGER"/>
+        <result property="createdAt" column="created_at" jdbcType="DATE"/>
+        <result property="createdBy" column="created_by" jdbcType="VARCHAR"/>
+        <result property="modifiedAt" column="modified_at" jdbcType="DATE"/>
+        <result property="modifiedBy" column="modified_by" jdbcType="VARCHAR"/>
+        <result property="withdrawUid" column="withdraw_uid" jdbcType="INTEGER"/>
+        <result property="withdrawMoney" column="withdraw_money" jdbcType="DECIMAL"/>
+        <result property="withdrawTradeNo" column="withdraw_trade_no" jdbcType="VARCHAR"/>
+        <result property="withdrawBankNo" column="withdraw_bank_no" jdbcType="INTEGER"/>
+        <result property="bankMatchName" column="bank_match_name" jdbcType="VARCHAR"/>
+        <result property="withdrawChannel" column="withdraw_channel" jdbcType="VARCHAR"/>
+        <result property="applyTime" column="apply_time" jdbcType="VARCHAR"/>
+        <result property="applyPassTime" column="apply_pass_time" jdbcType="VARCHAR"/>
+        <result property="applyStatus" column="apply_status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!-- 通过ID查询单条数据 -->
+    <select id="queryById" resultMap="StarNftWithdrawApplyMap">
+        select
+            id,is_deleted,created_at,created_by,modified_at,modified_by,withdraw_uid,withdraw_money,withdraw_trade_no,withdraw_bank_no,bank_match_name,withdraw_channel,apply_time,apply_pass_time,apply_status
+        from star_nft_withdraw_apply
+        where id = #{id}
+    </select>
+
+    <!--分页查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="StarNftWithdrawApplyMap">
+        select
+        id,is_deleted,created_at,created_by,modified_at,modified_by,withdraw_uid,withdraw_money,withdraw_trade_no,withdraw_bank_no,bank_match_name,withdraw_channel,apply_time,apply_pass_time,apply_status
+        from star_nft_withdraw_apply
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                and is_deleted = #{isDeleted}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                and created_at = #{createdAt}
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                and modified_at = #{modifiedAt}
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                and modified_by = #{modifiedBy}
+            </if>
+            <if test="withdrawUid != null and withdrawUid != ''">
+                and withdraw_uid = #{withdrawUid}
+            </if>
+            <if test="withdrawMoney != null and withdrawMoney != ''">
+                and withdraw_money = #{withdrawMoney}
+            </if>
+            <if test="withdrawTradeNo != null and withdrawTradeNo != ''">
+                and withdraw_trade_no = #{withdrawTradeNo}
+            </if>
+            <if test="withdrawBankNo != null and withdrawBankNo != ''">
+                and withdraw_bank_no = #{withdrawBankNo}
+            </if>
+            <if test="bankMatchName != null and bankMatchName != ''">
+                and bank_match_name = #{bankMatchName}
+            </if>
+            <if test="withdrawChannel != null and withdrawChannel != ''">
+                and withdraw_channel = #{withdrawChannel}
+            </if>
+            <if test="applyTime != null and applyTime != ''">
+                and apply_time = #{applyTime}
+            </if>
+            <if test="applyPassTime != null and applyPassTime != ''">
+                and apply_pass_time = #{applyPassTime}
+            </if>
+            <if test="applyStatus != null and applyStatus != ''">
+                and apply_status = #{applyStatus}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from star_nft_withdraw_apply
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                and is_deleted = #{isDeleted}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                and created_at = #{createdAt}
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                and modified_at = #{modifiedAt}
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                and modified_by = #{modifiedBy}
+            </if>
+            <if test="withdrawUid != null and withdrawUid != ''">
+                and withdraw_uid = #{withdrawUid}
+            </if>
+            <if test="withdrawMoney != null and withdrawMoney != ''">
+                and withdraw_money = #{withdrawMoney}
+            </if>
+            <if test="withdrawTradeNo != null and withdrawTradeNo != ''">
+                and withdraw_trade_no = #{withdrawTradeNo}
+            </if>
+            <if test="withdrawBankNo != null and withdrawBankNo != ''">
+                and withdraw_bank_no = #{withdrawBankNo}
+            </if>
+            <if test="bankMatchName != null and bankMatchName != ''">
+                and bank_match_name = #{bankMatchName}
+            </if>
+            <if test="withdrawChannel != null and withdrawChannel != ''">
+                and withdraw_channel = #{withdrawChannel}
+            </if>
+            <if test="applyTime != null and applyTime != ''">
+                and apply_time = #{applyTime}
+            </if>
+            <if test="applyPassTime != null and applyPassTime != ''">
+                and apply_pass_time = #{applyPassTime}
+            </if>
+            <if test="applyStatus != null and applyStatus != ''">
+                and apply_status = #{applyStatus}
+            </if>
+        </where>
+    </select>
+
+    <!--新增数据-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true" parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftWithdrawApply">
+        insert into star_nft_withdraw_apply(is_deleted,created_at,created_by,modified_at,modified_by,withdraw_uid,withdraw_money,withdraw_trade_no,withdraw_bank_no,bank_match_name,withdraw_channel,apply_time,apply_pass_time,apply_status)
+        values (#{isDeleted},#{createdAt},#{createdBy},#{modifiedAt},#{modifiedBy},#{withdrawUid},#{withdrawMoney},#{withdrawTradeNo},#{withdrawBankNo},#{bankMatchName},#{withdrawChannel},#{applyTime},#{applyPassTime},#{applyStatus})
+    </insert>
+
+    <!-- 批量新增数据 -->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into star_nft_withdraw_apply(id,is_deleted,created_at,created_by,modified_at,modified_by,withdraw_uid,withdraw_money,withdraw_trade_no,withdraw_bank_no,bank_match_name,withdraw_channel,apply_time,apply_pass_time,apply_status)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.withdrawUid},#{entity.withdrawMoney},#{entity.withdrawTradeNo},#{entity.withdrawBankNo},#{entity.bankMatchName},#{entity.withdrawChannel},#{entity.applyTime},#{entity.applyPassTime},#{entity.applyStatus})
+        </foreach>
+    </insert>
+
+    <!-- 批量新增或按主键更新数据 -->
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into star_nft_withdraw_apply(id,is_deleted,created_at,created_by,modified_at,modified_by,withdraw_uid,withdraw_money,withdraw_trade_no,withdraw_bank_no,bank_match_name,withdraw_channel,apply_time,apply_pass_time,apply_status)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.withdrawUid},#{entity.withdrawMoney},#{entity.withdrawTradeNo},#{entity.withdrawBankNo},#{entity.bankMatchName},#{entity.withdrawChannel},#{entity.applyTime},#{entity.applyPassTime},#{entity.applyStatus})
+        </foreach>
+        on duplicate key update
+        id=values(id),
+        is_deleted=values(is_deleted),
+        created_at=values(created_at),
+        created_by=values(created_by),
+        modified_at=values(modified_at),
+        modified_by=values(modified_by),
+        withdraw_uid=values(withdraw_uid),
+        withdraw_money=values(withdraw_money),
+        withdraw_trade_no=values(withdraw_trade_no),
+        withdraw_bank_no=values(withdraw_bank_no),
+        bank_match_name=values(bank_match_name),
+        withdraw_channel=values(withdraw_channel),
+        apply_time=values(apply_time),
+        apply_pass_time=values(apply_pass_time),
+        apply_status=values(apply_status)
+    </insert>
+
+    <!-- 更新数据 -->
+    <update id="update">
+        update star_nft_withdraw_apply
+        <set>
+            <if test="id != null and id != ''">
+                id = #{id},
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                is_deleted = #{isDeleted},
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                created_at = #{createdAt},
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                created_by = #{createdBy},
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                modified_at = #{modifiedAt},
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                modified_by = #{modifiedBy},
+            </if>
+            <if test="withdrawUid != null and withdrawUid != ''">
+                withdraw_uid = #{withdrawUid},
+            </if>
+            <if test="withdrawMoney != null and withdrawMoney != ''">
+                withdraw_money = #{withdrawMoney},
+            </if>
+            <if test="withdrawTradeNo != null and withdrawTradeNo != ''">
+                withdraw_trade_no = #{withdrawTradeNo},
+            </if>
+            <if test="withdrawBankNo != null and withdrawBankNo != ''">
+                withdraw_bank_no = #{withdrawBankNo},
+            </if>
+            <if test="bankMatchName != null and bankMatchName != ''">
+                bank_match_name = #{bankMatchName},
+            </if>
+            <if test="withdrawChannel != null and withdrawChannel != ''">
+                withdraw_channel = #{withdrawChannel},
+            </if>
+            <if test="applyTime != null and applyTime != ''">
+                apply_time = #{applyTime},
+            </if>
+            <if test="applyPassTime != null and applyPassTime != ''">
+                apply_pass_time = #{applyPassTime},
+            </if>
+            <if test="applyStatus != null and applyStatus != ''">
+                apply_status = #{applyStatus},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from star_nft_withdraw_apply where id = #{id}
+    </delete>
+</mapper>

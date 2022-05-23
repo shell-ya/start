@@ -16,6 +16,8 @@ import java.util.Objects;
 public class YamlConfigurerConfiguration {
 
     private static final String path = "/preconfig/pre_config.yaml";
+    private static final String pay_conf_path = "/preconfig/pay_conf.yaml";
+    private static final String channel_conf_path = "/preconfig/channel_conf.yaml";
 
     @Bean
     @SneakyThrows
@@ -23,8 +25,10 @@ public class YamlConfigurerConfiguration {
         PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
         YamlPropertiesFactoryBean yaml = new YamlPropertiesFactoryBean();
         ClassPathResource classPathResource = new ClassPathResource(path);
+        ClassPathResource payConfClassPathResource = new ClassPathResource(pay_conf_path);
+        ClassPathResource channelConfClassPathResource = new ClassPathResource(channel_conf_path);
         //自定义yaml文件的存储路径
-        yaml.setResources(new Resource[]{classPathResource});
+        yaml.setResources(classPathResource, payConfClassPathResource, channelConfClassPathResource);
         configurer.setProperties(Objects.requireNonNull(yaml.getObject()));
         return configurer;
     }

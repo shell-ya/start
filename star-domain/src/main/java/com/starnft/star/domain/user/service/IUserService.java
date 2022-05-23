@@ -13,6 +13,7 @@ public interface IUserService {
 
     /**
      * 账号密码登录
+     *
      * @param req
      * @return
      */
@@ -20,6 +21,7 @@ public interface IUserService {
 
     /**
      * 根据用户id获取用户信息
+     *
      * @param userId
      * @return
      */
@@ -27,6 +29,7 @@ public interface IUserService {
 
     /**
      * 手机验证码登录/注册
+     *
      * @param req
      * @return
      */
@@ -34,6 +37,7 @@ public interface IUserService {
 
     /**
      * 用户登出
+     *
      * @param userId
      * @return
      */
@@ -41,6 +45,7 @@ public interface IUserService {
 
     /**
      * 获取短信验证码
+     *
      * @param req
      * @return
      */
@@ -48,6 +53,7 @@ public interface IUserService {
 
     /**
      * 初始化登录密码
+     *
      * @param materialDTO
      * @return
      */
@@ -55,6 +61,7 @@ public interface IUserService {
 
     /**
      * 修改账户密码
+     *
      * @param materialDTO
      * @return
      */
@@ -62,6 +69,7 @@ public interface IUserService {
 
     /**
      * 初始化支付密码
+     *
      * @param req
      * @return
      */
@@ -69,6 +77,7 @@ public interface IUserService {
 
     /**
      * 修改支付密码
+     *
      * @param req
      * @return
      */
@@ -76,6 +85,7 @@ public interface IUserService {
 
     /**
      * 校验支付密码是否正确
+     *
      * @param req
      * @return
      */
@@ -83,13 +93,15 @@ public interface IUserService {
 
     /**
      * 发起实名认证
+     *
      * @param req
      * @return
      */
-    Boolean realNameAuthentication(Long userId  , AuthenticationNameDTO req);
+    Boolean realNameAuthentication(Long userId, AuthenticationNameDTO req);
 
     /**
      * 查询实名认证结果
+     *
      * @param userId
      * @return
      */
@@ -97,6 +109,7 @@ public interface IUserService {
 
     /**
      * 查询协议信息
+     *
      * @param agreementId
      * @return
      */
@@ -105,6 +118,7 @@ public interface IUserService {
 
     /**
      * 根据协议类型查询最新协议
+     *
      * @param agreementType
      * @return
      */
@@ -112,6 +126,7 @@ public interface IUserService {
 
     /**
      * 保存用户同意协议的版本信息
+     *
      * @param agreementIdDTO
      * @return
      */
@@ -119,6 +134,7 @@ public interface IUserService {
 
     /**
      * 根据协议id查询协议信息
+     *
      * @param agreementIdList
      * @return
      */
@@ -126,9 +142,18 @@ public interface IUserService {
 
     /**
      * 插入协议的授权信息
+     *
      * @param list
      * @param userId
      * @param authorizationId
      */
-    void batchInsertAgreementSign(List<AgreementSignDTO> list ,Long userId , Long authorizationId);
+    void batchInsertAgreementSign(List<AgreementSignDTO> list, Long userId, Long authorizationId);
+
+    /**
+     * 获取用户真实信息
+     *
+     * @param uid
+     * @return
+     */
+    UserRealInfo getUserRealInfo(Long uid);
 }

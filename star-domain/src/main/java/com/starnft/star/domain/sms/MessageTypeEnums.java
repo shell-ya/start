@@ -1,7 +1,8 @@
 package com.starnft.star.domain.sms;
 
 public enum MessageTypeEnums {
-    sw_message(1,"swMessageStrategy","首网短信发送策略");
+    sw_message(1,"swMessageStrategy","首网短信发送策略"),
+    tx_message(2,"txMessageStrategy","腾讯短信发送策略");
 
     public String getStrategy() {
         return strategy;
