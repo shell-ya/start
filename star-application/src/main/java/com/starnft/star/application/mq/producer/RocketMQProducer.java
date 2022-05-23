@@ -47,7 +47,9 @@ public class RocketMQProducer implements IMessageSender {
         String msgId = sendResult.getMsgId();
         SendStatus sendStatus = sendResult.getSendStatus();
         if (sendStatus.equals(SendStatus.SEND_OK)) {
-            log.debug("[{}] 消息同步发送成功，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message.get()));
+            if (log.isDebugEnabled()) {
+                log.debug("[{}] 消息同步发送成功，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message.get()));
+            }
         } else {
             log.error("[{}] 消息同步发送失败，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message.get()));
             //消息记录落盘
@@ -72,7 +74,9 @@ public class RocketMQProducer implements IMessageSender {
             public void onSuccess(SendResult sendResult) {
                 String msgId = sendResult.getMsgId();
                 SendStatus sendStatus = sendResult.getSendStatus();
-                log.debug("[{}] 消息同步发送成功，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message.get()));
+                if (log.isDebugEnabled()) {
+                    log.debug("[{}] 消息同步发送成功，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message.get()));
+                }
             }
 
             @Override
@@ -107,7 +111,9 @@ public class RocketMQProducer implements IMessageSender {
         String msgId = sendResult.getMsgId();
         SendStatus sendStatus = sendResult.getSendStatus();
         if (sendStatus.equals(SendStatus.SEND_OK)) {
-            log.debug("[{}] 消息同步发送成功，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message.get()));
+            if (log.isDebugEnabled()) {
+                log.debug("[{}] 消息同步发送成功，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message.get()));
+            }
         } else {
             log.error("[{}] 消息同步发送失败，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message.get()));
             //消息记录落盘
@@ -132,7 +138,9 @@ public class RocketMQProducer implements IMessageSender {
             String msgId = sendResult.getMsgId();
             SendStatus sendStatus = sendResult.getSendStatus();
             if (sendStatus.equals(SendStatus.SEND_OK)) {
-                log.debug("[{}] 消息同步发送成功，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message));
+                if (log.isDebugEnabled()) {
+                    log.debug("[{}] 消息同步发送成功，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message));
+                }
             } else {
                 log.error("[{}] 消息同步发送失败，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message));
                 //消息记录落盘

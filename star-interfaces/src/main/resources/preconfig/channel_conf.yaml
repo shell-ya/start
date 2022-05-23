@@ -3,8 +3,8 @@ channel-configs:
     - trade: SandPay
       reqTempPath: sandpay/sand_pay_request.ftl
       resTempPath: sandpay/sand_pay_response.ftl
-      httpConfs:
-        - processType: json
-          apiUrl: https://www.baidu.com
-          properties:
-            reqHeader: POST
+      httpConf:
+        processType: json
+        apiUrl: https://www.baidu.com
+        properties:
+          reqHeader: POST

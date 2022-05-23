@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.order.StarNftOrderMapper">
+    <resultMap type="com.starnft.star.infrastructure.entity.order.StarNftOrder" id="StarNftOrderMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="orderSn" column="order_sn" jdbcType="VARCHAR"/>
+        <result property="seriesThemeInfoId" column="series_theme_info_id" jdbcType="BIGINT"/>
+        <result property="seriesThemeId" column="series_theme_id" jdbcType="BIGINT"/>
+        <result property="seriesId" column="series_id" jdbcType="BIGINT"/>
+        <result property="seriesName" column="series_name" jdbcType="VARCHAR"/>
+        <result property="themeName" column="theme_name" jdbcType="VARCHAR"/>
+        <result property="themePic" column="theme_pic" jdbcType="VARCHAR"/>
+        <result property="themeType" column="theme_type" jdbcType="BIT"/>
+        <result property="status" column="status" jdbcType="BIT"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="totalAmount" column="total_amount" jdbcType="DECIMAL"/>
+        <result property="payAmount" column="pay_amount" jdbcType="DECIMAL"/>
+        <result property="payNumber" column="pay_number" jdbcType="VARCHAR"/>
+        <result property="createdAt" column="created_at" jdbcType="DATE"/>
+        <result property="createdBy" column="created_by" jdbcType="VARCHAR"/>
+        <result property="modifiedAt" column="modified_at" jdbcType="DATE"/>
+        <result property="modifiedBy" column="modified_by" jdbcType="VARCHAR"/>
+        <result property="isDeleted" column="is_delete" jdbcType="BIT"/>
+    </resultMap>
+
+    <!-- 通过ID查询单条数据 -->
+    <select id="queryById" resultMap="StarNftOrderMap">
+        select
+            id,order_sn,series_theme_info_id,series_theme_id,series_id,series_name,theme_name,theme_pic,theme_type,status,user_id,total_amount,pay_amount,pay_number,created_at,created_by,modified_at,modified_by,is_delete
+        from star_nft_order
+        where id = #{id}
+    </select>
+
+    <!--分页查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="StarNftOrderMap">
+        select
+        id,order_sn,series_theme_info_id,series_theme_id,series_id,series_name,theme_name,theme_pic,theme_type,status,user_id,total_amount,pay_amount,pay_number,created_at,created_by,modified_at,modified_by,is_delete
+        from star_nft_order
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="orderSn != null and orderSn != ''">
+                and order_sn = #{orderSn}
+            </if>
+            <if test="seriesThemeInfoId != null and seriesThemeInfoId != ''">
+                and series_theme_info_id = #{seriesThemeInfoId}
+            </if>
+            <if test="seriesThemeId != null and seriesThemeId != ''">
+                and series_theme_id = #{seriesThemeId}
+            </if>
+            <if test="seriesId != null and seriesId != ''">
+                and series_id = #{seriesId}
+            </if>
+            <if test="seriesName != null and seriesName != ''">
+                and series_name = #{seriesName}
+            </if>
+            <if test="themeName != null and themeName != ''">
+                and theme_name = #{themeName}
+            </if>
+            <if test="themePic != null and themePic != ''">
+                and theme_pic = #{themePic}
+            </if>
+            <if test="themeType != null and themeType != ''">
+                and theme_type = #{themeType}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+            <if test="totalAmount != null and totalAmount != ''">
+                and total_amount = #{totalAmount}
+            </if>
+            <if test="payAmount != null and payAmount != ''">
+                and pay_amount = #{payAmount}
+            </if>
+            <if test="payNumber != null and payNumber != ''">
+                and pay_number = #{payNumber}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                and created_at = #{createdAt}
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                and modified_at = #{modifiedAt}
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                and modified_by = #{modifiedBy}
+            </if>
+            <if test="isDelete != null and isDelete != ''">
+                and is_delete = #{isDelete}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from star_nft_order
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="orderSn != null and orderSn != ''">
+                and order_sn = #{orderSn}
+            </if>
+            <if test="seriesThemeInfoId != null and seriesThemeInfoId != ''">
+                and series_theme_info_id = #{seriesThemeInfoId}
+            </if>
+            <if test="seriesThemeId != null and seriesThemeId != ''">
+                and series_theme_id = #{seriesThemeId}
+            </if>
+            <if test="seriesId != null and seriesId != ''">
+                and series_id = #{seriesId}
+            </if>
+            <if test="seriesName != null and seriesName != ''">
+                and series_name = #{seriesName}
+            </if>
+            <if test="themeName != null and themeName != ''">
+                and theme_name = #{themeName}
+            </if>
+            <if test="themePic != null and themePic != ''">
+                and theme_pic = #{themePic}
+            </if>
+            <if test="themeType != null and themeType != ''">
+                and theme_type = #{themeType}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+            <if test="totalAmount != null and totalAmount != ''">
+                and total_amount = #{totalAmount}
+            </if>
+            <if test="payAmount != null and payAmount != ''">
+                and pay_amount = #{payAmount}
+            </if>
+            <if test="payNumber != null and payNumber != ''">
+                and pay_number = #{payNumber}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                and created_at = #{createdAt}
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                and modified_at = #{modifiedAt}
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                and modified_by = #{modifiedBy}
+            </if>
+            <if test="isDelete != null and isDelete != ''">
+                and is_delete = #{isDelete}
+            </if>
+        </where>
+    </select>
+
+    <!--新增数据-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into star_nft_order(id,order_sn,series_theme_info_id,series_theme_id,series_id,series_name,theme_name,theme_pic,theme_type,status,user_id,total_amount,pay_amount,pay_number,created_at,created_by,modified_at,modified_by,is_delete)
+        values (#{id},#{orderSn},#{seriesThemeInfoId},#{seriesThemeId},#{seriesId},#{seriesName},#{themeName},#{themePic},#{themeType},#{status},#{userId},#{totalAmount},#{payAmount},#{payNumber},#{createdAt},#{createdBy},#{modifiedAt},#{modifiedBy},#{isDelete})
+    </insert>
+
+    <!-- 批量新增数据 -->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into star_nft_order(id,order_sn,series_theme_info_id,series_theme_id,series_id,series_name,theme_name,theme_pic,theme_type,status,user_id,total_amount,pay_amount,pay_number,created_at,created_by,modified_at,modified_by,is_delete)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.id},#{entity.orderSn},#{entity.seriesThemeInfoId},#{entity.seriesThemeId},#{entity.seriesId},#{entity.seriesName},#{entity.themeName},#{entity.themePic},#{entity.themeType},#{entity.status},#{entity.userId},#{entity.totalAmount},#{entity.payAmount},#{entity.payNumber},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.isDelete})
+        </foreach>
+    </insert>
+
+    <!-- 批量新增或按主键更新数据 -->
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into star_nft_order(id,order_sn,series_theme_info_id,series_theme_id,series_id,series_name,theme_name,theme_pic,theme_type,status,user_id,total_amount,pay_amount,pay_number,created_at,created_by,modified_at,modified_by,is_delete)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.id},#{entity.orderSn},#{entity.seriesThemeInfoId},#{entity.seriesThemeId},#{entity.seriesId},#{entity.seriesName},#{entity.themeName},#{entity.themePic},#{entity.themeType},#{entity.status},#{entity.userId},#{entity.totalAmount},#{entity.payAmount},#{entity.payNumber},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.isDelete})
+        </foreach>
+        on duplicate key update
+        id=values(id),
+        order_sn=values(order_sn),
+        series_theme_info_id=values(series_theme_info_id),
+        series_theme_id=values(series_theme_id),
+        series_id=values(series_id),
+        series_name=values(series_name),
+        theme_name=values(theme_name),
+        theme_pic=values(theme_pic),
+        theme_type=values(theme_type),
+        status=values(status),
+        user_id=values(user_id),
+        total_amount=values(total_amount),
+        pay_amount=values(pay_amount),
+        pay_number=values(pay_number),
+        created_at=values(created_at),
+        created_by=values(created_by),
+        modified_at=values(modified_at),
+        modified_by=values(modified_by),
+        is_delete=values(is_delete)
+    </insert>
+
+    <!-- 更新数据 -->
+    <update id="update">
+        update star_nft_order
+        <set>
+            <if test="id != null and id != ''">
+                id = #{id},
+            </if>
+            <if test="orderSn != null and orderSn != ''">
+                order_sn = #{orderSn},
+            </if>
+            <if test="seriesThemeInfoId != null and seriesThemeInfoId != ''">
+                series_theme_info_id = #{seriesThemeInfoId},
+            </if>
+            <if test="seriesThemeId != null and seriesThemeId != ''">
+                series_theme_id = #{seriesThemeId},
+            </if>
+            <if test="seriesId != null and seriesId != ''">
+                series_id = #{seriesId},
+            </if>
+            <if test="seriesName != null and seriesName != ''">
+                series_name = #{seriesName},
+            </if>
+            <if test="themeName != null and themeName != ''">
+                theme_name = #{themeName},
+            </if>
+            <if test="themePic != null and themePic != ''">
+                theme_pic = #{themePic},
+            </if>
+            <if test="themeType != null and themeType != ''">
+                theme_type = #{themeType},
+            </if>
+            <if test="status != null and status != ''">
+                status = #{status},
+            </if>
+            <if test="userId != null and userId != ''">
+                user_id = #{userId},
+            </if>
+            <if test="totalAmount != null and totalAmount != ''">
+                total_amount = #{totalAmount},
+            </if>
+            <if test="payAmount != null and payAmount != ''">
+                pay_amount = #{payAmount},
+            </if>
+            <if test="payNumber != null and payNumber != ''">
+                pay_number = #{payNumber},
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                created_at = #{createdAt},
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                created_by = #{createdBy},
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                modified_at = #{modifiedAt},
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                modified_by = #{modifiedBy},
+            </if>
+            <if test="isDelete != null and isDelete != ''">
+                is_delete = #{isDelete},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from star_nft_order where id = #{id}
+    </delete>
+</mapper>

@@ -1,12 +1,12 @@
-package com.starnft.star.infrastructure.mapper.order;
+package com.starnft.star.infrastructure.entity.order;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.starnft.star.infrastructure.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 订单表;
@@ -15,7 +15,7 @@ import java.util.Date;
  */
 @ApiModel(value = "订单表",description = "")
 @TableName("star_nft_order")
-public class StarNftOrder implements Serializable {
+public class StarNftOrder extends BaseEntity implements Serializable {
 
     /** 主键id */
     @ApiModelProperty(name = "主键id",notes = "")
