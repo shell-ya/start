@@ -31,4 +31,6 @@ public interface WalletService {
     //用户绑定银行卡查询
     List<CardBindResult> obtainCards(Long uid);
 
+    //TODO 删除已绑定卡
+
 }

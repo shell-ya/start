@@ -42,7 +42,7 @@ public class SpringTest {
 
     @Test
     @SneakyThrows
-    public void tempconf(){
+    public void tempconf() {
         log.info(JSON.toJSONString(channelConf.getTempConfs()));
 
         List<TempConf> tempConfs = channelConf.getTempConfs();
@@ -58,10 +58,10 @@ public class SpringTest {
 
         HashMap<@Nullable String, @Nullable String> map =
                 Maps.newHashMap();
-        map.put("a","123");
-        map.put("b","234");
+        map.put("a", "123");
+        map.put("b", "234");
         Map<String, Object> dataModel = new HashMap<>();
-        dataModel.put("request",map);
+        dataModel.put("request", map);
 
         String process = templateHelper.process(reqTempPath, dataModel);
 
