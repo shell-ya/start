@@ -66,7 +66,7 @@ public class BaseUserService {
         if (StringUtils.isNotBlank(accountId)){
             String key = String.format(RedisKey.REDIS_USER_TOKEN.getKey(), accountId);
             String tokenRes = String.valueOf(redisTemplate.opsForValue().get(key));
-            if (StringUtils.isNotBlank(tokenRes)){
+            if (StringUtils.isNotBlank(tokenRes) && !"null".equals(tokenRes)){
                 return Long.valueOf(accountId);
             }
         }

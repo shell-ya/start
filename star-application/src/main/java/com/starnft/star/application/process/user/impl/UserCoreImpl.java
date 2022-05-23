@@ -123,7 +123,7 @@ public class UserCoreImpl implements UserCore {
     @Override
     public AgreementRes queryNewAgreement(Integer agreementType) {
         AgreementRes agreementRes = new AgreementRes();
-        if (AgreementTypeEnum.UNKNOWN.equals(AgreementTypeEnum.getCode(agreementType))) {
+        if (!AgreementTypeEnum.UNKNOWN.equals(AgreementTypeEnum.getCode(agreementType))) {
             AgreementVO agreementInfo = userService.queryAgreementContentByType(agreementType);
             if (Objects.nonNull(agreementInfo)) {
                 //先写死注册场景
