@@ -18,6 +18,12 @@ public class StarNftWalletRecord extends BaseEntity implements Serializable {
     /** 交易流水号 */
     @ApiModelProperty(name = "交易流水号",notes = "")
     private String recordSn ;
+    /** 订单号 */
+    @ApiModelProperty(name = "订单号",notes = "")
+    private String orderSn;
+    /** 第三方交易流水号 */
+    @ApiModelProperty(name = "第三方交易流水号",notes = "")
+    private String outTradeNo;
     /** 支付方uid 0系统充值 -1 系统退款 */
     @ApiModelProperty(name = "支付方uid 0系统充值 -1 系统退款",notes = "")
     private Long fromUid ;
@@ -69,6 +75,22 @@ public class StarNftWalletRecord extends BaseEntity implements Serializable {
 
     public void setRecordSn(String recordSn) {
         this.recordSn = recordSn;
+    }
+
+    public String getOrderSn() {
+        return orderSn;
+    }
+
+    public void setOrderSn(String orderSn) {
+        this.orderSn = orderSn;
+    }
+
+    public String getOutTradeNo() {
+        return outTradeNo;
+    }
+
+    public void setOutTradeNo(String outTradeNo) {
+        this.outTradeNo = outTradeNo;
     }
 
     public Long getFromUid() {

@@ -250,6 +250,8 @@ public class WalletRepository implements IWalletRepository {
 
     private WalletRecordVO walletRecordToVO(StarNftWalletRecord record) {
         return WalletRecordVO.builder().recordSn(record.getRecordSn())
+                .orderSn(record.getOrderSn())
+                .outTradeNo(record.getOutTradeNo())
                 .checkStatus(record.getCheckStatus())
                 .checkTime(record.getCheckTime())
                 .fetchStatus(record.getFetchStatus())

@@ -1,6 +1,7 @@
 package com.starnft.star.application.process.wallet.impl;
 
 import com.google.common.collect.Lists;
+import com.starnft.star.application.mq.producer.wallet.WalletProducer;
 import com.starnft.star.application.process.wallet.IWalletCore;
 import com.starnft.star.application.process.wallet.req.PayRecordReq;
 import com.starnft.star.application.process.wallet.req.RechargeFacadeReq;
@@ -12,6 +13,7 @@ import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.payment.model.req.PaymentRich;
 import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.user.model.vo.UserInfoVO;
 import com.starnft.star.domain.user.service.IUserService;
@@ -47,6 +49,9 @@ public class WalletCore implements IWalletCore {
     private RedisUtil redisUtil;
 
     @Resource
+    private WalletProducer walletProducer;
+
+    @Resource
     private Map<StarConstants.Ids, IIdGenerator> idGeneratorMap;
 
     @Override
@@ -60,10 +65,13 @@ public class WalletCore implements IWalletCore {
 
         //整合订单信息
 
-        //调用支付领域服务 获取对应支付渠道配置 创建待支付支付单
+        //发送消息队列 调用支付领域服务 获取对应支付渠道配置 创建待支付支付单
+        walletProducer.sendRecharge(buildPaymentReq(walletRecordReq,rechargeFacadeReq));
 
-        // 调用支付
+        return null;
+    }
 
+    private PaymentRich buildPaymentReq(WalletRecordReq walletRecordReq, RechargeFacadeReq rechargeFacadeReq) {
         return null;
     }
 
@@ -120,8 +128,8 @@ public class WalletCore implements IWalletCore {
                 .userId(userId)
                 .channel(walletRecordVO.getPayChannel())
                 .money(walletRecordVO.getTsMoney())
-                .orderSn(walletRecordVO.getRecordSn())//todo
-                .outTradeNo("TODO")
+                .orderSn(walletRecordVO.getOrderSn())
+                .outTradeNo(walletRecordVO.getOutTradeNo())
                 .status(walletRecordVO.getPayStatus())
                 .payTime(walletRecordVO.getPayTime())
                 .patType(walletRecordVO.getTsType())

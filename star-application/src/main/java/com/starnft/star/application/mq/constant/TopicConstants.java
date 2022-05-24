@@ -4,7 +4,10 @@ package com.starnft.star.application.mq.constant;
 public enum TopicConstants {
 
     //消息推送未读消息tag
-    NOTICE_UNREAD_DESTINATION("STAR-NOTICE:%s", "unread");
+    NOTICE_UNREAD_DESTINATION("STAR-NOTICE:%s", "unread"),
+
+    WALLET_RECHARGE_DESTINATION("STAR-WALLET:%s", "recharge");
+
 
     private String format;
     private String tag;
