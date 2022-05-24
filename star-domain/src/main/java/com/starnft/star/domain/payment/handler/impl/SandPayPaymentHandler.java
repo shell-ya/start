@@ -42,6 +42,11 @@ public class SandPayPaymentHandler extends PaymentHandlerBase {
     }
 
     @Override
+    protected Map<String, Object> buildDataModel(Object... datas) {
+        return null;
+    }
+
+    @Override
     protected void verifyLegality(PaymentRich req) {
 
     }

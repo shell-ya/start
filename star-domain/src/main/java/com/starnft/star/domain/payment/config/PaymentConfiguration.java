@@ -3,13 +3,19 @@ package com.starnft.star.domain.payment.config;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.payment.config.container.Channel;
 import com.starnft.star.domain.payment.config.container.PayConf;
+import com.starnft.star.domain.support.process.assign.TradeType;
+import com.starnft.star.domain.support.process.config.ChannelConf;
+import com.starnft.star.domain.support.process.config.TempConf;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.Map;
 
 @Component
 public class PaymentConfiguration extends PayConf {
 
+    @Resource
+    private ChannelConf channelConf;
 
     /**
      * @author Ryan Z / haoran
@@ -33,4 +39,23 @@ public class PaymentConfiguration extends PayConf {
         }
         return null;
     }
+
+
+    /**
+     * @author Ryan Z / haoran
+     * @description 根据交易类型 获取对应信息
+     * @date  2022/5/24
+     * @param tradeType
+     * @return TempConf
+     */
+    public TempConf getChannelConf(TradeType tradeType) {
+        for (TempConf tempConf : channelConf.getTempConfs()) {
+            if (tempConf.getTrade().equals(tradeType.name())) {
+                return tempConf;
+            }
+        }
+        return null;
+    }
+
+
 }
