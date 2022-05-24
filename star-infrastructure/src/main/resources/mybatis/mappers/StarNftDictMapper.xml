@@ -164,11 +164,11 @@
             </if>
         </where>
     </select>
-    <select id="queryApiKeys" resultType="com.starnft.star.infrastructure.entity.dict.StarNftDict">
+    <select id="queryByCategoryCode" resultType="com.starnft.star.infrastructure.entity.dict.StarNftDict">
         select * from star_nft_dict
         <where>
-            <if test="apiKeys != null and apiKeys != ''">
-                and category_code = #{apiKeys}
+            <if test="categoryCode != null and categoryCode != ''">
+                and category_code = #{categoryCode}
             </if>
             and enabled = 1
         </where>

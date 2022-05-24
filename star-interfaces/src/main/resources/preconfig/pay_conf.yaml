@@ -1,1 +1,13 @@
 pay-conf:
+  - channels:
+      channelName: WeChatPay #厂商下所有位置唯一可以去掉该属性 让该属性为null
+      vendor: SandPay
+      properties:
+        url: https://cashier.sandpay.com.cn/qr/api/order/create
+        h5url: https://cashier.sandpay.com.cn/gateway/api/order/pay
+        mid: 6888805042881
+        signCertPath: classpath:key/lsnft.pfx
+        signCertPwd: 101750
+        sandCertPath: classpath:key/sand.cer
+        notify: https://mp.lsnft.cn/api/api/v1/trans/notify/sd
+

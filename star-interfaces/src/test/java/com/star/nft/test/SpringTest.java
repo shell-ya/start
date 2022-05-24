@@ -8,8 +8,11 @@ import com.starnft.star.application.mq.constant.TopicConstants;
 import com.starnft.star.application.mq.producer.notification.NotificationProducer;
 import com.starnft.star.application.process.notification.vo.NotificationVO;
 import com.starnft.star.application.process.wallet.req.PayRecordReq;
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.template.FreeMakerTemplateHelper;
 import com.starnft.star.common.template.TemplateHelper;
+import com.starnft.star.domain.payment.handler.IPaymentHandler;
+import com.starnft.star.domain.payment.router.IPaymentRouter;
 import com.starnft.star.domain.support.process.assign.TradeType;
 import com.starnft.star.domain.support.process.config.ChannelConf;
 import com.starnft.star.domain.support.process.config.TempConf;
@@ -21,10 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @SpringBootTest(classes = {StarApplication.class})
@@ -39,6 +39,13 @@ public class SpringTest {
 
     @Resource
     private FreeMakerTemplateHelper templateHelper;
+
+    @Resource
+    private IPaymentRouter paymentRouter;
+
+    @Test
+    public void payment() {
+    }
 
     @Test
     @SneakyThrows

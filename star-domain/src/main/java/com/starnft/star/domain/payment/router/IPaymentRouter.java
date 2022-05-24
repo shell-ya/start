@@ -2,7 +2,6 @@ package com.starnft.star.domain.payment.router;
 
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.payment.handler.IPaymentHandler;
-import com.starnft.star.domain.payment.router.model.PaymentRouterContext;
 
 import java.util.List;
 
@@ -25,21 +24,13 @@ public interface IPaymentRouter {
 
     /**
      * @author Ryan Z / haoran
-     * @description 根据条件获取对应的支付执行器
+     * @description 根据支付渠道编码获取对应的支付执行器
      * @date  2022/5/20
-     * @param context
+     * @param payChannel 渠道
      * @return IPaymentHandler
      */
-    IPaymentHandler<?> payRoute(PaymentRouterContext context);
+    IPaymentHandler payRoute(String payChannel);
 
-    /**
-     * @author Ryan Z / haoran
-     * @description  获取渠道对应所需参数类型 用于获取IPaymentHandler 的第二个参数
-     * @date  2022/5/20
-     * @param payChannel
-     * @return  Class 渠道对应所需参数类型
-     */
-    Class<?> obtainChannelRequest(StarConstants.PayChannel payChannel);
 
 
 

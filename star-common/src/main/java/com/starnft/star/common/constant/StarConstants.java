@@ -62,6 +62,13 @@ public class StarConstants {
         Other;
     }
 
+    /**
+     * 对接支付厂商
+     */
+    public enum Pay_Vendor{
+        SandPay
+    }
+
     public enum Pay_Status {
         /**
          * 待支付

@@ -9,7 +9,7 @@ import java.util.List;
 @Mapper
 public interface StarNftDictMapper {
 
-   List<StarNftDict> queryApiKeys(@Param("apiKeys") String categoryCode);
+   List<StarNftDict> queryByCategoryCode(@Param("categoryCode") String categoryCode);
 
    int insertBatch(@Param("entities") List<StarNftDict> entities);
 
