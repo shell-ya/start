@@ -42,7 +42,6 @@ public abstract class PaymentHandlerBase
         return doPay(paymentRich, vendorConf);
     }
 
-    @SneakyThrows
     protected String processTemplate(final String templateName, Object... data) {
         TemplateHelper templateHelper = applicationContext.getBean(FreeMakerTemplateHelper.class);
         String res = null;
