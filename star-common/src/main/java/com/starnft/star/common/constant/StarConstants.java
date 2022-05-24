@@ -56,6 +56,8 @@ public class StarConstants {
          * 余额
          */
         Balance,
+
+        UNION_PAY,
         /**
          * 其他
          */
@@ -160,6 +162,7 @@ public class StarConstants {
 
         WEBSERVICE("webservice", "ws"),
         JSON("json", "json"),
+
         UNKNOWN("unknown", "unknown");
 
         private String name;

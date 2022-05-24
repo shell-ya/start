@@ -1,4 +1,4 @@
 {
-    "param1":"${request.a}",
-    "param2":"${request.b}"
+    "header":"${request.a}",
+    "body":"${request.b}"
 }
