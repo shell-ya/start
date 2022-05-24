@@ -7,12 +7,14 @@ import com.starnft.star.domain.payment.model.req.PaymentRich;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
 import com.starnft.star.domain.support.process.ProcessInteractionHolder;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.util.Map;
 
+@Slf4j
 public abstract class PaymentHandlerBase
         extends PaymentConfiguration implements IPaymentHandler, ApplicationContextAware, ProcessInteractionHolder {
 
@@ -32,6 +34,10 @@ public abstract class PaymentHandlerBase
         verifyLegality(paymentRich);
         //获取对应的厂商 渠道 配置信息
         Map<String, String> vendorConf = super.getVendorConf(getVendor(), getPayChannel());
+
+        if (null == vendorConf) {
+            throw new RuntimeException("配置信息未被加载，请检查配置！");
+        }
         //执行支付流程
         return doPay(paymentRich, vendorConf);
     }
@@ -39,7 +45,13 @@ public abstract class PaymentHandlerBase
     @SneakyThrows
     protected String processTemplate(final String templateName, Object... data) {
         TemplateHelper templateHelper = applicationContext.getBean(FreeMakerTemplateHelper.class);
-        return templateHelper.process(templateName, buildDataModel(data));
+        String res = null;
+        try {
+            res = templateHelper.process(templateName, buildDataModel(data));
+        } catch (Exception e) {
+            log.error("[{}] 执行模版解析错误 templateName :{}", this.getClass().getName(), templateName, e);
+        }
+        return res;
     }
 
     protected abstract void verifyLegality(PaymentRich req);

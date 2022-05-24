@@ -42,7 +42,7 @@ public class SandPayPaymentHandler extends PaymentHandlerBase {
     }
 
     @Override
-    protected Map<String, Object> buildDataModel(Object... datas) {
+    protected Map<String, Object> buildDataModel(Object... data) {
         return null;
     }
 
