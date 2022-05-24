@@ -9,6 +9,7 @@ import com.starnft.star.domain.support.process.config.TempConf;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.Map;
 
 @Component
@@ -27,6 +28,7 @@ public class PaymentConfiguration extends PayConf {
      * @return properties
      */
     public Map<String, String> getVendorConf(StarConstants.Pay_Vendor vendor, StarConstants.PayChannel channel) {
+        Map<String, String> props = new HashMap<>();
         for (Channel ch : getChannels()) {
             if (null != channel
                     && ch.getVendor().equals(vendor.name())
@@ -34,10 +36,10 @@ public class PaymentConfiguration extends PayConf {
                 return ch.getProperties();
             }
             if (ch.getVendor().equals(vendor.name())) {
-                return ch.getProperties();
+                props = ch.getProperties();
             }
         }
-        return null;
+        return props;
     }
 
 
