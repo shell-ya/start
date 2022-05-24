@@ -28,7 +28,7 @@ public class PaymentConfiguration extends PayConf {
      * @return properties
      */
     public Map<String, String> getVendorConf(StarConstants.Pay_Vendor vendor, StarConstants.PayChannel channel) {
-        Map<String, String> props = new HashMap<>();
+        Map<String, String> props = null;
         for (Channel ch : getChannels()) {
             if (null != channel
                     && ch.getVendor().equals(vendor.name())
