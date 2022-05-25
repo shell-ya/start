@@ -1,26 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.starnft.star.infrastructure.mapper.number.StarNftThemeNumberMapper">
-  <resultMap id="BaseResultMap" type="com.starnft.star.infrastructure.entity.number.StarNftThemeNumber">
-    <!--@mbg.generated-->
-    <!--@Table star_nft_theme_number-->
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="series_theme_info_id" jdbcType="BIGINT" property="seriesThemeInfoId" />
-    <result column="theme_number" jdbcType="BIGINT" property="themeNumber" />
-    <result column=" contract_address" jdbcType="VARCHAR" property="contractAddress" />
-    <result column="chain_identification" jdbcType="VARCHAR" property="chainIdentification" />
-    <result column="price" jdbcType="DECIMAL" property="price" />
-    <result column="status" jdbcType="BOOLEAN" property="status" />
-    <result column="owenr_by" jdbcType="VARCHAR" property="owenrBy" />
-    <result column="create_at" jdbcType="TIMESTAMP" property="createAt" />
-    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
-    <result column="update_at" jdbcType="TIMESTAMP" property="updateAt" />
-    <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
-    <result column="is_delete" jdbcType="BOOLEAN" property="isDelete" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    <!--@mbg.generated-->
-    id, series_theme_info_id, theme_number, ` contract_address`, chain_identification, 
-    price, `status`, owenr_by, create_at, create_by, update_at, update_by, is_delete
-  </sql>
+    <resultMap id="BaseResultMap" type="com.starnft.star.infrastructure.entity.number.StarNftThemeNumber">
+        <!--@mbg.generated-->
+        <!--@Table star_nft_theme_number-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="series_theme_info_id" jdbcType="BIGINT" property="seriesThemeInfoId"/>
+        <result column="theme_number" jdbcType="BIGINT" property="themeNumber"/>
+        <result column=" contract_address" jdbcType="VARCHAR" property="contractAddress"/>
+        <result column="chain_identification" jdbcType="VARCHAR" property="chainIdentification"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="status" jdbcType="BOOLEAN" property="status"/>
+        <result column="owenr_by" jdbcType="VARCHAR" property="owenrBy"/>
+        <result column="create_at" jdbcType="TIMESTAMP" property="createAt"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="update_at" jdbcType="TIMESTAMP" property="updateAt"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="is_delete" jdbcType="BOOLEAN" property="isDelete"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, series_theme_info_id, theme_number, ` contract_address`, chain_identification,
+        price, `status`, owenr_by, create_at, create_by, update_at, update_by, is_delete
+    </sql>
+
+    <select id="selectNumberById" resultType="com.starnft.star.domain.numbers.model.vo.NumberDetailVO">
+        SELECT a.id                   id,
+               a.theme_number         number,
+               a.contract_address     contract_address,
+               a.chain_identification chain_identification,
+               a.price                price,
+               a.status               status,
+               b.theme_name           name,
+               b.theme_pic            picture,
+               b.descrption           descrption,
+               b.theme_type           type
+        FROM star_nft_theme_number a
+                 LEFT JOIN star_nft_theme_info b
+                           ON a.series_theme_info_id = b.id
+        WHERE a.id = #{id}
+          AND a.is_delete = 0
+    </select>
+
+    <select id="selectNumberList" resultType="com.starnft.star.domain.numbers.model.vo.NumberVO">
+        SELECT
+        a.id,
+        a.theme_number number,
+        a.price,
+        a.status,
+        b.theme_name,
+        b.theme_pic,
+        b.theme_type type
+        FROM star_nft_theme_number a
+        INNER JOIN star_nft_theme_info b ON a.series_theme_info_id = b.id
+        <where>
+            <if test="themeType != null and themeType != ''">
+                b.theme_type = #{themeType}
+            </if>
+            <if test="seriesId != null and seriesId != ''">
+                AND b.series_id = #{seriesId}
+            </if>
+            <if test="themeId != null and themeId != ''">
+                AND b.id = #{themeId}
+            </if>
+            <if test="themeName != null and themeName != ''">
+                AND b.theme_name LIKE CONCAT('%',#{themeName},'%')
+            </if>
+            AND a.is_delete = 0
+            AND b.is_delete = 0
+        </where>
+        <if test="orderBy != null and orderBy != ''">
+            ORDER BY ${orderBy} ${sortType}
+        </if>
+
+    </select>
 </mapper>

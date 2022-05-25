@@ -2,6 +2,7 @@ package com.starnft.star.application.process.user.impl;
 
 import com.starnft.star.application.process.user.UserCore;
 import com.starnft.star.application.process.user.req.AuthMaterialReq;
+import com.starnft.star.application.process.user.req.UserGatheringInfoReq;
 import com.starnft.star.application.process.user.req.UserLoginReq;
 import com.starnft.star.application.process.user.req.UserVerifyCodeReq;
 import com.starnft.star.application.process.user.res.*;
@@ -15,6 +16,9 @@ import com.starnft.star.domain.user.model.dto.*;
 import com.starnft.star.domain.user.model.vo.*;
 import com.starnft.star.domain.user.repository.IUserRepository;
 import com.starnft.star.domain.user.service.IUserService;
+import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
+import com.starnft.star.domain.wallet.model.res.WalletResult;
+import com.starnft.star.domain.wallet.service.WalletService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +26,7 @@ import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +43,10 @@ public class UserCoreImpl implements UserCore {
 
     @Autowired
     IUserService userService;
+
+    @Resource
+    private WalletService walletService;
+
     @Autowired
     IUserRepository userRepository;
 
@@ -108,6 +117,40 @@ public class UserCoreImpl implements UserCore {
 
         AuthMaterialDTO authMaterialreq = BeanColverUtil.colver(req, AuthMaterialDTO.class);
         return userService.changePassword(authMaterialreq);
+    }
+
+    @Override
+    public UserGatheringInfoRes ObtainUserGatheringInfo(UserGatheringInfoReq req) {
+
+        UserGatheringInfoRes userGatheringInfoRes = new UserGatheringInfoRes();
+
+        //获取User信息
+        UserInfoVO userInfoVO = userService.queryUserInfo(req.getUid());
+        userInfoVO.setUserId(req.getUid());
+        populateUserInfo(userGatheringInfoRes, userInfoVO);
+
+        //获取钱包信息
+        WalletResult walletResult = walletService.queryWalletInfo(new WalletInfoReq(req.getUid()));
+        populateWalletInfo(userGatheringInfoRes, walletResult);
+
+        return userGatheringInfoRes;
+    }
+
+
+    private void populateWalletInfo(UserGatheringInfoRes userGatheringInfoRes, WalletResult walletResult) {
+        userGatheringInfoRes.setBalance(walletResult.getBalance());
+        userGatheringInfoRes.setWalletId(walletResult.getWalletId());
+        userGatheringInfoRes.setFrozen(walletResult.isFrozen());
+        userGatheringInfoRes.setFrozen_fee(walletResult.getFrozen_fee());
+        userGatheringInfoRes.setWallet_income(walletResult.getWallet_income());
+        userGatheringInfoRes.setWallet_outcome(walletResult.getWallet_outcome());
+    }
+
+    private void populateUserInfo(UserGatheringInfoRes userGatheringInfoRes, UserInfoVO userInfoVO) {
+        userGatheringInfoRes.setNickName(userInfoVO.getNickName());
+        userGatheringInfoRes.setUid(userInfoVO.getUserId());
+        userGatheringInfoRes.setPhone(userInfoVO.getPhone());
+        userGatheringInfoRes.setAvatar(userInfoVO.getAvatar());
     }
 
     @Override

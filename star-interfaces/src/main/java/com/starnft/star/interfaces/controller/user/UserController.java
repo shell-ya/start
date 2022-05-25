@@ -1,7 +1,6 @@
 package com.starnft.star.interfaces.controller.user;
 
 import com.starnft.star.application.process.user.UserCore;
-import com.starnft.star.application.process.user.UserTotalInfoCompose;
 import com.starnft.star.application.process.user.req.*;
 import com.starnft.star.application.process.user.res.*;
 import com.starnft.star.common.RopResponse;
@@ -27,9 +26,6 @@ public class UserController {
 
     @Autowired
     private UserCore userCore;
-
-    @Resource
-    private UserTotalInfoCompose userTotalInfoCompose;
 
 
     @ApiOperation("短信验证码登录/注册")
@@ -75,7 +71,7 @@ public class UserController {
     @ApiOperation("查询用户信息")
     @PostMapping("/userinfo/queryuserinfo")
     public RopResponse getUserInfo(UserResolverInfo userResolverInfo) {
-        UserGatheringInfoRes userGatheringInfoRes = userTotalInfoCompose.ObtainUserGatheringInfo(new UserGatheringInfoReq(userResolverInfo.getUserId()));
+        UserGatheringInfoRes userGatheringInfoRes = userCore.ObtainUserGatheringInfo(new UserGatheringInfoReq(userResolverInfo.getUserId()));
         return RopResponse.success(userGatheringInfoRes);
     }
 

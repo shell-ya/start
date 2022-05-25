@@ -9,7 +9,6 @@ import com.starnft.star.domain.support.process.config.TempConf;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.Map;
 
 @Component
