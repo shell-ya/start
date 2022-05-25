@@ -1,10 +1,16 @@
 package com.starnft.star.domain.payment.model.req;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class PaymentRich implements Serializable {
 
     /**
@@ -21,6 +27,10 @@ public class PaymentRich implements Serializable {
      */
     private String tradeSn;
 
+    private String clientIp;
+
+    private String frontUrl;
+    private String totalMoney;
     /**
      * 订单号
      */

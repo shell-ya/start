@@ -3,6 +3,7 @@ channel-configs:
     - trade: SandPay
       reqTempPath: sandpay/sand_pay_request.ftl
       resTempPath: sandpay/sand_pay_response.ftl
+      signTempPath: sandpay/sand_pay_sign.ftl
 
       httpConf:
         processType: json

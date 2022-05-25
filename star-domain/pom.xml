@@ -24,6 +24,11 @@
             <groupId>com.starnft.star</groupId>
             <artifactId>star-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.dustlight.captcha</groupId>
+            <artifactId>captcha-core</artifactId>
+            <version>1.0.1</version>
+        </dependency>
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

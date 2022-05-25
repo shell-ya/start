@@ -45,6 +45,10 @@ public class StarConstants {
          */
         AliPay,
         /**
+         * 云闪付
+         */
+        UnionPay,
+        /**
          * 微信
          */
         WeChatPay,

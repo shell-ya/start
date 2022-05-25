@@ -192,7 +192,9 @@ public class RestTemplateHelper {
      */
     public static ResponseEntity<String> executePostBodyParam(HttpHeaders headers, String url, String str) {
         RestTemplate restTemplate = SpringUtil.getBean(RestTemplate.class);
-        headers.set("Content-Type", "application/json;charset=UTF-8");
+        if (headers.get("Content-Type") == null) {
+            headers.set("Content-Type", "application/json;charset=UTF-8");
+        }
         HttpEntity<String> httpEntity = new HttpEntity<>(str, headers);
         return restTemplate.postForEntity(url, httpEntity, String.class);
     }

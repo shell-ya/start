@@ -26,10 +26,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.KeyStore;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
@@ -55,6 +52,9 @@ public class SdKeysHelper {
 				sdChannel=channel;
 			}
 		}
+
+
+
 		// 加载私钥
 		initPulbicKey(sdChannel.getProperties().get("sandCertPath"));
 		log.info("加载公钥成功");
@@ -64,7 +64,22 @@ public class SdKeysHelper {
 	}
 
 
+	public  byte[] digitalSign(byte[] plainBytes, PrivateKey privateKey, String signAlgorithm)  {
+		try {
+			Signature signature = Signature.getInstance(signAlgorithm);
+			signature.initSign(privateKey);
+			signature.update(plainBytes);
+			byte[] signBytes = signature.sign();
 
+			return signBytes;
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException(String.format("数字签名时没有[%s]此类算法", signAlgorithm));
+		} catch (InvalidKeyException e) {
+			throw new RuntimeException("数字签名时私钥无效", e);
+		} catch (SignatureException e) {
+			throw new RuntimeException("数字签名时出现异常", e);
+		}
+	}
 	public  PublicKey getPublicKey() {
 		return (PublicKey) keys.get(PUBLIC_KEY);
 	}

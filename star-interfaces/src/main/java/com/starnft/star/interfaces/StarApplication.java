@@ -1,6 +1,7 @@
 package com.starnft.star.interfaces;
 
 
+import cn.dustlight.captcha.annotations.EnableCaptcha;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configurable
 @MapperScan("com.starnft.star.infrastructure.mapper")
 @ComponentScan(basePackages = {"com.starnft.star"})
+@EnableCaptcha
 public class StarApplication {
 
     public static void main(String[] args) {

@@ -5,7 +5,7 @@ pay-conf:
       properties:
         url: https://cashier.sandpay.com.cn/qr/api/order/create
         h5url: https://cashier.sandpay.com.cn/gateway/api/order/pay
-        mid: 6888805042881
+        mid: 6888806043502
         signCertPath: classpath:keys/lsnft.pfx
         signCertPwd: 101750
         sandCertPath: classpath:keys/sand.cer
