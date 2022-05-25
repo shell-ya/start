@@ -29,19 +29,7 @@ public class SandPayPaymentHandler extends PaymentHandlerBase {
     }
 
 
-    /**
-     * @param paymentRich
-     * @param vendorConf
-     * @return PaymentRes
-     * @author Ryan Z / haoran
-     * @description 杉德支付接口
-     * @date 2022/5/24
-     * 调用第三方接口 使用
-     * @see com.starnft.star.domain.support.process.ProcessInteractionHolder obtainProcessInteraction 获取抽象类以继承该接口获取IInteract
-     * @see com.starnft.star.domain.support.process.IInteract
-     * 若第三方接口使用的自己独特加密后的工具，则封装该工具并继承 【InteractBase】并实现 interact 统一调用入口
-     * @see com.starnft.star.domain.support.process.InteractBase
-     */
+
     @Override
     protected PaymentRes doPay(PaymentRich paymentRich, Map<String, String> vendorConf) {
         TempConf channelConf = getChannelConf(TradeType.SandPay);

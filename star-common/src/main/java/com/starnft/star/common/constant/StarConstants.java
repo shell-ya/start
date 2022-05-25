@@ -200,4 +200,11 @@ public class StarConstants {
         FAILURE
     }
 
+    public enum ORDER_STATE{
+        WAIT_PAY,
+        PAY_SUCCESS,
+        PAY_FAILED,
+        PAY_CANCEL
+    }
+
 }

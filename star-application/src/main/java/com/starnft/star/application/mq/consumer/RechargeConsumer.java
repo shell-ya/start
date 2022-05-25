@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 @Service
-@RocketMQMessageListener(topic = "STAR-WALLET", consumerGroup = "star-consumer2-group", selectorExpression = "recharge")
+@RocketMQMessageListener(topic = "STAR-WALLET", consumerGroup = "star-consumer-recharge-group", selectorExpression = "recharge")
 public class RechargeConsumer implements RocketMQListener<PaymentRich> {
 
     @Resource

@@ -19,6 +19,7 @@ public abstract class PaymentHandlerBase
 
     private ApplicationContext applicationContext;
 
+
     /**
      * @param paymentRich 是一个聚合对象 里面包含用户信息 订单信息等支付所需要的信息
      *                    在对接第三方支付时需要将用户唯一标识 作为扩展字段传入 在接收回调信息时候会获取到 原用户标识 以便于以后以用户标识作为分库分表路由的唯一标识
@@ -41,6 +42,16 @@ public abstract class PaymentHandlerBase
         return doPay(paymentRich, vendorConf);
     }
 
+
+
+    /**
+     * @author Ryan Z / haoran
+     * @description 模板解析
+     * @date  2022/5/25
+     * @param templateName 渠道配置中的模板资源路径
+     * @param data 需要被解析的参数
+     * @return 解析后的字符串
+     */
     protected String processTemplate(final String templateName, Object... data) {
         TemplateHelper templateHelper = applicationContext.getBean(FreeMakerTemplateHelper.class);
         String res = null;
@@ -52,11 +63,42 @@ public abstract class PaymentHandlerBase
         return res;
     }
 
+
+    /**
+     * @author Ryan Z / haoran
+     * @description 根据对应支付渠道做响应的参数合法性校验
+     * @date  2022/5/25
+     * @param req
+     */
     protected abstract void verifyLegality(PaymentRich req);
 
+
+
+    /**
+     * @param paymentRich
+     * @param vendorConf
+     * @return PaymentRes
+     * @author Ryan Z / haoran
+     * @description 支付接口
+     * @date 2022/5/24
+     * 调用第三方接口 使用
+     * @see com.starnft.star.domain.support.process.ProcessInteractionHolder obtainProcessInteraction 获取抽象类以继承该接口获取IInteract
+     * @see com.starnft.star.domain.support.process.IInteract
+     * 若第三方接口使用的自己独特加密后的工具，则封装该工具并继承 【InteractBase】并实现 interact 统一调用入口
+     * @see com.starnft.star.domain.support.process.InteractBase
+     */
     protected abstract PaymentRes doPay(PaymentRich paymentRich, Map<String, String> vendorConf);
 
+
+
+    /**
+     *  模板实体生成 调用processTemplate 时将需要在模板中解析的参数传入 在该方法中加载
+     * @param data
+     * @return
+     */
     protected abstract Map<String, Object> buildDataModel(Object... data);
+
+
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

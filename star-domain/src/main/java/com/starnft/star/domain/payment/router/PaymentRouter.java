@@ -25,7 +25,7 @@ public class PaymentRouter implements IPaymentRouter, ApplicationContextAware {
 
     private ApplicationContext applicationContext;
 
-    private final Map<StarConstants.PayChannel, IPaymentHandler> handlerMaps = new ConcurrentHashMap<>(8);
+    private final Map<String, IPaymentHandler> handlerMaps = new ConcurrentHashMap<>(8);
 
     @PostConstruct
     private void init() {
@@ -33,7 +33,7 @@ public class PaymentRouter implements IPaymentRouter, ApplicationContextAware {
         for (IPaymentHandler handler : handlers.values()) {
             Class<? extends IPaymentHandler> handlerClass = handler.getClass();
             if (!Modifier.isAbstract(handlerClass.getModifiers())) {
-                handlerMaps.put(handler.getPayChannel(), handler);
+                handlerMaps.put(handler.getVendor().name().concat("-" + handler.getPayChannel().name()), handler);
             }
         }
     }
@@ -46,13 +46,13 @@ public class PaymentRouter implements IPaymentRouter, ApplicationContextAware {
 
 
     /**
-     * @author Ryan Z / haoran
-     * @description 获取支付具体执行器 该方法会先查找当前配置的支付厂商
-     *              根据厂商再寻找对应厂商下的渠道支付 若该厂商下渠道找不到
-     *              则随机路由一个其他厂商下拥有该渠道的执行器执行
-     * @date  2022/5/24
      * @param payChannel
      * @return IPaymentHandler
+     * @author Ryan Z / haoran
+     * @description 获取支付具体执行器 该方法会先查找当前配置的支付厂商
+     * 根据厂商再寻找对应厂商下的渠道支付 若该厂商下渠道找不到
+     * 则随机路由一个其他厂商下拥有该渠道的执行器执行
+     * @date 2022/5/24
      */
     @Override
     public IPaymentHandler payRoute(String payChannel) {
