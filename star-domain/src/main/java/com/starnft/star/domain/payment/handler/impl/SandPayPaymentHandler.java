@@ -62,7 +62,7 @@ public class SandPayPaymentHandler extends PaymentHandlerBase {
     @Override
     protected PaymentRes doPay(PaymentRich paymentRich, Map<String, String> vendorConf) {
         TempConf channelConf = getChannelConf(TradeType.SandPay);
-        String signString = processTemplate(channelConf.getSignTempPath(), paymentRich, vendorConf).replaceAll("(\\r\\n|\\n|\\\\n|\\s)", "");;
+        String signString = processTemplate(channelConf.getSignTempPath(), paymentRich, vendorConf);
         String signResult = new String(Base64.encodeBase64(sdKeysHelper.digitalSign(signString.getBytes(StandardCharsets.UTF_8), sdKeysHelper.getPrivateKey(), "SHA1WithRSA")));
 //        String requestStr = processTemplate(channelConf.getReqTempPath(), signString, signResult);
         Map<String, String> req = new HashMap<>();
@@ -74,9 +74,7 @@ public class SandPayPaymentHandler extends PaymentHandlerBase {
 
         IInteract iInteract = obtainProcessInteraction(StarConstants.ProcessType.JSON);
         HttpHeaders httpHeaders = new HttpHeaders();
-
         ResponseEntity<String> h5url = RestTemplateHelper.executePostFromParam(httpHeaders, vendorConf.get("h5url"), req);
-
         String result = URLDecoder.decode(h5url.getBody(), "utf-8");
         Map<String, String> stringStringMap = TemplateHelper.getInstance().convertResultStringToMap(result);
         String sign = stringStringMap.get("sign");
