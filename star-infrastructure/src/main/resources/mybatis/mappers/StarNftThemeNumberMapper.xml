@@ -11,7 +11,7 @@
         <result column="chain_identification" jdbcType="VARCHAR" property="chainIdentification"/>
         <result column="price" jdbcType="DECIMAL" property="price"/>
         <result column="status" jdbcType="BOOLEAN" property="status"/>
-        <result column="owenr_by" jdbcType="VARCHAR" property="owenrBy"/>
+        <result column="owner_by" jdbcType="VARCHAR" property="owenrBy"/>
         <result column="create_at" jdbcType="TIMESTAMP" property="createAt"/>
         <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
         <result column="update_at" jdbcType="TIMESTAMP" property="updateAt"/>
@@ -24,13 +24,14 @@
         price, `status`, owenr_by, create_at, create_by, update_at, update_by, is_delete
     </sql>
 
-    <select id="selectNumberById" resultType="com.starnft.star.domain.numbers.model.vo.NumberDetailVO">
+    <select id="selectNumberDetailId" resultType="com.starnft.star.domain.numbers.model.vo.NumberDetailVO">
         SELECT a.id                   id,
                a.theme_number         number,
                a.contract_address     contract_address,
                a.chain_identification chain_identification,
                a.price                price,
                a.status               status,
+               a.owner_by             owner_by,
                b.theme_name           name,
                b.theme_pic            picture,
                b.descrption           descrption,
