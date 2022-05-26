@@ -23,11 +23,12 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @Component
-public class SandPayPaymentHandler extends PaymentHandlerBase {
+public class SandPayUnionPayPaymentHandler extends PaymentHandlerBase {
 
     @Resource
     SdKeysHelper sdKeysHelper;
@@ -59,11 +60,13 @@ public class SandPayPaymentHandler extends PaymentHandlerBase {
     @SneakyThrows
     @Override
     protected PaymentRes doPay(PaymentRich paymentRich, Map<String, String> vendorConf) {
-        TempConf channelConf = getChannelConf(TradeType.SandPay);
+        TempConf channelConf = getChannelConf(TradeType.BankSandPay);
+        return getPaymentRes(paymentRich, vendorConf, channelConf);
+    }
+
+    protected PaymentRes getPaymentRes(PaymentRich paymentRich, Map<String, String> vendorConf, TempConf channelConf) throws Exception {
         String signString = processTemplate(channelConf.getSignTempPath(), paymentRich, vendorConf);
         String signResult = new String(Base64.encodeBase64(sdKeysHelper.digitalSign(signString.getBytes(StandardCharsets.UTF_8), sdKeysHelper.getPrivateKey(), "SHA1WithRSA")));
-
-        String requestStr = processTemplate(channelConf.getReqTempPath(), signString, signResult);
         Map<String, String> req = new HashMap<>();
         req.put("charset", "utf-8");
         req.put("data", signString);
@@ -73,7 +76,7 @@ public class SandPayPaymentHandler extends PaymentHandlerBase {
 
         IInteract iInteract = obtainProcessInteraction(StarConstants.ProcessType.JSON);
         HttpHeaders httpHeaders = new HttpHeaders();
-        ResponseEntity<String> h5url = RestTemplateHelper.executePostFromParam(httpHeaders, vendorConf.get("h5url"), req);
+        ResponseEntity<String> h5url = RestTemplateHelper.executePostFromParam(httpHeaders, channelConf.getHttpConf().getApiUrl(), req);
         String result = URLDecoder.decode(Objects.requireNonNull(h5url.getBody()), "utf-8");
         Map<String, String> stringStringMap = TemplateHelper.getInstance().convertResultStringToMap(result);
         String sign = stringStringMap.get("sign");

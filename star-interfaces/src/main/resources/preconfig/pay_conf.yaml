@@ -4,7 +4,7 @@ pay-conf:
     - vendor: SandPay
       properties:
         url: https://cashier.sandpay.com.cn/qr/api/order/create
-        h5url: https://cashier.sandpay.com.cn/gateway/api/order/pay
+        h5url:
         mid: 6888806043502
         signCertPath: classpath:keys/lsnft.pfx
         signCertPwd: 101750
