@@ -24,13 +24,11 @@ import javax.annotation.Resource;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class SandPayPaymentHandler extends PaymentHandlerBase {
+
     @Resource
     SdKeysHelper sdKeysHelper;
 
@@ -64,7 +62,8 @@ public class SandPayPaymentHandler extends PaymentHandlerBase {
         TempConf channelConf = getChannelConf(TradeType.SandPay);
         String signString = processTemplate(channelConf.getSignTempPath(), paymentRich, vendorConf);
         String signResult = new String(Base64.encodeBase64(sdKeysHelper.digitalSign(signString.getBytes(StandardCharsets.UTF_8), sdKeysHelper.getPrivateKey(), "SHA1WithRSA")));
-//        String requestStr = processTemplate(channelConf.getReqTempPath(), signString, signResult);
+
+        String requestStr = processTemplate(channelConf.getReqTempPath(), signString, signResult);
         Map<String, String> req = new HashMap<>();
         req.put("charset", "utf-8");
         req.put("data", signString);
@@ -75,7 +74,7 @@ public class SandPayPaymentHandler extends PaymentHandlerBase {
         IInteract iInteract = obtainProcessInteraction(StarConstants.ProcessType.JSON);
         HttpHeaders httpHeaders = new HttpHeaders();
         ResponseEntity<String> h5url = RestTemplateHelper.executePostFromParam(httpHeaders, vendorConf.get("h5url"), req);
-        String result = URLDecoder.decode(h5url.getBody(), "utf-8");
+        String result = URLDecoder.decode(Objects.requireNonNull(h5url.getBody()), "utf-8");
         Map<String, String> stringStringMap = TemplateHelper.getInstance().convertResultStringToMap(result);
         String sign = stringStringMap.get("sign");
         String respData = stringStringMap.get("data");
@@ -86,7 +85,7 @@ public class SandPayPaymentHandler extends PaymentHandlerBase {
         if (object.getJSONObject("head").get("respCode").equals("000000")) {
             paymentRes.setPayment(object.getJSONObject("body").get("credential").toString());
             paymentRes.setOrderSn(paymentRich.getOrderSn());
-            paymentRes.setTotalMoney(paymentRich.getTotalMoney());
+            paymentRes.setTotalMoney(paymentRich.getTotalMoney().toPlainString());
             return paymentRes;
         }
         throw new RuntimeException("拉起支付出现错误");
@@ -97,8 +96,6 @@ public class SandPayPaymentHandler extends PaymentHandlerBase {
         HashMap<@Nullable String, @Nullable Object> dataModel = Maps.newHashMap();
         dataModel.put("payment", data[0]);
         dataModel.put("conf", data[1]);
-        dataModel.put("currentTime", getCurrentTime());
-        dataModel.put("outLineTime", outLineTime());
         dataModel.put("helper", TemplateHelper.getInstance());
         return dataModel;
     }
@@ -106,15 +103,5 @@ public class SandPayPaymentHandler extends PaymentHandlerBase {
     @Override
     protected void verifyLegality(PaymentRich req) {
 
-    }
-
-    private String getCurrentTime() {
-        return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-    }
-
-    private String outLineTime() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MINUTE, 5);
-        return new SimpleDateFormat("yyyyMMddHHmmss").format(calendar.getTime());
     }
 }

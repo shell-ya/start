@@ -1,11 +1,19 @@
 package com.starnft.star.domain.payment.model.req;
 
+import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.core.io.JsonStringEncoder;
+import com.google.common.collect.Maps;
+import com.starnft.star.common.constant.StarConstants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.HashMap;
 
 @Data
 @AllArgsConstructor
@@ -22,17 +30,40 @@ public class PaymentRich implements Serializable {
      */
     private Long userId;
 
-    /**
-     * 交易流水号
-     */
-    private String tradeSn;
-
     private String clientIp;
-
+    /**
+     * 支付后跳转页面url
+     */
     private String frontUrl;
-    private String totalMoney;
+    /**
+     * 支付金额
+     */
+    private BigDecimal totalMoney;
     /**
      * 订单号
      */
     private String orderSn;
+
+    /**
+     * 订单类型
+     */
+    private StarConstants.OrderType orderType;
+
+
+    public String getOrderTypeName() {
+        return orderType.getName();
+    }
+
+    public String getOrderTypeDesc() {
+        return orderType.getDesc();
+    }
+
+    public String composeCallback(){
+        HashMap<@Nullable String, @Nullable String> extInfo = Maps.newHashMap();
+        extInfo.put("userId",String.valueOf(getUserId()));
+        extInfo.put("orderType",String.valueOf(getOrderTypeName()));
+        char[] chars = new JsonStringEncoder().quoteAsString(JSON.toJSONString(extInfo));
+        return String.valueOf(chars).replace("\\\\","");
+    }
+
 }

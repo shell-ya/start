@@ -63,16 +63,18 @@ public class WalletCore implements IWalletCore {
         WalletRecordReq walletRecordReq = walletRecordInit(rechargeFacadeReq);
         boolean isSuccess = walletService.rechargeRecordGenerate(walletRecordReq);
 
-        //整合订单信息
-
         //发送消息队列 调用支付领域服务 获取对应支付渠道配置 创建待支付支付单
-        walletProducer.sendRecharge(buildPaymentReq(walletRecordReq,rechargeFacadeReq));
+        if (isSuccess) walletProducer.sendRecharge(buildPaymentReq(walletRecordReq,rechargeFacadeReq));
 
         return null;
     }
 
     private PaymentRich buildPaymentReq(WalletRecordReq walletRecordReq, RechargeFacadeReq rechargeFacadeReq) {
-        return null;
+        return PaymentRich.builder().payChannel(rechargeFacadeReq.getChannel())
+                .totalMoney(rechargeFacadeReq.getMoney())
+                .userId(rechargeFacadeReq.getUserId())
+                .orderSn(walletRecordReq.getRecordSn())
+                .build();
     }
 
     @Override

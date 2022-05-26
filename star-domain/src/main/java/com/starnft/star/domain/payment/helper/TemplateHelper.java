@@ -1,16 +1,118 @@
 package com.starnft.star.domain.payment.helper;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class TemplateHelper {
-    private static TemplateHelper instance = new TemplateHelper();
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    /**
+     * 线程安全单例模式生成TemplateHelper实体
+     */
+    private static volatile TemplateHelper instance = null;
 
     public static TemplateHelper getInstance() {
+        if (instance == null) {
+            synchronized (TemplateHelper.class) {
+                if (instance == null) {
+                    instance = new TemplateHelper();
+                }
+            }
+        }
         return instance;
+    }
+
+
+    /**
+     * 将数据模型中的属性值转换为字符串
+     *
+     * @param dataModel
+     * @return
+     */
+    public String getDataModelString(Object dataModel) {
+        StringBuilder sb = new StringBuilder();
+        String className = dataModel.getClass().getName();
+        sb.append(className).append("{");
+        try {
+            Class<?> clazz = Class.forName(className);
+            for (Field field : clazz.getDeclaredFields()) {
+                field.setAccessible(true);
+                sb.append(field.getName()).append("=").append(field.get(dataModel)).append(",");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
+
+    /**
+     * 判断json是否为数组类型
+     *
+     * @param object
+     * @return
+     */
+    public static boolean isArray(Object object) {
+        // 判断获取的参数类型是否为数组或者为list集合
+        Object o = JSON.parse(JSON.toJSONString(object));
+        if (isNullOrEmpty(o)) {
+            return Boolean.FALSE;
+        }
+        if (o instanceof JSONObject) {
+            return Boolean.FALSE;
+        } else if (o instanceof JSONArray) {
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
+
+    /**
+     * 判断一个未知对象是否为空
+     * 判断对象或对象数组中每一个对象是否为空: 对象为null，字符序列长度为0，集合类、Map为empty
+     *
+     * @param obj
+     * @return
+     */
+    @SuppressWarnings("rawtypes")
+    public static boolean isNullOrEmpty(Object obj) {
+        if (obj == null || "null".equals(obj))
+            return true;
+
+        if (obj instanceof CharSequence)
+            return ((CharSequence) obj).length() == 0;
+
+        if (obj instanceof Collection)
+            return ((Collection) obj).isEmpty();
+
+        if (obj instanceof Map)
+            return ((Map) obj).isEmpty();
+
+        if (obj instanceof Object[]) {
+            Object[] object = (Object[]) obj;
+            if (object.length == 0) {
+                return true;
+            }
+            boolean empty = true;
+            for (int i = 0; i < object.length; i++) {
+                if (!isNullOrEmpty(object[i])) {
+                    empty = false;
+                    break;
+                }
+            }
+            return empty;
+        }
+        return false;
     }
 
     public String yuanToFen(Object o) {
@@ -91,7 +193,7 @@ public class TemplateHelper {
      * @param result
      * @return
      */
-    public  Map<String, String> convertResultStringToMap(String result) {
+    public Map<String, String> convertResultStringToMap(String result) {
         Map<String, String> map = null;
         try {
 
@@ -104,7 +206,7 @@ public class TemplateHelper {
             }
 
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            logger.error("转换失败",e);
         }
         return map;
     }
@@ -112,12 +214,11 @@ public class TemplateHelper {
     /**
      * 解析应答字符串，生成应答要素
      *
-     * @param str
-     *            需要解析的字符串
+     * @param str 需要解析的字符串
      * @return 解析的结果map
      * @throws UnsupportedEncodingException
      */
-    private   Map<String, String> parseQString(String str) throws UnsupportedEncodingException {
+    private Map<String, String> parseQString(String str) throws UnsupportedEncodingException {
 
         Map<String, String> map = new HashMap<String, String>();
         int len = str.length();
@@ -170,8 +271,7 @@ public class TemplateHelper {
         return map;
     }
 
-    private  void putKeyValueToMap(StringBuilder temp, boolean isKey, String key, Map<String, String> map)
-             {
+    private void putKeyValueToMap(StringBuilder temp, boolean isKey, String key, Map<String, String> map) {
         if (isKey) {
             key = temp.toString();
             if (key.length() == 0) {
@@ -184,5 +284,16 @@ public class TemplateHelper {
             }
             map.put(key, temp.toString());
         }
+    }
+
+
+    public String getCurrentTime() {
+        return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+    }
+
+    public String outLineTime() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MINUTE, 5);
+        return new SimpleDateFormat("yyyyMMddHHmmss").format(calendar.getTime());
     }
 }

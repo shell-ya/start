@@ -71,7 +71,7 @@ public class StarConstants {
     /**
      * 对接支付厂商
      */
-    public enum Pay_Vendor{
+    public enum Pay_Vendor {
         SandPay
     }
 
@@ -194,21 +194,53 @@ public class StarConstants {
         }
     }
 
-    public enum MESSAGE_TERMINAL{
+    public enum MESSAGE_TERMINAL {
         Consumer,
         Producer
     }
 
-    public enum NORMAL_STATUS{
+    public enum NORMAL_STATUS {
         SUCCESS,
         FAILURE
     }
 
-    public enum ORDER_STATE{
+    public enum ORDER_STATE {
         WAIT_PAY,
         PAY_SUCCESS,
         PAY_FAILED,
         PAY_CANCEL
+    }
+
+
+    public enum OrderType {
+
+        RECHARGE("RECHARGE", "充值"),
+        ;
+
+        private String name;
+
+        private String desc;
+
+        OrderType(String name, String desc) {
+            this.name = name;
+            this.desc = desc;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
     }
 
 }
