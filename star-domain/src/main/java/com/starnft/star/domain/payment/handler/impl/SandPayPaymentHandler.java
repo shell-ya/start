@@ -1,5 +1,7 @@
 package com.starnft.star.domain.payment.handler.impl;
 
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Maps;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.payment.handler.PaymentHandlerBase;
@@ -72,16 +74,24 @@ public class SandPayPaymentHandler extends PaymentHandlerBase {
 
         IInteract iInteract = obtainProcessInteraction(StarConstants.ProcessType.JSON);
         HttpHeaders httpHeaders = new HttpHeaders();
-//        httpHeaders.add("Content-Type","application/x-www-form-urlencoded");
-//        String h5url = HttpUtil.post(vendorConf.get("h5url"), req);
+
         ResponseEntity<String> h5url = RestTemplateHelper.executePostFromParam(httpHeaders, vendorConf.get("h5url"), req);
-//        String res = iInteract.interact(ConnContext.builder().httpHeaders(httpHeaders)
-//                .url(vendorConf.get("h5url")).restMethod(RequestMethod.POST).build(), () -> req);
+
         String result = URLDecoder.decode(h5url.getBody(), "utf-8");
         Map<String, String> stringStringMap = TemplateHelper.getInstance().convertResultStringToMap(result);
+        String sign = stringStringMap.get("sign");
+        String respData = stringStringMap.get("data");
+        boolean valid = sdKeysHelper.verifyDigitalSign(respData.getBytes("utf-8"), Base64.decodeBase64(sign), sdKeysHelper.getPublicKey(), "SHA1WithRSA");
+        if (!valid) throw new RuntimeException("签名校验出错");
         PaymentRes paymentRes = new PaymentRes();
-
-        return null;
+        JSONObject object = JSONUtil.parseObj(respData);
+        if (object.getJSONObject("head").get("respCode").equals("000000")) {
+            paymentRes.setPayment(object.getJSONObject("body").get("credential").toString());
+            paymentRes.setOrderSn(paymentRich.getOrderSn());
+            paymentRes.setTotalMoney(paymentRich.getTotalMoney());
+            return paymentRes;
+        }
+        throw new RuntimeException("拉起支付出现错误");
     }
 
     @Override

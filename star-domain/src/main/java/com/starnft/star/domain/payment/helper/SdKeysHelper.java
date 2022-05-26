@@ -62,7 +62,22 @@ public class SdKeysHelper {
 		initPrivateKey(sdChannel.getProperties().get("signCertPath"), sdChannel.getProperties().get("signCertPwd"));
 		log.info("加载私钥成功");
 	}
-
+	public  boolean verifyDigitalSign(byte[] plainBytes, byte[] signBytes, PublicKey publicKey, String signAlgorithm) throws Exception {
+		boolean isValid = false;
+		try {
+			Signature signature = Signature.getInstance(signAlgorithm);
+			signature.initVerify(publicKey);
+			signature.update(plainBytes);
+			isValid = signature.verify(signBytes);
+			return isValid;
+		} catch (NoSuchAlgorithmException e) {
+			throw new Exception(String.format("验证数字签名时没有[%s]此类算法", signAlgorithm), e);
+		} catch (InvalidKeyException e) {
+			throw new Exception("验证数字签名时公钥无效", e);
+		} catch (SignatureException e) {
+			throw new Exception("验证数字签名时出现异常", e);
+		}
+	}
 
 	public  byte[] digitalSign(byte[] plainBytes, PrivateKey privateKey, String signAlgorithm)  {
 		try {
