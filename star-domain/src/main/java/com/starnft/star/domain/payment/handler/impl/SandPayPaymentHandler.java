@@ -1,6 +1,5 @@
 package com.starnft.star.domain.payment.handler.impl;
 
-import cn.hutool.http.HttpUtil;
 import com.google.common.collect.Maps;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.payment.handler.PaymentHandlerBase;
@@ -11,10 +10,12 @@ import com.starnft.star.domain.payment.model.res.PaymentRes;
 import com.starnft.star.domain.support.process.IInteract;
 import com.starnft.star.domain.support.process.assign.TradeType;
 import com.starnft.star.domain.support.process.config.TempConf;
+import com.starnft.star.domain.support.process.helper.RestTemplateHelper;
 import lombok.SneakyThrows;
 import org.apache.commons.codec.binary.Base64;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -62,7 +63,7 @@ public class SandPayPaymentHandler extends PaymentHandlerBase {
         String signString = processTemplate(channelConf.getSignTempPath(), paymentRich, vendorConf).replaceAll("(\\r\\n|\\n|\\\\n|\\s)", "");;
         String signResult = new String(Base64.encodeBase64(sdKeysHelper.digitalSign(signString.getBytes(StandardCharsets.UTF_8), sdKeysHelper.getPrivateKey(), "SHA1WithRSA")));
 //        String requestStr = processTemplate(channelConf.getReqTempPath(), signString, signResult);
-        Map<String, Object> req = new HashMap<>();
+        Map<String, String> req = new HashMap<>();
         req.put("charset", "utf-8");
         req.put("data", signString);
         req.put("signType", "01");
@@ -72,13 +73,14 @@ public class SandPayPaymentHandler extends PaymentHandlerBase {
         IInteract iInteract = obtainProcessInteraction(StarConstants.ProcessType.JSON);
         HttpHeaders httpHeaders = new HttpHeaders();
 //        httpHeaders.add("Content-Type","application/x-www-form-urlencoded");
-        String h5url = HttpUtil.post(vendorConf.get("h5url"), req);
-      //  ResponseEntity<String> h5url = RestTemplateHelper.executePostFromParam(httpHeaders, vendorConf.get("h5url"), req);
+//        String h5url = HttpUtil.post(vendorConf.get("h5url"), req);
+        ResponseEntity<String> h5url = RestTemplateHelper.executePostFromParam(httpHeaders, vendorConf.get("h5url"), req);
 //        String res = iInteract.interact(ConnContext.builder().httpHeaders(httpHeaders)
 //                .url(vendorConf.get("h5url")).restMethod(RequestMethod.POST).build(), () -> req);
-        String result = URLDecoder.decode(h5url, "utf-8");
-        System.out.println(result);
-        //res 解析
+        String result = URLDecoder.decode(h5url.getBody(), "utf-8");
+        Map<String, String> stringStringMap = TemplateHelper.getInstance().convertResultStringToMap(result);
+        PaymentRes paymentRes = new PaymentRes();
+
         return null;
     }
 
