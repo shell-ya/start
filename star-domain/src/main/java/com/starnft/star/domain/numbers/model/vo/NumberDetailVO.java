@@ -27,4 +27,5 @@ public class NumberDetailVO implements Serializable {
     private BigDecimal price;
     private Integer status;
     private Integer type;
+    private String ownerBy;
 }
