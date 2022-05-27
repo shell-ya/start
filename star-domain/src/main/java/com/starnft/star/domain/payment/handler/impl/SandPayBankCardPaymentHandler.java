@@ -30,7 +30,7 @@ public class SandPayBankCardPaymentHandler extends SandPayUnionPayPaymentHandler
     @Override
     @SneakyThrows
     protected PaymentRes doPay(PaymentRich paymentRich, Map<String, String> vendorConf) {
-        TempConf channelConf = getChannelConf(TradeType.BankSandPay);
+        TempConf channelConf = getChannelConf(TradeType.Bank_SandPay);
         return super.getPaymentRes(paymentRich,vendorConf,channelConf);
     }
 

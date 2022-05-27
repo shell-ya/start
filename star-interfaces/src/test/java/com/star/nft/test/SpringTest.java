@@ -61,7 +61,7 @@ public class SpringTest {
 
         TempConf temp = null;
         for (TempConf tempConf : tempConfs) {
-            if (tempConf.getTrade().equals(TradeType.SandPay.name())) {
+            if (tempConf.getTrade().equals(TradeType.Union_SandPay.name())) {
                 temp = tempConf;
             }
         }

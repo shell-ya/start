@@ -64,7 +64,7 @@ public class SandPayUnionPayPaymentHandler extends PaymentHandlerBase {
     @SneakyThrows
     @Override
     protected PaymentRes doPay(PaymentRich paymentRich, Map<String, String> vendorConf) {
-        TempConf channelConf = getChannelConf(TradeType.SandPay);
+        TempConf channelConf = getChannelConf(TradeType.Union_SandPay);
         return getPaymentRes(paymentRich, vendorConf, channelConf);
     }
 

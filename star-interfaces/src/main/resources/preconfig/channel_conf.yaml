@@ -1,6 +1,6 @@
 channel-configs:
   tempConfs:
-    - trade: SandPay
+    - trade: Union_SandPay
       reqTempPath: sandpay/sand_pay_request.ftl
       resTempPath: sandpay/sand_pay_response.ftl
       signTempPath: sandpay/sand_pay_sign.ftl
@@ -10,7 +10,7 @@ channel-configs:
         properties:
           reqHeader: POST
 
-    - trade: BankSandPay
+    - trade: Bank_SandPay
       reqTempPath: sandpay/sand_bank_pay_request.ftl
       resTempPath: sandpay/sand_pay_response.ftl
       signTempPath: sandpay/sand_bank_pay_sign.ftl
