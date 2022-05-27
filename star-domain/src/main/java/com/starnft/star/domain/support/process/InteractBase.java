@@ -1,7 +1,9 @@
 package com.starnft.star.domain.support.process;
 
+import com.alibaba.fastjson.JSON;
 import com.starnft.star.domain.support.process.assign.StarRequestMethod;
 import com.starnft.star.domain.support.process.context.ConnContext;
+import com.starnft.star.domain.support.process.res.RemoteRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +24,17 @@ public abstract class InteractBase implements IInteract{
         }
         return doInteract(context, () -> null);
 
+    }
+
+    @Override
+    public <T> T verifyResAndGet(RemoteRes remoteRes, Class<T> resClazz) {
+        if (null == remoteRes) {
+            throw new RuntimeException("接口响应为空");
+        }
+        if (remoteRes.getCode().equals("-1")) {
+            throw new RuntimeException(remoteRes.getMessage());
+        }
+        return JSON.parseObject(remoteRes.getContext(), resClazz);
     }
 
     protected abstract String doInteract(ConnContext context, Supplier<Map<?, ?>> urlParams);

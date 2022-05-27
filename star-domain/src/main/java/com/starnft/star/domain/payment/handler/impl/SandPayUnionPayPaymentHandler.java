@@ -108,7 +108,7 @@ public class SandPayUnionPayPaymentHandler extends PaymentHandlerBase {
         RemoteRes remoteRes = JSON.parseObject(resModel, RemoteRes.class);
 
         //验证响应状态并返回
-        return verifyResAndGet(remoteRes, PaymentRes.class);
+        return iInteract.verifyResAndGet(remoteRes, PaymentRes.class);
     }
 
     @Override

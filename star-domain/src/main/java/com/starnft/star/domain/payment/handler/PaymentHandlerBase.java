@@ -99,17 +99,6 @@ public abstract class PaymentHandlerBase
     protected abstract Map<String, Object> buildDataModel(Object... data);
 
 
-    protected <T> T verifyResAndGet(RemoteRes remoteRes, Class<T> resClazz) {
-        if (null == remoteRes) {
-            throw new RuntimeException("接口响应为空");
-        }
-        if (remoteRes.getCode().equals("-1")) {
-            throw new RuntimeException(remoteRes.getMessage());
-        }
-        return JSON.parseObject(remoteRes.getContext(), resClazz);
-    }
-
-
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
