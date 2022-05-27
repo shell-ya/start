@@ -6,7 +6,6 @@ import com.starnft.star.domain.support.process.context.ConnContext;
 import com.starnft.star.domain.support.process.helper.RestTemplateHelper;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -26,6 +25,8 @@ public class RestTemplateInteraction extends InteractBase {
                 return doPut(context, context.getHttpHeaders());
             case DELETE:
                 return doDelete();//TODO
+            case POST_FORM:
+                return doPostForm(context, context.getHttpHeaders());
             default:
                 return doPost(context, context.getHttpHeaders());
         }
@@ -59,6 +60,16 @@ public class RestTemplateInteraction extends InteractBase {
      */
     private String doPost(ConnContext context, HttpHeaders httpHeaders) {
         return RestTemplateHelper.executePostBodyParam(httpHeaders, context.getUrl(), context.getContent()).getBody();
+    }
+
+
+    /**
+     * POST_FORM请求
+     *
+     * @return ResponseEntity
+     */
+    private String doPostForm(ConnContext context, HttpHeaders httpHeaders) {
+        return RestTemplateHelper.executePostFromParam(httpHeaders, context.getUrl(), context.getFormData()).getBody();
     }
 
     /**

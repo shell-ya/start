@@ -1,21 +1,19 @@
 channel-configs:
   tempConfs:
-    - trade: SandPay
-      reqTempPath: sandpay/sand_pay_request.ftl
-      resTempPath: sandpay/sand_pay_response.ftl
+    - trade: Union_SandPay
       signTempPath: sandpay/sand_pay_sign.ftl
+      resTempPath: sandpay/sand_pay_response.ftl
       httpConf:
-        processType: param
+        processType: json
         apiUrl: https://cashier.sandpay.com.cn/gateway/api/order/pay
         properties:
           reqHeader: POST
 
-    - trade: BankSandPay
-      reqTempPath: sandpay/sand_bank_pay_request.ftl
-      resTempPath: sandpay/sand_bank_pay_response.ftl
+    - trade: Bank_SandPay
       signTempPath: sandpay/sand_bank_pay_sign.ftl
+      resTempPath: sandpay/sand_pay_response.ftl
       httpConf:
-        processType: param
+        processType: json
         apiUrl: https://cashier.sandpay.com.cn/gateway/api/order/pay
         properties:
           reqHeader: POST
