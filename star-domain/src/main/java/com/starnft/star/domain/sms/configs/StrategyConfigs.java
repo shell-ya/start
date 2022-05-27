@@ -8,7 +8,7 @@ import org.springframework.context.annotation.PropertySource;
 @Data
 @Configuration
 @ConfigurationProperties(prefix = "strategy")
-@PropertySource("classpath:sms/strategy.yml")
+@PropertySource("classpath:sms/strategy.properties")
 public class StrategyConfigs {
     private Integer sms;
 }
