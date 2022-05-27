@@ -12,7 +12,6 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.HashMap;
 
 @Data
@@ -29,7 +28,9 @@ public class PaymentRich implements Serializable {
      * 用户Id
      */
     private Long userId;
-
+    /**
+     * 客户端ip
+     */
     private String clientIp;
     /**
      * 支付后跳转页面url
@@ -45,6 +46,11 @@ public class PaymentRich implements Serializable {
     private String orderSn;
 
     /**
+     * 消息广播主题
+     */
+    private String multicastTopic;
+
+    /**
      * 订单类型
      */
     private StarConstants.OrderType orderType;
@@ -58,12 +64,13 @@ public class PaymentRich implements Serializable {
         return orderType.getDesc();
     }
 
-    public String composeCallback(){
+    public String composeCallback() {
         HashMap<@Nullable String, @Nullable String> extInfo = Maps.newHashMap();
-        extInfo.put("userId",String.valueOf(getUserId()));
-        extInfo.put("orderType",String.valueOf(getOrderTypeName()));
+        extInfo.put("userId", String.valueOf(getUserId()));
+        extInfo.put("orderType", String.valueOf(getOrderTypeName()));
+        extInfo.put("multicastTopic", multicastTopic);
         char[] chars = new JsonStringEncoder().quoteAsString(JSON.toJSONString(extInfo));
-        return String.valueOf(chars).replace("\\\\","");
+        return String.valueOf(chars).replace("\\\\", "");
     }
 
 }

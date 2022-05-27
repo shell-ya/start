@@ -11,7 +11,8 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class SandPayBankCardPaymentHandler extends SandPayUnionPayPaymentHandler {
+public class SandPayBankCardPaymentHandler extends AbstractSandPayHandler {
+
     @Override
     public StarConstants.PayChannel getPayChannel() {
         return StarConstants.PayChannel.BankCard;
@@ -34,8 +35,4 @@ public class SandPayBankCardPaymentHandler extends SandPayUnionPayPaymentHandler
         return super.getPaymentRes(paymentRich,vendorConf,channelConf);
     }
 
-    @Override
-    protected Map<String, Object> buildDataModel(Object... data) {
-        return super.buildDataModel(data);
-    }
 }

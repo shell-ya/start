@@ -18,9 +18,6 @@ public interface IInteract {
      */
     String interact(ConnContext context, Supplier<Map<?, ?>> urlParams);
 
-
-
-
     /**
      * @author Ryan Z / haoran
      * @description 解析参数响应状态 并返回响应实体

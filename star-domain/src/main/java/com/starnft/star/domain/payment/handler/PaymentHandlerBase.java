@@ -1,13 +1,11 @@
 package com.starnft.star.domain.payment.handler;
 
-import com.alibaba.fastjson.JSON;
 import com.starnft.star.common.template.FreeMakerTemplateHelper;
 import com.starnft.star.common.template.TemplateHelper;
 import com.starnft.star.domain.payment.config.PaymentConfiguration;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
 import com.starnft.star.domain.support.process.ProcessInteractionHolder;
-import com.starnft.star.domain.support.process.res.RemoteRes;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -19,7 +17,7 @@ import java.util.Map;
 public abstract class PaymentHandlerBase
         extends PaymentConfiguration implements IPaymentHandler, ApplicationContextAware, ProcessInteractionHolder {
 
-    private ApplicationContext applicationContext;
+    protected ApplicationContext applicationContext;
 
 
     /**

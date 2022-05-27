@@ -32,10 +32,7 @@ import java.util.Objects;
 
 @Component
 @Slf4j
-public class SandPayUnionPayPaymentHandler extends PaymentHandlerBase {
-
-    @Resource
-    SdKeysHelper sdKeysHelper;
+public class SandPayUnionPayPaymentHandler extends AbstractSandPayHandler {
 
     @Override
     public StarConstants.PayChannel getPayChannel() {
@@ -66,58 +63,6 @@ public class SandPayUnionPayPaymentHandler extends PaymentHandlerBase {
     protected PaymentRes doPay(PaymentRich paymentRich, Map<String, String> vendorConf) {
         TempConf channelConf = getChannelConf(TradeType.Union_SandPay);
         return getPaymentRes(paymentRich, vendorConf, channelConf);
-    }
-
-    protected PaymentRes getPaymentRes(PaymentRich paymentRich, Map<String, String> vendorConf, TempConf channelConf) throws Exception {
-
-        //模板解析参数
-        String signString = processTemplate(channelConf.getSignTempPath(), paymentRich, vendorConf);
-        //参数根据第三方加密规则加密
-        String signResult = new String(Base64.encodeBase64(sdKeysHelper.digitalSign(signString.getBytes(StandardCharsets.UTF_8),
-                sdKeysHelper.getPrivateKey(), "SHA1WithRSA")));
-
-        Map<String, String> req = new HashMap<>();
-        req.put("charset", "utf-8");
-        req.put("data", signString);
-        req.put("signType", "01");
-        req.put("sign", signResult);
-
-        if (log.isDebugEnabled()) {
-            log.info("[{}] :加密后入参:{}", this.getClass().getSimpleName(), req.toString());
-        }
-
-        IInteract iInteract = obtainProcessInteraction(StarConstants.ProcessType.JSON);
-
-        String context = iInteract.interact(ConnContext.builder()
-                .formData(req).httpHeaders(new HttpHeaders())
-                .restMethod(StarRequestMethod.POST_FORM).url(channelConf.getHttpConf().getApiUrl()).build(), () -> null);
-        //参数解密
-        String result = URLDecoder.decode(Objects.requireNonNull(context), "utf-8");
-        Map<String, String> data = TemplateHelper.getInstance().convertResultStringToMap(result);
-        String sign = data.get("sign");
-        String respData = data.get("data");
-        //响应验签
-        boolean valid = sdKeysHelper.verifyDigitalSign(respData.getBytes("utf-8"),
-                Base64.decodeBase64(sign), sdKeysHelper.getPublicKey(), "SHA1WithRSA");
-
-        if (!valid) throw new RuntimeException("签名校验出错");
-
-        //模板解析相应参数
-        JSONObject resObj = JSONUtil.parseObj(respData);
-        String resModel = super.processTemplate(channelConf.getResTempPath(), paymentRich, resObj);
-        RemoteRes remoteRes = JSON.parseObject(resModel, RemoteRes.class);
-
-        //验证响应状态并返回
-        return iInteract.verifyResAndGet(remoteRes, PaymentRes.class);
-    }
-
-    @Override
-    protected Map<String, Object> buildDataModel(Object... data) {
-        HashMap<@Nullable String, @Nullable Object> dataModel = Maps.newHashMap();
-        dataModel.put("param1", data[0]);
-        dataModel.put("param2", data[1]);
-        dataModel.put("helper", TemplateHelper.getInstance());
-        return dataModel;
     }
 
     @Override

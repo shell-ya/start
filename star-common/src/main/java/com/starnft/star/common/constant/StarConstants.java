@@ -47,7 +47,7 @@ public class StarConstants {
         /**
          * 云闪付
          */
-        UnionPay,
+        UNION_PAY,
         /**
          * 微信
          */
@@ -61,7 +61,6 @@ public class StarConstants {
          */
         Balance,
 
-        UNION_PAY,
         /**
          * 其他
          */
