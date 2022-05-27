@@ -20,7 +20,7 @@ public class MessageAdapter implements ApplicationContextAware {
      * @return
      */
     public MessageStrategyInterface getDistributor() {
-        MessageTypeEnums defaultMessageType = MessageTypeEnums.getDefaultMessageType(strategyConfigs.getStrategy());
+        MessageTypeEnums defaultMessageType = MessageTypeEnums.getDefaultMessageType(strategyConfigs.getSms());
         return (MessageStrategyInterface) context.getBean(defaultMessageType.getStrategy());
     }
     /**

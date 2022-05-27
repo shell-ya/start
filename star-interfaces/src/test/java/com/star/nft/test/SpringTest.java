@@ -11,6 +11,7 @@ import com.starnft.star.application.process.wallet.req.PayRecordReq;
 import com.starnft.star.common.template.FreeMakerTemplateHelper;
 import com.starnft.star.domain.payment.config.container.PayConf;
 import com.starnft.star.domain.payment.router.IPaymentRouter;
+import com.starnft.star.domain.sms.adapter.MessageAdapter;
 import com.starnft.star.domain.support.process.assign.TradeType;
 import com.starnft.star.domain.support.process.config.ChannelConf;
 import com.starnft.star.domain.support.process.config.TempConf;
@@ -46,12 +47,18 @@ public class SpringTest {
 
     @Resource
     private PayConf payConf;
-
+    @Resource
+    MessageAdapter messageAdapter;
     @Test
     public void payment() {
         System.out.println(JSON.toJSONString(payConf.getChannels()));
     }
+    @Test
+    public void sms() {
+        boolean b = messageAdapter.getDistributor().checkCodeMessage("18682441029", "123456");
+        System.out.println(b);
 
+    }
     @Test
     @SneakyThrows
     public void tempconf() {
