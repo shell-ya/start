@@ -52,7 +52,7 @@ public class UserRepository implements IUserRepository {
         UserInfoEntity queryUser = new UserInfoEntity();
         queryUser.setIsDeleted(Boolean.FALSE);
         queryUser.setPhone(phone);
-        UserInfoEntity userInfoEntity = userInfoMapper.selectOne(new QueryWrapper<UserInfoEntity>().setEntity(queryUser));
+        UserInfoEntity userInfoEntity = this.userInfoMapper.selectOne(new QueryWrapper<UserInfoEntity>().setEntity(queryUser));
         if (Objects.nonNull(userInfoEntity)) {
             UserInfo userInfo = new UserInfo();
             userInfo.setAccount(userInfoEntity.getAccount());
@@ -70,7 +70,7 @@ public class UserRepository implements IUserRepository {
 
     @Override
     public UserInfo queryUserInfoByUserId(Long userId) {
-        UserInfoEntity userInfoEntity = getUserInfoEntity(userId);
+        UserInfoEntity userInfoEntity = this.getUserInfoEntity(userId);
         if (Objects.nonNull(userInfoEntity)) {
             UserInfo userInfo = new UserInfo();
             userInfo.setAccount(userInfoEntity.getAccount());
@@ -91,9 +91,8 @@ public class UserRepository implements IUserRepository {
         UserInfoEntity queryUser = new UserInfoEntity();
         queryUser.setIsDeleted(Boolean.FALSE);
         queryUser.setAccount(userId);
-        return userInfoMapper.selectOne(new QueryWrapper<UserInfoEntity>().setEntity(queryUser));
+        return this.userInfoMapper.selectOne(new QueryWrapper<UserInfoEntity>().setEntity(queryUser));
     }
-
 
 
     @Override
@@ -108,7 +107,7 @@ public class UserRepository implements IUserRepository {
         addUserInfo.setAccount(req.getUserId());
         addUserInfo.setNickName(req.getNickName());
         addUserInfo.setPhone(req.getPhone());
-        return userInfoMapper.insert(addUserInfo);
+        return this.userInfoMapper.insert(addUserInfo);
     }
 
     @Transactional
@@ -125,9 +124,9 @@ public class UserRepository implements IUserRepository {
         updateUserInfo.setModifiedAt(new Date());
         updateUserInfo.setModifiedBy(userInfo.getAccount());
 
-        Integer updateRows = userInfoMapper.update(updateUserInfo, updateWrapper);
+        Integer updateRows = this.userInfoMapper.update(updateUserInfo, updateWrapper);
         //密码修改记录
-        addUserPwdLog(userInfo.getAccount(), newPassword);
+        this.addUserPwdLog(userInfo.getAccount(), newPassword);
         return updateRows;
     }
 
@@ -142,12 +141,12 @@ public class UserRepository implements IUserRepository {
         addLog.setModifiedAt(new Date());
         addLog.setModifiedBy(userId);
         addLog.setIsDeleted(Boolean.FALSE);
-        return userPwdHistoryLogMapper.insert(addLog);
+        return this.userPwdHistoryLogMapper.insert(addLog);
     }
 
     @Override
     public UserPwdChangeLogsVO queryPwdLog(Long userId) {
-        List<UserPwdHistoryLogEntity> userPwdHistoryLogEntities = userPwdHistoryLogMapper.selectByParamAndLimiTen(userId);
+        List<UserPwdHistoryLogEntity> userPwdHistoryLogEntities = this.userPwdHistoryLogMapper.selectByParamAndLimiTen(userId);
 
         List<String> passwords = Optional.ofNullable(userPwdHistoryLogEntities)
                 .orElse(new ArrayList<>())
@@ -172,7 +171,7 @@ public class UserRepository implements IUserRepository {
         UpdateWrapper updateWrapper = new UpdateWrapper();
         updateWrapper.eq("account", userId);
         updateWrapper.eq("is_deleted", Boolean.FALSE);
-        return userInfoMapper.update(userInfo, updateWrapper);
+        return this.userInfoMapper.update(userInfo, updateWrapper);
     }
 
     @Override
@@ -185,7 +184,7 @@ public class UserRepository implements IUserRepository {
         userLoginLog.setModifiedAt(new Date());
         userLoginLog.setModifiedBy(userId);
         userLoginLog.setIsDeleted(Boolean.FALSE);
-        return userLoginLogMapper.insert(userLoginLog);
+        return this.userLoginLogMapper.insert(userLoginLog);
     }
 
     @Override
@@ -197,9 +196,9 @@ public class UserRepository implements IUserRepository {
         userLoginLog.setModifiedBy(userId);
 
         UpdateWrapper updateWrapper = new UpdateWrapper();
-        updateWrapper.eq("account", userId);
+        updateWrapper.eq("user_id", userId);
         updateWrapper.eq("is_delete", Boolean.FALSE);
-        return userLoginLogMapper.update(userLoginLog, updateWrapper);
+        return this.userLoginLogMapper.update(userLoginLog, updateWrapper);
     }
 
     @Override
@@ -214,7 +213,7 @@ public class UserRepository implements IUserRepository {
         userInfo.setModifiedBy(userId);
         userInfo.setModifiedAt(new Date());
 
-        int row = userInfoMapper.update(userInfo, updateWrapper);
+        int row = this.userInfoMapper.update(userInfo, updateWrapper);
         return row > 0 ? Boolean.TRUE : Boolean.FALSE;
     }
 
@@ -225,24 +224,24 @@ public class UserRepository implements IUserRepository {
         userInfo.setModifiedBy(req.getAccount());
 
         UpdateWrapper updateWrapper = new UpdateWrapper();
-        updateWrapper.eq("account" , req.getAccount()) ;
-        return userInfoMapper.update(userInfo ,updateWrapper);
+        updateWrapper.eq("account", req.getAccount());
+        return this.userInfoMapper.update(userInfo, updateWrapper);
     }
 
     @Override
     public AgreementVO queryAgreementInfoByType(Integer agreementType) {
-        UserAgreementEntity userAgreementEntity = userAgreementMapper.queryAgreementInfoByType(agreementType);
+        UserAgreementEntity userAgreementEntity = this.userAgreementMapper.queryAgreementInfoByType(agreementType);
         return BeanColverUtil.colver(userAgreementEntity, AgreementVO.class);
     }
 
     @Override
     public List<String> queryUserSignAgreement(Long userId) {
-        return signMapper.batchSelectUserAgreementId(userId);
+        return this.signMapper.batchSelectUserAgreementId(userId);
     }
 
     @Override
     public List<AgreementVO> queryNewAgreementByScene(Integer scene) {
-        List<UserAgreementEntity> userAgreementEntity = userAgreementMapper.queryNewAgreementByScene(scene);
+        List<UserAgreementEntity> userAgreementEntity = this.userAgreementMapper.queryNewAgreementByScene(scene);
         return BeanColverUtil.colverList(userAgreementEntity, AgreementVO.class);
     }
 
@@ -253,13 +252,13 @@ public class UserRepository implements IUserRepository {
         wrapper.eq("is_deleted", Boolean.FALSE);
         wrapper.le("effective_time", LocalDateTime.now());
         wrapper.last("limit 1");
-        UserAgreementPopupEntity userAgreementPopupEntity = userAgreementPopupMapper.selectOne(wrapper);
+        UserAgreementPopupEntity userAgreementPopupEntity = this.userAgreementPopupMapper.selectOne(wrapper);
         return BeanColverUtil.colver(userAgreementPopupEntity, AgreementPopupInfoVO.class);
     }
 
     @Override
     public List<AgreementVO> queryAgreementByAgreementId(List<String> agreementIdList) {
-        List<UserAgreementEntity> userAgreementEntities = userAgreementMapper.batchQueryAgreementById(agreementIdList);
+        List<UserAgreementEntity> userAgreementEntities = this.userAgreementMapper.batchQueryAgreementById(agreementIdList);
         return BeanColverUtil.colverList(userAgreementEntities, AgreementVO.class);
     }
 
@@ -275,12 +274,12 @@ public class UserRepository implements IUserRepository {
         userDataAuthorizationEntity.setModifiedAt(new Date());
         userDataAuthorizationEntity.setModifiedBy(userId);
         userDataAuthorizationEntity.setIsDeleted(Boolean.FALSE);
-        return userDataAuthorizationMapper.insert(userDataAuthorizationEntity);
+        return this.userDataAuthorizationMapper.insert(userDataAuthorizationEntity);
     }
 
     @Override
     public Integer batchInsertAgreementSign(List<AgreementSignDTO> list) {
-        return signMapper.batchInsertAgreementSign(list);
+        return this.signMapper.batchInsertAgreementSign(list);
     }
 
     @Override
@@ -288,7 +287,7 @@ public class UserRepository implements IUserRepository {
         UserInfoEntity queryUser = new UserInfoEntity();
         queryUser.setIsDeleted(Boolean.FALSE);
         queryUser.setAccount(userId);
-        UserInfoEntity userInfoEntity = userInfoMapper.selectOne(new QueryWrapper<UserInfoEntity>().setEntity(queryUser));
+        UserInfoEntity userInfoEntity = this.userInfoMapper.selectOne(new QueryWrapper<UserInfoEntity>().setEntity(queryUser));
         return BeanColverUtil.colver(userInfoEntity, UserRealInfo.class);
     }
 
@@ -297,7 +296,7 @@ public class UserRepository implements IUserRepository {
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("account", userId);
         queryWrapper.eq("is_deleted", Boolean.FALSE);
-        UserInfoEntity userInfoEntity = userInfoMapper.selectOne(queryWrapper);
+        UserInfoEntity userInfoEntity = this.userInfoMapper.selectOne(queryWrapper);
         return Objects.nonNull(userInfoEntity);
     }
 }
