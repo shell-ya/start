@@ -1,11 +1,13 @@
 package com.starnft.star.domain.payment.handler;
 
+import com.alibaba.fastjson.JSON;
 import com.starnft.star.common.template.FreeMakerTemplateHelper;
 import com.starnft.star.common.template.TemplateHelper;
 import com.starnft.star.domain.payment.config.PaymentConfiguration;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
 import com.starnft.star.domain.support.process.ProcessInteractionHolder;
+import com.starnft.star.domain.support.process.res.RemoteRes;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -43,14 +45,13 @@ public abstract class PaymentHandlerBase
     }
 
 
-
     /**
+     * @param templateName 渠道配置中的模板资源路径
+     * @param data         需要被解析的参数
+     * @return 解析后的字符串
      * @author Ryan Z / haoran
      * @description 模板解析
-     * @date  2022/5/25
-     * @param templateName 渠道配置中的模板资源路径
-     * @param data 需要被解析的参数
-     * @return 解析后的字符串
+     * @date 2022/5/25
      */
     protected String processTemplate(final String templateName, Object... data) {
         TemplateHelper templateHelper = applicationContext.getBean(FreeMakerTemplateHelper.class);
@@ -65,13 +66,12 @@ public abstract class PaymentHandlerBase
 
 
     /**
+     * @param req
      * @author Ryan Z / haoran
      * @description 根据对应支付渠道做响应的参数合法性校验
-     * @date  2022/5/25
-     * @param req
+     * @date 2022/5/25
      */
     protected abstract void verifyLegality(PaymentRich req);
-
 
 
     /**
@@ -90,14 +90,24 @@ public abstract class PaymentHandlerBase
     protected abstract PaymentRes doPay(PaymentRich paymentRich, Map<String, String> vendorConf);
 
 
-
     /**
-     *  模板实体生成 调用processTemplate 时将需要在模板中解析的参数传入 在该方法中加载
+     * 模板实体生成 调用processTemplate 时将需要在模板中解析的参数传入 在该方法中加载
+     *
      * @param data
      * @return
      */
     protected abstract Map<String, Object> buildDataModel(Object... data);
 
+
+    protected <T> T verifyResAndGet(RemoteRes remoteRes, Class<T> resClazz) {
+        if (null == remoteRes) {
+            throw new RuntimeException("接口响应为空");
+        }
+        if (remoteRes.getCode().equals("-1")) {
+            throw new RuntimeException(remoteRes.getMessage());
+        }
+        return JSON.parseObject(remoteRes.getContext(), resClazz);
+    }
 
 
     @Override

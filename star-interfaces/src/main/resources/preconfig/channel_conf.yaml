@@ -12,7 +12,7 @@ channel-configs:
 
     - trade: BankSandPay
       reqTempPath: sandpay/sand_bank_pay_request.ftl
-      resTempPath: sandpay/sand_bank_pay_response.ftl
+      resTempPath: sandpay/sand_pay_response.ftl
       signTempPath: sandpay/sand_bank_pay_sign.ftl
       httpConf:
         processType: param

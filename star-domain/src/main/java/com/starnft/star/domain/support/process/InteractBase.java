@@ -1,5 +1,6 @@
 package com.starnft.star.domain.support.process;
 
+import com.starnft.star.domain.support.process.assign.StarRequestMethod;
 import com.starnft.star.domain.support.process.context.ConnContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,7 @@ public abstract class InteractBase implements IInteract{
     public String interact(ConnContext context, Supplier<Map<?, ?>> urlParams) {
 
         //Rest接口 Get请求参数传递
-        if (null != context.getRestMethod() && context.getRestMethod() == RequestMethod.GET) {
+        if (null != context.getRestMethod() && context.getRestMethod() == StarRequestMethod.GET) {
             return doInteract(context, urlParams);
         }
         return doInteract(context, () -> null);
