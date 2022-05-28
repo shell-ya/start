@@ -6,7 +6,6 @@ import com.starnft.star.common.enums.LoginTypeEnum;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.po.AccessToken;
-import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.user.model.dto.*;
 import com.starnft.star.domain.user.model.vo.*;
@@ -49,7 +48,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     public UserInfoVO login(UserLoginDTO req) {
 
         LoginTypeEnum loginTypeEnum = LoginTypeEnum.getLoginTypeEnum(req.getLoginScenes());
-        UserLoginStrategy login = applicationContext.getBean(loginTypeEnum.getStrategy(), UserLoginStrategy.class);
+        UserLoginStrategy login = this.applicationContext.getBean(loginTypeEnum.getStrategy(), UserLoginStrategy.class);
         Long userId = login.login(req);
 
         //创建token
@@ -57,7 +56,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         accessToken.setUserId(userId);
 
         UserInfoVO userInfo = new UserInfoVO();
-        userInfo.setToken(createUserTokenAndSaveRedis(userId));
+        userInfo.setToken(this.createUserTokenAndSaveRedis(userId));
         userInfo.setUserId(userId);
 
         return userInfo;
@@ -65,25 +64,34 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
     @Override
     public UserInfoVO queryUserInfo(Long userId) {
-        UserInfo userInfo = userRepository.queryUserInfoByUserId(userId);
+        UserInfo userInfo = this.userRepository.queryUserInfoByUserId(userId);
         if (Objects.isNull(userInfo)) {
             throw new StarException(StarError.USER_NOT_EXISTS);
         }
-        return BeanColverUtil.colver(userInfo, UserInfoVO.class);
+        return UserInfoVO.builder()
+                .userId(userInfo.getId())
+                .phone(userInfo.getPhone())
+                .nickName(userInfo.getNickName())
+                .avatar(userInfo.getAvatar())
+                .realPersonFlag(YesOrNoStatusEnum.YES.getCode().equals(userInfo.getRealPersonFlag()))
+                .blockchainAddress(userInfo.getBlockchainAddress())
+                .briefIntroduction(userInfo.getBriefIntroduction())
+                .plyPassword(userInfo.getPlyPassword())
+                .build();
     }
 
     @Override
     public UserRegisterInfoVO loginByPhone(UserLoginDTO req) {
 
         LoginTypeEnum loginTypeEnum = LoginTypeEnum.getLoginTypeEnum(req.getLoginScenes());
-        UserLoginStrategy login = applicationContext.getBean(loginTypeEnum.getStrategy(), UserLoginStrategy.class);
+        UserLoginStrategy login = this.applicationContext.getBean(loginTypeEnum.getStrategy(), UserLoginStrategy.class);
         Long userId = login.login(req);
 
         UserRegisterInfoVO userRegisterInfoVO = new UserRegisterInfoVO();
 
         AccessToken accessToken = new AccessToken();
         accessToken.setUserId(userId);
-        userRegisterInfoVO.setToken(createUserTokenAndSaveRedis(userId));
+        userRegisterInfoVO.setToken(this.createUserTokenAndSaveRedis(userId));
         userRegisterInfoVO.setUserId(userId);
 
         return userRegisterInfoVO;
@@ -92,8 +100,8 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     @Transactional
     @Override
     public Boolean logOut(Long userId) {
-        userRepository.deleteLoginLog(userId);
-        return cleanUserToken(userId);
+        this.userRepository.deleteLoginLog(userId);
+        return this.cleanUserToken(userId);
     }
 
     @Override
@@ -103,8 +111,8 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
         //校验验证码发送的频率
         String key = String.format(RedisKey.SMS_CODE_LIFE.getKey(), req.getPhone());
-        if (smsEnable) {
-            Object obj = redisTemplate.opsForValue().get(key);
+        if (this.smsEnable) {
+            Object obj = this.redisTemplate.opsForValue().get(key);
             if (Objects.isNull(obj)) {
                 throw new StarException(StarError.VERIFYCODE_FREQUENCY_IS_TOO_HIGH);
             }
@@ -116,21 +124,21 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         RedisKey redisKeyEnum = RedisKey.getRedisKeyEnum(req.getVerificationScenes());
         String redisKey = String.format(redisKeyEnum.getKey(), req.getPhone());
         try {
-            redisTemplate.opsForValue().set(redisKey, code, redisKeyEnum.getTime(), redisKeyEnum.getTimeUnit());
+            this.redisTemplate.opsForValue().set(redisKey, code, redisKeyEnum.getTime(), redisKeyEnum.getTimeUnit());
             //限制短信发送时间
-            redisTemplate.opsForValue().set(key, req.getPhone(), RedisKey.SMS_CODE_LIFE.getTime(), RedisKey.SMS_CODE_LIFE.getTimeUnit());
+            this.redisTemplate.opsForValue().set(key, req.getPhone(), RedisKey.SMS_CODE_LIFE.getTime(), RedisKey.SMS_CODE_LIFE.getTimeUnit());
         } catch (Exception e) {
             log.error("sms redis error:{}", e);
         }
 
         // 如发送短信则不返回验证码
-        return smsEnable ? null : UserVerifyCode.builder().code(code).build();
+        return this.smsEnable ? null : UserVerifyCode.builder().code(code).build();
     }
 
     @Override
     public Boolean setUpPassword(AuthMaterialDTO materialDTO) {
         //校验用户是否存在
-        UserInfo userInfo = userRepository.queryUserInfoByPhone(materialDTO.getPhone());
+        UserInfo userInfo = this.userRepository.queryUserInfoByPhone(materialDTO.getPhone());
         if (Objects.isNull(userInfo)) {
             log.error("设置初始密码，用户：{}不存在", materialDTO.getPhone());
             throw new StarException(StarError.USER_NOT_EXISTS);
@@ -138,19 +146,19 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
         //验证码校验
         String verifiCodeKey = String.format(RedisKey.REDIS_CODE_LOGIN_CHANGE_PWD.getKey(), materialDTO.getPhone());
-        String code = String.valueOf(redisTemplate.opsForValue().get(verifiCodeKey));
+        String code = String.valueOf(this.redisTemplate.opsForValue().get(verifiCodeKey));
         if (!code.equals(materialDTO.getVerificationCode())) {
             throw new StarException(StarError.CODE_NOT_FUND);
         }
 
-        Integer updateRows = userRepository.setUpPassword(userInfo, materialDTO.getPassword());
+        Integer updateRows = this.userRepository.setUpPassword(userInfo, materialDTO.getPassword());
         return Objects.nonNull(updateRows) ? Boolean.TRUE : Boolean.FALSE;
     }
 
     @Override
     public Boolean changePassword(AuthMaterialDTO materialDTO) {
         //校验用户是否存在
-        UserInfo userInfo = userRepository.queryUserInfoByPhone(materialDTO.getPhone());
+        UserInfo userInfo = this.userRepository.queryUserInfoByPhone(materialDTO.getPhone());
         if (Objects.isNull(userInfo)) {
             log.error("修改密码，用户：{} 不存在", materialDTO.getPhone());
             throw new StarException(StarError.USER_NOT_EXISTS);
@@ -158,7 +166,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
         //校验验证码是否过期
         String redisKey = String.format(RedisKey.REDIS_CODE_NOT_LOGIN_CHANGE_PWD.getKey(), materialDTO.getPhone());
-        String code = String.valueOf(redisTemplate.opsForValue().get(redisKey));
+        String code = String.valueOf(this.redisTemplate.opsForValue().get(redisKey));
         Optional.ofNullable(materialDTO)
                 .filter(a -> a.getVerificationCode().equals(code))
                 .orElseThrow(() -> new StarException(StarError.CODE_NOT_FUND));
@@ -173,14 +181,14 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
         //校验距离上次修改密码是否超过24小时
         String changeSuccessKey = String.format(RedisKey.REDIS_CHANGE_PWD_SUCCESS_EXPIRED.getKey(), userInfo.getAccount());
-        Object userIdObj = redisTemplate.opsForValue().get(changeSuccessKey);
+        Object userIdObj = this.redisTemplate.opsForValue().get(changeSuccessKey);
         if (Objects.nonNull(userIdObj)) {
             new StarException(StarError.CHANGE_PWD_FREQUENCY_IS_TOO_HIGH);
         }
 
         //校验新密码与最新十次的修改是否一致
         String newPassword = StarUtils.getSHA256Str(materialDTO.getPassword());
-        UserPwdChangeLogsVO userPwdChangeLogsVO = userRepository.queryPwdLog(userInfo.getAccount());
+        UserPwdChangeLogsVO userPwdChangeLogsVO = this.userRepository.queryPwdLog(userInfo.getAccount());
         Map<String, String> userPwdMap = Optional
                 .ofNullable(userPwdChangeLogsVO.getPasswords())
                 .orElse(new ArrayList<>())
@@ -191,11 +199,11 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         }
 
         //更新密码
-        Integer result = userRepository.changePwd(userInfo.getAccount(), materialDTO.getPassword());
+        Integer result = this.userRepository.changePwd(userInfo.getAccount(), materialDTO.getPassword());
         Boolean successBln = Objects.nonNull(result) ? Boolean.TRUE : Boolean.FALSE;
 
         //更新成功修改密码间隔时间
-        redisTemplate.opsForValue().set(changeSuccessKey, userInfo.getAccount()
+        this.redisTemplate.opsForValue().set(changeSuccessKey, userInfo.getAccount()
                 , RedisKey.REDIS_CHANGE_PWD_SUCCESS_EXPIRED.getTime()
                 , RedisKey.REDIS_CHANGE_PWD_SUCCESS_EXPIRED.getTimeUnit());
 
@@ -205,21 +213,21 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     @Override
     public Boolean intiPayPassword(PayPasswordDTO req) {
         //校验用户是否存在
-        UserInfo userInfo = userRepository.queryUserInfoByUserId(req.getUserId());
+        UserInfo userInfo = this.userRepository.queryUserInfoByUserId(req.getUserId());
         if (Objects.isNull(userInfo)) {
             throw new StarException(StarError.USER_NOT_EXISTS);
         }
 
         //校验验证码是否过期
         String redisKey = String.format(RedisKey.REDIS_CODE_LOGIN_CHANGE_PAYPWD.getKey(), req.getPhone());
-        String code = String.valueOf(redisTemplate.opsForValue().get(redisKey));
+        String code = String.valueOf(this.redisTemplate.opsForValue().get(redisKey));
         Optional.ofNullable(req)
                 .filter(a -> a.getVerificationCode().equals(code))
                 .orElseThrow(() -> new StarException(StarError.CODE_NOT_FUND));
 
         if (StringUtils.isNotBlank(userInfo.getPlyPassword())) {
             //初始化密码
-            return userRepository.changePayPwd(userInfo.getAccount(), req.getPayPassword());
+            return this.userRepository.changePayPwd(userInfo.getAccount(), req.getPayPassword());
         }
         return Boolean.FALSE;
     }
@@ -227,29 +235,29 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     @Override
     public Boolean changePayPassword(PayPasswordDTO req) {
         //校验用户是否存在
-        UserInfo userInfo = userRepository.queryUserInfoByUserId(req.getUserId());
+        UserInfo userInfo = this.userRepository.queryUserInfoByUserId(req.getUserId());
         if (Objects.isNull(userInfo)) {
             throw new StarException(StarError.USER_NOT_EXISTS);
         }
 
         //校验验证码是否过期
         String redisKey = String.format(RedisKey.REDIS_CODE_LOGIN_CHANGE_PAYPWD.getKey(), req.getPhone());
-        String code = String.valueOf(redisTemplate.opsForValue().get(redisKey));
+        String code = String.valueOf(this.redisTemplate.opsForValue().get(redisKey));
         Optional.ofNullable(req)
                 .filter(a -> a.getVerificationCode().equals(code))
                 .orElseThrow(() -> new StarException(StarError.CODE_NOT_FUND));
 
         //校验距离上次修改密码是否超过24小时
         String changeSuccessKey = String.format(RedisKey.REDIS_CHANGE_PAY_PWD_SUCCESS_EXPIRED.getKey(), userInfo.getAccount());
-        Object userIdObj = redisTemplate.opsForValue().get(changeSuccessKey);
+        Object userIdObj = this.redisTemplate.opsForValue().get(changeSuccessKey);
         if (Objects.nonNull(userIdObj)) {
             new StarException(StarError.CHANGE_PWD_FREQUENCY_IS_TOO_HIGH);
         }
 
         //修改密码
-        Boolean successBln = userRepository.changePayPwd(userInfo.getAccount(), req.getPayPassword());
+        Boolean successBln = this.userRepository.changePayPwd(userInfo.getAccount(), req.getPayPassword());
         if (successBln) {
-            redisTemplate.opsForValue().set(changeSuccessKey, userInfo.getAccount()
+            this.redisTemplate.opsForValue().set(changeSuccessKey, userInfo.getAccount()
                     , RedisKey.REDIS_CHANGE_PAY_PWD_SUCCESS_EXPIRED.getTime()
                     , RedisKey.REDIS_CHANGE_PAY_PWD_SUCCESS_EXPIRED.getTimeUnit());
         }
@@ -259,7 +267,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     @Override
     public Boolean checkPayPassword(CheckPayPassword req) {
         //校验用户是否存在
-        UserInfo userInfo = userRepository.queryUserInfoByUserId(req.getUserId());
+        UserInfo userInfo = this.userRepository.queryUserInfoByUserId(req.getUserId());
         if (Objects.isNull(userInfo)) {
             throw new StarException(StarError.USER_NOT_EXISTS);
         }
@@ -273,18 +281,18 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     }
 
     @Override
-    public Boolean realNameAuthentication(Long userId , AuthenticationNameDTO req) {
+    public Boolean realNameAuthentication(Long userId, AuthenticationNameDTO req) {
 
         //校验用户信息
-        UserInfo userInfo = userRepository.queryUserInfoByUserId(userId);
+        UserInfo userInfo = this.userRepository.queryUserInfoByUserId(userId);
         if (Objects.isNull(userInfo)) {
             throw new StarException(StarError.USER_NOT_EXISTS);
         }
 
-        if (smsEnable) {
+        if (this.smsEnable) {
             //校验验证码
             String redisVerificationCodeKey = String.format(RedisKey.REDIS_REAL_NAME_AUTHENTICATION.getKey(), userId);
-            String code = String.valueOf(redisTemplate.opsForValue().get(redisVerificationCodeKey));
+            String code = String.valueOf(this.redisTemplate.opsForValue().get(redisVerificationCodeKey));
             if (StringUtils.isBlank(code)) {
                 throw new StarException(StarError.CODE_NOT_FUND);
             }
@@ -305,13 +313,13 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         updateDTO.setFullName(req.getFullName());
         updateDTO.setIdNumber(req.getIdNumber());
         updateDTO.setRealPersonFlag(YesOrNoStatusEnum.YES.getCode());
-        Integer row = userRepository.updateUserInfo(updateDTO);
+        Integer row = this.userRepository.updateUserInfo(updateDTO);
         return row > 0 ? Boolean.TRUE : Boolean.FALSE;
     }
 
     @Override
     public UserAuthenticationVO queryAuthentication(Long userId) {
-        UserInfo userInfo = userRepository.queryUserInfoByUserId(userId);
+        UserInfo userInfo = this.userRepository.queryUserInfoByUserId(userId);
         Optional.ofNullable(userInfo.getRealPersonFlag())
                 .filter(a -> Objects.equals(YesOrNoStatusEnum.YES.getCode(), a))
                 .orElseThrow(() -> new StarException(StarError.NOT_AUTHENTICATION));
@@ -337,19 +345,19 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
     @Override
     public List<AgreementVO> queryAgreementByAgreementId(List<String> agreementIdList) {
-        List<AgreementVO> agreementInfos = userRepository.queryAgreementByAgreementId(agreementIdList);
+        List<AgreementVO> agreementInfos = this.userRepository.queryAgreementByAgreementId(agreementIdList);
         return agreementInfos;
     }
 
     @Transactional
     @Override
     public void batchInsertAgreementSign(List<AgreementSignDTO> list, Long userId, Long authorizationId) {
-        userRepository.addAuthorizationId(userId,authorizationId);
-        userRepository.batchInsertAgreementSign(list);
+        this.userRepository.addAuthorizationId(userId, authorizationId);
+        this.userRepository.batchInsertAgreementSign(list);
     }
 
     @Override
     public UserRealInfo getUserRealInfo(Long uid) {
-        return userRepository.getUserInfoAll(uid);
+        return this.userRepository.getUserInfoAll(uid);
     }
 }

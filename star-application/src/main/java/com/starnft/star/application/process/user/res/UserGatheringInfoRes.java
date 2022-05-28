@@ -1,113 +1,47 @@
 package com.starnft.star.application.process.user.res;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+@Data
+@ApiModel("用户信息")
 public class UserGatheringInfoRes implements Serializable {
 
-    /** ========= User Info =========== */
+    @ApiModelProperty("用户id")
     private Long uid;
 
+    @ApiModelProperty("手机号")
     private String phone;
 
+    @ApiModelProperty("昵称")
     private String nickName;
 
+    @ApiModelProperty("头像")
     private String avatar;
 
-    /** ========= User Info END========= */
+    @ApiModelProperty("区块链地址")
+    private String blockchainAddress;
 
-    /** ========= User WalletInfo ============ */
+    @ApiModelProperty("钱包地址")
     private String walletId;
 
+    @ApiModelProperty("余额")
     private BigDecimal balance;
 
-    private BigDecimal wallet_income;
+    @ApiModelProperty("收款账户")
+    private String collectionAccount;
 
-    private BigDecimal wallet_outcome;
+    @ApiModelProperty("简介")
+    private String briefIntroduction;
 
-    private boolean frozen;
+    @ApiModelProperty("是否实名认证")
+    private Boolean realPersonFlag;
 
-    private BigDecimal frozen_fee;
+    @ApiModelProperty("是否设置支付密码")
+    private Boolean payPasswordFlag;
 
-    /** ========= User WalletInfo END========= */
-
-    public Long getUid() {
-        return uid;
-    }
-
-    public void setUid(Long uid) {
-        this.uid = uid;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getWalletId() {
-        return walletId;
-    }
-
-    public void setWalletId(String walletId) {
-        this.walletId = walletId;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-
-    public BigDecimal getWallet_income() {
-        return wallet_income;
-    }
-
-    public void setWallet_income(BigDecimal wallet_income) {
-        this.wallet_income = wallet_income;
-    }
-
-    public BigDecimal getWallet_outcome() {
-        return wallet_outcome;
-    }
-
-    public void setWallet_outcome(BigDecimal wallet_outcome) {
-        this.wallet_outcome = wallet_outcome;
-    }
-
-    public boolean isFrozen() {
-        return frozen;
-    }
-
-    public void setFrozen(boolean frozen) {
-        this.frozen = frozen;
-    }
-
-    public BigDecimal getFrozen_fee() {
-        return frozen_fee;
-    }
-
-    public void setFrozen_fee(BigDecimal frozen_fee) {
-        this.frozen_fee = frozen_fee;
-    }
 }

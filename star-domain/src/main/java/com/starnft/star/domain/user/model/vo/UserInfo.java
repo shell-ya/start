@@ -26,4 +26,8 @@ public class UserInfo {
     private Boolean isActive;
 
     private Integer realPersonFlag;
+
+    private String blockchainAddress;
+
+    private String briefIntroduction;
 }

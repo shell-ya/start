@@ -82,6 +82,8 @@ public class UserRepository implements IUserRepository {
             userInfo.setPlyPassword(userInfoEntity.getPlyPassword());
             userInfo.setId(userInfoEntity.getId());
             userInfo.setRealPersonFlag(userInfoEntity.getRealPersonFlag());
+            userInfo.setBlockchainAddress(userInfoEntity.getBlockchainAddress());
+            userInfo.setBriefIntroduction(userInfoEntity.getBriefIntroduction());
             return userInfo;
         }
         return null;

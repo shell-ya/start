@@ -48,4 +48,11 @@ public class UserInfoEntity extends BaseEntity {
 
     @TableField("real_person_flag")
     private Integer realPersonFlag;
+
+    @TableField("blockchain_address")
+    private String blockchainAddress;
+
+    @TableField("brief_introduction")
+    private String briefIntroduction;
+
 }
