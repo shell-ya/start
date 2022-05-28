@@ -51,6 +51,16 @@ public class StarNftNumberCirculationHist implements Serializable {
     private BigDecimal afterPrice;
 
     /**
+     * 变化前物主
+     */
+    private String beforeOwner;
+
+    /**
+     * 变化后物主
+     */
+    private String afterOwner;
+
+    /**
      * 创建时间
      */
     private Date createAt;
