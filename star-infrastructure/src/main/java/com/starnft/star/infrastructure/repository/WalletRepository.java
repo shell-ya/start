@@ -19,6 +19,7 @@ import com.starnft.star.domain.wallet.model.vo.*;
 import com.starnft.star.domain.wallet.repository.IWalletRepository;
 import com.starnft.star.infrastructure.entity.wallet.*;
 import com.starnft.star.infrastructure.mapper.wallet.*;
+import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
+@Slf4j
 public class WalletRepository implements IWalletRepository {
 
     @Resource
@@ -222,6 +224,12 @@ public class WalletRepository implements IWalletRepository {
     @Transactional
     public boolean cardBinding(BankRelationVO bankRelationVO) {
         StarNftBankRelation starNftBankRelation = new StarNftBankRelation();
+        List<BankRelationVO> relationVOS = queryCardBindings(bankRelationVO.getUid());
+        if (relationVOS.size() == 0) {
+            starNftBankRelation.setIsDefault(1);
+        } else {
+            starNftBankRelation.setIsDefault(bankRelationVO.getIsDefault());
+        }
         starNftBankRelation.setUid(bankRelationVO.getUid());
         starNftBankRelation.setNickname(bankRelationVO.getNickname());
         starNftBankRelation.setCardNo(AESUtil.encrypt(bankRelationVO.getCardNo()));
@@ -240,13 +248,72 @@ public class WalletRepository implements IWalletRepository {
         ArrayList<@Nullable BankRelationVO> relations = Lists.newArrayList();
         for (StarNftBankRelation nftBankRelation : starNftBankRelations) {
             relations.add(BankRelationVO.builder()
+                    .uid(uid)
                     .cardNo(AESUtil.decrypt(nftBankRelation.getCardNo()))
                     .cardName(nftBankRelation.getCardName())
+                    .isDefault(nftBankRelation.getIsDefault())
                     .bankShortName(nftBankRelation.getBankNameShort()).build());
         }
 
         return relations;
     }
+
+    @Override
+    @Transactional
+    public boolean deleteCard(List<BankRelationVO> bankRelations) {
+
+        boolean hasDefault = false;
+        for (BankRelationVO bankRelation : bankRelations) {
+            if (bankRelation.getIsDefault() == 1) {
+                hasDefault = true;
+            }
+            starNftBankRelationMapper.delete(bankRelation.getUid(), AESUtil.encrypt(bankRelation.getCardNo()));
+        }
+        List<BankRelationVO> relationVOS = queryCardBindings(bankRelations.get(0).getUid());
+
+        boolean hasCards = relationVOS.size() > 0;
+        if (!hasCards) {
+            return true;
+        }
+
+        //删除的卡中有默认的卡时则 将剩余未被删除的卡中随机选择一个卡作为默认卡 全部删除则直接返回
+        BankRelationVO bankRelationVO = relationVOS.get(0);
+        bankRelationVO.setIsDefault(1);
+
+        return setDefaultCard(bankRelationVO);
+
+    }
+
+    @Override
+    @Transactional
+    public boolean setDefaultCard(BankRelationVO relationVO) {
+        StarNftBankRelation starNftBankRelation = new StarNftBankRelation();
+        starNftBankRelation.setIsDefault(1);
+        starNftBankRelation.setUid(relationVO.getUid());
+        List<StarNftBankRelation> starNftBankRelations = starNftBankRelationMapper.queryByCondition(starNftBankRelation);
+        if (starNftBankRelations.size() > 1) {
+            log.error("[{}]默认银行卡数量大于1 出现异常", relationVO.getUid());
+            throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR);
+        }
+
+        if (starNftBankRelations.size() != 0) {
+            StarNftBankRelation defaultRelation = starNftBankRelations.get(0);
+            defaultRelation.setModifiedAt(new Date());
+            defaultRelation.setModifiedBy(relationVO.getUid());
+            defaultRelation.setCardNo(defaultRelation.getCardNo());
+            defaultRelation.setIsDefault(0);
+            Integer reSet = starNftBankRelationMapper.update(defaultRelation);
+            if (reSet != 1) {
+                throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR);
+            }
+        }
+
+        starNftBankRelation.setCardNo(AESUtil.encrypt(relationVO.getCardNo()));
+        Integer updated = starNftBankRelationMapper.update(starNftBankRelation);
+
+        return updated == 1;
+    }
+
 
     private WalletRecordVO walletRecordToVO(StarNftWalletRecord record) {
         return WalletRecordVO.builder().recordSn(record.getRecordSn())

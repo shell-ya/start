@@ -35,6 +35,11 @@ public class StarNftBankRelation extends BaseEntity implements Serializable{
     /** 开户银行简称 */
     @ApiModelProperty(name = "开户银行简称",notes = "")
     private String bankNameShort ;
+    /**
+     * 是否是默认卡
+     */
+    @ApiModelProperty(name = "是否是默认卡",notes = "")
+    private Integer isDefault ;
 
 
     public Long getId() {
@@ -83,5 +88,13 @@ public class StarNftBankRelation extends BaseEntity implements Serializable{
 
     public void setBankNameShort(String bankNameShort) {
         this.bankNameShort = bankNameShort;
+    }
+
+    public Integer getIsDefault() {
+        return isDefault;
+    }
+
+    public void setIsDefault(Integer isDefault) {
+        this.isDefault = isDefault;
     }
 }

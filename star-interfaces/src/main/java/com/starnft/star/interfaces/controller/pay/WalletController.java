@@ -10,25 +10,31 @@ import com.starnft.star.domain.wallet.model.req.CardBindReq;
 import com.starnft.star.domain.wallet.model.req.WithDrawReq;
 import com.starnft.star.domain.wallet.model.res.CardBindResult;
 import com.starnft.star.domain.wallet.model.res.WithdrawResult;
+import com.starnft.star.domain.wallet.model.vo.BankRelationVO;
+import com.starnft.star.domain.wallet.service.WalletService;
 import com.starnft.star.interfaces.interceptor.UserContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @Api(tags = "钱包接口「WalletController」")
 @RequestMapping(value = "/wallet")
-
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WalletController {
-    @Resource
-    private IWalletCore walletCore;
+
+    private final IWalletCore walletCore;
+
+    private final WalletService walletService;
 
     @ApiOperation("交易记录")
     @PostMapping("/transactions")
@@ -60,6 +66,28 @@ public class WalletController {
     @PostMapping("/bindingslist")
     public RopResponse<List<CardBindResult>> bindingsList() {
         return RopResponse.success(walletCore.obtainCardBinds(UserContext.getUserId().getUserId()));
+    }
+
+    @ApiOperation("删除银行卡")
+    @PostMapping("/deletecards")
+    public RopResponse<?> deletecards(@Validated @RequestBody List<@Valid BankRelationVO> bankRelations) {
+        for (BankRelationVO bankRelation : bankRelations) {
+            bankRelation.setUid(UserContext.getUserId().getUserId());
+        }
+        boolean isSuccess = walletService.deleteCards(bankRelations);
+        if (isSuccess) {
+            return RopResponse.successNoData();
+        }
+        return RopResponse.fail(StarError.SYSTEM_ERROR);
+    }
+
+    @ApiOperation("默认银行卡设置")
+    @PostMapping("/defaultcardsetting")
+    public RopResponse<?> setDefaultCard(@Validated @RequestBody BankRelationVO relationVO) {
+        if (walletService.setDefaultCard(relationVO)) {
+            return RopResponse.successNoData();
+        }
+        return RopResponse.fail(StarError.SYSTEM_ERROR);
     }
 
 

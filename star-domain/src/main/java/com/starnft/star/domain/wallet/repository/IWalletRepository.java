@@ -104,4 +104,18 @@ public interface IWalletRepository {
      */
     List<BankRelationVO> queryCardBindings(Long uid);
 
+
+    /**
+     *  批量删除绑定卡
+     * @param bankRelations
+     * @return yes/no
+     */
+    boolean deleteCard(List<BankRelationVO> bankRelations);
+
+    /**
+     * 设置卡为默认
+     */
+
+    boolean setDefaultCard(BankRelationVO relationVO);
+
 }

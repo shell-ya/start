@@ -13,12 +13,13 @@
         <result property="cardNo" column="card_no" jdbcType="VARCHAR"/>
         <result property="cardName" column="card_name" jdbcType="VARCHAR"/>
         <result property="bankNameShort" column="bank_name_short" jdbcType="VARCHAR"/>
+        <result property="isDefault" column="is_default" jdbcType="TINYINT"/>
     </resultMap>
     <!--分页查询指定行数据-->
     <select id="queryByCondition" resultMap="StarNftBankRelationMap"
             parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftBankRelation">
         select
-        id,is_deleted,created_at,created_by,modified_at,modified_by,uid,nickname,card_no,card_name,bank_name_short
+        id,is_deleted,created_at,created_by,modified_at,modified_by,uid,nickname,card_no,card_name,bank_name_short,is_default
         from star_nft_bank_relation
         <where>
             <if test="id != null and id != ''">
@@ -54,15 +55,18 @@
             <if test="bankNameShort != null and bankNameShort != ''">
                 and bank_name_short = #{bankNameShort}
             </if>
+            <if test="isDefault != null and isDefault != ''">
+                and is_default = #{isDefault}
+            </if>
         </where>
     </select>
     <!--新增数据-->
     <insert id="insert" keyProperty="id" useGeneratedKeys="true"
             parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftBankRelation">
         insert into star_nft_bank_relation(is_deleted, created_at, created_by, modified_at, modified_by, uid,
-                                           nickname, card_no, card_name, bank_name_short)
+                                           nickname, card_no, card_name, bank_name_short,is_default)
         values (#{isDeleted}, #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{uid}, #{nickname},
-                #{cardNo}, #{cardName}, #{bankNameShort})
+                #{cardNo}, #{cardName}, #{bankNameShort},#{isDefault})
     </insert>
 
 
@@ -76,13 +80,13 @@
             <if test="isDeleted != null and isDeleted != ''">
                 is_deleted = #{isDeleted},
             </if>
-            <if test="createdAt != null and createdAt != ''">
+            <if test="createdAt != null">
                 created_at = #{createdAt},
             </if>
             <if test="createdBy != null and createdBy != ''">
                 created_by = #{createdBy},
             </if>
-            <if test="modifiedAt != null and modifiedAt != ''">
+            <if test="modifiedAt != null">
                 modified_at = #{modifiedAt},
             </if>
             <if test="modifiedBy != null and modifiedBy != ''">
@@ -103,14 +107,31 @@
             <if test="bankNameShort != null and bankNameShort != ''">
                 bank_name_short = #{bankNameShort},
             </if>
+            <if test="isDefault != null or isDefault == 0">
+                is_default = #{isDefault},
+            </if>
         </set>
-        where id = #{id}
+        <where>
+            <if test="uid != null and uid != ''">
+                and uid = #{uid}
+            </if>
+            <if test="cardNo != null and cardNo != ''">
+                and card_no = #{cardNo}
+            </if>
+        </where>
     </update>
 
     <!--通过主键删除-->
-    <delete id="deleteById">
+    <delete id="delete">
         delete
         from star_nft_bank_relation
-        where id = #{id}
+        <where>
+            <if test="uid != null and uid != ''">
+                and uid = #{uid}
+            </if>
+            <if test="cardNo != null and cardNo != ''">
+                and card_no = #{cardNo}
+            </if>
+        </where>
     </delete>
 </mapper>

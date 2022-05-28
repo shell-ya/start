@@ -64,7 +64,7 @@ public class WalletCore implements IWalletCore {
         boolean isSuccess = walletService.rechargeRecordGenerate(walletRecordReq);
 
         //发送消息队列 调用支付领域服务 获取对应支付渠道配置 创建待支付支付单
-        if (isSuccess) walletProducer.sendRecharge(buildPaymentReq(walletRecordReq,rechargeFacadeReq));
+        if (isSuccess) walletProducer.sendRecharge(buildPaymentReq(walletRecordReq, rechargeFacadeReq));
 
         return null;
     }
@@ -103,11 +103,17 @@ public class WalletCore implements IWalletCore {
 
     @Override
     public boolean cardBinding(CardBindReq cardBindReq) {
+        if (cardBindReq.getCardNo().toString().length() < 13 || cardBindReq.getCardNo().toString().length() >19){
+            throw new StarException("卡号长度错误");
+        }
         UserInfoVO userInfoVO = userService.queryUserInfo(cardBindReq.getUid());
         cardBindReq.setNickname(userInfoVO.getNickName());
         List<CardBindResult> cardBindResults = obtainCardBinds(cardBindReq.getUid());
         if (cardBindResults.size() >= 5) {
             throw new StarException("银行卡超过绑定5张上限");
+        }
+        if (cardBindReq.getIsDefault() == null || cardBindReq.getIsDefault() == 0){
+            cardBindReq.setIsDefault(cardBindResults.size() >= 1 ? 0 : 1);
         }
         return walletService.cardBind(cardBindReq);
     }

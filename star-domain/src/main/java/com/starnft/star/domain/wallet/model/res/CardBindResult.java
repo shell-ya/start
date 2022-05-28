@@ -26,5 +26,10 @@ public class CardBindResult implements Serializable {
      */
     @ApiModelProperty(value = "银行简称")
     private String bankShortName;
+    /**
+     * 是否是默认卡
+     */
+    @ApiModelProperty(value = "是否是默认卡")
+    private Integer isDefault;
 
 }

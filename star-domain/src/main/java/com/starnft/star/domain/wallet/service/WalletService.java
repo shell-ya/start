@@ -5,6 +5,7 @@ import com.starnft.star.domain.wallet.model.req.*;
 import com.starnft.star.domain.wallet.model.res.CardBindResult;
 import com.starnft.star.domain.wallet.model.res.WalletResult;
 import com.starnft.star.domain.wallet.model.res.WithdrawResult;
+import com.starnft.star.domain.wallet.model.vo.BankRelationVO;
 import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
 
 import java.util.List;
@@ -31,6 +32,9 @@ public interface WalletService {
     //用户绑定银行卡查询
     List<CardBindResult> obtainCards(Long uid);
 
-    //TODO 删除已绑定卡
+    //删除银行卡
+    boolean deleteCards(List<BankRelationVO> bankRelations);
 
+    //设置银行卡为默认卡
+    boolean setDefaultCard(BankRelationVO relationVO);
 }
