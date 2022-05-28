@@ -143,7 +143,7 @@ public class WalletAddrGenerator {
         AddressIndex btcAddressIndex = BIP44.m().purpose44().coinType(0).account(0).external().address(0);
         // 2. calculate seed from mnemonics , then get master/root key ; Note that the bip39 passphrase we set "" for common
         String seed;
-        String salt = "mnemonic";
+        String salt = RandomUtil.randomString(18);
         seed = getSeed(mnemonic, salt);
         System.out.println(seed);
 
