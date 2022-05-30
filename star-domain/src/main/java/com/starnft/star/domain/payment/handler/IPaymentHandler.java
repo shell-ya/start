@@ -17,4 +17,5 @@ public interface IPaymentHandler {
     //厂商信息
     StarConstants.Pay_Vendor getVendor();
 
+
 }

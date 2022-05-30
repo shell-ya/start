@@ -4,9 +4,9 @@ import com.google.common.collect.Lists;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.payment.core.IPaymentService;
 import com.starnft.star.domain.payment.handler.IPaymentHandler;
-import com.starnft.star.domain.payment.model.req.PaymentOrder;
+import com.starnft.star.domain.payment.model.req.PayCheckReq;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
-import com.starnft.star.domain.payment.model.res.PaymentOrderRes;
+import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
 import com.starnft.star.domain.payment.router.IPaymentRouter;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -38,8 +38,8 @@ public class PaymentService implements IPaymentService {
     }
 
     @Override
-    public PaymentOrderRes searchOrder(PaymentOrder payReq) {
+    public PayCheckRes orderCheck(PayCheckReq payReq) {
         IPaymentHandler iPaymentHandler = paymentRouter.payRoute(payReq.getPayChannel());
-        return iPaymentHandler.queryOrderCode(payReq);
+        return iPaymentHandler.orderCheck(payReq);
     }
 }

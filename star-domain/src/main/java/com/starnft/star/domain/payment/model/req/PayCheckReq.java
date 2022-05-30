@@ -8,5 +8,6 @@ import lombok.Data;
 public class PayCheckReq {
 
     private String orderSn;
+    private String payChannel;
 
 }

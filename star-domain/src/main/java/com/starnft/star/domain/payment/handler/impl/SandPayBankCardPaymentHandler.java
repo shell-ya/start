@@ -1,9 +1,7 @@
 package com.starnft.star.domain.payment.handler.impl;
 
 import com.starnft.star.common.constant.StarConstants;
-import com.starnft.star.domain.payment.model.req.PayCheckReq;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
-import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
 import com.starnft.star.domain.support.process.assign.TradeType;
 import com.starnft.star.domain.support.process.config.TempConf;
@@ -15,8 +13,6 @@ import java.util.Map;
 @Component
 public class SandPayBankCardPaymentHandler extends AbstractSandPayHandler {
 
-
-
     @Override
     public StarConstants.PayChannel getPayChannel() {
         return StarConstants.PayChannel.BankCard;
@@ -26,6 +22,8 @@ public class SandPayBankCardPaymentHandler extends AbstractSandPayHandler {
     public StarConstants.Pay_Vendor getVendor() {
         return StarConstants.Pay_Vendor.SandPay;
     }
+
+
 
     @Override
     protected void verifyLegality(PaymentRich req) {
