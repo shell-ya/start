@@ -7,6 +7,11 @@ import lombok.Data;
 @Builder
 public class PayCheckReq {
 
+    /**
+     * 支付渠道
+     */
+    private String payChannel;
+
     private String orderSn;
     private String payChannel;
 
