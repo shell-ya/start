@@ -1,0 +1,16 @@
+{
+"body":
+{
+"orderCode":"${param1}"
+},
+"head":
+{
+"method":"sandpay.trade.query",
+"productId":"00000030",
+"mid":"${param2.mid}",
+"channelType":"08",
+"reqTime":"${helper.getCurrentTime()}",
+"version":"1.0",
+"accessType":"1"
+}
+}

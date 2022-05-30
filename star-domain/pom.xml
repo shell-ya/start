@@ -13,7 +13,6 @@
     <artifactId>star-domain</artifactId>
 
     <dependencies>
-
         <dependency>
             <groupId>com.tencentcloudapi</groupId>
             <artifactId>tencentcloud-sdk-java</artifactId>

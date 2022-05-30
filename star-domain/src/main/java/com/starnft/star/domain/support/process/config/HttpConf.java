@@ -11,6 +11,7 @@ public class HttpConf implements Serializable {
     private String processType;
 
     private String apiUrl;
+    private String orderQueryUrl;
 
     private Map<String, String> properties;
 

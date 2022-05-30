@@ -36,14 +36,7 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
         //模板解析参数
         String signString = processTemplate(channelConf.getSignTempPath(), paymentRich, vendorConf);
         //参数根据第三方加密规则加密
-        String signResult = new String(Base64.encodeBase64(sdKeysHelper.digitalSign(signString.getBytes(StandardCharsets.UTF_8),
-                sdKeysHelper.getPrivateKey(), "SHA1WithRSA")));
-
-        Map<String, String> req = new HashMap<>();
-        req.put("charset", "utf-8");
-        req.put("data", signString);
-        req.put("signType", "01");
-        req.put("sign", signResult);
+        Map<String, String> req = getSignAndMap(sdKeysHelper, signString);
 
         if (log.isDebugEnabled()) {
             log.info("[{}] :加密后入参:{}", this.getClass().getSimpleName(), req.toString());
@@ -53,7 +46,8 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
 
         String context = iInteract.interact(ConnContext.builder()
                 .formData(req).httpHeaders(new HttpHeaders())
-                .restMethod(StarRequestMethod.POST_FORM).url(channelConf.getHttpConf().getApiUrl()).build(), () -> null);
+                .restMethod(StarRequestMethod.POST_FORM)
+                .url(channelConf.getHttpConf().getApiUrl()).build(), () -> null);
         //参数解密
         String result = URLDecoder.decode(Objects.requireNonNull(context), "utf-8");
         Map<String, String> data = TemplateHelper.getInstance().convertResultStringToMap(result);
@@ -74,6 +68,29 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
         return iInteract.verifyResAndGet(remoteRes, PaymentRes.class);
     }
 
+    private  Map<String, String> getSignAndMap(SdKeysHelper sdKeysHelper, String signString) {
+        String signResult = new String(Base64.encodeBase64(sdKeysHelper.digitalSign(signString.getBytes(StandardCharsets.UTF_8),
+                sdKeysHelper.getPrivateKey(), "SHA1WithRSA")));
+        Map<String, String> req = new HashMap<>();
+        req.put("charset", "utf-8");
+        req.put("data", signString);
+        req.put("signType", "01");
+        req.put("sign", signResult);
+        return req;
+    }
+
+
+    protected  void searchOrder(String orderSn, Map<String, String> vendorConf, TempConf channelConf){
+          String signString = processTemplate(channelConf.getOrderTempPath(), orderSn, vendorConf);
+        SdKeysHelper sdKeysHelper = applicationContext.getBean(SdKeysHelper.class);
+        Map<String, String> req = getSignAndMap(sdKeysHelper, signString);
+        IInteract iInteract = obtainProcessInteraction(StarConstants.ProcessType.JSON);
+        String context = iInteract.interact(ConnContext.builder()
+                .formData(req).httpHeaders(new HttpHeaders())
+                .restMethod(StarRequestMethod.POST_FORM)
+                .url(channelConf.getHttpConf().getOrderQueryUrl()).build(), () -> null);
+        System.out.println(context);
+    }
     @Override
     protected Map<String, Object> buildDataModel(Object... data) {
         HashMap<@Nullable String, @Nullable Object> dataModel = Maps.newHashMap();
