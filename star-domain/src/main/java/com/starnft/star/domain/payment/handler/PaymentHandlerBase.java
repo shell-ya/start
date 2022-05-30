@@ -42,6 +42,17 @@ public abstract class PaymentHandlerBase
         return doPay(paymentRich, vendorConf);
     }
 
+    @Override
+    public PaymentRes queryOrderCode(String orderCode) {
+        Map<String, String> vendorConf = super.getVendorConf(getVendor(), getPayChannel());
+
+        if (null == vendorConf) {
+            throw new RuntimeException("配置信息未被加载，请检查配置！");
+        }
+        //执行支付流程
+        return searchOrderCode(orderCode, vendorConf);
+    }
+
 
     /**
      * @param templateName 渠道配置中的模板资源路径
@@ -86,6 +97,7 @@ public abstract class PaymentHandlerBase
      * @see com.starnft.star.domain.support.process.InteractBase
      */
     protected abstract PaymentRes doPay(PaymentRich paymentRich, Map<String, String> vendorConf);
+    protected abstract PaymentRes searchOrderCode(String  order, Map<String, String> vendorConf);
 
 
     /**

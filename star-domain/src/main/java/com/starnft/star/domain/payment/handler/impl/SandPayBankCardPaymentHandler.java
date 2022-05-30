@@ -13,6 +13,8 @@ import java.util.Map;
 @Component
 public class SandPayBankCardPaymentHandler extends AbstractSandPayHandler {
 
+
+
     @Override
     public StarConstants.PayChannel getPayChannel() {
         return StarConstants.PayChannel.BankCard;
@@ -33,6 +35,12 @@ public class SandPayBankCardPaymentHandler extends AbstractSandPayHandler {
     protected PaymentRes doPay(PaymentRich paymentRich, Map<String, String> vendorConf) {
         TempConf channelConf = getChannelConf(TradeType.Bank_SandPay);
         return super.getPaymentRes(paymentRich, vendorConf, channelConf);
+    }
+
+    @Override
+    protected PaymentRes searchOrderCode(String order, Map<String, String> vendorConf) {
+
+        return super.searchOrder(order,vendorConf);
     }
 
 }

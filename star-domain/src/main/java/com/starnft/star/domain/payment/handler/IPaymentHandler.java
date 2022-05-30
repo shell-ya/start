@@ -7,6 +7,7 @@ import com.starnft.star.domain.payment.model.res.PaymentRes;
 public interface IPaymentHandler {
 
     PaymentRes pay(PaymentRich payReq);
+    PaymentRes queryOrderCode(String  orderCode);
 
     StarConstants.PayChannel getPayChannel();
 

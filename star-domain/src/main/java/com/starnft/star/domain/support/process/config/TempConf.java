@@ -13,8 +13,6 @@ public class TempConf implements Serializable {
 
     private String resTempPath;
 
-    private String orderTempPath;
-
     private String signTempPath;
 
     private HttpConf httpConf;

@@ -12,6 +12,7 @@ import com.starnft.star.domain.payment.model.req.PaymentRich;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
 import com.starnft.star.domain.support.process.IInteract;
 import com.starnft.star.domain.support.process.assign.StarRequestMethod;
+import com.starnft.star.domain.support.process.assign.TradeType;
 import com.starnft.star.domain.support.process.config.TempConf;
 import com.starnft.star.domain.support.process.context.ConnContext;
 import com.starnft.star.domain.support.process.res.RemoteRes;
@@ -80,16 +81,19 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
     }
 
 
-    protected  void searchOrder(String orderSn, Map<String, String> vendorConf, TempConf channelConf){
-          String signString = processTemplate(channelConf.getOrderTempPath(), orderSn, vendorConf);
+    protected  PaymentRes searchOrder(String orderSn, Map<String, String> vendorConf){
+
+        TempConf channelConf = getChannelConf(TradeType.SandPay_Order_Query);
+          String signString = processTemplate(channelConf.getSignTempPath(), orderSn, vendorConf);
         SdKeysHelper sdKeysHelper = applicationContext.getBean(SdKeysHelper.class);
         Map<String, String> req = getSignAndMap(sdKeysHelper, signString);
         IInteract iInteract = obtainProcessInteraction(StarConstants.ProcessType.JSON);
         String context = iInteract.interact(ConnContext.builder()
                 .formData(req).httpHeaders(new HttpHeaders())
                 .restMethod(StarRequestMethod.POST_FORM)
-                .url(channelConf.getHttpConf().getOrderQueryUrl()).build(), () -> null);
+                .url(channelConf.getHttpConf().getApiUrl()).build(), () -> null);
         System.out.println(context);
+        return  null;
     }
     @Override
     protected Map<String, Object> buildDataModel(Object... data) {
