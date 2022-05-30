@@ -3,9 +3,9 @@ package com.starnft.star.domain.payment.handler;
 import com.starnft.star.common.template.FreeMakerTemplateHelper;
 import com.starnft.star.common.template.TemplateHelper;
 import com.starnft.star.domain.payment.config.PaymentConfiguration;
-import com.starnft.star.domain.payment.model.req.PaymentOrder;
+import com.starnft.star.domain.payment.model.req.PayCheckReq;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
-import com.starnft.star.domain.payment.model.res.PaymentOrderRes;
+import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
 import com.starnft.star.domain.support.process.ProcessInteractionHolder;
 import lombok.extern.slf4j.Slf4j;
@@ -44,17 +44,17 @@ public abstract class PaymentHandlerBase
         return doPay(paymentRich, vendorConf);
     }
 
+
     @Override
-    public PaymentOrderRes queryOrderCode(PaymentOrder paymentOrder) {
+    public PayCheckRes orderCheck(PayCheckReq payCheckReq) {
         Map<String, String> vendorConf = super.getVendorConf(getVendor(), getPayChannel());
 
         if (null == vendorConf) {
             throw new RuntimeException("配置信息未被加载，请检查配置！");
         }
         //执行支付流程
-        return searchOrderCode(paymentOrder, vendorConf);
+        return doOrderCheck(payCheckReq, vendorConf);
     }
-
 
     /**
      * @param templateName 渠道配置中的模板资源路径
@@ -99,7 +99,7 @@ public abstract class PaymentHandlerBase
      * @see com.starnft.star.domain.support.process.InteractBase
      */
     protected abstract PaymentRes doPay(PaymentRich paymentRich, Map<String, String> vendorConf);
-    protected abstract PaymentOrderRes searchOrderCode(PaymentOrder  order, Map<String, String> vendorConf);
+    protected abstract PayCheckRes doOrderCheck(PayCheckReq payCheckReq, Map<String, String> vendorConf);
 
 
     /**

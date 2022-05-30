@@ -41,7 +41,7 @@ public enum StarError {
 
 
     COS_ERROR("500001", "cos异常"),
-    MESSAGE_TOPIC_NOT_FOUND("400001", "TopicConstants 未找到响应topic,请检查配置"),
+    MESSAGE_TOPIC_NOT_FOUND("400001", "TopicConstants 未找到相应topic,请检查配置"),
     PERSISTENT_FAIL("200002", "数据保存失败"),
 
     IS_TRANSACTION("300002", "有其他交易正在进行，请先完成正在进行的交易"),

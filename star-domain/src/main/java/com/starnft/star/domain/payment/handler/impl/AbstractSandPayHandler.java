@@ -8,9 +8,9 @@ import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.payment.handler.PaymentHandlerBase;
 import com.starnft.star.domain.payment.helper.SdKeysHelper;
 import com.starnft.star.domain.payment.helper.TemplateHelper;
-import com.starnft.star.domain.payment.model.req.PaymentOrder;
+import com.starnft.star.domain.payment.model.req.PayCheckReq;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
-import com.starnft.star.domain.payment.model.res.PaymentOrderRes;
+import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
 import com.starnft.star.domain.support.process.IInteract;
 import com.starnft.star.domain.support.process.assign.StarRequestMethod;
@@ -18,7 +18,6 @@ import com.starnft.star.domain.support.process.assign.TradeType;
 import com.starnft.star.domain.support.process.config.TempConf;
 import com.starnft.star.domain.support.process.context.ConnContext;
 import com.starnft.star.domain.support.process.res.RemoteRes;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -60,6 +59,7 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
         //响应验签
         boolean valid = sdKeysHelper.verifyDigitalSign(respData.getBytes("utf-8"),
                 Base64.decodeBase64(sign), sdKeysHelper.getPublicKey(), "SHA1WithRSA");
+
         if (!valid) throw new RuntimeException("签名校验出错");
 
         //模板解析相应参数
@@ -71,7 +71,7 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
         return iInteract.verifyResAndGet(remoteRes, PaymentRes.class);
     }
 
-    private  Map<String, String> getSignAndMap(SdKeysHelper sdKeysHelper, String signString) {
+    private Map<String, String> getSignAndMap(SdKeysHelper sdKeysHelper, String signString) {
         String signResult = new String(Base64.encodeBase64(sdKeysHelper.digitalSign(signString.getBytes(StandardCharsets.UTF_8),
                 sdKeysHelper.getPrivateKey(), "SHA1WithRSA")));
         Map<String, String> req = new HashMap<>();
@@ -83,11 +83,10 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
     }
 
 
-    @SneakyThrows
-    protected PaymentOrderRes searchOrder(PaymentOrder order, Map<String, String> vendorConf){
+    protected PayCheckRes doOrderCheck(PayCheckReq payCheckReq, Map<String, String> vendorConf) {
 
         TempConf channelConf = getChannelConf(TradeType.SandPay_Order_Query);
-          String signString = processTemplate(channelConf.getSignTempPath(), order, vendorConf);
+          String signString = processTemplate(channelConf.getSignTempPath(), payCheckReq.getOrderSn(), vendorConf);
         SdKeysHelper sdKeysHelper = applicationContext.getBean(SdKeysHelper.class);
         Map<String, String> req = getSignAndMap(sdKeysHelper, signString);
         IInteract iInteract = obtainProcessInteraction(StarConstants.ProcessType.JSON);
@@ -95,19 +94,16 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
                 .formData(req).httpHeaders(new HttpHeaders())
                 .restMethod(StarRequestMethod.POST_FORM)
                 .url(channelConf.getHttpConf().getApiUrl()).build(), () -> null);
-        String result = URLDecoder.decode(Objects.requireNonNull(context), "utf-8");
-        Map<String, String> data = TemplateHelper.getInstance().convertResultStringToMap(result);
-        String sign = data.get("sign");
-        String respData = data.get("data");
-        boolean valid = sdKeysHelper.verifyDigitalSign(respData.getBytes("utf-8"),
-                Base64.decodeBase64(sign), sdKeysHelper.getPublicKey(), "SHA1WithRSA");
-        if (!valid) throw new RuntimeException("签名校验出错");
-        //模板解析相应参数
-        JSONObject resObj = JSONUtil.parseObj(respData);
-        String resModel = super.processTemplate(channelConf.getResTempPath(), null, resObj);
+        System.out.println(context);
+
+        JSONObject resObj = JSONUtil.parseObj(context);
+
+        String resModel = super.processTemplate(channelConf.getResTempPath(), resObj, vendorConf);
         RemoteRes remoteRes = JSON.parseObject(resModel, RemoteRes.class);
-        return  null;
+
+        return iInteract.verifyResAndGet(remoteRes, PayCheckRes.class);
     }
+
     @Override
     protected Map<String, Object> buildDataModel(Object... data) {
         HashMap<@Nullable String, @Nullable Object> dataModel = Maps.newHashMap();
