@@ -34,4 +34,10 @@ public class PaymentService implements IPaymentService {
         IPaymentHandler iPaymentHandler = paymentRouter.payRoute(payReq.getPayChannel());
         return iPaymentHandler.pay(payReq);
     }
+
+    @Override
+    public PaymentRes searchOrder(PaymentRich payReq) {
+        IPaymentHandler iPaymentHandler = paymentRouter.payRoute(payReq.getPayChannel());
+        return iPaymentHandler.queryOrderCode(payReq.getOrderSn());
+    }
 }

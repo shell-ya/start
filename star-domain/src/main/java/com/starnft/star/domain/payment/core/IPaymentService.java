@@ -15,4 +15,5 @@ public interface IPaymentService {
 
 
     PaymentRes pay(PaymentRich payReq);
+    public PaymentRes searchOrder(PaymentRich payReq);
 }
