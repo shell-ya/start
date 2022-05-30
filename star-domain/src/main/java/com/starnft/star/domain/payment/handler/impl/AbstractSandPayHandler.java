@@ -18,6 +18,7 @@ import com.starnft.star.domain.support.process.assign.TradeType;
 import com.starnft.star.domain.support.process.config.TempConf;
 import com.starnft.star.domain.support.process.context.ConnContext;
 import com.starnft.star.domain.support.process.res.RemoteRes;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -86,7 +87,7 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
     protected PayCheckRes doOrderCheck(PayCheckReq payCheckReq, Map<String, String> vendorConf) {
 
         TempConf channelConf = getChannelConf(TradeType.SandPay_Order_Query);
-        String signString = super.processTemplate(channelConf.getSignTempPath(), payCheckReq.getOrderSn(), vendorConf);
+          String signString = processTemplate(channelConf.getSignTempPath(), orderSn, vendorConf);
         SdKeysHelper sdKeysHelper = applicationContext.getBean(SdKeysHelper.class);
         Map<String, String> req = getSignAndMap(sdKeysHelper, signString);
         IInteract iInteract = obtainProcessInteraction(StarConstants.ProcessType.JSON);
