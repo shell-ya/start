@@ -69,6 +69,7 @@ public class PaymentRich implements Serializable {
         HashMap<@Nullable String, @Nullable String> extInfo = Maps.newHashMap();
         extInfo.put("userId", String.valueOf(getUserId()));
         extInfo.put("orderType", String.valueOf(getOrderTypeName()));
+        extInfo.put("payChannel", String.valueOf(getPayChannel()));
         extInfo.put("multicastTopic", multicastTopic);
         char[] chars = new JsonStringEncoder().quoteAsString(JSON.toJSONString(extInfo));
         return String.valueOf(chars).replace("\\\\", "");

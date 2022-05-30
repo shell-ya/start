@@ -1,7 +1,9 @@
 package com.starnft.star.domain.payment.core;
 
 
+import com.starnft.star.domain.payment.model.req.PayCheckReq;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
+import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
 
 import java.util.List;
@@ -15,5 +17,6 @@ public interface IPaymentService {
 
 
     PaymentRes pay(PaymentRich payReq);
-    public PaymentRes searchOrder(PaymentRich payReq);
+
+    PayCheckRes orderCheck(PayCheckReq payCheckReq);
 }
