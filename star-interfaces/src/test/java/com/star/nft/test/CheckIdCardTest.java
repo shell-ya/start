@@ -4,6 +4,7 @@ import cn.hutool.core.util.IdUtil;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.identify.strategy.SwIdentifyStrategy;
 import com.starnft.star.domain.payment.core.IPaymentService;
+import com.starnft.star.domain.payment.model.req.PaymentOrder;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
 import com.starnft.star.interfaces.StarApplication;
@@ -45,7 +46,7 @@ public class CheckIdCardTest {
     }
     @Test
     public void testOrder() {
-        PaymentRich paymentRich = PaymentRich.builder().orderSn("UN1531117987266957312I").payChannel(StarConstants.PayChannel.UNION_PAY.name()).build();
+        PaymentOrder paymentRich = PaymentOrder.builder().orderSn("UN1531117987266957312I").payChannel(StarConstants.PayChannel.UNION_PAY.name()).build();
 
         //2022-05-21 17:04:10.372 +0800 [[TID: N/A] [main] INFO  c.s.s.d.i.s.SwIdentifyStrategy- 身份验证回调「{"tradeNo":"977617813713715200","chargeStatus":1,"message":"true","data":{"birthday":"xxxx","country":"饶平县","orderNo":"011653123850766333","handleTime":"2022-05-21 17:04:10","gender":"1","city":"潮州市","remark":"一致","result":"01","province":"广东省","age":"27"},"code":"200000"}
         PaymentRes union_pay = paymentService.searchOrder(paymentRich);

@@ -1,7 +1,9 @@
 package com.starnft.star.domain.payment.handler.impl;
 
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.domain.payment.model.req.PaymentOrder;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
+import com.starnft.star.domain.payment.model.res.PaymentOrderRes;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
 import com.starnft.star.domain.support.process.assign.TradeType;
 import com.starnft.star.domain.support.process.config.TempConf;
@@ -47,7 +49,7 @@ public class SandPayUnionPayPaymentHandler extends AbstractSandPayHandler {
     }
 
     @Override
-    protected PaymentRes searchOrderCode(String order, Map<String, String> vendorConf) {
+    protected PaymentOrderRes searchOrderCode(PaymentOrder order, Map<String, String> vendorConf) {
         return super.searchOrder(order,vendorConf);
     }
 

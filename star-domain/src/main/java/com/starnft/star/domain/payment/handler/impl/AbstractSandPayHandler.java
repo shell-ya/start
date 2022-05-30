@@ -8,7 +8,9 @@ import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.payment.handler.PaymentHandlerBase;
 import com.starnft.star.domain.payment.helper.SdKeysHelper;
 import com.starnft.star.domain.payment.helper.TemplateHelper;
+import com.starnft.star.domain.payment.model.req.PaymentOrder;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
+import com.starnft.star.domain.payment.model.res.PaymentOrderRes;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
 import com.starnft.star.domain.support.process.IInteract;
 import com.starnft.star.domain.support.process.assign.StarRequestMethod;
@@ -82,10 +84,10 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
 
 
     @SneakyThrows
-    protected  PaymentRes searchOrder(String orderSn, Map<String, String> vendorConf){
+    protected PaymentOrderRes searchOrder(PaymentOrder order, Map<String, String> vendorConf){
 
         TempConf channelConf = getChannelConf(TradeType.SandPay_Order_Query);
-          String signString = processTemplate(channelConf.getSignTempPath(), orderSn, vendorConf);
+          String signString = processTemplate(channelConf.getSignTempPath(), order, vendorConf);
         SdKeysHelper sdKeysHelper = applicationContext.getBean(SdKeysHelper.class);
         Map<String, String> req = getSignAndMap(sdKeysHelper, signString);
         IInteract iInteract = obtainProcessInteraction(StarConstants.ProcessType.JSON);
