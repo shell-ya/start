@@ -16,6 +16,7 @@ import com.starnft.star.domain.support.process.assign.TradeType;
 import com.starnft.star.domain.support.process.config.TempConf;
 import com.starnft.star.domain.support.process.context.ConnContext;
 import com.starnft.star.domain.support.process.res.RemoteRes;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -57,7 +58,6 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
         //响应验签
         boolean valid = sdKeysHelper.verifyDigitalSign(respData.getBytes("utf-8"),
                 Base64.decodeBase64(sign), sdKeysHelper.getPublicKey(), "SHA1WithRSA");
-
         if (!valid) throw new RuntimeException("签名校验出错");
 
         //模板解析相应参数
@@ -81,6 +81,7 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
     }
 
 
+    @SneakyThrows
     protected  PaymentRes searchOrder(String orderSn, Map<String, String> vendorConf){
 
         TempConf channelConf = getChannelConf(TradeType.SandPay_Order_Query);
@@ -92,7 +93,17 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
                 .formData(req).httpHeaders(new HttpHeaders())
                 .restMethod(StarRequestMethod.POST_FORM)
                 .url(channelConf.getHttpConf().getApiUrl()).build(), () -> null);
-        System.out.println(context);
+        String result = URLDecoder.decode(Objects.requireNonNull(context), "utf-8");
+        Map<String, String> data = TemplateHelper.getInstance().convertResultStringToMap(result);
+        String sign = data.get("sign");
+        String respData = data.get("data");
+        boolean valid = sdKeysHelper.verifyDigitalSign(respData.getBytes("utf-8"),
+                Base64.decodeBase64(sign), sdKeysHelper.getPublicKey(), "SHA1WithRSA");
+        if (!valid) throw new RuntimeException("签名校验出错");
+        //模板解析相应参数
+        JSONObject resObj = JSONUtil.parseObj(respData);
+        String resModel = super.processTemplate(channelConf.getResTempPath(), null, resObj);
+        RemoteRes remoteRes = JSON.parseObject(resModel, RemoteRes.class);
         return  null;
     }
     @Override
