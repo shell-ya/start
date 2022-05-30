@@ -13,4 +13,6 @@ public interface IMessageSender {
 
     <T> void syncSendOrderly(final String topic, List<T> messages, String hashKey);
 
+    <T> void sendTransaction(final String topic, final String unique, final String transactionGroup, Optional<T> message);
+
 }

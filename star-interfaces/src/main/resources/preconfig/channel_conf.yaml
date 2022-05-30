@@ -18,8 +18,8 @@ channel-configs:
         properties:
           reqHeader: POST
     - trade: SandPay_Order_Query
-      signTempPath: sandpay/sand_order_code.ftl
-      resTempPath: sandpay/sand_pay_response.ftl
+      signTempPath: sandpay/sand_order_check_req.ftl
+      resTempPath: sandpay/sand_order_check_res.ftl
       httpConf:
         processType: json
         apiUrl: https://cashier.sandpay.com.cn/gateway/api/order/query

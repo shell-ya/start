@@ -12,7 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.producer.SendCallback;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.client.producer.SendStatus;
+import org.apache.rocketmq.client.producer.TransactionSendResult;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
+import org.apache.rocketmq.spring.support.RocketMQHeaders;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
@@ -43,21 +45,13 @@ public class RocketMQProducer implements IMessageSender {
     @Override
     public <T> void send(final String topic, final Optional<T> message) {
         verifyFormat(topic);
-        SendResult sendResult = template.syncSend(topic, JSONObject.toJSONString(message.get()));
-        String msgId = sendResult.getMsgId();
-        SendStatus sendStatus = sendResult.getSendStatus();
-        if (sendStatus.equals(SendStatus.SEND_OK)) {
-            if (log.isDebugEnabled()) {
-                log.debug("[{}] 消息同步发送成功，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message.get()));
-            }
-        } else {
-            log.error("[{}] 消息同步发送失败，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message.get()));
-            //消息记录落盘
-            boolean isSuccess = writeLog(topic, JSONObject.toJSONString(message.get()), sendResult.getMsgId(), sendStatus.name());
-            if (!isSuccess) {
-                throw new RuntimeException(StarError.PERSISTENT_FAIL.getErrorMessage());
-            }
-        }
+        message.ifPresent(msg -> {
+            SendResult sendResult = template.syncSend(topic, JSONObject.toJSONString(msg));
+            String msgId = sendResult.getMsgId();
+            SendStatus sendStatus = sendResult.getSendStatus();
+            persistMessage(topic, msg, sendResult, sendStatus, msgId);
+        });
+
     }
 
     /**
@@ -69,27 +63,29 @@ public class RocketMQProducer implements IMessageSender {
     @Override
     public <T> void asyncSend(final String topic, final Optional<T> message) {
         verifyFormat(topic);
-        template.asyncSend(topic, JSONObject.toJSONString(message.get()), new SendCallback() {
-            @Override
-            public void onSuccess(SendResult sendResult) {
-                String msgId = sendResult.getMsgId();
-                SendStatus sendStatus = sendResult.getSendStatus();
-                if (log.isDebugEnabled()) {
-                    log.debug("[{}] 消息同步发送成功，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message.get()));
+        message.ifPresent(msg -> {
+            template.asyncSend(topic, JSONObject.toJSONString(msg), new SendCallback() {
+                @Override
+                public void onSuccess(SendResult sendResult) {
+                    String msgId = sendResult.getMsgId();
+                    SendStatus sendStatus = sendResult.getSendStatus();
+                    if (log.isDebugEnabled()) {
+                        log.debug("[{}] 消息同步发送成功，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(msg));
+                    }
                 }
-            }
 
-            @Override
-            public void onException(Throwable throwable) {
-                IIdGenerator iIdGenerator = idGeneratorMap.get(StarConstants.Ids.RandomNumeric);
-                long msgId = iIdGenerator.nextId();
-                log.error("[{}] 消息同步发送失败，消息id: {} 消息内容:{} 异常：{}", topic, msgId, JSONObject.toJSONString(message.get()), throwable.getMessage());
-                //消息记录落盘
-                boolean isSuccess = writeLog(topic, JSONObject.toJSONString(message.get()), String.valueOf(msgId), StarConstants.NORMAL_STATUS.FAILURE.name());
-                if (!isSuccess) {
-                    throw new RuntimeException(StarError.PERSISTENT_FAIL.getErrorMessage());
+                @Override
+                public void onException(Throwable throwable) {
+                    IIdGenerator iIdGenerator = idGeneratorMap.get(StarConstants.Ids.RandomNumeric);
+                    long msgId = iIdGenerator.nextId();
+                    log.error("[{}] 消息同步发送失败，消息id: {} 消息内容:{} 异常：{}", topic, msgId, JSONObject.toJSONString(msg), throwable.getMessage());
+                    //消息记录落盘
+                    boolean isSuccess = writeLog(topic, JSONObject.toJSONString(msg), String.valueOf(msgId), StarConstants.NORMAL_STATUS.FAILURE.name());
+                    if (!isSuccess) {
+                        throw new RuntimeException(StarError.PERSISTENT_FAIL.getErrorMessage());
+                    }
                 }
-            }
+            });
         });
     }
 
@@ -107,21 +103,13 @@ public class RocketMQProducer implements IMessageSender {
     @Override
     public <T> void syncSendDelay(final String topic, final Optional<T> message, long timeout, int delayLevel) {
         verifyFormat(topic);
-        SendResult sendResult = template.syncSend(topic, MessageBuilder.withPayload(JSONObject.toJSONString(message.get())).build(), timeout, delayLevel);
-        String msgId = sendResult.getMsgId();
-        SendStatus sendStatus = sendResult.getSendStatus();
-        if (sendStatus.equals(SendStatus.SEND_OK)) {
-            if (log.isDebugEnabled()) {
-                log.debug("[{}] 消息同步发送成功，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message.get()));
-            }
-        } else {
-            log.error("[{}] 消息同步发送失败，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message.get()));
-            //消息记录落盘
-            boolean isSuccess = writeLog(topic, JSONObject.toJSONString(message.get()), sendResult.getMsgId(), sendStatus.name());
-            if (!isSuccess) {
-                throw new RuntimeException(StarError.PERSISTENT_FAIL.getErrorMessage());
-            }
-        }
+        message.ifPresent(msg -> {
+            SendResult sendResult = template.syncSend(topic,
+                    MessageBuilder.withPayload(JSONObject.toJSONString(msg)).build(), timeout, delayLevel);
+            String msgId = sendResult.getMsgId();
+            SendStatus sendStatus = sendResult.getSendStatus();
+            persistMessage(topic, msg, sendResult, sendStatus, msgId);
+        });
     }
 
     /**
@@ -137,21 +125,63 @@ public class RocketMQProducer implements IMessageSender {
                     MessageBuilder.withPayload(JSONObject.toJSONString(message)).build(), hashKey);
             String msgId = sendResult.getMsgId();
             SendStatus sendStatus = sendResult.getSendStatus();
-            if (sendStatus.equals(SendStatus.SEND_OK)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("[{}] 消息同步发送成功，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message));
-                }
-            } else {
-                log.error("[{}] 消息同步发送失败，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message));
-                //消息记录落盘
-                boolean isSuccess = writeLog(topic, JSONObject.toJSONString(message), sendResult.getMsgId(), sendStatus.name());
-                if (!isSuccess) {
-                    throw new RuntimeException(StarError.PERSISTENT_FAIL.getErrorMessage());
-                }
-            }
+            persistMessage(topic, message, sendResult, sendStatus, msgId);
         }
     }
 
+
+    /**
+     * 发送事务消息
+     *
+     * @param topic            topic
+     * @param unique           唯一标识
+     * @param transactionGroup 事务组
+     * @param message          消息
+     * @param <T>
+     */
+    @Override
+    public <T> void sendTransaction(final String topic, final String unique, final String transactionGroup, Optional<T> message) {
+        verifyFormat(topic);
+        message.ifPresent(msg -> {
+            TransactionSendResult result = template.sendMessageInTransaction(transactionGroup,
+                    topic,
+                    MessageBuilder.withPayload(msg)
+                            .setHeader(RocketMQHeaders.TRANSACTION_ID,
+                                    String.valueOf(idGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId()))
+                            .setHeader("unique", unique)
+                            .build()
+                    , msg);
+            SendStatus sendStatus = result.getSendStatus();
+            String msgId = result.getMsgId();
+            persistMessage(topic, msg, result, sendStatus, msgId);
+        });
+    }
+
+
+    /**
+     * 保存失败消息
+     *
+     * @param topic      topic
+     * @param message    message
+     * @param result     result
+     * @param sendStatus sendStatus
+     * @param msgId      msgId
+     * @param <T>
+     */
+    private <T> void persistMessage(String topic, T message, SendResult result, SendStatus sendStatus, String msgId) {
+        if (sendStatus.equals(SendStatus.SEND_OK)) {
+            if (log.isDebugEnabled()) {
+                log.debug("[{}] 消息发送成功，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message));
+            }
+        } else {
+            log.error("[{}] 消息发送失败，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message));
+            //消息记录落盘
+            boolean isSuccess = writeLog(topic, JSONObject.toJSONString(message), result.getMsgId(), sendStatus.name());
+            if (!isSuccess) {
+                throw new RuntimeException(StarError.PERSISTENT_FAIL.getErrorMessage());
+            }
+        }
+    }
 
     /**
      * @param topic

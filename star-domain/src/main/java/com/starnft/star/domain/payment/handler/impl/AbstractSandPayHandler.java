@@ -8,7 +8,9 @@ import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.payment.handler.PaymentHandlerBase;
 import com.starnft.star.domain.payment.helper.SdKeysHelper;
 import com.starnft.star.domain.payment.helper.TemplateHelper;
+import com.starnft.star.domain.payment.model.req.PayCheckReq;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
+import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
 import com.starnft.star.domain.support.process.IInteract;
 import com.starnft.star.domain.support.process.assign.StarRequestMethod;
@@ -69,7 +71,7 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
         return iInteract.verifyResAndGet(remoteRes, PaymentRes.class);
     }
 
-    private  Map<String, String> getSignAndMap(SdKeysHelper sdKeysHelper, String signString) {
+    private Map<String, String> getSignAndMap(SdKeysHelper sdKeysHelper, String signString) {
         String signResult = new String(Base64.encodeBase64(sdKeysHelper.digitalSign(signString.getBytes(StandardCharsets.UTF_8),
                 sdKeysHelper.getPrivateKey(), "SHA1WithRSA")));
         Map<String, String> req = new HashMap<>();
@@ -81,10 +83,10 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
     }
 
 
-    protected  PaymentRes searchOrder(String orderSn, Map<String, String> vendorConf){
+    protected PayCheckRes doOrderCheck(PayCheckReq payCheckReq, Map<String, String> vendorConf) {
 
         TempConf channelConf = getChannelConf(TradeType.SandPay_Order_Query);
-          String signString = processTemplate(channelConf.getSignTempPath(), orderSn, vendorConf);
+        String signString = super.processTemplate(channelConf.getSignTempPath(), payCheckReq.getOrderSn(), vendorConf);
         SdKeysHelper sdKeysHelper = applicationContext.getBean(SdKeysHelper.class);
         Map<String, String> req = getSignAndMap(sdKeysHelper, signString);
         IInteract iInteract = obtainProcessInteraction(StarConstants.ProcessType.JSON);
@@ -93,8 +95,15 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
                 .restMethod(StarRequestMethod.POST_FORM)
                 .url(channelConf.getHttpConf().getApiUrl()).build(), () -> null);
         System.out.println(context);
-        return  null;
+
+        JSONObject resObj = JSONUtil.parseObj(context);
+
+        String resModel = super.processTemplate(channelConf.getResTempPath(), resObj, vendorConf);
+        RemoteRes remoteRes = JSON.parseObject(resModel, RemoteRes.class);
+
+        return iInteract.verifyResAndGet(remoteRes, PayCheckRes.class);
     }
+
     @Override
     protected Map<String, Object> buildDataModel(Object... data) {
         HashMap<@Nullable String, @Nullable Object> dataModel = Maps.newHashMap();
