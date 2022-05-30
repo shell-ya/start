@@ -116,7 +116,11 @@ public class TemplateHelper {
         }
         return false;
     }
+    public BigDecimal fenToYuan(Object o) {
+        BigDecimal bigDecimal = new BigDecimal(o.toString());
 
+   return  bigDecimal.divide(new BigDecimal(100)).setScale(2);
+    }
     public String yuanToFen(Object o) {
         if (o == null)
             return "0";

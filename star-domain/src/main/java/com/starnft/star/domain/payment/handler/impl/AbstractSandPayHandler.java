@@ -113,7 +113,6 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
 
         String resModel = super.processTemplate(channelConf.getResTempPath(), resObj, vendorConf);
         RemoteRes remoteRes = JSON.parseObject(resModel, RemoteRes.class);
-
         return iInteract.verifyResAndGet(remoteRes, PayCheckRes.class);
     }
 
