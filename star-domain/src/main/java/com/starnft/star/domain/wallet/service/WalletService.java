@@ -2,6 +2,7 @@ package com.starnft.star.domain.wallet.service;
 
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.wallet.model.req.*;
+import com.starnft.star.domain.wallet.model.res.CalculateResult;
 import com.starnft.star.domain.wallet.model.res.CardBindResult;
 import com.starnft.star.domain.wallet.model.res.WalletResult;
 import com.starnft.star.domain.wallet.model.res.WithdrawResult;
@@ -17,6 +18,9 @@ public interface WalletService {
 
     //生成预充值记录
     boolean rechargeRecordGenerate(WalletRecordReq walletRecordReq);
+
+    //提现金额计算
+    CalculateResult withdrawMoneyCalculate(CalculateReq calculate);
 
     //todo 提现
     WithdrawResult withdraw(WithDrawReq withDrawReq);

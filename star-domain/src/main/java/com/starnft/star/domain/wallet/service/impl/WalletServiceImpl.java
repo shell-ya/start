@@ -12,6 +12,7 @@ import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.wallet.model.req.*;
+import com.starnft.star.domain.wallet.model.res.CalculateResult;
 import com.starnft.star.domain.wallet.model.res.CardBindResult;
 import com.starnft.star.domain.wallet.model.res.WalletResult;
 import com.starnft.star.domain.wallet.model.res.WithdrawResult;
@@ -28,6 +29,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -89,6 +91,18 @@ public class WalletServiceImpl implements WalletService {
         }
 
         return isSuccess;
+    }
+
+    @Override
+    public CalculateResult withdrawMoneyCalculate(CalculateReq calculate) {
+
+        WalletConfigVO config = WalletConfig.getConfig(StarConstants.PayChannel.valueOf(calculate.getChannel()));
+        BigDecimal calculated = calculate.getMoney().subtract(calculate.getMoney().multiply(config.getChargeRate()));
+        NumberFormat percent = NumberFormat.getPercentInstance();
+        NumberFormat number = NumberFormat.getNumberInstance();
+        number.setMaximumFractionDigits(3);
+        percent.setMaximumFractionDigits(4);
+        return new CalculateResult(number.format(calculated), percent.format(config.getChargeRate()));
     }
 
     private String verifyAndGetKey(WithDrawReq withDrawReq) {
@@ -201,7 +215,7 @@ public class WalletServiceImpl implements WalletService {
         List<BankRelationVO> relations = walletRepository.queryCardBindings(uid);
         ArrayList<@Nullable CardBindResult> results = Lists.newArrayList();
         for (BankRelationVO relation : relations) {
-            results.add(new CardBindResult(relation.getCardNo(), relation.getCardName(), relation.getBankShortName(),relation.getIsDefault()));
+            results.add(new CardBindResult(relation.getCardNo(), relation.getCardName(), relation.getBankShortName(), relation.getIsDefault()));
         }
         return results;
     }

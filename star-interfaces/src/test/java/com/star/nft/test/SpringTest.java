@@ -8,6 +8,7 @@ import com.starnft.star.application.mq.constant.TopicConstants;
 import com.starnft.star.application.mq.producer.notification.NotificationProducer;
 import com.starnft.star.application.process.notification.vo.NotificationVO;
 import com.starnft.star.application.process.wallet.req.PayRecordReq;
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.template.FreeMakerTemplateHelper;
 import com.starnft.star.domain.payment.config.container.PayConf;
 import com.starnft.star.domain.payment.router.IPaymentRouter;
@@ -15,14 +16,19 @@ import com.starnft.star.domain.sms.adapter.MessageAdapter;
 import com.starnft.star.domain.support.process.assign.TradeType;
 import com.starnft.star.domain.support.process.config.ChannelConf;
 import com.starnft.star.domain.support.process.config.TempConf;
+import com.starnft.star.domain.wallet.model.req.CalculateReq;
+import com.starnft.star.domain.wallet.model.res.CalculateResult;
+import com.starnft.star.domain.wallet.service.WalletService;
 import com.starnft.star.interfaces.StarApplication;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,34 +37,42 @@ import java.util.Map;
 
 @SpringBootTest(classes = {StarApplication.class})
 @Slf4j
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class SpringTest {
 
-    @Resource
-    private NotificationProducer notificationProducer;
+    final NotificationProducer notificationProducer;
 
-    @Resource
-    private ChannelConf channelConf;
+    final ChannelConf channelConf;
 
-    @Resource
-    private FreeMakerTemplateHelper templateHelper;
+    final FreeMakerTemplateHelper templateHelper;
 
-    @Resource
-    private IPaymentRouter paymentRouter;
+    final IPaymentRouter paymentRouter;
 
-    @Resource
-    private PayConf payConf;
-    @Resource
-    MessageAdapter messageAdapter;
+    final PayConf payConf;
+    final MessageAdapter messageAdapter;
+
+    final WalletService walletService;
+
+
     @Test
     public void payment() {
-        System.out.println(JSON.toJSONString(payConf.getChannels()));
+        CalculateResult calculateResult = walletService.withdrawMoneyCalculate(
+                new CalculateReq(new BigDecimal("100"), StarConstants.PayChannel.UNION_PAY.name()));
+
+        System.out.println(calculateResult);
+
     }
+
+    /**
+     * D短信测试用例
+     */
     @Test
     public void sms() {
-        boolean b = messageAdapter.getDistributor().checkCodeMessage("18682441029", "123456");
+        boolean b = messageAdapter.getDistributor().checkCodeMessage("17603219247", "123456");
         System.out.println(b);
 
     }
+
     @Test
     @SneakyThrows
     public void tempconf() {

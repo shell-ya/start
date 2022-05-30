@@ -20,7 +20,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.http.HttpHeaders;
 
-import javax.annotation.Resource;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
