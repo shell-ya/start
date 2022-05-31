@@ -72,6 +72,17 @@ public interface IWalletRepository {
      */
     boolean updateWalletRecordStatus(String serialNo, String payStatus);
 
+    /**
+     * 更新交易记录状态
+     * 成功 会写第三方交易流水
+     *
+     * @param serialNo  流水号
+     * @param payStatus 状态
+     * @param outTradeNo 第三方交易流水号
+     * @return 执行结果
+     */
+    boolean updateWalletRecordSuccess(String serialNo, String payStatus,String outTradeNo);
+
 
     /**
      * @param queryReq

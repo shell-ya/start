@@ -20,7 +20,7 @@ public class PaySuccessState extends AbstractState {
     }
 
     @Override
-    public Result paySuccess(String orderNo, Enum<StarConstants.Pay_Status> payStatus) {
+    public Result paySuccess(String orderNo, String outTradeNo, Enum<StarConstants.Pay_Status> payStatus) {
         WalletRecordVO walletRecordVO = walletRepository.queryWalletRecordBySerialNo(orderNo, payStatus.name());
         if (null == walletRecordVO) {
             return Result.buildErrorResult("订单不存在");

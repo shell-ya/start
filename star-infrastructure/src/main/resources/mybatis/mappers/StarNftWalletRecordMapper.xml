@@ -168,12 +168,9 @@
     </insert>
 
     <!-- 更新数据 -->
-    <update id="updateRecord">
+    <update id="updateRecord" parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord">
         update star_nft_wallet_record
         <set>
-            <if test="id != null and id != ''">
-                id = #{id},
-            </if>
             <if test="isDeleted != null and isDeleted != ''">
                 is_deleted = #{isDeleted},
             </if>

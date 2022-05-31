@@ -2,6 +2,8 @@ package com.starnft.star.domain.wallet.service.impl;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.starnft.star.common.Result;
+import com.starnft.star.common.ResultCode;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
@@ -20,9 +22,12 @@ import com.starnft.star.domain.wallet.model.vo.*;
 import com.starnft.star.domain.wallet.repository.IWalletRepository;
 import com.starnft.star.domain.wallet.service.WalletConfig;
 import com.starnft.star.domain.wallet.service.WalletService;
+import com.starnft.star.domain.wallet.service.stateflow.IStateHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.web3j.crypto.CipherException;
 
 import javax.annotation.Resource;
@@ -35,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class WalletServiceImpl implements WalletService {
 
     @Resource
@@ -51,6 +57,9 @@ public class WalletServiceImpl implements WalletService {
 
     @Resource
     private Map<StarConstants.Ids, IIdGenerator> idGeneratorMap;
+
+    @Resource
+    private IStateHandler stateHandler;
 
     @Override
     @Transactional
@@ -201,6 +210,33 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public ResponsePageResult<WalletRecordVO> queryTransactionRecord(TransactionRecordQueryReq queryReq) {
         return walletRepository.queryTransactionRecordByCondition(queryReq);
+    }
+
+    @Override
+    @Transactional
+    public boolean rechargeProcess(@Validated RechargeVO rechargeVO) {
+        WalletVO walletVO = walletRepository.queryWallet(new WalletInfoReq(Long.valueOf(rechargeVO.getUid())));
+        BigDecimal curr = walletVO.getBalance().add(rechargeVO.getTotalAmount().abs());
+        BigDecimal income = walletVO.getWallet_income().add(curr);
+
+        //修改交易记录状态 会写第三方流水号
+        WalletRecordVO walletRecordVO = walletRepository.queryWalletRecordBySerialNo(rechargeVO.getOrderSn(), StarConstants.Pay_Status.PAY_ING.name());
+        if (null == walletRecordVO) {
+            log.error("钱包交易记录状态变化出错,交易记录单号：[{}] , 第三方交易流水号： [{}] ", rechargeVO.getOrderSn(), rechargeVO.getTransSn());
+            throw new RuntimeException("钱包交易记录状态变化出错");
+        }
+
+        Result result = stateHandler.paySuccess(rechargeVO.getOrderSn(), rechargeVO.getTransSn(), null);
+        //记录余额变动记录
+        boolean logWrite = walletRepository.createWalletLog(RechargeReq.builder().walletId(walletVO.getWalletId())
+                .userId(walletVO.getUid()).money(rechargeVO.getTotalAmount()).currentMoney(curr).payChannel(rechargeVO.getPayChannel())
+                .payNo(rechargeVO.getOrderSn()).build());
+
+        //修改余额
+        boolean balanceModify = walletRepository.modifyWalletBalance(WalletVO.builder().uid(Long.valueOf(rechargeVO.getUid()))
+                .balance(curr).wallet_outcome(income).build());
+
+        return logWrite && balanceModify && result.getCode().equals(ResultCode.SUCCESS.getCode());
     }
 
     @Override

@@ -25,9 +25,9 @@ public class PayingState extends AbstractState {
     }
 
     @Override
-    public Result paySuccess(String orderNo, Enum<StarConstants.Pay_Status> payStatus) {
-        boolean isSuccess = walletRepository.updateWalletRecordStatus(orderNo, StarConstants.Pay_Status.PAY_SUCCESS.name());
-        return isSuccess ? Result.buildSuccessResult() : Result.buildErrorResult("状态修改失败");
+    public Result paySuccess(String orderNo, String outTradeNo, Enum<StarConstants.Pay_Status> payStatus) {
+        boolean isSuccess = walletRepository.updateWalletRecordSuccess(orderNo, outTradeNo, StarConstants.Pay_Status.PAY_SUCCESS.name());
+        return isSuccess ? Result.buildSuccessResult() : Result.buildErrorResult("状态修改为成功失败");
     }
 
     @Override

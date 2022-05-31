@@ -20,8 +20,8 @@ public class StateHandlerImpl extends StateConfig implements IStateHandler {
     }
 
     @Override
-    public Result paySuccess(String orderNo, Enum<StarConstants.Pay_Status> payStatus) {
-        return stateMap.get(payStatus).paySuccess(orderNo, payStatus);
+    public Result paySuccess(String orderNo, String outTradeNo, Enum<StarConstants.Pay_Status> payStatus) {
+        return stateMap.get(payStatus).paySuccess(orderNo,outTradeNo, payStatus);
     }
 
     @Override

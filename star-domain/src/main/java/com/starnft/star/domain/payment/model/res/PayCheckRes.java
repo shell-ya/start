@@ -12,11 +12,15 @@ public class PayCheckRes implements Serializable {
 
     private String message;
 
+    private String uid;
+
     private String orderSn;
 
     private String transSn;
 
     private BigDecimal totalAmount;
+
+    private String payChannel;
 
     //todo 回调相应参数
 

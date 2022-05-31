@@ -7,6 +7,7 @@ import com.starnft.star.domain.wallet.model.res.CardBindResult;
 import com.starnft.star.domain.wallet.model.res.WalletResult;
 import com.starnft.star.domain.wallet.model.res.WithdrawResult;
 import com.starnft.star.domain.wallet.model.vo.BankRelationVO;
+import com.starnft.star.domain.wallet.model.vo.RechargeVO;
 import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public interface WalletService {
     ResponsePageResult<WalletRecordVO> queryTransactionRecord(TransactionRecordQueryReq queryReq);
 
     //支付成功 回调修改钱包余额 变动以及状态
+    boolean rechargeProcess(RechargeVO rechargeVO);
 
     //银行卡绑定
     boolean cardBind(CardBindReq cardBindReq);

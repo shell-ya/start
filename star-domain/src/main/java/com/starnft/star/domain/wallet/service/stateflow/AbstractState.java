@@ -15,7 +15,7 @@ public abstract class AbstractState {
 
     public abstract Result paying(String orderNo, Enum<StarConstants.Pay_Status> payStatus);
 
-    public abstract Result paySuccess(String orderNo, Enum<StarConstants.Pay_Status> payStatus);
+    public abstract Result paySuccess(String orderNo, String outTradeNo, Enum<StarConstants.Pay_Status> payStatus);
 
     public abstract Result payFailure(String orderNo, Enum<StarConstants.Pay_Status> payStatus);
 

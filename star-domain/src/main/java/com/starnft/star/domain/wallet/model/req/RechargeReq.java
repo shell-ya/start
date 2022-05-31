@@ -1,10 +1,12 @@
 package com.starnft.star.domain.wallet.model.req;
 
 import com.starnft.star.common.constant.StarConstants;
+import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
+@Builder
 public class RechargeReq {
 
     /** userId*/
