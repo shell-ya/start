@@ -236,6 +236,7 @@ public class WalletRepository implements IWalletRepository {
         starNftBankRelation.setCardName(bankRelationVO.getCardName());
         starNftBankRelation.setBankNameShort(bankRelationVO.getBankShortName());
         starNftBankRelation.setCreatedBy(bankRelationVO.getUid());
+        starNftBankRelation.setPhone(bankRelationVO.getPhone());
         starNftBankRelation.setCreatedAt(new Date());
         return starNftBankRelationMapper.insert(starNftBankRelation) == 1;
     }

@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
 
 @Data
@@ -28,12 +29,14 @@ public class WithDrawReq {
      */
     @ApiModelProperty(value = "提现金额", required = false)
     @NotNull(message = "金额不能为空")
+    @Pattern(regexp = "^(([0-9]|([1-9][0-9]{0,9}))((\\.[0-9]{1,2})?))$", message = "请输入正确的金额")
     private BigDecimal money;
     /**
      * 提现银行卡号
      */
     @NotNull(message = "银行卡号不能为空")
     @ApiModelProperty(value = "提现银行卡号", required = false)
+    @Pattern(regexp = "[1-9]\\d*", message = "卡号输入有误")
     private Long bankNo;
     /**
      * 卡姓名

@@ -7,6 +7,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 @Data
@@ -30,6 +31,7 @@ public class CardBindReq implements Serializable {
      */
     @ApiModelProperty(value = "银行卡号")
     @NotNull(message = "银行卡号不能为空")
+    @Pattern(regexp = "[1-9]\\d*", message = "卡号输入有误")
     private Long cardNo;
     /**
      * 持卡人姓名
@@ -48,6 +50,7 @@ public class CardBindReq implements Serializable {
      */
     @NotBlank(message = "银行预留电话不能为空")
     @ApiModelProperty(value = "银行预留电话", required = false)
+    @Pattern(regexp = "0?(13|14|15|18|17)[0-9]{9}", message = "手机号格式错误")
     private String phone;
 
     /**
