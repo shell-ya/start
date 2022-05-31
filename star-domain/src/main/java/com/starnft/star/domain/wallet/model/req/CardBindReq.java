@@ -44,6 +44,13 @@ public class CardBindReq implements Serializable {
     private String bankShortName;
 
     /**
+     * 银行预留电话
+     */
+    @NotBlank(message = "银行预留电话不能为空")
+    @ApiModelProperty(value = "银行预留电话", required = false)
+    private String phone;
+
+    /**
      * 是否默认卡 无卡绑定自动设为默认
      */
     @ApiModelProperty(value = "是否默认卡 无卡绑定自动设为默认")

@@ -206,7 +206,7 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public boolean cardBind(CardBindReq cardBindReq) {
         return walletRepository.cardBinding(BankRelationVO.builder().uid(cardBindReq.getUid()).cardNo(cardBindReq.getCardNo().toString())
-                .cardName(cardBindReq.getCardName()).Nickname(cardBindReq.getNickname()).isDefault(cardBindReq.getIsDefault())
+                .cardName(cardBindReq.getCardName()).Nickname(cardBindReq.getNickname()).isDefault(cardBindReq.getIsDefault()).phone(cardBindReq.getPhone())
                 .bankShortName(cardBindReq.getBankShortName()).build());
     }
 

@@ -14,12 +14,13 @@
         <result property="cardName" column="card_name" jdbcType="VARCHAR"/>
         <result property="bankNameShort" column="bank_name_short" jdbcType="VARCHAR"/>
         <result property="isDefault" column="is_default" jdbcType="TINYINT"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
     </resultMap>
     <!--分页查询指定行数据-->
     <select id="queryByCondition" resultMap="StarNftBankRelationMap"
             parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftBankRelation">
         select
-        id,is_deleted,created_at,created_by,modified_at,modified_by,uid,nickname,card_no,card_name,bank_name_short,is_default
+        id,is_deleted,created_at,created_by,modified_at,modified_by,uid,nickname,card_no,card_name,bank_name_short,phone,is_default
         from star_nft_bank_relation
         <where>
             <if test="id != null and id != ''">
@@ -55,6 +56,9 @@
             <if test="bankNameShort != null and bankNameShort != ''">
                 and bank_name_short = #{bankNameShort}
             </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
             <if test="isDefault != null and isDefault != ''">
                 and is_default = #{isDefault}
             </if>
@@ -64,9 +68,9 @@
     <insert id="insert" keyProperty="id" useGeneratedKeys="true"
             parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftBankRelation">
         insert into star_nft_bank_relation(is_deleted, created_at, created_by, modified_at, modified_by, uid,
-                                           nickname, card_no, card_name, bank_name_short,is_default)
+                                           nickname, card_no, card_name, bank_name_short, phone, is_default)
         values (#{isDeleted}, #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{uid}, #{nickname},
-                #{cardNo}, #{cardName}, #{bankNameShort},#{isDefault})
+                #{cardNo}, #{cardName}, #{bankNameShort}, #{phone}, #{isDefault})
     </insert>
 
 
@@ -106,6 +110,9 @@
             </if>
             <if test="bankNameShort != null and bankNameShort != ''">
                 bank_name_short = #{bankNameShort},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
             </if>
             <if test="isDefault != null or isDefault == 0">
                 is_default = #{isDefault},

@@ -88,7 +88,7 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
     protected PayCheckRes doOrderCheck(PayCheckReq payCheckReq, Map<String, String> vendorConf) {
 
         TempConf channelConf = getChannelConf(TradeType.SandPay_Order_Query);
-          String signString = processTemplate(channelConf.getSignTempPath(), payCheckReq.getOrderSn(), vendorConf);
+        String signString = processTemplate(channelConf.getSignTempPath(), payCheckReq.getOrderSn(), vendorConf);
         SdKeysHelper sdKeysHelper = applicationContext.getBean(SdKeysHelper.class);
         Map<String, String> req = getSignAndMap(sdKeysHelper, signString);
         IInteract iInteract = obtainProcessInteraction(StarConstants.ProcessType.JSON);
