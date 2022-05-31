@@ -22,7 +22,7 @@ public interface WalletService {
     //提现金额计算
     CalculateResult withdrawMoneyCalculate(CalculateReq calculate);
 
-    //todo 提现
+    //提现
     WithdrawResult withdraw(WithDrawReq withDrawReq);
 
     //查询交易记录

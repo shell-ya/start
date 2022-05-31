@@ -16,5 +16,6 @@ public interface IPaymentService {
     List<String> obtainSupported();
 
     PaymentRes pay(PaymentRich payReq);
-     PayCheckRes orderCheck(PayCheckReq payReq);
+
+    PayCheckRes orderCheck(PayCheckReq payReq);
 }

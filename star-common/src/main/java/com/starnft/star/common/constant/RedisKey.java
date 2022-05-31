@@ -75,7 +75,7 @@ public enum RedisKey {
     /**
      * 钱包交易状态锁
      */
-    REDIS_TRANSACTION_ING(401, StarConstants.SERVICE_NAME.concat(".wallet.transaction:%s"), 5L, TimeUnit.MINUTES),
+    REDIS_TRANSACTION_ING(401, StarConstants.SERVICE_NAME.concat(".wallet.transaction:%s"), 3L, TimeUnit.MINUTES),
 
     /**
      * 提现次数

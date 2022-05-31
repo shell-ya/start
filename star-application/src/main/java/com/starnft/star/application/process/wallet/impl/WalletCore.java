@@ -1,19 +1,25 @@
 package com.starnft.star.application.process.wallet.impl;
 
 import com.google.common.collect.Lists;
+import com.starnft.star.application.mq.constant.TopicConstants;
 import com.starnft.star.application.mq.producer.wallet.WalletProducer;
 import com.starnft.star.application.process.wallet.IWalletCore;
 import com.starnft.star.application.process.wallet.req.PayRecordReq;
 import com.starnft.star.application.process.wallet.req.RechargeFacadeReq;
 import com.starnft.star.application.process.wallet.res.RechargeReqResult;
 import com.starnft.star.application.process.wallet.res.TransactionRecord;
+import com.starnft.star.common.Result;
+import com.starnft.star.common.ResultCode;
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.payment.core.IPaymentService;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
+import com.starnft.star.domain.payment.model.res.PaymentRes;
 import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.user.model.vo.UserInfoVO;
 import com.starnft.star.domain.user.service.IUserService;
@@ -25,7 +31,11 @@ import com.starnft.star.domain.wallet.model.res.CardBindResult;
 import com.starnft.star.domain.wallet.model.res.WithdrawResult;
 import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
 import com.starnft.star.domain.wallet.service.WalletService;
+import com.starnft.star.domain.wallet.service.stateflow.IStateHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -33,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 
 
+@Slf4j
 @Service
 public class WalletCore implements IWalletCore {
 
@@ -54,26 +65,80 @@ public class WalletCore implements IWalletCore {
     @Resource
     private Map<StarConstants.Ids, IIdGenerator> idGeneratorMap;
 
-    @Override
-    public RechargeReqResult recharge(RechargeFacadeReq rechargeFacadeReq) {
+    @Resource
+    private IPaymentService paymentService;
 
+    @Resource
+    private IStateHandler stateHandler;
+
+    @Override
+    @Transactional
+    public RechargeReqResult recharge(@Validated RechargeFacadeReq rechargeFacadeReq) {
         //参数验证
         verifyParam(rechargeFacadeReq);
-        //钱包领域 生成待支付充值订单
-        WalletRecordReq walletRecordReq = walletRecordInit(rechargeFacadeReq);
-        boolean isSuccess = walletService.rechargeRecordGenerate(walletRecordReq);
 
-        //发送消息队列 调用支付领域服务 获取对应支付渠道配置 创建待支付支付单
-        if (isSuccess) walletProducer.sendRecharge(buildPaymentReq(walletRecordReq, rechargeFacadeReq));
+        String isTransaction = String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
+                new StringBuffer(String.valueOf(rechargeFacadeReq.getUserId())).append(rechargeFacadeReq.getWalletId()));
 
-        return null;
+        if (redisUtil.hasKey(isTransaction)) {
+            throw new StarException(StarError.IS_TRANSACTION);
+        }
+        //锁定当前钱包交易
+        if (redisLockUtils.lock(isTransaction, RedisKey.REDIS_TRANSACTION_ING.getTime())) {
+            try {
+                //钱包领域 生成待支付充值订单
+                WalletRecordReq walletRecordReq = walletRecordInit(rechargeFacadeReq);
+                boolean isSuccess = walletService.rechargeRecordGenerate(walletRecordReq);
+
+                RechargeReqResult rechargeReqResult = new RechargeReqResult();
+                if (isSuccess) {
+                    //调用支付领域服务 获取拉起支付参数
+                    PaymentRes payResult = paymentService.pay(buildPaymentReq(walletRecordReq, rechargeFacadeReq));
+                    if (payResult.getStatus().equals(ResultCode.SUCCESS.getCode())) {
+                        rechargeReqResult.setOrderSn(payResult.getOrderSn());
+                        //组装跳转url
+                        assembly(rechargeReqResult);
+                        //修改状态为支付中
+                        modifyStatus(walletRecordReq, payResult);
+                        return rechargeReqResult;
+                    }
+                }
+            } catch (Exception e) {
+                log.error("uid:[{}] 充值异常", rechargeFacadeReq.getUserId(), e);
+                throw new StarException(StarError.PAY_PROCESS_ERROR);
+            } finally {
+                redisLockUtils.unlock(isTransaction);
+            }
+        }
+        throw new StarException(StarError.PAY_PROCESS_ERROR);
+    }
+
+    private void modifyStatus(WalletRecordReq walletRecordReq, PaymentRes payResult) {
+        //状态机修改充值单状态
+        Result modifyResult = stateHandler.paying(payResult.getOrderSn(), StarConstants.Pay_Status.valueOf(walletRecordReq.getPayStatus()));
+        if (modifyResult.getCode().equals(ResultCode.SUCCESS.getCode())) {
+            return;
+        }
+        log.error("当前状态[{}] 修改失败", StarConstants.Pay_Status.valueOf(walletRecordReq.getPayStatus()));
+        throw new RuntimeException(modifyResult.getInfo());
+    }
+
+
+    private void assembly(RechargeReqResult rechargeReqResult) {
     }
 
     private PaymentRich buildPaymentReq(WalletRecordReq walletRecordReq, RechargeFacadeReq rechargeFacadeReq) {
+
+        //充值回调topic设置 用户拉起第三方支付支付后 结果回调后将状态及参数发送该topic下的消费者消费处理
+        String rechargeCallbackProcessTopic = String.format(TopicConstants.WALLET_RECHARGE_DESTINATION.getFormat(),
+                TopicConstants.WALLET_RECHARGE_DESTINATION.getTag());
+
         return PaymentRich.builder().payChannel(rechargeFacadeReq.getChannel())
                 .totalMoney(rechargeFacadeReq.getMoney())
                 .userId(rechargeFacadeReq.getUserId())
                 .orderSn(walletRecordReq.getRecordSn())
+                .frontUrl("")//todo 查询支付结果页连接
+                .multicastTopic(rechargeCallbackProcessTopic)
                 .build();
     }
 
@@ -103,7 +168,7 @@ public class WalletCore implements IWalletCore {
 
     @Override
     public boolean cardBinding(CardBindReq cardBindReq) {
-        if (cardBindReq.getCardNo().toString().length() < 13 || cardBindReq.getCardNo().toString().length() >19){
+        if (cardBindReq.getCardNo().toString().length() < 13 || cardBindReq.getCardNo().toString().length() > 19) {
             throw new StarException("卡号长度错误");
         }
         UserInfoVO userInfoVO = userService.queryUserInfo(cardBindReq.getUid());
@@ -112,7 +177,7 @@ public class WalletCore implements IWalletCore {
         if (cardBindResults.size() >= 5) {
             throw new StarException("银行卡超过绑定5张上限");
         }
-        if (cardBindReq.getIsDefault() == null || cardBindReq.getIsDefault() == 0){
+        if (cardBindReq.getIsDefault() == null || cardBindReq.getIsDefault() == 0) {
             cardBindReq.setIsDefault(cardBindResults.size() >= 1 ? 0 : 1);
         }
         return walletService.cardBind(cardBindReq);

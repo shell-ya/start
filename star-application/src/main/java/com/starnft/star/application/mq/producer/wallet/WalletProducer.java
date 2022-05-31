@@ -10,11 +10,4 @@ import java.util.Optional;
 @Service
 public class WalletProducer extends BaseProducer {
 
-    public void sendRecharge(PaymentRich paymentRich){
-        String topic = String.format(TopicConstants.WALLET_RECHARGE_DESTINATION.getFormat()
-                ,TopicConstants.WALLET_RECHARGE_DESTINATION.getTag());
-        paymentRich.setMulticastTopic(topic);
-
-        messageSender.send(topic, Optional.of(paymentRich));
-    }
 }

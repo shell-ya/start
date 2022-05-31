@@ -6,7 +6,7 @@ public enum TopicConstants {
     //消息推送未读消息tag
     NOTICE_UNREAD_DESTINATION("STAR-NOTICE:%s", "unread"),
 
-    WALLET_RECHARGE_DESTINATION("STAR-WALLET:%s", "recharge");
+    WALLET_RECHARGE_DESTINATION("STAR-RECHARGE:%s", "callback");
 
 
     private String format;

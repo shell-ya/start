@@ -21,7 +21,7 @@ public class WaitPayState extends AbstractState {
     @Override
     public Result paying(String orderNo, Enum<StarConstants.Pay_Status> payStatus) {
         boolean isSuccess = walletRepository.updateWalletRecordStatus(orderNo, StarConstants.Pay_Status.PAY_ING.name());
-        return isSuccess ? Result.buildSuccessResult() : Result.buildErrorResult("状态修改失败");
+        return isSuccess ? Result.buildSuccessResult() : Result.buildErrorResult("状态修改为支付中失败");
     }
 
     @Override
