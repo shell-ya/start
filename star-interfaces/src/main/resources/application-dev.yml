@@ -22,7 +22,7 @@ spring:
         max-active: 100
         max-idle: 10
         max-wait: 100000
-    timeout: 5000
+    timeout: 20000
     password: wqd123456.
 
 server:
@@ -58,3 +58,30 @@ rocketmq:
 #    consumeThreadMin: 20
 #    consumeThreadMax: 64
 #    consumeMessageBatchMaxSize: 1
+
+# 验证码相关配置
+captcha:
+  prefix: captcha
+  # 验证码过期时间，默认是2分钟,单位毫秒， 可以根据自身业务进行调整
+  expire:
+    default: 30000
+    # 文字点选验证码 过期时间设置大一点
+    WORD_IMAGE_CLICK: 60000
+  # 使用加载系统自带的资源， 默认是true
+  init-default-resource: true
+  cache:
+    # 缓存控制， 默认为false不开启
+    enabled: true
+    # 验证码会提前缓存一些生成好的验证数据， 默认是20
+    cache-size: 20
+    # 缓存拉取失败后等待时间 默认是 5秒钟
+    wait-time: 5000
+    # 缓存检查间隔 默认是2秒钟
+    period: 2000
+  secondary:
+    # 二次验证， 默认false 不开启
+    enabled: false
+    # 二次验证过期时间， 默认 2分钟
+    expire: 120000
+    # 二次验证缓存key前缀，默认是 captcha:secondary
+    keyPrefix: "captcha.secondary"
