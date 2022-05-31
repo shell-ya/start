@@ -22,7 +22,6 @@ public class RechargeConsumer implements RocketMQListener<PayCheckRes> {
     private WalletService walletService;
 
     @Override
-    @Transactional
     public void onMessage(PayCheckRes payCheckRes) {
         if (payCheckRes.getStatus().equals(ResultCode.SUCCESS.getCode())) {
             RechargeVO rechargeVO = BeanColverUtil.colver(payCheckRes, RechargeVO.class);

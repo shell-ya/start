@@ -236,6 +236,12 @@ public class WalletServiceImpl implements WalletService {
         boolean balanceModify = walletRepository.modifyWalletBalance(WalletVO.builder().uid(Long.valueOf(rechargeVO.getUid()))
                 .balance(curr).wallet_outcome(income).build());
 
+        // redis写入交易成功信息 前端轮训状态直接查redis
+        if (logWrite && balanceModify && result.getCode().equals(ResultCode.SUCCESS.getCode())) {
+            redisUtil.set(String.format(RedisKey.REDIS_TRANSACTION_SUCCESS.getKey()
+                    , rechargeVO.getOrderSn()), 1, RedisKey.REDIS_TRANSACTION_SUCCESS.getTime());
+        }
+
         return logWrite && balanceModify && result.getCode().equals(ResultCode.SUCCESS.getCode());
     }
 
