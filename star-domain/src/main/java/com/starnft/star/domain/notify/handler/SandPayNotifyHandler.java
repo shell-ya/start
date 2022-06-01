@@ -11,11 +11,13 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+
 @Component
 @Slf4j
-public class SandPayNotifyHandler implements INotifyHandler  {
+public class SandPayNotifyHandler implements INotifyHandler {
     @Resource
     SdKeysHelper sdKeysHelper;
+
     @Override
     public String doNotify(HttpServletRequest request) {
         String data = request.getParameter("data");

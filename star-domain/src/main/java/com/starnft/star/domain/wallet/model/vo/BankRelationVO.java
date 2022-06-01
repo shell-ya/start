@@ -22,7 +22,7 @@ public class BankRelationVO implements Serializable {
      * 用户昵称
      */
     @ApiModelProperty(value = "用户昵称")
-    private String Nickname;
+    private String nickname;
     /**
      * 银行卡号
      */

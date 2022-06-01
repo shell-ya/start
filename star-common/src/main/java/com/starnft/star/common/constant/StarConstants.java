@@ -94,7 +94,11 @@ public class StarConstants {
         /**
          * 支付关闭
          */
-        PAY_CLOSE;
+        PAY_CLOSE,
+        /**
+         * 支付异常
+         */
+        PAY_EXCEPTION;
 
     }
 

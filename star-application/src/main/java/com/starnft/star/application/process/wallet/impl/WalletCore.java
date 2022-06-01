@@ -1,6 +1,7 @@
 package com.starnft.star.application.process.wallet.impl;
 
 import com.google.common.collect.Lists;
+import com.starnft.star.application.mq.IMessageSender;
 import com.starnft.star.application.mq.constant.TopicConstants;
 import com.starnft.star.application.mq.producer.wallet.WalletProducer;
 import com.starnft.star.application.process.wallet.IWalletCore;
@@ -18,16 +19,16 @@ import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.payment.core.IPaymentService;
+import com.starnft.star.domain.payment.model.req.PayCheckReq;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
+import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
 import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.user.model.vo.UserInfoVO;
 import com.starnft.star.domain.user.service.IUserService;
-import com.starnft.star.domain.wallet.model.req.CardBindReq;
-import com.starnft.star.domain.wallet.model.req.TransactionRecordQueryReq;
-import com.starnft.star.domain.wallet.model.req.WalletRecordReq;
-import com.starnft.star.domain.wallet.model.req.WithDrawReq;
+import com.starnft.star.domain.wallet.model.req.*;
 import com.starnft.star.domain.wallet.model.res.CardBindResult;
+import com.starnft.star.domain.wallet.model.res.TxResultRes;
 import com.starnft.star.domain.wallet.model.res.WithdrawResult;
 import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
 import com.starnft.star.domain.wallet.service.WalletService;
@@ -41,6 +42,7 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Slf4j
@@ -70,6 +72,9 @@ public class WalletCore implements IWalletCore {
 
     @Resource
     private IStateHandler stateHandler;
+
+    @Resource
+    private IMessageSender messageSender;
 
     @Override
     @Transactional
@@ -181,6 +186,30 @@ public class WalletCore implements IWalletCore {
             cardBindReq.setIsDefault(cardBindResults.size() >= 1 ? 0 : 1);
         }
         return walletService.cardBind(cardBindReq);
+    }
+
+    @Override
+    public TxResultRes queryTxResult(TxResultReq txResultReq) {
+        TxResultRes txResultRes = walletService.txResultQuery(txResultReq);
+        //根据状态做不同的处理
+        if (StarConstants.Pay_Status.PAY_ING.name().equals(txResultRes.getStatus())) {
+            //轮训多次无果 查单
+            PayCheckRes payCheckRes = paymentService.orderCheck(PayCheckReq.builder()
+                    .payChannel(txResultReq.getPayChannel()).orderSn(txResultReq.getOrderSn()).build());
+            //将查询到的结果发送mq
+            String rechargeCallbackProcessTopic = String.format(TopicConstants.WALLET_RECHARGE_DESTINATION.getFormat(),
+                    TopicConstants.WALLET_RECHARGE_DESTINATION.getTag());
+            messageSender.send(rechargeCallbackProcessTopic, Optional.of(payCheckRes));
+            //todo 前端轮训后 仍然是支付中 提示 用户稍后再试 前端判断还是直接异常？
+            return txResultRes;
+        }
+        //成功或者失败直接返回
+        if (StarConstants.Pay_Status.PAY_SUCCESS.name().equals(txResultRes.getStatus())
+                || StarConstants.Pay_Status.PAY_FAILED.name().equals(txResultRes.getStatus())) {
+            return txResultRes;
+        }
+        //支付异常返回 需要前端提示人工处理
+        return txResultRes;
     }
 
     @Override

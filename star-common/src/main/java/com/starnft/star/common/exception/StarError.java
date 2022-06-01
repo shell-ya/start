@@ -30,14 +30,14 @@ public enum StarError {
     AGREEMENT_TYPE_UNKNOWN("100018", "未知协议类型"),
     AGREEMENT_ID_NULL("100019", "协议id为空"),
     TOKEN_NOT_EXISTS_ERROR("100020", "token不存在"),
-    TOKEN_EXPIRED_ERROR("100020", "token已失效，请重新登录"),
+    TOKEN_EXPIRED_ERROR("100021", "token已失效，请重新登录"),
     USER_NOT_LOGIN("100015", "用户未登录"),
 
     IMAGE_CAPTCHA_CHECK_ERROR("100030", "图像验证码校验不通过"),
 
     DB_RECORD_UNEXPECTED_ERROR("200001", "数据库记录异常"),
 
-    VALUE_COULD_NOT_BE_NULL("100010", "必须值不能为空"),
+    VALUE_COULD_NOT_BE_NULL("100022", "必须值不能为空"),
 
     BALANCE_NOT_ENOUGH("300001", "余额不足"),
 
@@ -54,6 +54,7 @@ public enum StarError {
     CARD_BINDING_FAILED("300005", "银行卡绑定失败"),
     CARD_NOT_BINDING_FAILED("300006", "你还没有绑定银行卡"),
     PAY_PROCESS_ERROR("300007", "支付异常"),
+    REQUEST_TIMEOUT_ERROR("100040", "请求超时,请稍后再试！"),
     ;
 
     private String NS = "";
