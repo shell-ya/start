@@ -13,6 +13,5 @@ public class PayCheckReq {
     private String payChannel;
 
     private String orderSn;
-//    private String payChannel;
 
 }

@@ -14,8 +14,6 @@ import java.util.List;
 public interface IPaymentService {
 
     List<String> obtainSupported();
-
     PaymentRes pay(PaymentRich payReq);
-
     PayCheckRes orderCheck(PayCheckReq payReq);
 }
