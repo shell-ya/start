@@ -5,5 +5,5 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface INotifyRouter {
 
-    String  doDistribute(String sign, HttpServletRequest request, HttpServletResponse response);
+    String doDistribute(String sign, HttpServletRequest request, HttpServletResponse response);
 }

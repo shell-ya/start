@@ -15,31 +15,33 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class NotifyRouter implements  INotifyRouter, ApplicationContextAware {
+public class NotifyRouter implements INotifyRouter, ApplicationContextAware {
     @Resource
     ApplicationContext context;
 
-    Map<PlatformTypeEnum, INotifyHandler> handlerMap= new ConcurrentHashMap<>(16);
+    Map<PlatformTypeEnum, INotifyHandler> handlerMap = new ConcurrentHashMap<>(16);
+
     @PostConstruct
-    public void init(){
+    public void init() {
         Map<String, INotifyHandler> handlers = context.getBeansOfType(INotifyHandler.class);
         for (INotifyHandler value : handlers.values()) {
-            handlerMap.put(value.getNotifyChannel(),value);
+            handlerMap.put(value.getNotifyChannel(), value);
         }
     }
+
     @Override
-    public String  doDistribute(String sign, HttpServletRequest request, HttpServletResponse response) {
+    public String doDistribute(String sign, HttpServletRequest request, HttpServletResponse response) {
         PlatformTypeEnum platforms = PlatformTypeEnum.getPlatforms(sign);
         INotifyHandler iNotifyHandler = handlerMap.get(platforms);
         String result = iNotifyHandler.doNotify(request);
         //
 
-        return  result;
+        return result;
 
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.context=applicationContext;
+        this.context = applicationContext;
     }
 }

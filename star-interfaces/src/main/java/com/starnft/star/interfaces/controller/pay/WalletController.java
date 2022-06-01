@@ -2,6 +2,8 @@ package com.starnft.star.interfaces.controller.pay;
 
 import com.starnft.star.application.process.wallet.IWalletCore;
 import com.starnft.star.application.process.wallet.req.PayRecordReq;
+import com.starnft.star.application.process.wallet.req.RechargeFacadeReq;
+import com.starnft.star.application.process.wallet.res.RechargeReqResult;
 import com.starnft.star.application.process.wallet.res.TransactionRecord;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.exception.StarError;
@@ -35,6 +37,14 @@ public class WalletController {
     private final IWalletCore walletCore;
 
     private final WalletService walletService;
+
+    @ApiOperation("充值")
+    @PostMapping("/recharge")
+    public RopResponse<RechargeReqResult> recharge(@Validated @RequestBody RechargeFacadeReq req) {
+        req.setUserId(UserContext.getUserId().getUserId());
+        return RopResponse.success(walletCore.recharge(req));
+    }
+
 
     @ApiOperation("交易记录")
     @PostMapping("/transactions")

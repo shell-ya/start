@@ -12,9 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 public class PayNotifyServiceImpl implements PayNotifyService {
 
     @Resource
-  private INotifyRouter iNotifyRouter;
+    private INotifyRouter iNotifyRouter;
+
     @Override
-    public String  transform(String platform, HttpServletRequest request, HttpServletResponse response) {
-      return   iNotifyRouter.doDistribute(platform,request,response);
+    public String transform(String platform, HttpServletRequest request, HttpServletResponse response) {
+        return iNotifyRouter.doDistribute(platform, request, response);
     }
 }

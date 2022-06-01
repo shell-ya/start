@@ -14,10 +14,7 @@ import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.wallet.model.req.*;
-import com.starnft.star.domain.wallet.model.res.CalculateResult;
-import com.starnft.star.domain.wallet.model.res.CardBindResult;
-import com.starnft.star.domain.wallet.model.res.WalletResult;
-import com.starnft.star.domain.wallet.model.res.WithdrawResult;
+import com.starnft.star.domain.wallet.model.res.*;
 import com.starnft.star.domain.wallet.model.vo.*;
 import com.starnft.star.domain.wallet.repository.IWalletRepository;
 import com.starnft.star.domain.wallet.service.WalletConfig;
@@ -86,6 +83,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
+    @Transactional
     public boolean rechargeRecordGenerate(WalletRecordReq walletRecordReq) {
 
         if (Strings.isNullOrEmpty(walletRecordReq.getRecordSn())) {
@@ -100,6 +98,11 @@ public class WalletServiceImpl implements WalletService {
         }
 
         return isSuccess;
+    }
+
+    @Override
+    public WalletRecordVO queryWalletRecordByOrderNo(String orderNo) {
+        return walletRepository.queryWalletRecordBySerialNo(orderNo, null);
     }
 
     @Override
@@ -216,17 +219,21 @@ public class WalletServiceImpl implements WalletService {
     @Transactional
     public boolean rechargeProcess(@Validated RechargeVO rechargeVO) {
         WalletVO walletVO = walletRepository.queryWallet(new WalletInfoReq(Long.valueOf(rechargeVO.getUid())));
+        //充值后当前金额
         BigDecimal curr = walletVO.getBalance().add(rechargeVO.getTotalAmount().abs());
+        //增加总收入金额
         BigDecimal income = walletVO.getWallet_income().add(curr);
 
-        //修改交易记录状态 会写第三方流水号
+        //修改交易记录状态 回写第三方流水号
         WalletRecordVO walletRecordVO = walletRepository.queryWalletRecordBySerialNo(rechargeVO.getOrderSn(), StarConstants.Pay_Status.PAY_ING.name());
         if (null == walletRecordVO) {
             log.error("钱包交易记录状态变化出错,交易记录单号：[{}] , 第三方交易流水号： [{}] ", rechargeVO.getOrderSn(), rechargeVO.getTransSn());
             throw new RuntimeException("钱包交易记录状态变化出错");
         }
 
-        Result result = stateHandler.paySuccess(rechargeVO.getOrderSn(), rechargeVO.getTransSn(), null);
+        Result result = stateHandler.paySuccess(rechargeVO.getOrderSn(),
+                rechargeVO.getTransSn(), StarConstants.Pay_Status.valueOf(walletRecordVO.getPayStatus()));
+
         //记录余额变动记录
         boolean logWrite = walletRepository.createWalletLog(RechargeReq.builder().walletId(walletVO.getWalletId())
                 .userId(walletVO.getUid()).money(rechargeVO.getTotalAmount()).currentMoney(curr).payChannel(rechargeVO.getPayChannel())
@@ -246,9 +253,71 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
+    public TxResultRes txResultCacheQuery(TxResultReq txResultReq) {
+
+        boolean isSuccess = false;
+        //充值回调
+        isSuccess = redisUtil.hasKey(String.format(RedisKey.REDIS_TRANSACTION_SUCCESS.getKey()
+                , txResultReq.getOrderSn()));
+
+        if (isSuccess) {
+            Integer status = (Integer) redisUtil.get(String.format(RedisKey.REDIS_TRANSACTION_SUCCESS.getKey()
+                    , txResultReq.getOrderSn()));
+            TxResultRes txResultRes = processCacheResult(txResultReq, status, null);
+            if (txResultRes != null) return txResultRes;
+        }
+        return new TxResultRes(txResultReq.getOrderSn(), StarConstants.Pay_Status.PAY_ING.name());
+    }
+
+    @Override
+    @Transactional
+    public TxResultRes txResultQuery(TxResultReq txResultReq) {
+        String txResultKey = String.format(RedisKey.REDIS_TRANSACTION_SUCCESS.getKey(), txResultReq.getOrderSn());
+
+        boolean isSuccess = redisUtil.hasKey(txResultKey);
+        int status = isSuccess ? (Integer) redisUtil.get(txResultKey) : -1;
+
+        WalletRecordVO walletRecordVO = walletRepository.queryWalletRecordBySerialNo(txResultReq.getOrderSn(), null);
+
+        //缓存命中 处理
+        TxResultRes txResultRes = processCacheResult(txResultReq, status, walletRecordVO);
+        if (txResultRes != null) return txResultRes;
+
+        //缓存未命中 查库
+        if (!isSuccess) {
+            //未找到记录 请求超时
+            if (null == walletRecordVO) {
+                log.error("单号：[{}] 支付请求超时，数据异常", txResultReq.getOrderSn());
+                throw new StarException(StarError.REQUEST_TIMEOUT_ERROR);
+            }
+            return new TxResultRes(walletRecordVO.getRecordSn(), walletRecordVO.getPayStatus());
+        }
+
+        return new TxResultRes(txResultReq.getOrderSn(), StarConstants.Pay_Status.PAY_EXCEPTION.name());
+    }
+
+    //根据缓存值处理结果
+    private TxResultRes processCacheResult(TxResultReq txResultReq, int status, WalletRecordVO walletRecordVO) {
+        //缓存命中 返回
+        if (status == 1) {
+            return new TxResultRes(txResultReq.getOrderSn(), StarConstants.Pay_Status.PAY_SUCCESS.name());
+        }
+        if (null == walletRecordVO) {
+            walletRecordVO = walletRepository.queryWalletRecordBySerialNo(txResultReq.getOrderSn(), null);
+        }
+        //缓存命中 支付失败
+        if (status == 0) {
+            Result result = stateHandler.payFailure(txResultReq.getOrderSn(), StarConstants.Pay_Status.valueOf(walletRecordVO.getPayStatus()));
+            if (!result.getCode().equals(ResultCode.SUCCESS.getCode())) throw new RuntimeException(result.getInfo());
+            return new TxResultRes(txResultReq.getOrderSn(), StarConstants.Pay_Status.PAY_FAILED.name());
+        }
+        return null;
+    }
+
+    @Override
     public boolean cardBind(CardBindReq cardBindReq) {
         return walletRepository.cardBinding(BankRelationVO.builder().uid(cardBindReq.getUid()).cardNo(cardBindReq.getCardNo().toString())
-                .cardName(cardBindReq.getCardName()).Nickname(cardBindReq.getNickname()).isDefault(cardBindReq.getIsDefault()).phone(cardBindReq.getPhone())
+                .cardName(cardBindReq.getCardName()).nickname(cardBindReq.getNickname()).isDefault(cardBindReq.getIsDefault()).phone(cardBindReq.getPhone())
                 .bankShortName(cardBindReq.getBankShortName()).build());
     }
 

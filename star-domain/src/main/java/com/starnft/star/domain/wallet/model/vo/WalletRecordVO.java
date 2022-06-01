@@ -61,22 +61,18 @@ public class WalletRecordVO implements Serializable {
     /**
      * 收款状态 0待收款 -1失败 1成功
      */
-    @ApiModelProperty(name = "收款状态 0待收款 -1失败 1成功", notes = "")
     private String fetchStatus;
     /**
      * 收款时间
      */
-    @ApiModelProperty(name = "收款时间", notes = "")
     private Date fetchTime;
     /**
      * 对账状态 0未对账 1已对账
      */
-    @ApiModelProperty(name = "对账状态 0未对账 1已对账", notes = "")
     private Integer checkStatus;
     /**
      * 对账时间
      */
-    @ApiModelProperty(name = "对账时间", notes = "")
     private Date checkTime;
 
     public String getRecordSn() {

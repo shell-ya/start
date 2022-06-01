@@ -4,5 +4,5 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public interface PayNotifyService {
-    String  transform(String platform,HttpServletRequest request, HttpServletResponse response);
+    String transform(String platform, HttpServletRequest request, HttpServletResponse response);
 }

@@ -5,8 +5,9 @@ import com.starnft.star.common.enums.PlatformTypeEnum;
 import javax.servlet.http.HttpServletRequest;
 
 public interface INotifyHandler {
-   String  doNotify(HttpServletRequest request);
-   //支付渠道
-   PlatformTypeEnum getNotifyChannel();
+    String doNotify(HttpServletRequest request);
+
+    //支付渠道
+    PlatformTypeEnum getNotifyChannel();
 
 }
