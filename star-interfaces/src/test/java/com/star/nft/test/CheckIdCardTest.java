@@ -3,13 +3,13 @@ package com.star.nft.test;
 import cn.hutool.core.util.IdUtil;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.identify.strategy.SwIdentifyStrategy;
-import com.starnft.star.domain.order.service.IOrderService;
 import com.starnft.star.domain.payment.core.IPaymentService;
 import com.starnft.star.domain.payment.model.req.PayCheckReq;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
 import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
-import com.starnft.star.infrastructure.mapper.order.StarNftOrderMapper;
+import com.starnft.star.domain.user.model.dto.UserInfoAddDTO;
+import com.starnft.star.infrastructure.repository.UserRepository;
 import com.starnft.star.interfaces.StarApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +24,7 @@ public class CheckIdCardTest {
     @Resource
     IPaymentService paymentService;
     @Resource
-    StarNftOrderMapper orderService;
+    UserRepository userRepository;
     @Test
     public void repoTest() {
 
@@ -58,7 +58,8 @@ public class CheckIdCardTest {
     }
     @Test
     public void testSaveOrder() {
-        orderService.
+        UserInfoAddDTO is = UserInfoAddDTO.builder().nickName("XCSSD").phone("18712923565").createBy(12L).build();
+        userRepository.addUserInfo(is);
 
 
     }
