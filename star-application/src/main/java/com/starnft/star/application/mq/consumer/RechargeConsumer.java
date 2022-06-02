@@ -43,7 +43,7 @@ public class RechargeConsumer implements RocketMQListener<PayCheckRes> {
             return;
         }
 
-        //修改余额失败
+        //修改余额失败 0失败 1 成功
         redisUtil.set(String.format(RedisKey.REDIS_TRANSACTION_SUCCESS.getKey(), payCheckRes.getOrderSn()), 0, RedisKey.REDIS_TRANSACTION_SUCCESS.getTime());
         WalletRecordVO walletRecordVO = walletService.queryWalletRecordByOrderNo(payCheckRes.getOrderSn());
         Result result = stateHandler.payFailure(payCheckRes.getOrderSn(), StarConstants.Pay_Status.valueOf(walletRecordVO.getPayStatus()));

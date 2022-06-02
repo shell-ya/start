@@ -335,10 +335,6 @@ public class WalletRepository implements IWalletRepository {
         return WalletRecordVO.builder().recordSn(record.getRecordSn())
                 .orderSn(record.getOrderSn())
                 .outTradeNo(record.getOutTradeNo())
-                .checkStatus(record.getCheckStatus())
-                .checkTime(record.getCheckTime())
-                .fetchStatus(record.getFetchStatus())
-                .fetchTime(record.getFetchTime())
                 .fromUid(record.getFromUid())
                 .payChannel(record.getPayChannel())
                 .payTime(record.getPayTime())
@@ -364,8 +360,6 @@ public class WalletRepository implements IWalletRepository {
         starNftWalletRecord.setTsType(walletRecordReq.getTsType());
         starNftWalletRecord.setPayChannel(walletRecordReq.getPayChannel());
         starNftWalletRecord.setPayTime(walletRecordReq.getPayTime());
-        starNftWalletRecord.setCheckStatus(walletRecordReq.getCheckStatus());
-        starNftWalletRecord.setCheckTime(walletRecordReq.getCheckTime());
         starNftWalletRecord.setCreatedBy(walletRecordReq.getFrom_uid() == 0 ? walletRecordReq.getTo_uid() : walletRecordReq.getFrom_uid());
         starNftWalletRecord.setCreatedAt(new Date());
         starNftWalletRecord.setIsDeleted(false);

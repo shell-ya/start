@@ -48,18 +48,6 @@ public class StarNftWalletRecord extends BaseEntity implements Serializable {
     /** 交易时间 */
     @ApiModelProperty(name = "交易时间",notes = "")
     private Date payTime ;
-    /** 收款状态 0待收款 -1失败 1成功 */
-    @ApiModelProperty(name = "收款状态 0待收款 -1失败 1成功",notes = "")
-    private String fetchStatus ;
-    /** 收款时间 */
-    @ApiModelProperty(name = "收款时间",notes = "")
-    private Date fetchTime ;
-    /** 对账状态 0未对账 1已对账 */
-    @ApiModelProperty(name = "对账状态 0未对账 1已对账",notes = "")
-    private Integer checkStatus ;
-    /** 对账时间 */
-    @ApiModelProperty(name = "对账时间",notes = "")
-    private Date checkTime ;
 
     public Long getId() {
         return id;
@@ -157,36 +145,5 @@ public class StarNftWalletRecord extends BaseEntity implements Serializable {
         this.payTime = payTime;
     }
 
-    public String getFetchStatus() {
-        return fetchStatus;
-    }
-
-    public void setFetchStatus(String fetchStatus) {
-        this.fetchStatus = fetchStatus;
-    }
-
-    public Date getFetchTime() {
-        return fetchTime;
-    }
-
-    public void setFetchTime(Date fetchTime) {
-        this.fetchTime = fetchTime;
-    }
-
-    public Integer getCheckStatus() {
-        return checkStatus;
-    }
-
-    public void setCheckStatus(Integer checkStatus) {
-        this.checkStatus = checkStatus;
-    }
-
-    public Date getCheckTime() {
-        return checkTime;
-    }
-
-    public void setCheckTime(Date checkTime) {
-        this.checkTime = checkTime;
-    }
 
 }

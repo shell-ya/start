@@ -42,14 +42,6 @@ public class WalletRecordReq implements Serializable {
      * 交易时间
      */
     private Date payTime;
-    /**
-     * 对账状态
-     */
-    private Integer checkStatus;
-    /**
-     * 对账时间
-     */
-    private Date checkTime;
 
     public Long getFrom_uid() {
         return from_uid;
@@ -113,21 +105,5 @@ public class WalletRecordReq implements Serializable {
 
     public void setPayTime(Date payTime) {
         this.payTime = payTime;
-    }
-
-    public Integer getCheckStatus() {
-        return checkStatus;
-    }
-
-    public void setCheckStatus(Integer checkStatus) {
-        this.checkStatus = checkStatus;
-    }
-
-    public Date getCheckTime() {
-        return checkTime;
-    }
-
-    public void setCheckTime(Date checkTime) {
-        this.checkTime = checkTime;
     }
 }

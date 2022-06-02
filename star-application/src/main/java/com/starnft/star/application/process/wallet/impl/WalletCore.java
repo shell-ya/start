@@ -277,7 +277,6 @@ public class WalletCore implements IWalletCore {
                 .tsMoney(rechargeFacadeReq.getMoney())
                 .payTime(new Date())
                 .payStatus(StarConstants.Pay_Status.WAIT_PAY.name())
-                .checkStatus(0)
                 .build();
     }
 }

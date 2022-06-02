@@ -19,16 +19,12 @@
         <result property="remark" column="remark" jdbcType="VARCHAR"/>
         <result property="payStatus" column="pay_status" jdbcType="INTEGER"/>
         <result property="payTime" column="pay_time" jdbcType="DATE"/>
-        <result property="fetchStatus" column="fetch_status" jdbcType="INTEGER"/>
-        <result property="fetchTime" column="fetch_time" jdbcType="DATE"/>
-        <result property="checkStatus" column="check_status" jdbcType="INTEGER"/>
-        <result property="checkTime" column="check_time" jdbcType="DATE"/>
     </resultMap>
 
     <select id="selectByLimit" resultMap="StarNftWalletRecordMap"
             parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord">
         select
-        id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,order_sn,out_trade_no,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time,fetch_status,fetch_time,check_status,check_time
+        id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,order_sn,out_trade_no,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time
         from star_nft_wallet_record
         <where>
             <if test="id != null and id != ''">
@@ -82,18 +78,6 @@
             <if test="payTime != null and payTime != ''">
                 and pay_time = #{payTime}
             </if>
-            <if test="fetchStatus != null and fetchStatus != ''">
-                and fetch_status = #{fetchStatus}
-            </if>
-            <if test="fetchTime != null and fetchTime != ''">
-                and fetch_time = #{fetchTime}
-            </if>
-            <if test="checkStatus != null and checkStatus != ''">
-                and check_status = #{checkStatus}
-            </if>
-            <if test="checkTime != null and checkTime != ''">
-                and check_time = #{checkTime}
-            </if>
         </where>
         limit #{pageable.offset}, #{pageable.pageSize}
     </select>
@@ -101,7 +85,7 @@
     <select id="queryRecordOnCondition"
             resultType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord">
         select
-        id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,order_sn,out_trade_no,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time,fetch_status,fetch_time,check_status,check_time
+        id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,order_sn,out_trade_no,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time
         from star_nft_wallet_record
         <where>
             <if test="userId != null and userId != ''">
@@ -126,7 +110,7 @@
         </where>
         union all
         select
-        id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,order_sn,out_trade_no,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time,fetch_status,fetch_time,check_status,check_time
+        id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,order_sn,out_trade_no,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time
         from star_nft_wallet_record
         <where>
             <if test="userId != null and userId != ''">
@@ -160,11 +144,10 @@
         insert into star_nft_wallet_record(is_deleted, created_at, created_by, modified_at, modified_by, record_sn,
                                            order_sn, out_trade_no,
                                            from_uid, to_uid, ts_type, ts_money, pay_channel, remark, pay_status,
-                                           pay_time, fetch_status, fetch_time, check_status, check_time)
+                                           pay_time)
         values (#{isDeleted}, #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{recordSn}, #{orderSn},
                 #{outTradeNo}, #{fromUid},
-                #{toUid}, #{tsType}, #{tsMoney}, #{payChannel}, #{remark}, #{payStatus}, #{payTime}, #{fetchStatus},
-                #{fetchTime}, #{checkStatus}, #{checkTime})
+                #{toUid}, #{tsType}, #{tsMoney}, #{payChannel}, #{remark}, #{payStatus}, #{payTime})
     </insert>
 
     <!-- 更新数据 -->
@@ -218,18 +201,6 @@
             </if>
             <if test="payTime != null and payTime != ''">
                 pay_time = #{payTime},
-            </if>
-            <if test="fetchStatus != null and fetchStatus != ''">
-                fetch_status = #{fetchStatus},
-            </if>
-            <if test="fetchTime != null and fetchTime != ''">
-                fetch_time = #{fetchTime},
-            </if>
-            <if test="checkStatus != null and checkStatus != ''">
-                check_status = #{checkStatus},
-            </if>
-            <if test="checkTime != null and checkTime != ''">
-                check_time = #{checkTime},
             </if>
         </set>
         where 1=1
