@@ -1,6 +1,5 @@
 package com.starnft.star.application.aware;
 
-import com.starnft.star.common.exception.StarException;
 import com.starnft.star.application.aware.context.ExtraConfiguration;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -27,7 +26,6 @@ public class ConfigurationHolder implements ApplicationContextAware {
     private void initConfig() {
         configuration = applicationContext.getBean(ExtraConfiguration.class);
     }
-
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         ConfigurationHolder.applicationContext = applicationContext;

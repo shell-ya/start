@@ -3,11 +3,13 @@ package com.star.nft.test;
 import cn.hutool.core.util.IdUtil;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.identify.strategy.SwIdentifyStrategy;
+import com.starnft.star.domain.order.service.IOrderService;
 import com.starnft.star.domain.payment.core.IPaymentService;
 import com.starnft.star.domain.payment.model.req.PayCheckReq;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
 import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
+import com.starnft.star.infrastructure.mapper.order.StarNftOrderMapper;
 import com.starnft.star.interfaces.StarApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +23,8 @@ public class CheckIdCardTest {
     SwIdentifyStrategy swIdentifyStrategy;
     @Resource
     IPaymentService paymentService;
-
+    @Resource
+    StarNftOrderMapper orderService;
     @Test
     public void repoTest() {
 
@@ -50,6 +53,12 @@ public class CheckIdCardTest {
         PayCheckReq paymentRich = PayCheckReq.builder().orderSn("YL1531328398713032704I").payChannel(StarConstants.PayChannel.UNION_PAY.name()).build();
         PayCheckRes payCheckRes = paymentService.orderCheck(paymentRich);
         System.out.println(payCheckRes);
+
+
+    }
+    @Test
+    public void testSaveOrder() {
+        orderService.
 
 
     }

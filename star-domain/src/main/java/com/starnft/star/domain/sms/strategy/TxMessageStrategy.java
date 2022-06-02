@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 public class TxMessageStrategy implements MessageStrategyInterface {
     @Override
     public boolean checkCodeMessage(String mobile, String code) {
+
         return false;
     }
 }

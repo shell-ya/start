@@ -22,7 +22,6 @@ public class ImageCaptchaCheckReq implements Serializable {
     @ApiModelProperty(value = "生成验证码返回的id")
     @NotBlank(message = "验证码id不能为空")
     private String id;
-
     @ApiModelProperty(value = "验证码轨迹")
     @NotNull(message = "验证码轨迹不能为空")
     private StarImageCaptchaTrack captchaTrack;
