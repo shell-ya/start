@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 public class UserInfoAddDTO {
 
     private Long userId;
-
     private String nickName;
 
     private Long createBy;

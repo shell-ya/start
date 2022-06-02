@@ -58,7 +58,7 @@ public class CheckIdCardTest {
     }
     @Test
     public void testSaveOrder() {
-        UserInfoAddDTO is = UserInfoAddDTO.builder().nickName("XCSSD").phone("18712923565").createBy(12L).build();
+        UserInfoAddDTO is = UserInfoAddDTO.builder().userId(1000L).nickName("XCSSD").phone("18712923565").createBy(12L).build();
         userRepository.addUserInfo(is);
 
 
