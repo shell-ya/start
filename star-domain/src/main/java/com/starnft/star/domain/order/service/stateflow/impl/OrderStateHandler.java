@@ -11,22 +11,18 @@ public class OrderStateHandler extends OrderStateConfig implements IOrderStateHa
 
 
     @Override
-    public Result waitPay(String orderSn, Enum<StarConstants.ORDER_STATE> orderState) {
-        return orderStateMap.get(orderState).waitPay(orderSn, orderState);
+    public Result waitPay(Long uid, String orderSn, StarConstants.ORDER_STATE orderState) {
+        return orderStateMap.get(orderState).waitPay(uid, orderSn, orderState);
     }
 
     @Override
-    public Result paySuccess(String orderSn, Enum<StarConstants.ORDER_STATE> orderState) {
-        return orderStateMap.get(orderState).paySuccess(orderSn, orderState);
+    public Result payComplete(Long uid, String orderSn, String payNumber, StarConstants.ORDER_STATE orderState) {
+        return orderStateMap.get(orderState).payComplete(uid, orderSn, payNumber, orderState);
     }
 
-    @Override
-    public Result payFailed(String orderSn, Enum<StarConstants.ORDER_STATE> orderState) {
-        return orderStateMap.get(orderState).payFailed(orderSn, orderState);
-    }
 
     @Override
-    public Result payCancel(String orderSn, Enum<StarConstants.ORDER_STATE> orderState) {
-        return orderStateMap.get(orderState).payCancel(orderSn, orderState);
+    public Result payCancel(Long uid, String orderSn, StarConstants.ORDER_STATE orderState) {
+        return orderStateMap.get(orderState).payCancel(uid, orderSn, orderState);
     }
 }

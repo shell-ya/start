@@ -1,8 +1,12 @@
 package com.starnft.star.infrastructure.mapper.order;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.starnft.star.infrastructure.entity.order.StarNftOrder;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface StarNftOrderMapper {
+public interface StarNftOrderMapper extends BaseMapper<StarNftOrder> {
+
+    Integer createOrder(StarNftOrder starNftOrder);
 
 }

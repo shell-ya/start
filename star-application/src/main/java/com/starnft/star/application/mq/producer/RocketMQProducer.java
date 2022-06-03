@@ -22,6 +22,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @Slf4j
 @Component
@@ -61,7 +62,8 @@ public class RocketMQProducer implements IMessageSender {
      * @date 2022/5/18
      */
     @Override
-    public <T> void asyncSend(final String topic, final Optional<T> message) {
+    public <T> void asyncSend(final String topic, final Optional<T> message,
+                              Consumer<SendResult> operationIfSuccess, Runnable failOperation) {
         verifyFormat(topic);
         message.ifPresent(msg -> {
             template.asyncSend(topic, JSONObject.toJSONString(msg), new SendCallback() {
@@ -69,6 +71,8 @@ public class RocketMQProducer implements IMessageSender {
                 public void onSuccess(SendResult sendResult) {
                     String msgId = sendResult.getMsgId();
                     SendStatus sendStatus = sendResult.getSendStatus();
+                    //如果成功执行的操作
+                    operationIfSuccess.accept(sendResult);
                     if (log.isDebugEnabled()) {
                         log.debug("[{}] 消息同步发送成功，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(msg));
                     }
@@ -84,6 +88,7 @@ public class RocketMQProducer implements IMessageSender {
                     if (!isSuccess) {
                         throw new RuntimeException(StarError.PERSISTENT_FAIL.getErrorMessage());
                     }
+                    failOperation.run();
                 }
             });
         });

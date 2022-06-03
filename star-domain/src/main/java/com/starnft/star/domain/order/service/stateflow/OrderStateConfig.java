@@ -2,8 +2,7 @@ package com.starnft.star.domain.order.service.stateflow;
 
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.order.service.stateflow.event.OrderPayCancelState;
-import com.starnft.star.domain.order.service.stateflow.event.OrderPayFailedState;
-import com.starnft.star.domain.order.service.stateflow.event.OrderPaySuccessState;
+import com.starnft.star.domain.order.service.stateflow.event.OrderPayCompleteState;
 import com.starnft.star.domain.order.service.stateflow.event.OrderWaitPayState;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,10 +18,7 @@ public class OrderStateConfig {
     private OrderWaitPayState orderWaitPayState;
 
     @Resource
-    private OrderPaySuccessState orderPaySuccessState;
-
-    @Resource
-    private OrderPayFailedState orderPayFailedState;
+    private OrderPayCompleteState orderPayCompleteState;
 
     @Resource
     private OrderPayCancelState orderPayCancelState;
@@ -32,8 +28,7 @@ public class OrderStateConfig {
     @PostConstruct
     private void initStates(){
         orderStateMap.put(StarConstants.ORDER_STATE.WAIT_PAY,orderWaitPayState);
-        orderStateMap.put(StarConstants.ORDER_STATE.PAY_SUCCESS,orderPaySuccessState);
-        orderStateMap.put(StarConstants.ORDER_STATE.PAY_FAILED,orderPayFailedState);
+        orderStateMap.put(StarConstants.ORDER_STATE.COMPLETED, orderPayCompleteState);
         orderStateMap.put(StarConstants.ORDER_STATE.PAY_CANCEL,orderPayCancelState);
 
     }
