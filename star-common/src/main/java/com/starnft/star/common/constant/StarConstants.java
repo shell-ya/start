@@ -221,10 +221,27 @@ public class StarConstants {
     }
 
     public enum ORDER_STATE {
-        WAIT_PAY,
-        PAY_SUCCESS,
-        PAY_FAILED,
-        PAY_CANCEL
+        WAIT_PAY(0,"待支付"),
+        COMPLETED(1,"已完成"),
+        PAY_CANCEL(2,"已取消");
+
+        private Integer code;
+        private String desc;
+
+        ORDER_STATE(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+
     }
 
 

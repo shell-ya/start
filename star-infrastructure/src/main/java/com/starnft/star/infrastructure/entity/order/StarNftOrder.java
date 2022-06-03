@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * 订单表;
@@ -50,13 +51,13 @@ public class StarNftOrder extends BaseEntity implements Serializable {
     private Integer status ;
     /** 用户id */
     @ApiModelProperty(name = "用户id",notes = "")
-    private String userId ;
+    private Long userId ;
     /** 订单总金额 */
     @ApiModelProperty(name = "订单总金额",notes = "")
-    private Double totalAmount ;
+    private BigDecimal totalAmount ;
     /** 应付金额 */
     @ApiModelProperty(name = "应付金额",notes = "")
-    private Double payAmount ;
+    private BigDecimal payAmount ;
     /** 支付单编号 */
     @ApiModelProperty(name = "支付单编号",notes = "")
     private String payNumber ;
@@ -141,27 +142,27 @@ public class StarNftOrder extends BaseEntity implements Serializable {
         this.status = status;
     }
 
-    public String getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public Double getTotalAmount() {
+    public BigDecimal getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(Double totalAmount) {
+    public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
 
-    public Double getPayAmount() {
+    public BigDecimal getPayAmount() {
         return payAmount;
     }
 
-    public void setPayAmount(Double payAmount) {
+    public void setPayAmount(BigDecimal payAmount) {
         this.payAmount = payAmount;
     }
 

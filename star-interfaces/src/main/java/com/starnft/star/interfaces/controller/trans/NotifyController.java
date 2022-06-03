@@ -1,7 +1,6 @@
 package com.starnft.star.interfaces.controller.trans;
 
 import com.starnft.star.application.mq.IMessageSender;
-import com.starnft.star.application.mq.producer.RocketMQProducer;
 import com.starnft.star.domain.notify.service.PayNotifyService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +23,7 @@ public class NotifyController {
     @RequestMapping("/notifyPay/{platform}")
     public String notifyPay(@PathVariable String platform, HttpServletRequest request, HttpServletResponse response) {
         String transform = payNotifyService.transform(platform, request, response);
-        messageSender.asyncSend("xxxx", Optional.of(transform));
+        messageSender.asyncSend("xxxx", Optional.of(transform), null, null);
         return transform;
     }
 }

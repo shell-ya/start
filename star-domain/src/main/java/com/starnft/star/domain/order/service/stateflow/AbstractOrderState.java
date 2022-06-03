@@ -11,12 +11,10 @@ public abstract class AbstractOrderState {
     @Resource
     protected IOrderRepository orderRepository;
 
-    public abstract Result waitPay(String orderSn, Enum<StarConstants.ORDER_STATE> orderState);
+    public abstract Result waitPay(Long uid, String orderSn, StarConstants.ORDER_STATE orderState);
 
-    public abstract Result paySuccess(String orderSn, Enum<StarConstants.ORDER_STATE> orderState);
+    public abstract Result payComplete(Long uid, String orderSn, String payNumber, StarConstants.ORDER_STATE orderState);
 
-    public abstract Result payFailed(String orderSn, Enum<StarConstants.ORDER_STATE> orderState);
-
-    public abstract Result payCancel(String orderSn, Enum<StarConstants.ORDER_STATE> orderState);
+    public abstract Result payCancel(Long uid, String orderSn, StarConstants.ORDER_STATE orderState);
 
 }
