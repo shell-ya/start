@@ -5,13 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ThemeDetailVO {
+public class ThemeDetailVO implements Serializable {
 
     private Long id;
 

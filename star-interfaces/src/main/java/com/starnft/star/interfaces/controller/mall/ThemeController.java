@@ -8,6 +8,7 @@ import com.starnft.star.domain.numbers.model.dto.NumberDTO;
 import com.starnft.star.domain.numbers.model.req.NumberReq;
 import com.starnft.star.domain.numbers.serivce.NumberService;
 import com.starnft.star.domain.theme.model.req.ThemeReq;
+import com.starnft.star.domain.theme.model.vo.ThemeVO;
 import com.starnft.star.domain.theme.service.ThemeService;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import io.swagger.annotations.Api;
@@ -16,21 +17,31 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 @Api(tags = "主题相关接口「ThemeController」")
 @RequestMapping("/theme")
 public class ThemeController {
+
     @Resource
     ThemeService themeService;
     @Resource
     NumberService numberService;
-    @PostMapping("/seriesTheme/{id}")
-    @ApiOperation("依据系列ID查找主题")
+
+    @GetMapping("/{seriesId}")
+    @ApiOperation("获取系列ID下所有主题")
     @TokenIgnore
-    public RopResponse seriesTheme(@PathVariable @ApiParam("系列id") Long  id, @RequestBody RequestPage requestPage){
-        return  RopResponse.success(
-                themeService
+    public RopResponse<List<ThemeVO>> getAllTheme(@PathVariable @ApiParam("系列id") Long seriesId) {
+        return RopResponse.success(this.themeService.queryThemesBySeriesId(seriesId));
+    }
+
+    @PostMapping("/page/{id}")
+    @ApiOperation("获取系列ID下所有主题 - 分页")
+    @TokenIgnore
+    public RopResponse seriesTheme(@PathVariable @ApiParam("系列id") Long id, @RequestBody RequestPage requestPage) {
+        return RopResponse.success(
+                this.themeService
                         .queryMainThemeInfo(ThemeReq.builder()
                                 .page(requestPage.getPage())
                                 .size(requestPage.getSize())
@@ -39,24 +50,24 @@ public class ThemeController {
         );
     }
 
-    @PostMapping("/theme/detail/{id}")
+    @PostMapping("/detail/{id}")
     @ApiOperation("主题详情")
     @TokenIgnore
-    public RopResponse seriesTheme(@PathVariable @ApiParam("主题id") Long  id){
-        return  RopResponse.success( themeService.queryThemeDetail(id) );
+    public RopResponse seriesTheme(@PathVariable @ApiParam("主题id") Long id) {
+        return RopResponse.success(this.themeService.queryThemeDetail(id));
     }
 
-    @PostMapping("/theme/detail/numbers/{id}")
-    @ApiOperation("主题商品编号列表")
+    @PostMapping("/detail/numbers/{id}")
+    @ApiOperation(value = "主题商品编号列表", hidden = true)
     @TokenIgnore
-    public RopResponse seriesThemeNumbers(@PathVariable @ApiParam("主题id") Long  id,@RequestBody RequestConditionPage<NumberDTO> page){
-         return  RopResponse.success(numberService
-                 .queryThemeNumber( NumberReq.builder()
-                         .page(page.getPage())
-                         .size(page.getSize())
-                         .upOrDown(page.getCondition().getUpOrDown())
-                         .orderBy(OrderByEnum.getOrderBy(page.getCondition().getOrderBy()))
-                         .isSell(page.getCondition().getIsSell()).id(id).build())
-       );
+    public RopResponse seriesThemeNumbers(@PathVariable @ApiParam("主题id") Long id, @RequestBody RequestConditionPage<NumberDTO> page) {
+        return RopResponse.success(this.numberService
+                .queryThemeNumber(NumberReq.builder()
+                        .page(page.getPage())
+                        .size(page.getSize())
+                        .upOrDown(page.getCondition().getUpOrDown())
+                        .orderBy(OrderByEnum.getOrderBy(page.getCondition().getOrderBy()))
+                        .isSell(page.getCondition().getIsSell()).id(id).build())
+        );
     }
 }

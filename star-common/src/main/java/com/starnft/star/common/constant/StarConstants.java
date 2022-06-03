@@ -28,6 +28,19 @@ public class StarConstants {
      */
     public static final String TOKEN = "token";
 
+    /**
+     * 市场品类系列缓存名字
+     */
+    public static final String SERIES_CACHE_NAME = ".series.cache";
+    /**
+     * 市场品类主题缓存名字
+     */
+    public static final String THEME_CACHE_NAME = ".theme.cache";
+    /**
+     * 主题详细信息缓存名字
+     */
+    public static final String THEME_DETAIL_CACHE_NAME = ".theme.detail.cache";
+
     public enum Ids {
         /**
          * 雪花算法
@@ -149,7 +162,7 @@ public class StarConstants {
         }
 
         public Integer getCode() {
-            return code;
+            return this.code;
         }
 
         public void setCode(Integer code) {
@@ -157,7 +170,7 @@ public class StarConstants {
         }
 
         public String getFont() {
-            return font;
+            return this.font;
         }
 
         public void setFont(String font) {
@@ -181,7 +194,7 @@ public class StarConstants {
         }
 
         public String getName() {
-            return name;
+            return this.name;
         }
 
         public void setName(String name) {
@@ -189,7 +202,7 @@ public class StarConstants {
         }
 
         public String getCode() {
-            return code;
+            return this.code;
         }
 
         public void setCode(String code) {
@@ -230,7 +243,7 @@ public class StarConstants {
         }
 
         public String getName() {
-            return name;
+            return this.name;
         }
 
         public void setName(String name) {
@@ -238,7 +251,7 @@ public class StarConstants {
         }
 
         public String getDesc() {
-            return desc;
+            return this.desc;
         }
 
         public void setDesc(String desc) {

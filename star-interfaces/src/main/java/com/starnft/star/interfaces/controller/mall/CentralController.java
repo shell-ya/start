@@ -25,12 +25,13 @@ public class CentralController {
 
     @Resource
     ThemeService themeService;
+
     @PostMapping("/theme")
-    @ApiOperation("首页系列推荐接口")
+    @ApiOperation("首页主题推荐接口")
     @TokenIgnore
-    public RopResponse mainTheme(@RequestBody RequestPage requestPage){
-        return  RopResponse.success(
-                themeService
+    public RopResponse mainTheme(@RequestBody RequestPage requestPage) {
+        return RopResponse.success(
+                this.themeService
                         .queryMainThemeInfo(ThemeReq.builder()
                                 .page(requestPage.getPage())
                                 .size(requestPage.getSize())
@@ -38,17 +39,18 @@ public class CentralController {
                                 .build())
         );
     }
+
     //主页显示系列
     @PostMapping("/series")
     @ApiOperation("首页系列推荐接口")
     @TokenIgnore
-    public RopResponse mainSeries(@RequestBody  RequestPage requestPage){
-      return  RopResponse.success(
-                seriesService
-               .queryMainSeriesInfo(SeriesReq.builder()
-                      .page(requestPage.getPage())
-                      .size(requestPage.getSize())
-                      .build())
-      );
+    public RopResponse mainSeries(@RequestBody RequestPage requestPage) {
+        return RopResponse.success(
+                this.seriesService
+                        .queryMainSeriesInfo(SeriesReq.builder()
+                                .page(requestPage.getPage())
+                                .size(requestPage.getSize())
+                                .build())
+        );
     }
 }

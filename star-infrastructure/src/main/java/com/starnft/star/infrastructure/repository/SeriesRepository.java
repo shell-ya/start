@@ -1,8 +1,10 @@
 package com.starnft.star.infrastructure.repository;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.starnft.star.common.enums.CommodityTypeEnum;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.series.model.req.SeriesReq;
 import com.starnft.star.domain.series.model.vo.SeriesVO;
@@ -21,12 +23,13 @@ import java.util.stream.Collectors;
 public class SeriesRepository implements ISeriesRepository {
     @Resource
     StarNftSeriesMapper starNftSeriesMapper;
+
     @Override
     public ResponsePageResult<SeriesVO> querySeries(SeriesReq requestPage) {
         PageInfo<StarNftSeries> result = PageHelper.startPage(requestPage.getPage(), requestPage.getSize())
                 .doSelectPageInfo(() -> {
-                            starNftSeriesMapper.selectList(new QueryWrapper<StarNftSeries>()
-                                            .eq(StarNftSeries.COL_IS_DELETE, Boolean.FALSE));
+                            this.starNftSeriesMapper.selectList(new QueryWrapper<StarNftSeries>()
+                                    .eq(StarNftSeries.COL_IS_DELETE, Boolean.FALSE));
                         }
                 );
         List<SeriesVO> list = result.getList().stream()
@@ -48,5 +51,22 @@ public class SeriesRepository implements ISeriesRepository {
         pageResult.setTotal(result.getTotal());
         pageResult.setSize(result.getSize());
         return pageResult;
+    }
+
+    @Override
+    public List<SeriesVO> querySeries(CommodityTypeEnum commodityType) {
+        List<StarNftSeries> starNftSeries = this.starNftSeriesMapper.selectList(
+                Wrappers.lambdaQuery(StarNftSeries.class)
+                        .eq(StarNftSeries::getSeriesType, commodityType.getType())
+                        .eq(StarNftSeries::getIsDelete, Boolean.FALSE));
+        return starNftSeries.stream()
+                .map(item ->
+                        SeriesVO
+                                .builder()
+                                .id(item.getId())
+                                .seriesName(item.getSeriesName())
+                                .build()
+                )
+                .collect(Collectors.toList());
     }
 }

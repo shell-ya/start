@@ -5,8 +5,13 @@ import com.starnft.star.domain.theme.model.req.ThemeReq;
 import com.starnft.star.domain.theme.model.vo.ThemeDetailVO;
 import com.starnft.star.domain.theme.model.vo.ThemeVO;
 
+import java.util.List;
+
 public interface IThemeRepository {
     ResponsePageResult<ThemeVO> queryTheme(ThemeReq requestPage);
+
+    List<ThemeVO> queryTheme(Long seriesId);
+
     ThemeDetailVO queryThemeDetail(Long id);
 
 }

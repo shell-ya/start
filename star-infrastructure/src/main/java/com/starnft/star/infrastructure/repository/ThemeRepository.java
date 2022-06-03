@@ -1,6 +1,7 @@
 package com.starnft.star.infrastructure.repository;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.starnft.star.common.page.ResponsePageResult;
@@ -17,22 +18,24 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
 @Slf4j
 @Repository
-public class ThemeRepository  implements IThemeRepository {
+public class ThemeRepository implements IThemeRepository {
     @Resource
     StarNftThemeInfoMapper starNftThemeInfoMapper;
+
     @Override
     public ResponsePageResult<ThemeVO> queryTheme(ThemeReq requestPage) {
         QueryWrapper<StarNftThemeInfo> wrapper = new QueryWrapper<StarNftThemeInfo>().eq(StarNftThemeInfo.COL_IS_DELETE, Boolean.FALSE);
-        if (Objects.nonNull(requestPage.getIsRecommend())){
-            wrapper.eq(StarNftThemeInfo.COL_IS_RECOMMEND,requestPage.getIsRecommend());
+        if (Objects.nonNull(requestPage.getIsRecommend())) {
+            wrapper.eq(StarNftThemeInfo.COL_IS_RECOMMEND, requestPage.getIsRecommend());
         }
-        if (Objects.nonNull(requestPage.getSeriesId())){
-            wrapper.eq(StarNftThemeInfo.COL_SERIES_ID,requestPage.getSeriesId());
+        if (Objects.nonNull(requestPage.getSeriesId())) {
+            wrapper.eq(StarNftThemeInfo.COL_SERIES_ID, requestPage.getSeriesId());
         }
         PageInfo<StarNftThemeInfo> result = PageHelper.startPage(requestPage.getPage(), requestPage.getSize())
-                .doSelectPageInfo(() ->  starNftThemeInfoMapper.selectList(wrapper));
+                .doSelectPageInfo(() -> this.starNftThemeInfoMapper.selectList(wrapper));
         List<ThemeVO> list = result.getList().stream()
                 .map(item ->
                         ThemeVO
@@ -58,12 +61,30 @@ public class ThemeRepository  implements IThemeRepository {
     }
 
     @Override
+    public List<ThemeVO> queryTheme(Long seriesId) {
+        List<StarNftThemeInfo> starNftThemeInfos = this.starNftThemeInfoMapper.selectList(
+                Wrappers.lambdaQuery(StarNftThemeInfo.class)
+                        .eq(StarNftThemeInfo::getSeriesId, seriesId)
+                        .eq(StarNftThemeInfo::getIsDelete, Boolean.FALSE));
+        return starNftThemeInfos.stream()
+                .map(item ->
+                        ThemeVO
+                                .builder()
+                                .id(item.getId())
+                                .themeName(item.getThemeName())
+                                .build()
+
+                )
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public ThemeDetailVO queryThemeDetail(Long id) {
-        StarNftThemeInfo repository = starNftThemeInfoMapper.selectById(id);
-        if (repository.getIsDelete().equals(Boolean.TRUE)){
-            return  null;
+        StarNftThemeInfo repository = this.starNftThemeInfoMapper.selectById(id);
+        if (Objects.isNull(repository) || repository.getIsDelete().equals(Boolean.TRUE)) {
+            return null;
         }
-        return  ThemeDetailVO
+        return ThemeDetailVO
                 .builder()
                 .id(repository.getId())
                 .themeName(repository.getThemeName())

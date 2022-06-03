@@ -4,75 +4,75 @@ spring:
   application:
     name: star
   shardingsphere:
-      datasource:
-        #数据库分库名
-        names: ds0
-        ds0:
-          #type为数据源，如果是Druid数据库连接池，可以去改
-          type: com.zaxxer.hikari.HikariDataSource
-          driver-class-name: com.mysql.cj.jdbc.Driver
-          jdbc-url: jdbc:mysql://sh-cynosdbmysql-grp-ibkpxd68.sql.tencentcdb.com:23543/star?serverTimezone=GMT%2B8&characterEncoding=utf8
-          username: root
-          password: wqd1234.
-#        ds1:
-#          type: com.alibaba.druid.pool.DruidDataSource
-#          driver-class-name: com.mysql.cj.jdbc.Driver
-#          jdbc-url: jdbc:mysql://sh-cynosdbmysql-grp-ibkpxd68.sql.tencentcdb.com:23543/star?serverTimezone=GMT%2B8&characterEncoding=utf8
-#          username: root
-#          password: wqd1234.
-      # 分片规则
+    datasource:
+      #数据库分库名
+      names: ds0
+      ds0:
+        #type为数据源，如果是Druid数据库连接池，可以去改
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://sh-cynosdbmysql-grp-ibkpxd68.sql.tencentcdb.com:23543/star?serverTimezone=GMT%2B8&characterEncoding=utf8
+        username: root
+        password: wqd1234.
+    #        ds1:
+    #          type: com.alibaba.druid.pool.DruidDataSource
+    #          driver-class-name: com.mysql.cj.jdbc.Driver
+    #          jdbc-url: jdbc:mysql://sh-cynosdbmysql-grp-ibkpxd68.sql.tencentcdb.com:23543/star?serverTimezone=GMT%2B8&characterEncoding=utf8
+    #          username: root
+    #          password: wqd1234.
+    # 分片规则
 
-      sharding:
-        tables:
-          # 设置逻辑表为 star_nft_order
-#          star_nft_order:
-#            actual-data-nodes: ds0.star_nft_order_$->{0..9} # 真实数据节点
-##            # 指定 t_order 表里面主键 order_id 生成策略 为 SNOWFLAKE（雪花算法）
-##            key-generator:
-##              column: order_id
-##              type: SNOWFLAKE
-#            # 指定数据库分片策略，根据 order_id 进行分库，是偶数则添加到 ds0，是奇数则添加到 ds1
-##            database-strategy:
-##              inline:
-##                sharding-column: user_id
-##                algorithm-expression: ds$->{order_id % 2}
-#            # 指定数据表分片策略，根据 order_user_id 进行分表，是偶数则添加到 t_order_0，是奇数则添加到 t_order_1
-#            table-strategy:
-#              inline:
-#                sharding-column: user_id
-#                algorithm-expression: star_nft_order_$->{user_id%10}
-          account_user:
-            actual-data-nodes: ds0.account_user_$->{0..9}
-#            key-generator:
-#              column: order_item_id
-#              type: SNOWFLAKE
-#            database-strategy:
-#              inline:
-#                sharding-column: id
-#                algorithm-expression: ds$->{id % 2}
-            table-strategy:
-              inline:
-                sharding-column: id
-                algorithm-expression: account_user_$->{id%10}
-        # 设置绑定关系
-        binding-tables: account_user
-        # 默认数据源，即未配置分表规则的表数据存储表
-#        default-data-source: ds0
-      # 在日志中SQL语句
-      props:
-        sql:
-          show: true
-#  datasource:
-#    username: root
-#    password: wqd1234.
-#    type: com.alibaba.druid.pool.DruidDataSource
-#    url: jdbc:mysql://sh-cynosdbmysql-grp-ibkpxd68.sql.tencentcdb.com:23543/star?serverTimezone=GMT%2B8&characterEncoding=utf8
-#    driver-class-name: com.mysql.jdbc.Driver
-#    druid:
-#      max-active: 20
-#      initial-size: 5
-#      min-idle: 5
-#      max-wait: 60000
+    sharding:
+      tables:
+        # 设置逻辑表为 star_nft_order
+        #          star_nft_order:
+        #            actual-data-nodes: ds0.star_nft_order_$->{0..9} # 真实数据节点
+        ##            # 指定 t_order 表里面主键 order_id 生成策略 为 SNOWFLAKE（雪花算法）
+        ##            key-generator:
+        ##              column: order_id
+        ##              type: SNOWFLAKE
+        #            # 指定数据库分片策略，根据 order_id 进行分库，是偶数则添加到 ds0，是奇数则添加到 ds1
+        ##            database-strategy:
+        ##              inline:
+        ##                sharding-column: user_id
+        ##                algorithm-expression: ds$->{order_id % 2}
+        #            # 指定数据表分片策略，根据 order_user_id 进行分表，是偶数则添加到 t_order_0，是奇数则添加到 t_order_1
+        #            table-strategy:
+        #              inline:
+        #                sharding-column: user_id
+        #                algorithm-expression: star_nft_order_$->{user_id%10}
+        account_user:
+          actual-data-nodes: ds0.account_user_$->{0..9}
+          #            key-generator:
+          #              column: order_item_id
+          #              type: SNOWFLAKE
+          #            database-strategy:
+          #              inline:
+          #                sharding-column: id
+          #                algorithm-expression: ds$->{id % 2}
+          table-strategy:
+            inline:
+              sharding-column: id
+              algorithm-expression: account_user_$->{id%10}
+      # 设置绑定关系
+      binding-tables: account_user
+      # 默认数据源，即未配置分表规则的表数据存储表
+    #        default-data-source: ds0
+    # 在日志中SQL语句
+    props:
+      sql:
+        show: true
+  #  datasource:
+  #    username: root
+  #    password: wqd1234.
+  #    type: com.alibaba.druid.pool.DruidDataSource
+  #    url: jdbc:mysql://sh-cynosdbmysql-grp-ibkpxd68.sql.tencentcdb.com:23543/star?serverTimezone=GMT%2B8&characterEncoding=utf8
+  #    driver-class-name: com.mysql.jdbc.Driver
+  #    druid:
+  #      max-active: 20
+  #      initial-size: 5
+  #      min-idle: 5
+  #      max-wait: 60000
   redis:
     host: 124.221.181.84
     database: 0
@@ -121,7 +121,7 @@ rocketmq:
 
 # 验证码相关配置
 captcha:
-  prefix: captcha
+  prefix: star.captcha
   # 验证码过期时间，默认是2分钟,单位毫秒， 可以根据自身业务进行调整
   expire:
     default: 30000
@@ -144,4 +144,39 @@ captcha:
     # 二次验证过期时间， 默认 2分钟
     expire: 120000
     # 二次验证缓存key前缀，默认是 captcha:secondary
-    keyPrefix: "captcha.secondary"
+    keyPrefix: star.captcha.secondary
+
+jetcache:
+  # 统计缓存调用相关信息的统计间隔（分钟），0表示不统计
+  statIntervalMinutes: 60
+  # 缓存实例名称cacheName会作为缓存key的前缀，2.4.3以前的版本总是把areaName加在cacheName中，因此areaName也出现在key前缀中。我们一般设置为false。
+  areaInCacheName: false
+  local:
+    default:
+      # 本地缓存类型，支持 linkedhashmap、caffeine
+      type: caffeine
+      # 每个缓存实例存储的缓存数量的全局配置，仅本地缓存需要配置，如果缓存实例没有指定则使用全局配置
+      limit: 100
+      # 缓存key转换器的全局配置
+      keyConvertor: fastjson
+      # 本地缓存超时时间的全局配置（毫秒） 默认无穷大
+      expireAfterWriteInMillis: 600000
+      # 多长时间没访问就让缓存失效的全局配置（毫秒），仅支持本地缓存。0表示不使用这个功能。
+      expireAfterAccessInMillis: 300000
+  remote:
+    default:
+      type: redis
+      keyPrefix: star-service
+      keyConvertor: fastjson
+      valueEncoder: java
+      valueDecoder: java
+      # 远程缓存超时时间的全局配置（毫秒）
+      expireAfterWriteInMillis: 3600000
+      poolConfig:
+        minIdle: 10
+        maxIdle: 20
+        maxTotal: 50
+      host: ${spring.redis.host}
+      database: ${spring.redis.database}
+      port: ${spring.redis.port}
+      password: ${spring.redis.password}
