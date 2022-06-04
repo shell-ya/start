@@ -32,7 +32,7 @@ public class CardBindReq implements Serializable {
     @ApiModelProperty(value = "银行卡号")
     @NotNull(message = "银行卡号不能为空")
     @Pattern(regexp = "[1-9]\\d*", message = "卡号输入有误")
-    private Long cardNo;
+    private String cardNo;
     /**
      * 持卡人姓名
      */

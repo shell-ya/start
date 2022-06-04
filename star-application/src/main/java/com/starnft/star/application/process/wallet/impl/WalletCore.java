@@ -173,7 +173,7 @@ public class WalletCore implements IWalletCore {
 
     @Override
     public boolean cardBinding(CardBindReq cardBindReq) {
-        if (cardBindReq.getCardNo().toString().length() < 13 || cardBindReq.getCardNo().toString().length() > 19) {
+        if (cardBindReq.getCardNo().length() < 13 || cardBindReq.getCardNo().length() > 19) {
             throw new StarException("卡号长度错误");
         }
         UserInfoVO userInfoVO = userService.queryUserInfo(cardBindReq.getUid());

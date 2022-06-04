@@ -6,7 +6,6 @@ import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.repository.IOrderRepository;
 import com.starnft.star.infrastructure.entity.order.StarNftOrder;
 import com.starnft.star.infrastructure.mapper.order.StarNftOrderMapper;
-import jdk.internal.joptsimple.internal.Strings;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
@@ -47,7 +46,7 @@ public class OrderRepository implements IOrderRepository {
         //更新状态
         starNftOrder.setStatus(modifiedStatus);
         //会写支付单号
-        if (!Strings.isNullOrEmpty(payNumber)) {
+        if (!StringUtils.isNotBlank(payNumber)) {
             starNftOrder.setPayNumber(payNumber);
         }
 
