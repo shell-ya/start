@@ -360,4 +360,9 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     public UserRealInfo getUserRealInfo(Long uid) {
         return this.userRepository.getUserInfoAll(uid);
     }
+
+    @Override
+    public Boolean modifyUserInfo(UserInfoUpdateDTO req) {
+        return this.userRepository.updateUserInfo(req) == 1;
+    }
 }

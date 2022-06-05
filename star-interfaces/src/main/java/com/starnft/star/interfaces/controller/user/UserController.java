@@ -119,5 +119,10 @@ public class UserController {
         return RopResponse.success(this.userCore.queryAgreementAndNotice(agreementScene));
     }
 
+    @ApiOperation("更新用户信息")
+    @PostMapping("/userinfo/upd")
+    public RopResponse<Boolean> updateUserInfo(UserResolverInfo userResolverInfo, @RequestBody UserInfoUpdReq req) {
+        return RopResponse.success(this.userCore.modifyUserInfo(userResolverInfo.getUserId(), req));
+    }
 
 }

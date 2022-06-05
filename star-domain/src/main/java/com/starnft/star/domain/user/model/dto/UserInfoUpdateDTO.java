@@ -1,8 +1,14 @@
 package com.starnft.star.domain.user.model.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserInfoUpdateDTO {
 
     /**
@@ -54,4 +60,9 @@ public class UserInfoUpdateDTO {
      * 是否实名认证
      */
     private Integer realPersonFlag;
+
+    /**
+     * 简介
+     */
+    private String briefIntroduction;
 }

@@ -156,4 +156,6 @@ public interface IUserService {
      * @return
      */
     UserRealInfo getUserRealInfo(Long uid);
+
+    Boolean modifyUserInfo(UserInfoUpdateDTO userInfoUpd);
 }

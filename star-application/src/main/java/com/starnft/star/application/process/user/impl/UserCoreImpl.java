@@ -1,10 +1,7 @@
 package com.starnft.star.application.process.user.impl;
 
 import com.starnft.star.application.process.user.UserCore;
-import com.starnft.star.application.process.user.req.AuthMaterialReq;
-import com.starnft.star.application.process.user.req.UserGatheringInfoReq;
-import com.starnft.star.application.process.user.req.UserLoginReq;
-import com.starnft.star.application.process.user.req.UserVerifyCodeReq;
+import com.starnft.star.application.process.user.req.*;
 import com.starnft.star.application.process.user.res.*;
 import com.starnft.star.common.enums.AgreementSceneEnum;
 import com.starnft.star.common.enums.AgreementTypeEnum;
@@ -294,6 +291,16 @@ public class UserCoreImpl implements UserCore {
             log.error("user method queryAgreementAndNotice");
             throw new StarException(StarError.AGREEMENT_NOT_FUND);
         }
+    }
+
+    @Override
+    public Boolean modifyUserInfo(Long uid, UserInfoUpdReq req) {
+        return this.userService.modifyUserInfo(
+                UserInfoUpdateDTO.builder()
+                        .account(uid)
+                        .nickName(req.getNickName())
+                        .briefIntroduction(req.getBriefIntroduction())
+                        .build());
     }
 
     private void popupAgreement(PopupAgreementRes popupAgreementRes

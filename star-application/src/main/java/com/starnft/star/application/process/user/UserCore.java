@@ -1,12 +1,8 @@
 package com.starnft.star.application.process.user;
 
-import com.starnft.star.application.process.user.req.AuthMaterialReq;
-import com.starnft.star.application.process.user.req.UserGatheringInfoReq;
-import com.starnft.star.application.process.user.req.UserLoginReq;
-import com.starnft.star.application.process.user.req.UserVerifyCodeReq;
+import com.starnft.star.application.process.user.req.*;
 import com.starnft.star.application.process.user.res.*;
 import com.starnft.star.domain.user.model.dto.AuthenticationNameDTO;
-import com.starnft.star.domain.user.model.vo.AgreementVO;
 import com.starnft.star.domain.user.model.vo.UserAuthenticationVO;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -16,6 +12,7 @@ public interface UserCore {
 
     /**
      * 账号密码登录
+     *
      * @param req
      * @return
      */
@@ -23,6 +20,7 @@ public interface UserCore {
 
     /**
      * 手机验证码登录和自动注册
+     *
      * @param req
      * @return
      */
@@ -30,6 +28,7 @@ public interface UserCore {
 
     /**
      * 退出登录状态
+     *
      * @param userId
      * @return
      */
@@ -37,6 +36,7 @@ public interface UserCore {
 
     /**
      * 发送短信验证码
+     *
      * @param req
      * @return
      */
@@ -44,6 +44,7 @@ public interface UserCore {
 
     /**
      * 设置密码
+     *
      * @param req
      * @return
      */
@@ -51,6 +52,7 @@ public interface UserCore {
 
     /**
      * 修改密码
+     *
      * @param req
      * @return
      */
@@ -58,6 +60,7 @@ public interface UserCore {
 
     /**
      * 用户汇总信息查询 用户个人信息、钱包信息
+     *
      * @param req 获取用户总信息请求
      * @return 获取用户总信息响应
      */
@@ -65,13 +68,15 @@ public interface UserCore {
 
     /**
      * 发起实名认证
+     *
      * @param req
      * @return
      */
-    Boolean realNameAuthentication(Long userId  ,AuthenticationNameDTO req);
+    Boolean realNameAuthentication(Long userId, AuthenticationNameDTO req);
 
     /**
      * 查询实名认证结果
+     *
      * @param userId
      * @return
      */
@@ -79,6 +84,7 @@ public interface UserCore {
 
     /**
      * 根据协议类型查询最新协议内容
+     *
      * @param agreementType
      * @return
      */
@@ -86,6 +92,7 @@ public interface UserCore {
 
     /**
      * 判断用户是否弹窗
+     *
      * @param userId
      * @param authorizationSceneId
      * @return
@@ -94,13 +101,15 @@ public interface UserCore {
 
     /**
      * 保存用户签署协议历史信息
+     *
      * @param agreementIds
      * @param userId
      */
-    void saveUserAgreementHistoryByUserId(List<String> agreementIds , Long userId);
+    void saveUserAgreementHistoryByUserId(List<String> agreementIds, Long userId);
 
     /**
      * 查询协议的信息
+     *
      * @param agreementId
      * @return
      */
@@ -108,8 +117,11 @@ public interface UserCore {
 
     /**
      * 根据协议场景查询协议信息
+     *
      * @param agreementScene
      * @return
      */
     AgreementAndNoticeRes queryAgreementAndNotice(@RequestParam("agreementScene") Integer agreementScene);
+
+    Boolean modifyUserInfo(Long uid, UserInfoUpdReq req);
 }
