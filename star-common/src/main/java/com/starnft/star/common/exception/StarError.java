@@ -53,6 +53,7 @@ public enum StarError {
 
     CARD_BINDING_FAILED("300005", "银行卡绑定失败"),
     CARD_NOT_BINDING_FAILED("300006", "你还没有绑定银行卡"),
+    CARD_HAS_BIND("300008", "该银行卡已绑定"),
     PAY_PROCESS_ERROR("300007", "支付异常"),
     REQUEST_TIMEOUT_ERROR("100040", "请求超时,请稍后再试！"),
     ;

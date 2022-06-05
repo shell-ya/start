@@ -94,10 +94,11 @@ public class WalletController {
     @ApiOperation("默认银行卡设置")
     @PostMapping("/defaultcardsetting")
     public RopResponse<?> setDefaultCard(@Validated @RequestBody BankRelationVO relationVO) {
+        relationVO.setUid(UserContext.getUserId().getUserId());
         if (walletService.setDefaultCard(relationVO)) {
             return RopResponse.successNoData();
         }
-        return RopResponse.fail(StarError.SYSTEM_ERROR);
+        return RopResponse.fail(StarError.SYSTEM_ERROR, "可能您未绑定该卡");
     }
 
 

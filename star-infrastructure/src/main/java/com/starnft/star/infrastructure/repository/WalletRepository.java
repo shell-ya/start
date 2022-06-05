@@ -240,14 +240,18 @@ public class WalletRepository implements IWalletRepository {
     public boolean cardBinding(BankRelationVO bankRelationVO) {
         StarNftBankRelation starNftBankRelation = new StarNftBankRelation();
         List<BankRelationVO> relationVOS = queryCardBindings(bankRelationVO.getUid());
+        starNftBankRelation.setCardNo(AESUtil.encrypt(bankRelationVO.getCardNo()));
+        starNftBankRelation.setUid(bankRelationVO.getUid());
+        List<StarNftBankRelation> starNftBankRelations = starNftBankRelationMapper.queryByCondition(starNftBankRelation);
+        if (starNftBankRelations.size() >= 1) {
+            throw new StarException(StarError.CARD_HAS_BIND);
+        }
         if (relationVOS.size() == 0) {
             starNftBankRelation.setIsDefault(1);
         } else {
             starNftBankRelation.setIsDefault(bankRelationVO.getIsDefault());
         }
-        starNftBankRelation.setUid(bankRelationVO.getUid());
         starNftBankRelation.setNickname(bankRelationVO.getNickname());
-        starNftBankRelation.setCardNo(AESUtil.encrypt(bankRelationVO.getCardNo()));
         starNftBankRelation.setCardName(bankRelationVO.getCardName());
         starNftBankRelation.setBankNameShort(bankRelationVO.getBankShortName());
         starNftBankRelation.setCreatedBy(bankRelationVO.getUid());
@@ -271,7 +275,7 @@ public class WalletRepository implements IWalletRepository {
                     .bankShortName(nftBankRelation.getBankNameShort()).build());
         }
 
-        return relations;
+         return relations;
     }
 
     @Override
