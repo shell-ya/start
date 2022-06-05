@@ -24,7 +24,7 @@ public class WalletRecordReq implements Serializable {
     /**
      * 交易类型
      */
-    private String tsType;
+    private Integer tsType;
     /**
      * 交易金额
      */
@@ -67,11 +67,11 @@ public class WalletRecordReq implements Serializable {
         this.recordSn = recordSn;
     }
 
-    public String getTsType() {
+    public Integer getTsType() {
         return tsType;
     }
 
-    public void setTsType(String tsType) {
+    public void setTsType(Integer tsType) {
         this.tsType = tsType;
     }
 

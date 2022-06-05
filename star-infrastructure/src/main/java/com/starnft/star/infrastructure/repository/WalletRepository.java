@@ -362,6 +362,7 @@ public class WalletRepository implements IWalletRepository {
         starNftWalletRecord.setToUid(walletRecordReq.getTo_uid());
         starNftWalletRecord.setPayStatus(walletRecordReq.getPayStatus());
         starNftWalletRecord.setTsType(walletRecordReq.getTsType());
+        starNftWalletRecord.setTsMoney(walletRecordReq.getTsMoney());
         starNftWalletRecord.setPayChannel(walletRecordReq.getPayChannel());
         starNftWalletRecord.setPayTime(walletRecordReq.getPayTime());
         starNftWalletRecord.setCreatedBy(walletRecordReq.getFrom_uid() == 0 ? walletRecordReq.getTo_uid() : walletRecordReq.getFrom_uid());

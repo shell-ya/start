@@ -32,7 +32,7 @@ public class StarNftWalletRecord extends BaseEntity implements Serializable {
     private Long toUid ;
     /** 交易类型 1充值 2提现 3交易 4退款 */
     @ApiModelProperty(name = "交易类型 1充值 2提现 3交易 4退款",notes = "")
-    private String tsType ;
+    private Integer tsType ;
     /** 交易金额 */
     @ApiModelProperty(name = "交易金额",notes = "")
     private BigDecimal tsMoney ;
@@ -97,11 +97,11 @@ public class StarNftWalletRecord extends BaseEntity implements Serializable {
         this.toUid = toUid;
     }
 
-    public String getTsType() {
+    public Integer getTsType() {
         return tsType;
     }
 
-    public void setTsType(String tsType) {
+    public void setTsType(Integer tsType) {
         this.tsType = tsType;
     }
 

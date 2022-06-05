@@ -79,7 +79,6 @@
                 and pay_time = #{payTime}
             </if>
         </where>
-        limit #{pageable.offset}, #{pageable.pageSize}
     </select>
 
     <select id="queryRecordOnCondition"

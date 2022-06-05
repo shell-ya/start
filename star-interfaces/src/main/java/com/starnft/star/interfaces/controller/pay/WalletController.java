@@ -14,6 +14,7 @@ import com.starnft.star.domain.wallet.model.res.CardBindResult;
 import com.starnft.star.domain.wallet.model.res.WithdrawResult;
 import com.starnft.star.domain.wallet.model.vo.BankRelationVO;
 import com.starnft.star.domain.wallet.service.WalletService;
+import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import com.starnft.star.interfaces.interceptor.UserContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,8 +41,9 @@ public class WalletController {
 
     @ApiOperation("充值")
     @PostMapping("/recharge")
+    @TokenIgnore
     public RopResponse<RechargeReqResult> recharge(@Validated @RequestBody RechargeFacadeReq req) {
-        req.setUserId(UserContext.getUserId().getUserId());
+//        req.setUserId(UserContext.getUserId().getUserId());
         return RopResponse.success(walletCore.recharge(req));
     }
 

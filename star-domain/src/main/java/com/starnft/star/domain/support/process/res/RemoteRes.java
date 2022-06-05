@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class RemoteRes {
 
-    private String code;
+    private Integer code;
 
     private String message;
 

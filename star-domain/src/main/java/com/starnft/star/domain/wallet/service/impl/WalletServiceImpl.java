@@ -187,7 +187,7 @@ public class WalletServiceImpl implements WalletService {
         return WalletRecordReq.builder().from_uid(withDrawReq.getUid()).to_uid(0L)
                 .recordSn(String.valueOf(withdrawTradeNo))
                 .payChannel(withDrawReq.getChannel()).payStatus(StarConstants.Pay_Status.PAY_ING.name())
-                .tsMoney(withDrawReq.getMoney()).tsType(StarConstants.Transaction_Type.Withdraw.getCode().toString())
+                .tsMoney(withDrawReq.getMoney()).tsType(StarConstants.Transaction_Type.Withdraw.getCode())
                 .build();
     }
 

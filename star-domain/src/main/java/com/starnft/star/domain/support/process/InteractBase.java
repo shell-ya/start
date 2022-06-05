@@ -6,12 +6,11 @@ import com.starnft.star.domain.support.process.context.ConnContext;
 import com.starnft.star.domain.support.process.res.RemoteRes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.Map;
 import java.util.function.Supplier;
 
-public abstract class InteractBase implements IInteract{
+public abstract class InteractBase implements IInteract {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -31,7 +30,7 @@ public abstract class InteractBase implements IInteract{
         if (null == remoteRes) {
             throw new RuntimeException("接口响应为空");
         }
-        if (remoteRes.getCode().equals("-1")) {
+        if (remoteRes.getCode() == -1) {
             throw new RuntimeException(remoteRes.getMessage());
         }
         return JSON.parseObject(remoteRes.getContext(), resClazz);

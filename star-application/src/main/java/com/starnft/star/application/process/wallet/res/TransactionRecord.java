@@ -46,7 +46,7 @@ public class TransactionRecord implements Serializable {
      * 支付类型
      */
     @ApiModelProperty(value = "支付类型")
-    private String patType;
+    private String payType;
     /**
      * 支付时间
      */

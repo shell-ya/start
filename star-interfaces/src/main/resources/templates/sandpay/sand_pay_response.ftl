@@ -1,9 +1,9 @@
 {
     <#if param2?? && param2.head.respCode == '000000'>
-            "code":"0",
+            "code": 0 ,
             "message":"${param2.head.respMsg}",
         <#else >
-            "code":"-1",
+            "code": -1 ,
             "message":"${param2.head.respMsg}",
     </#if>
     "context":
@@ -12,10 +12,10 @@
             "totalMoney":"${helper.decimalToString(param1.totalMoney)}",
             "thirdPage":"${helper.escapeStr(param2.body.credential)}",
             <#if param2?? && param2.head.respCode == '000000'>
-                "code":"0",
+                "status": 0,
                 "message":"${param2.head.respMsg}"
             <#else >
-                "code":"-1",
+                "status": -1,
                 "message":"${param2.head.respMsg}"
             </#if>
         }

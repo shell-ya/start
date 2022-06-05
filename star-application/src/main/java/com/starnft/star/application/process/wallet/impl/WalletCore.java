@@ -142,7 +142,9 @@ public class WalletCore implements IWalletCore {
                 .totalMoney(rechargeFacadeReq.getMoney())
                 .userId(rechargeFacadeReq.getUserId())
                 .orderSn(walletRecordReq.getRecordSn())
-                .frontUrl("")//todo 查询支付结果页连接
+                .clientIp("1.1.1.1")
+                .frontUrl("abc")//todo 查询支付结果页连接
+                .orderType(StarConstants.OrderType.RECHARGE)
                 .multicastTopic(rechargeCallbackProcessTopic)
                 .build();
     }
@@ -226,6 +228,12 @@ public class WalletCore implements IWalletCore {
      * @date 2022/5/12
      */
     private TransactionRecord recordVOConvert(WalletRecordVO walletRecordVO, Long userId) {
+        String payType = "";
+        for (StarConstants.Transaction_Type value : StarConstants.Transaction_Type.values()) {
+            if (value.getCode().equals(walletRecordVO.getTsType())) {
+                payType = value.getFont();
+            }
+        }
         return TransactionRecord.builder()
                 .userId(userId)
                 .channel(walletRecordVO.getPayChannel())
@@ -234,7 +242,7 @@ public class WalletCore implements IWalletCore {
                 .outTradeNo(walletRecordVO.getOutTradeNo())
                 .status(walletRecordVO.getPayStatus())
                 .payTime(walletRecordVO.getPayTime())
-                .patType(walletRecordVO.getTsType())
+                .payType(payType)
                 .transactionSn(walletRecordVO.getRecordSn()).build();
     }
 
@@ -273,7 +281,7 @@ public class WalletCore implements IWalletCore {
                 .from_uid(0L) // 充值为0
                 .to_uid(rechargeFacadeReq.getUserId())
                 .payChannel(rechargeFacadeReq.getChannel())
-                .tsType(StarConstants.Transaction_Type.Recharge.getFont())
+                .tsType(StarConstants.Transaction_Type.Recharge.getCode())
                 .tsMoney(rechargeFacadeReq.getMoney())
                 .payTime(new Date())
                 .payStatus(StarConstants.Pay_Status.WAIT_PAY.name())
