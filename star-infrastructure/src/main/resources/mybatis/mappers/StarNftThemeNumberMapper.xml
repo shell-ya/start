@@ -71,7 +71,7 @@
             AND b.is_delete = 0
         </where>
         <if test="orderBy != null and orderBy != ''">
-            ORDER BY ${orderBy} ${sortType}
+            ORDER BY a.${orderBy} ${sortType}
         </if>
 
     </select>
