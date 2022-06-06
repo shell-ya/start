@@ -22,6 +22,11 @@ public class CardBindResult implements Serializable {
     @ApiModelProperty(value = "持卡人姓名")
     private String cardName;
     /**
+     * 卡类型
+     */
+    @ApiModelProperty(value = "卡类型")
+    private String cardType;
+    /**
      * 银行简称
      */
     @ApiModelProperty(value = "银行简称")

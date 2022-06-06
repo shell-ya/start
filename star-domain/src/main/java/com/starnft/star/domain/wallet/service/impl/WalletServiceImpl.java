@@ -321,7 +321,7 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public boolean cardBind(CardBindReq cardBindReq) {
-        return walletRepository.cardBinding(BankRelationVO.builder().uid(cardBindReq.getUid()).cardNo(cardBindReq.getCardNo())
+        return walletRepository.cardBinding(BankRelationVO.builder().uid(cardBindReq.getUid()).cardNo(cardBindReq.getCardNo()).cardType(cardBindReq.getCardType())
                 .cardName(cardBindReq.getCardName()).nickname(cardBindReq.getNickname()).isDefault(cardBindReq.getIsDefault()).phone(cardBindReq.getPhone())
                 .bankShortName(cardBindReq.getBankShortName()).build());
     }
@@ -331,7 +331,8 @@ public class WalletServiceImpl implements WalletService {
         List<BankRelationVO> relations = walletRepository.queryCardBindings(uid);
         ArrayList<@Nullable CardBindResult> results = Lists.newArrayList();
         for (BankRelationVO relation : relations) {
-            results.add(new CardBindResult(relation.getCardNo(), relation.getCardName(), relation.getBankShortName(), relation.getIsDefault()));
+            results.add(new CardBindResult(relation.getCardNo(), relation.getCardName(), relation.getCardType(),
+                    relation.getBankShortName(), relation.getIsDefault()));
         }
         return results;
     }

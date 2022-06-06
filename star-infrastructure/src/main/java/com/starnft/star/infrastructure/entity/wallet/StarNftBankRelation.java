@@ -10,39 +10,59 @@ import java.io.Serializable;
 
 /**
  * 银行卡绑定表;
+ *
  * @author :Ryan z
  * @date : 2022-5-22
  */
-@ApiModel(value = "银行卡绑定表",description = "")
+@ApiModel(value = "银行卡绑定表", description = "")
 @TableName("star_nft_bank_relation")
-public class StarNftBankRelation extends BaseEntity implements Serializable{
-    /** id */
-    @ApiModelProperty(name = "id",notes = "")
+public class StarNftBankRelation extends BaseEntity implements Serializable {
+    /**
+     * id
+     */
+    @ApiModelProperty(name = "id", notes = "")
     @TableId
-    private Long id ;
-    /** 用户id */
-    @ApiModelProperty(name = "用户id",notes = "")
-    private Long uid ;
-    /** 用户名称 */
-    @ApiModelProperty(name = "用户名称",notes = "")
-    private String nickname ;
-    /** 银行卡号 */
-    @ApiModelProperty(name = "银行卡号",notes = "")
-    private String cardNo ;
-    /** 持卡人姓名 */
-    @ApiModelProperty(name = "持卡人姓名",notes = "")
-    private String cardName ;
-    /** 开户银行简称 */
-    @ApiModelProperty(name = "开户银行简称",notes = "")
-    private String bankNameShort ;
-    /** 银行预留手机号 */
-    @ApiModelProperty(name = "银行预留手机号",notes = "")
-    private String phone ;
+    private Long id;
+    /**
+     * 用户id
+     */
+    @ApiModelProperty(name = "用户id", notes = "")
+    private Long uid;
+    /**
+     * 用户名称
+     */
+    @ApiModelProperty(name = "用户名称", notes = "")
+    private String nickname;
+    /**
+     * 银行卡号
+     */
+    @ApiModelProperty(name = "银行卡号", notes = "")
+    private String cardNo;
+    /**
+     * 卡类型
+     */
+    @ApiModelProperty(name = "卡类型", notes = "")
+    private String cardType;
+    /**
+     * 持卡人姓名
+     */
+    @ApiModelProperty(name = "持卡人姓名", notes = "")
+    private String cardName;
+    /**
+     * 开户银行简称
+     */
+    @ApiModelProperty(name = "开户银行简称", notes = "")
+    private String bankNameShort;
+    /**
+     * 银行预留手机号
+     */
+    @ApiModelProperty(name = "银行预留手机号", notes = "")
+    private String phone;
     /**
      * 是否是默认卡
      */
-    @ApiModelProperty(name = "是否是默认卡",notes = "")
-    private Integer isDefault ;
+    @ApiModelProperty(name = "是否是默认卡", notes = "")
+    private Integer isDefault;
 
 
     public Long getId() {
@@ -75,6 +95,14 @@ public class StarNftBankRelation extends BaseEntity implements Serializable{
 
     public void setCardNo(String cardNo) {
         this.cardNo = cardNo;
+    }
+
+    public String getCardType() {
+        return cardType;
+    }
+
+    public void setCardType(String cardType) {
+        this.cardType = cardType;
     }
 
     public String getCardName() {

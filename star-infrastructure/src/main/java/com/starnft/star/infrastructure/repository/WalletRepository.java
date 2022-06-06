@@ -246,9 +246,11 @@ public class WalletRepository implements IWalletRepository {
         starNftBankRelation.setCardNo(AESUtil.encrypt(bankRelationVO.getCardNo()));
         starNftBankRelation.setUid(bankRelationVO.getUid());
         List<StarNftBankRelation> starNftBankRelations = starNftBankRelationMapper.queryByCondition(starNftBankRelation);
+        //卡是否已绑定
         if (starNftBankRelations.size() >= 1) {
             throw new StarException(StarError.CARD_HAS_BIND);
         }
+        //是否还未绑卡 则设置为默认卡
         if (relationVOS.size() == 0) {
             starNftBankRelation.setIsDefault(1);
         } else {
@@ -256,6 +258,7 @@ public class WalletRepository implements IWalletRepository {
         }
         starNftBankRelation.setNickname(bankRelationVO.getNickname());
         starNftBankRelation.setCardName(bankRelationVO.getCardName());
+        starNftBankRelation.setCardType(bankRelationVO.getCardType());
         starNftBankRelation.setBankNameShort(bankRelationVO.getBankShortName());
         starNftBankRelation.setCreatedBy(bankRelationVO.getUid());
         starNftBankRelation.setPhone(bankRelationVO.getPhone());
@@ -273,6 +276,7 @@ public class WalletRepository implements IWalletRepository {
             relations.add(BankRelationVO.builder()
                     .uid(uid)
                     .cardNo(AESUtil.decrypt(nftBankRelation.getCardNo()))
+                    .cardType(nftBankRelation.getCardType())
                     .cardName(nftBankRelation.getCardName())
                     .isDefault(nftBankRelation.getIsDefault())
                     .bankShortName(nftBankRelation.getBankNameShort()).build());

@@ -34,6 +34,11 @@ public class CardBindReq implements Serializable {
     @Pattern(regexp = "[1-9]\\d*", message = "卡号输入有误")
     private String cardNo;
     /**
+     * 卡类型
+     */
+    @ApiModelProperty(value = "卡类型")
+    private String cardType;
+    /**
      * 持卡人姓名
      */
     @ApiModelProperty(value = "持卡人姓名")

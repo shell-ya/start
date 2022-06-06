@@ -11,25 +11,23 @@ import com.starnft.star.domain.wallet.model.vo.RechargeVO;
 import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
 import com.starnft.star.domain.wallet.service.WalletService;
 import com.starnft.star.domain.wallet.service.stateflow.IStateHandler;
+import lombok.RequiredArgsConstructor;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
 @Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @RocketMQMessageListener(topic = "STAR-RECHARGE", consumerGroup = "star-consumer-recharge-group", selectorExpression = "callback")
 public class RechargeConsumer implements RocketMQListener<PayCheckRes> {
 
     private Logger log = LoggerFactory.getLogger(RechargeConsumer.class);
-    @Resource
-    WalletService walletService;
-    @Resource
-    RedisUtil redisUtil;
-    @Resource
-    IStateHandler stateHandler;
+    final WalletService walletService;
+    final RedisUtil redisUtil;
+    final IStateHandler stateHandler;
 
     @Override
     public void onMessage(PayCheckRes payCheckRes) {
