@@ -24,6 +24,11 @@ public class StarConstants {
     public static final Integer VERIFY_CODE_ERROR_TIMES = 10;
 
     /**
+     * 支付密码错误重试机会
+     */
+    public static final Integer PAYPWD_RETRY_COUNT = 5;
+
+    /**
      * token关键字
      */
     public static final String TOKEN = "token";
@@ -221,9 +226,9 @@ public class StarConstants {
     }
 
     public enum ORDER_STATE {
-        WAIT_PAY(0,"待支付"),
-        COMPLETED(1,"已完成"),
-        PAY_CANCEL(2,"已取消");
+        WAIT_PAY(0, "待支付"),
+        COMPLETED(1, "已完成"),
+        PAY_CANCEL(2, "已取消");
 
         private Integer code;
         private String desc;
@@ -234,11 +239,11 @@ public class StarConstants {
         }
 
         public Integer getCode() {
-            return code;
+            return this.code;
         }
 
         public String getDesc() {
-            return desc;
+            return this.desc;
         }
 
 

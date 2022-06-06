@@ -1,12 +1,14 @@
 package com.starnft.star.domain.user.service.impl;
 
 import com.starnft.star.common.constant.RedisKey;
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.constant.YesOrNoStatusEnum;
 import com.starnft.star.common.enums.LoginTypeEnum;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.po.AccessToken;
 import com.starnft.star.common.utils.StarUtils;
+import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.user.model.dto.*;
 import com.starnft.star.domain.user.model.vo.*;
 import com.starnft.star.domain.user.repository.IUserRepository;
@@ -37,6 +39,9 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Autowired
     private IUserRepository userRepository;
@@ -266,17 +271,43 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
     @Override
     public Boolean checkPayPassword(CheckPayPassword req) {
-        //校验用户是否存在
+        // 前置校验凭证
+        String preCheckKey = String.format(RedisKey.REDIS_PRE_PAY_PWD_CHECK_TOKEN.getKey(), req.getUserId());
+        Optional.ofNullable(this.redisUtil.get(preCheckKey))
+                .filter(realToken -> Objects.equals(realToken, req.getToken()))
+                .orElseThrow(() -> new StarException(StarError.PAYPWD_PRE_CHECK_ERROR));
+
+        // 判断连续错误次数是否超过限制
+        String errorCountKey = String.format(RedisKey.REDIS_PAYPWD_CHECK_ERROR_TIMES.getKey(), req.getUserId());
+        if (this.redisUtil.hasKey(errorCountKey) &&
+                StarConstants.PAYPWD_RETRY_COUNT <= (Integer) this.redisUtil.get(errorCountKey)) {
+            throw new StarException(StarError.PAYPWD_CHECK_FREEZE, String.format(StarError.PAYPWD_CHECK_FREEZE.getErrorMessage(), StarConstants.PAYPWD_RETRY_COUNT));
+        }
+
+        // 校验用户是否存在
         UserInfo userInfo = this.userRepository.queryUserInfoByUserId(req.getUserId());
         if (Objects.isNull(userInfo)) {
             throw new StarException(StarError.USER_NOT_EXISTS);
         }
 
-        //校验密码是否正确
+        // 校验成功标识
+        String checkSuccessKey = String.format(RedisKey.REDIS_PAY_PWD_CHECK_SUCCESS.getKey(), req.getUserId());
+
+        // 校验密码是否正确
         String payPwd = StarUtils.getSHA256Str(req.getPayPassword());
-        if (!payPwd.equals(userInfo.getPlyPassword())) {
-            return Boolean.FALSE;
+        if (!Objects.equals(payPwd, userInfo.getPlyPassword())) {
+            // 错误后删除成功标识
+            this.redisUtil.del(checkSuccessKey);
+            long errorCount = this.redisUtil.incr(errorCountKey, 1);
+            this.redisUtil.expire(errorCountKey, RedisKey.REDIS_PAYPWD_CHECK_ERROR_TIMES.getTime(), RedisKey.REDIS_PAYPWD_CHECK_ERROR_TIMES.getTimeUnit());
+            throw new StarException(StarError.PAYPWD_CHECK_ERROR, String.format(StarError.PAYPWD_CHECK_ERROR.getErrorMessage(), StarConstants.PAYPWD_RETRY_COUNT, errorCount));
         }
+
+        // 清空错误次数和前置校验凭证
+        this.redisUtil.del(errorCountKey, preCheckKey);
+
+        // 保存校验成功标识 供后续业务校验使用 有效期5分钟 使用完需删除
+        this.redisUtil.set(checkSuccessKey, Boolean.TRUE.toString(), RedisKey.REDIS_PAY_PWD_CHECK_SUCCESS.getTime(), RedisKey.REDIS_PAY_PWD_CHECK_SUCCESS.getTimeUnit());
         return Boolean.TRUE;
     }
 
@@ -364,5 +395,14 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     @Override
     public Boolean modifyUserInfo(UserInfoUpdateDTO req) {
         return this.userRepository.updateUserInfo(req) == 1;
+    }
+
+    @Override
+    public String prePayPasswordCheck(Long uid) {
+        String token = StarUtils.getVerifyCode();
+        // 保存前置校验凭证
+        String redisKey = String.format(RedisKey.REDIS_PRE_PAY_PWD_CHECK_TOKEN.getKey(), uid);
+        this.redisUtil.set(redisKey, token, RedisKey.REDIS_PRE_PAY_PWD_CHECK_TOKEN.getTime(), RedisKey.REDIS_PRE_PAY_PWD_CHECK_TOKEN.getTimeUnit());
+        return token;
     }
 }

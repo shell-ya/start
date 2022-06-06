@@ -158,4 +158,6 @@ public interface IUserService {
     UserRealInfo getUserRealInfo(Long uid);
 
     Boolean modifyUserInfo(UserInfoUpdateDTO userInfoUpd);
+
+    String prePayPasswordCheck(Long uid);
 }

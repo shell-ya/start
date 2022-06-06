@@ -124,4 +124,8 @@ public interface UserCore {
     AgreementAndNoticeRes queryAgreementAndNotice(@RequestParam("agreementScene") Integer agreementScene);
 
     Boolean modifyUserInfo(Long uid, UserInfoUpdReq req);
+
+    PayPwdPreCheckRes prePayPasswordCheck(Long uid);
+
+    Boolean checkPayPassword(Long uid, PayPwdCheckReq req);
 }

@@ -33,6 +33,10 @@ public enum StarError {
     TOKEN_EXPIRED_ERROR("100021", "token已失效，请重新登录"),
     USER_NOT_LOGIN("100015", "用户未登录"),
 
+    PAYPWD_PRE_CHECK_ERROR("100022", "支付密码前置校验不通过"),
+    PAYPWD_CHECK_ERROR("100023", "支付密码错误，连续错误%s次后将被冻结6小时，已连续错误%s次"),
+    PAYPWD_CHECK_FREEZE("100024", "您输入的支付密码已连续错误%s次，为了您的账号安全，账号已冻结"),
+
     IMAGE_CAPTCHA_CHECK_ERROR("100030", "图像验证码校验不通过"),
 
     DB_RECORD_UNEXPECTED_ERROR("200001", "数据库记录异常"),

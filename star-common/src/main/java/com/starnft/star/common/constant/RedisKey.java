@@ -73,6 +73,21 @@ public enum RedisKey {
     REDIS_CHANGE_PAY_PWD_SUCCESS_EXPIRED(103, StarConstants.SERVICE_NAME.concat(".stint.changgepaypwd.succcess.%s"), 24L, TimeUnit.HOURS),
 
     /**
+     * 前置支付密码校验令牌
+     */
+    REDIS_PRE_PAY_PWD_CHECK_TOKEN(104, StarConstants.SERVICE_NAME.concat(".paypwd.check.pre.%s"), 5L, TimeUnit.MINUTES),
+
+    /**
+     * 支付密码校验成功标识
+     */
+    REDIS_PAY_PWD_CHECK_SUCCESS(105, StarConstants.SERVICE_NAME.concat(".paypwd.check.success.%s"), 5L, TimeUnit.MINUTES),
+
+    /**
+     * 支付密码错误次数
+     */
+    REDIS_PAYPWD_CHECK_ERROR_TIMES(106, StarConstants.SERVICE_NAME.concat(".paypwd.check.error.times.%s"), 6L, TimeUnit.HOURS),
+
+    /**
      * 钱包交易状态锁
      */
     REDIS_TRANSACTION_ING(401, StarConstants.SERVICE_NAME.concat(".wallet.transaction:%s"), 3L, TimeUnit.MINUTES),

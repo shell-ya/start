@@ -303,6 +303,21 @@ public class UserCoreImpl implements UserCore {
                         .build());
     }
 
+    @Override
+    public PayPwdPreCheckRes prePayPasswordCheck(Long uid) {
+        return new PayPwdPreCheckRes(this.userService.prePayPasswordCheck(uid));
+    }
+
+    @Override
+    public Boolean checkPayPassword(Long uid, PayPwdCheckReq req) {
+        return this.userService.checkPayPassword(CheckPayPassword
+                .builder()
+                .userId(uid)
+                .token(req.getToken())
+                .payPassword(req.getPayPassword())
+                .build());
+    }
+
     private void popupAgreement(PopupAgreementRes popupAgreementRes
             , List<AgreementVO> agreementVOS
             , Integer authorizationSceneId) {
