@@ -11,28 +11,28 @@ import com.starnft.star.domain.wallet.model.vo.RechargeVO;
 import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
 import com.starnft.star.domain.wallet.service.WalletService;
 import com.starnft.star.domain.wallet.service.stateflow.IStateHandler;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+
 @Service
-@Slf4j
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @RocketMQMessageListener(topic = "STAR-RECHARGE", consumerGroup = "star-consumer-recharge-group", selectorExpression = "callback")
 public class RechargeConsumer implements RocketMQListener<PayCheckRes> {
 
-    final WalletService walletService;
-
-    final RedisUtil redisUtil;
-
-    final IStateHandler stateHandler;
+    private Logger log = LoggerFactory.getLogger(RechargeConsumer.class);
+    @Resource
+    WalletService walletService;
+    @Resource
+    RedisUtil redisUtil;
+    @Resource
+    IStateHandler stateHandler;
 
     @Override
     public void onMessage(PayCheckRes payCheckRes) {
-
         if (payCheckRes.getStatus().equals(ResultCode.SUCCESS.getCode())) {
             RechargeVO rechargeVO = BeanColverUtil.colver(payCheckRes, RechargeVO.class);
             boolean isSuccess = walletService.rechargeProcess(rechargeVO);

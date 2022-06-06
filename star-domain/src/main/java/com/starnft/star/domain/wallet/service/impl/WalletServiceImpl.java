@@ -241,7 +241,7 @@ public class WalletServiceImpl implements WalletService {
 
         //修改余额
         boolean balanceModify = walletRepository.modifyWalletBalance(WalletVO.builder().uid(Long.valueOf(rechargeVO.getUid()))
-                .balance(curr).wallet_outcome(income).build());
+                .balance(curr).wallet_income(income).build());
 
         // redis写入交易成功信息 前端轮训状态直接查redis
         if (logWrite && balanceModify && result.getCode().equals(ResultCode.SUCCESS.getCode())) {

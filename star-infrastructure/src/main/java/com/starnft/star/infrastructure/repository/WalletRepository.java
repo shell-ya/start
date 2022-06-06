@@ -1,6 +1,7 @@
 package com.starnft.star.infrastructure.repository;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
@@ -20,6 +21,7 @@ import com.starnft.star.domain.wallet.repository.IWalletRepository;
 import com.starnft.star.infrastructure.entity.wallet.*;
 import com.starnft.star.infrastructure.mapper.wallet.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,7 +59,9 @@ public class WalletRepository implements IWalletRepository {
             return null;
         }
 
-        return WalletVO.builder().walletId(walletInfo.getwId())
+        return WalletVO.builder()
+                .uid(walletInfo.getUid())
+                .walletId(walletInfo.getwId())
                 .balance(walletInfo.getBalance())
                 .frozen(walletInfo.getFrozen() == 1)
                 .frozen_fee(walletInfo.getFrozenFee())
@@ -192,18 +196,17 @@ public class WalletRepository implements IWalletRepository {
     }
 
     @Override
-    public boolean updateWalletRecordSuccess(String serialNo, String payStatus, String outTradeNo) {
-        StarNftWalletRecord record = queryWalletRecordPO(serialNo, payStatus);
+    public boolean updateWalletRecordSuccess(String serialNo, String outTradeNo, String payStatus) {
+        StarNftWalletRecord record = queryWalletRecordPO(serialNo, null);
         if (null == record) {
             throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "记录不存在");
         }
 
-        StarNftWalletRecord update = new StarNftWalletRecord();
-        update.setId(record.getId());
-        update.setRecordSn(serialNo);
-        update.setOutTradeNo(outTradeNo);
-        update.setPayStatus(payStatus);
-        return starNftWalletRecordMapper.updateRecord(update) == 1;
+        LambdaQueryWrapper<StarNftWalletRecord> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(StringUtils.isNotBlank(serialNo), StarNftWalletRecord::getRecordSn, serialNo);
+        record.setOutTradeNo(outTradeNo);
+        record.setPayStatus(payStatus);
+        return starNftWalletRecordMapper.update(record, wrapper) == 1;
     }
 
     @Override
@@ -275,7 +278,7 @@ public class WalletRepository implements IWalletRepository {
                     .bankShortName(nftBankRelation.getBankNameShort()).build());
         }
 
-         return relations;
+        return relations;
     }
 
     @Override

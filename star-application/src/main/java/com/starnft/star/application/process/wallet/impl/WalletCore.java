@@ -35,6 +35,7 @@ import com.starnft.star.domain.wallet.service.WalletService;
 import com.starnft.star.domain.wallet.service.stateflow.IStateHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
@@ -77,7 +78,7 @@ public class WalletCore implements IWalletCore {
     private IMessageSender messageSender;
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public RechargeReqResult recharge(@Validated RechargeFacadeReq rechargeFacadeReq) {
         //参数验证
         verifyParam(rechargeFacadeReq);
@@ -91,22 +92,17 @@ public class WalletCore implements IWalletCore {
         //锁定当前钱包交易
         if (redisLockUtils.lock(isTransaction, RedisKey.REDIS_TRANSACTION_ING.getTime())) {
             try {
-                //钱包领域 生成待支付充值订单
+                //生成充值单状态为支付中
                 WalletRecordReq walletRecordReq = walletRecordInit(rechargeFacadeReq);
                 boolean isSuccess = walletService.rechargeRecordGenerate(walletRecordReq);
-
                 RechargeReqResult rechargeReqResult = new RechargeReqResult();
-                if (isSuccess) {
-                    //调用支付领域服务 获取拉起支付参数
-                    PaymentRes payResult = paymentService.pay(buildPaymentReq(walletRecordReq, rechargeFacadeReq));
-                    if (payResult.getStatus().equals(ResultCode.SUCCESS.getCode())) {
-                        rechargeReqResult.setOrderSn(payResult.getOrderSn());
-                        //组装跳转url
-                        assembly(rechargeReqResult);
-                        //修改状态为支付中
-                        modifyStatus(walletRecordReq, payResult);
-                        return rechargeReqResult;
-                    }
+                //调用支付领域服务 获取拉起支付参数
+                PaymentRes payResult = paymentService.pay(buildPaymentReq(walletRecordReq, rechargeFacadeReq));
+                if (payResult.getStatus().equals(ResultCode.SUCCESS.getCode())) {
+                    rechargeReqResult.setOrderSn(payResult.getOrderSn());
+                    //组装跳转url
+                    assembly(rechargeReqResult);
+                    return rechargeReqResult;
                 }
             } catch (Exception e) {
                 log.error("uid:[{}] 充值异常", rechargeFacadeReq.getUserId(), e);
@@ -284,7 +280,7 @@ public class WalletCore implements IWalletCore {
                 .tsType(StarConstants.Transaction_Type.Recharge.getCode())
                 .tsMoney(rechargeFacadeReq.getMoney())
                 .payTime(new Date())
-                .payStatus(StarConstants.Pay_Status.WAIT_PAY.name())
+                .payStatus(StarConstants.Pay_Status.PAY_ING.name())
                 .build();
     }
 }
