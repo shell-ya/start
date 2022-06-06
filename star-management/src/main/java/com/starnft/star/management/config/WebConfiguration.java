@@ -14,8 +14,8 @@ import javax.annotation.Resource;
 @Profile({"test"})
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
-    @Resource
-    private TokenInterceptor tokenInterceptor;
+//    @Resource
+//    private TokenInterceptor tokenInterceptor;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -26,22 +26,23 @@ public class WebConfiguration implements WebMvcConfigurer {
                 .maxAge(3600);
     }
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(tokenInterceptor)
-                .excludePathPatterns(
-                        "/swagger-resources/**",
-                        "/webjars/**",
-                        "/v2/**",
-                        "/swagger-ui.html/**",
-                        "/doc.html/**",
-                        "/favicon.ico/**",
-                        "/captcha/**",
-                        "/mode-Text.js/**"
-                )
-
-        ;
-    }
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry
+////                .addInterceptor(tokenInterceptor)
+//                .excludePathPatterns(
+//                        "/swagger-resources/**",
+//                        "/webjars/**",
+//                        "/v2/**",
+//                        "/swagger-ui.html/**",
+//                        "/doc.html/**",
+//                        "/favicon.ico/**",
+//                        "/captcha/**",
+//                        "/mode-Text.js/**"
+//                )
+//
+//        ;
+//    }
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // swagger页面
