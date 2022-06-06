@@ -6,6 +6,7 @@ import com.starnft.star.application.process.user.res.*;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.domain.user.model.dto.AuthenticationNameDTO;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
+import com.starnft.star.interfaces.interceptor.UserContext;
 import com.starnft.star.interfaces.interceptor.UserResolverInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -68,8 +69,9 @@ public class UserController {
 
     @ApiOperation("查询用户信息")
     @PostMapping("/userinfo/queryuserinfo")
-    public RopResponse<UserGatheringInfoRes> getUserInfo(UserResolverInfo userResolverInfo) {
-        UserGatheringInfoRes userGatheringInfoRes = this.userCore.ObtainUserGatheringInfo(new UserGatheringInfoReq(userResolverInfo.getUserId()));
+    public RopResponse<UserGatheringInfoRes> getUserInfo() {
+        Long userId = UserContext.getUserId().getUserId();
+        UserGatheringInfoRes userGatheringInfoRes = this.userCore.ObtainUserGatheringInfo(new UserGatheringInfoReq(userId));
         return RopResponse.success(userGatheringInfoRes);
     }
 

@@ -225,7 +225,7 @@ public class WalletRepository implements IWalletRepository {
     public boolean createWithdrawRecord(WithdrawRecordVO withdrawRecordVO) {
         StarNftWithdrawApply starNftWithdrawApply = new StarNftWithdrawApply();
         starNftWithdrawApply.setApplyStatus(0);//0 提现中 1 已提现
-        starNftWithdrawApply.setApplyTime(DateUtil.getCurrentDate(DatePattern.YYYY_MM_DD_HH_MM_SS));
+        starNftWithdrawApply.setApplyTime(DateUtil.getCurrentDateTime(DatePattern.YYYY_MM_DD_HH_MM_SS));
         starNftWithdrawApply.setWithdrawBankNo(withdrawRecordVO.getBankNo());
         starNftWithdrawApply.setBankMatchName(withdrawRecordVO.getCardName());
         starNftWithdrawApply.setWithdrawChannel(withdrawRecordVO.getChannel());

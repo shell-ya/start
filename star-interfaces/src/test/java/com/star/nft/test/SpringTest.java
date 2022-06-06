@@ -68,14 +68,14 @@ public class SpringTest {
                 TopicConstants.WALLET_RECHARGE_DESTINATION.getTag());
         PayCheckRes payCheckRes = new PayCheckRes();
         payCheckRes.setStatus(0);
-        payCheckRes.setOrderSn("983349086671503360");
+        payCheckRes.setOrderSn("983442751855132672");
         payCheckRes.setTotalAmount(new BigDecimal("10.00"));
-        payCheckRes.setUid("972318512126840832");
-        payCheckRes.setTransSn("9833490866715033601");
+        payCheckRes.setUid("982698476986724352");
+        payCheckRes.setTransSn("10983442751855132672");
         payCheckRes.setMessage("good");
         payCheckRes.setPayChannel(StarConstants.PayChannel.UNION_PAY.name());
 
-        messageSender.send("STAR-RECHARGE:callback", Optional.of(payCheckRes));
+        messageSender.send(rechargeCallbackProcessTopic, Optional.of(payCheckRes));
 
 
     }
