@@ -12,6 +12,11 @@
     <#if param1.body.orderStatus?? &&param1.body.orderStatus=='00' >
         "status":"0",
         "totalAmount":"${helper.fenToYuan(param1.body.totalAmount)}",
+        <#if param1.body.extend?? >
+            "uid":"${helper.parseStr(helper.parseObj(param1.body.extend),'userId')}",
+            "payChannel":"${helper.parseStr(helper.parseObj(param1.body.extend),'payChannel')}",
+            "topic":"${helper.parseStr(helper.parseObj(param1.body.extend),'multicastTopic')}",
+        </#if>
         "message":"交易成功"
     <#else>
         "status":"404",

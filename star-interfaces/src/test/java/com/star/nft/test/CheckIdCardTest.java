@@ -50,7 +50,7 @@ public class CheckIdCardTest {
     }
     @Test
     public void testOrder() {
-        PayCheckReq paymentRich = PayCheckReq.builder().orderSn("YL1531328398713032704I").payChannel(StarConstants.PayChannel.UNION_PAY.name()).build();
+        PayCheckReq paymentRich = PayCheckReq.builder().orderSn("983508486673530880").payChannel(StarConstants.PayChannel.UNION_PAY.name()).build();
         PayCheckRes payCheckRes = paymentService.orderCheck(paymentRich);
         System.out.println(payCheckRes);
 

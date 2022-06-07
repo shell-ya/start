@@ -1,5 +1,6 @@
 package com.starnft.star.domain.payment.helper;
 
+import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -65,6 +66,14 @@ public class TemplateHelper {
      * @param object
      * @return
      */
+    public static cn.hutool.json.JSONObject parseObj(Object obj){
+        cn.hutool.json.JSONObject jsonObject = JSONUtil.parseObj(obj);
+        return jsonObject;
+    }
+    public static String parseStr(Object obj,String key){
+        String str = JSONUtil.parseObj(obj).getStr(key);
+        return str;
+    }
     public static boolean isArray(Object object) {
         // 判断获取的参数类型是否为数组或者为list集合
         Object o = JSON.parse(JSON.toJSONString(object));
