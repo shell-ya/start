@@ -157,7 +157,26 @@ public interface IUserService {
      */
     UserRealInfo getUserRealInfo(Long uid);
 
+    /**
+     * 修改用户信息
+     *
+     * @param userInfoUpd
+     * @return
+     */
     Boolean modifyUserInfo(UserInfoUpdateDTO userInfoUpd);
 
+    /**
+     * 预校验支付密码
+     *
+     * @param uid
+     * @return
+     */
     String prePayPasswordCheck(Long uid);
+
+    /**
+     * 支付密码校验成功判断
+     *
+     * @param uid
+     */
+    void assertPayPwdCheckSuccess(Long uid);
 }

@@ -7,6 +7,7 @@ import com.starnft.star.common.enums.LoginTypeEnum;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.po.AccessToken;
+import com.starnft.star.common.utils.Assert;
 import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.user.model.dto.*;
@@ -404,5 +405,14 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         String redisKey = String.format(RedisKey.REDIS_PRE_PAY_PWD_CHECK_TOKEN.getKey(), uid);
         this.redisUtil.set(redisKey, token, RedisKey.REDIS_PRE_PAY_PWD_CHECK_TOKEN.getTime(), RedisKey.REDIS_PRE_PAY_PWD_CHECK_TOKEN.getTimeUnit());
         return token;
+    }
+
+    @Override
+    public void assertPayPwdCheckSuccess(Long uid) {
+        // 校验成功标识
+        String checkSuccessKey = String.format(RedisKey.REDIS_PAY_PWD_CHECK_SUCCESS.getKey(), uid);
+        Assert.isTrue(this.redisUtil.hasKey(checkSuccessKey), () -> new StarException(StarError.PAYPWD_PRE_CHECK_ERROR));
+        // 使用后删除成功标识
+        this.redisUtil.del(checkSuccessKey);
     }
 }
