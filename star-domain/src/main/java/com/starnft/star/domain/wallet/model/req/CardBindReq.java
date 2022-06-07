@@ -29,7 +29,7 @@ public class CardBindReq implements Serializable {
     /**
      * 银行卡号
      */
-    @ApiModelProperty(value = "银行卡号")
+    @ApiModelProperty(value = "银行卡号", required = true)
     @NotNull(message = "银行卡号不能为空")
     @Pattern(regexp = "[1-9]\\d*", message = "卡号输入有误")
     private String cardNo;
@@ -41,7 +41,7 @@ public class CardBindReq implements Serializable {
     /**
      * 持卡人姓名
      */
-    @ApiModelProperty(value = "持卡人姓名")
+    @ApiModelProperty(value = "持卡人姓名", required = true)
     @NotBlank(message = "持卡人姓名不能为空")
     private String cardName;
     /**
@@ -54,7 +54,7 @@ public class CardBindReq implements Serializable {
      * 银行预留电话
      */
     @NotBlank(message = "银行预留电话不能为空")
-    @ApiModelProperty(value = "银行预留电话", required = false)
+    @ApiModelProperty(value = "银行预留电话", required = true)
     @Pattern(regexp = "0?(13|14|15|18|17)[0-9]{9}", message = "手机号格式错误")
     private String phone;
 

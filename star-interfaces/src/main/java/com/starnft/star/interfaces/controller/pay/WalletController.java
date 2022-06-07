@@ -41,9 +41,8 @@ public class WalletController {
 
     @ApiOperation("充值")
     @PostMapping("/recharge")
-    @TokenIgnore
     public RopResponse<RechargeReqResult> recharge(@Validated @RequestBody RechargeFacadeReq req) {
-//        req.setUserId(UserContext.getUserId().getUserId());
+        req.setUserId(UserContext.getUserId().getUserId());
         return RopResponse.success(walletCore.recharge(req));
     }
 

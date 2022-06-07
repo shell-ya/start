@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
@@ -26,7 +27,8 @@ public class BankRelationVO implements Serializable {
     /**
      * 银行卡号
      */
-    @ApiModelProperty(value = "银行卡号")
+    @ApiModelProperty(value = "银行卡号", required = true)
+    @NotBlank(message = "银行卡号不能为空")
     @Pattern(regexp = "[1-9]\\d*", message = "卡号输入有误")
     private String cardNo;
     /**
