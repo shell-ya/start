@@ -2,6 +2,8 @@ package com.starnft.star.domain.notify.router;
 
 import com.starnft.star.common.enums.PlatformTypeEnum;
 import com.starnft.star.domain.notify.handler.INotifyHandler;
+import com.starnft.star.domain.payment.model.res.NotifyRes;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -15,6 +17,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
+@Slf4j
 public class NotifyRouter implements INotifyRouter, ApplicationContextAware {
     @Resource
     ApplicationContext context;
@@ -30,11 +33,10 @@ public class NotifyRouter implements INotifyRouter, ApplicationContextAware {
     }
 
     @Override
-    public String doDistribute(String sign, HttpServletRequest request, HttpServletResponse response) {
+    public NotifyRes doDistribute(String sign, HttpServletRequest request, HttpServletResponse response) {
         PlatformTypeEnum platforms = PlatformTypeEnum.getPlatforms(sign);
         INotifyHandler iNotifyHandler = handlerMap.get(platforms);
-        String result = iNotifyHandler.doNotify(request);
-        //
+        NotifyRes result = iNotifyHandler.doNotify(request);
 
         return result;
 

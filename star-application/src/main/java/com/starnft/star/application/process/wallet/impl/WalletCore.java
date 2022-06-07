@@ -101,7 +101,7 @@ public class WalletCore implements IWalletCore {
                 if (payResult.getStatus().equals(ResultCode.SUCCESS.getCode())) {
                     rechargeReqResult.setOrderSn(payResult.getOrderSn());
                     //组装跳转url
-                    assembly(rechargeReqResult);
+                    assembly(rechargeReqResult, payResult);
                     return rechargeReqResult;
                 }
             } catch (Exception e) {
@@ -125,7 +125,8 @@ public class WalletCore implements IWalletCore {
     }
 
 
-    private void assembly(RechargeReqResult rechargeReqResult) {
+    private void assembly(RechargeReqResult rechargeReqResult, PaymentRes payResult) {
+        rechargeReqResult.setNeededParam(payResult.getThirdPage());
     }
 
     private PaymentRich buildPaymentReq(WalletRecordReq walletRecordReq, RechargeFacadeReq rechargeFacadeReq) {

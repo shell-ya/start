@@ -1,7 +1,7 @@
 package com.starnft.star.common.enums;
 
 public enum PlatformTypeEnum {
-    sand_pay("sand_pay");
+    sand_pay("sand");
     private final String value;
 
     PlatformTypeEnum(String value) {

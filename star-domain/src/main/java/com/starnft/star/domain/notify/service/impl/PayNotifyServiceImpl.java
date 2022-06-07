@@ -2,6 +2,7 @@ package com.starnft.star.domain.notify.service.impl;
 
 import com.starnft.star.domain.notify.router.INotifyRouter;
 import com.starnft.star.domain.notify.service.PayNotifyService;
+import com.starnft.star.domain.payment.model.res.NotifyRes;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -15,7 +16,8 @@ public class PayNotifyServiceImpl implements PayNotifyService {
     private INotifyRouter iNotifyRouter;
 
     @Override
-    public String transform(String platform, HttpServletRequest request, HttpServletResponse response) {
-        return iNotifyRouter.doDistribute(platform, request, response);
+    public NotifyRes transform(String platform, HttpServletRequest request, HttpServletResponse response) {
+        NotifyRes s = iNotifyRouter.doDistribute(platform, request, response);
+        return s;
     }
 }

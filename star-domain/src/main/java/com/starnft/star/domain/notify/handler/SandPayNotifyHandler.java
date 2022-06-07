@@ -3,14 +3,16 @@ package com.starnft.star.domain.notify.handler;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.starnft.star.common.enums.PlatformTypeEnum;
-import com.starnft.star.domain.notify.model.NotifyDTO;
 import com.starnft.star.domain.payment.helper.SdKeysHelper;
+import com.starnft.star.domain.payment.model.res.NotifyRes;
+import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 
 @Component
 @Slf4j
@@ -19,7 +21,7 @@ public class SandPayNotifyHandler implements INotifyHandler {
     SdKeysHelper sdKeysHelper;
 
     @Override
-    public String doNotify(HttpServletRequest request) {
+    public NotifyRes doNotify(HttpServletRequest request) {
         String data = request.getParameter("data");
         String sign = request.getParameter("sign");
         // 验证签名
@@ -34,17 +36,22 @@ public class SandPayNotifyHandler implements INotifyHandler {
             } else {
                 log.info("verify sign success");
                 JSONObject dataJson = JSONObject.parseObject(data);
+                log.info("返回的数据", JSONUtil.toJsonStr(dataJson));
                 if (dataJson != null) {
                     if (dataJson.getJSONObject("head").getString("respCode").equals("000000")) {
-                        return JSONUtil.toJsonStr(
-
-                                NotifyDTO
-                                        .builder()
-//                                .orderCode(dataJson.getJSONObject("body").getString("tradeNo"))
-//                                .platformTradeNo(dataJson.getJSONObject("body").getString("payOrderCode"))
-//                                .payStatus(DictConstants.PayStatus.SUCCESS.getCode())
-                                        .build()
-                        );
+                        JSONObject extend = dataJson.getJSONObject("body").getJSONObject("extend");
+                        return   NotifyRes.builder().payCheckRes(PayCheckRes
+                                .builder()
+                                .orderSn(dataJson.getJSONObject("body").getString("tradeNo"))
+                                .transSn(dataJson.getJSONObject("body").getString("payOrderCode"))
+                                .uid(extend.getString("userId"))
+                                .payChannel(extend.getString("payChannel"))
+                                .status(0)
+                                .message(dataJson.getJSONObject("head").getString("respMsg"))
+                                .totalAmount(new BigDecimal(dataJson.getJSONObject("body").getString("settleAmount")).divide(new BigDecimal("100")))
+                                .build())
+                                .topic(extend.getString("multicastTopic"))
+                                .build();
                     }
                     log.info("通知业务数据为：" + JSONObject.toJSONString(dataJson, true));
                 } else {
@@ -61,5 +68,9 @@ public class SandPayNotifyHandler implements INotifyHandler {
     @Override
     public PlatformTypeEnum getNotifyChannel() {
         return PlatformTypeEnum.sand_pay;
+    }
+
+    public static void main(String[] args) {
+        System.out.println();
     }
 }

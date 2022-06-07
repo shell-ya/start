@@ -7,5 +7,5 @@ pay-conf:
         signCertPath: classpath:keys/lsnft.pfx
         signCertPwd: 101750
         sandCertPath: classpath:keys/sand.cer
-        notify: https://mp.lsnft.cn/api/api/v1/trans/notify/sd
+        notify: http://jacqueshuang.natapp1.cc/trans/notify/sand
 
