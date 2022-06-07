@@ -23,7 +23,7 @@ import com.starnft.star.domain.wallet.service.stateflow.IStateHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.web3j.crypto.CipherException;
 
@@ -59,8 +59,10 @@ public class WalletServiceImpl implements WalletService {
     @Resource
     private IStateHandler stateHandler;
 
+    @Resource
+    private TransactionTemplate template;
+
     @Override
-    @Transactional
     public WalletResult queryWalletInfo(WalletInfoReq walletInfoReq) {
         WalletVO walletVO = walletRepository.queryWallet(walletInfoReq);
         if (walletVO == null) {
@@ -84,7 +86,6 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    @Transactional
     public boolean rechargeRecordGenerate(WalletRecordReq walletRecordReq) {
 
         if (Strings.isNullOrEmpty(walletRecordReq.getRecordSn())) {
@@ -146,7 +147,6 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    @Transactional
     public WithdrawResult withdraw(WithDrawReq withDrawReq) {
         //校验提现规则
         String isTransactionKey = verifyAndGetKey(withDrawReq);
@@ -162,22 +162,25 @@ public class WalletServiceImpl implements WalletService {
                 if (walletResult.getBalance().compareTo(new BigDecimal(withDrawReq.getMoney())) <= 0) {
                     throw new StarException(StarError.BALANCE_NOT_ENOUGH);
                 }
-                //修改钱包余额
-                WalletVO walletVO = createWithdrawWalletVO(walletResult, withDrawReq);
-                boolean aSuccess = walletRepository.modifyWalletBalance(walletVO);
-                //记录提现记录 提现中
-                WithdrawRecordVO withdrawRecordVO = createWithdrawRecordVO(withDrawReq, withdrawTradeNo);
-                boolean bSuccess = walletRepository.createWithdrawRecord(withdrawRecordVO);
-                //记录交易记录
-                WalletRecordReq walletRecordReq = createWalletRecordReq(withDrawReq, withdrawTradeNo);
-                boolean cSuccess = walletRepository.createWalletRecord(walletRecordReq);
+                Boolean isSuccess = template.execute(status -> {
+                    //修改钱包余额
+                    WalletVO walletVO = createWithdrawWalletVO(walletResult, withDrawReq);
+                    boolean aSuccess = walletRepository.modifyWalletBalance(walletVO);
+                    //记录提现记录 提现中
+                    WithdrawRecordVO withdrawRecordVO = createWithdrawRecordVO(withDrawReq, withdrawTradeNo);
+                    boolean bSuccess = walletRepository.createWithdrawRecord(withdrawRecordVO);
+                    //记录交易记录
+                    WalletRecordReq walletRecordReq = createWalletRecordReq(withDrawReq, withdrawTradeNo);
+                    boolean cSuccess = walletRepository.createWalletRecord(walletRecordReq);
+                    return aSuccess && bSuccess && cSuccess;
+                });
+
                 //缓存提现次数到Redis
-                if (aSuccess && bSuccess && cSuccess) {
+                if (Boolean.TRUE.equals(isSuccess)) {
                     String withdrawTimesKey = String.format(RedisKey.REDIS_WITHDRAW_TIMES.getKey(),
                             new StringBuffer(String.valueOf(withDrawReq.getUid())).append(withDrawReq.getWalletId()));
                     redisUtil.incr(withdrawTimesKey, 1);
                 }
-
             }
         } catch (Exception e) {
             throw new RuntimeException("提现操作发生异常", e);
@@ -221,13 +224,12 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    @Transactional
     public boolean rechargeProcess(@Validated RechargeVO rechargeVO) {
         WalletVO walletVO = walletRepository.queryWallet(new WalletInfoReq(Long.valueOf(rechargeVO.getUid())));
         //充值后当前金额
         BigDecimal curr = walletVO.getBalance().add(rechargeVO.getTotalAmount().abs());
         //增加总收入金额
-        BigDecimal income = walletVO.getWallet_income().add(curr);
+        BigDecimal income = walletVO.getWallet_income().add(rechargeVO.getTotalAmount().abs());
 
         //修改交易记录状态 回写第三方流水号
         WalletRecordVO walletRecordVO = walletRepository.queryWalletRecordBySerialNo(rechargeVO.getOrderSn(), StarConstants.Pay_Status.PAY_ING.name());
@@ -236,33 +238,35 @@ public class WalletServiceImpl implements WalletService {
             throw new RuntimeException("钱包交易记录状态变化出错");
         }
 
-        Result result = stateHandler.paySuccess(rechargeVO.getOrderSn(),
-                rechargeVO.getTransSn(), StarConstants.Pay_Status.valueOf(walletRecordVO.getPayStatus()));
+        Boolean isSuccess = template.execute(status -> {
+            Result result = stateHandler.paySuccess(rechargeVO.getOrderSn(),
+                    rechargeVO.getTransSn(), StarConstants.Pay_Status.valueOf(walletRecordVO.getPayStatus()));
 
-        //记录余额变动记录
-        boolean logWrite = walletRepository.createWalletLog(RechargeReq.builder().walletId(walletVO.getWalletId())
-                .userId(walletVO.getUid()).money(rechargeVO.getTotalAmount()).currentMoney(curr).payChannel(rechargeVO.getPayChannel())
-                .payNo(rechargeVO.getOrderSn()).build());
+            //记录余额变动记录
+            boolean logWrite = walletRepository.createWalletLog(RechargeReq.builder().walletId(walletVO.getWalletId())
+                    .userId(walletVO.getUid()).money(rechargeVO.getTotalAmount()).currentMoney(curr).payChannel(rechargeVO.getPayChannel())
+                    .payNo(rechargeVO.getOrderSn()).build());
 
-        //修改余额
-        boolean balanceModify = walletRepository.modifyWalletBalance(WalletVO.builder().uid(Long.valueOf(rechargeVO.getUid()))
-                .balance(curr).wallet_income(income).build());
+            //修改余额
+            boolean balanceModify = walletRepository.modifyWalletBalance(WalletVO.builder().uid(Long.valueOf(rechargeVO.getUid()))
+                    .balance(curr).wallet_income(income).build());
+            return logWrite && balanceModify && result.getCode().equals(ResultCode.SUCCESS.getCode());
+        });
 
         // redis写入交易成功信息 前端轮训状态直接查redis
-        if (logWrite && balanceModify && result.getCode().equals(ResultCode.SUCCESS.getCode())) {
+        if (Boolean.TRUE.equals(isSuccess)) {
             redisUtil.set(String.format(RedisKey.REDIS_TRANSACTION_SUCCESS.getKey()
                     , rechargeVO.getOrderSn()), 1, RedisKey.REDIS_TRANSACTION_SUCCESS.getTime());
         }
 
-        return logWrite && balanceModify && result.getCode().equals(ResultCode.SUCCESS.getCode());
+        return Boolean.TRUE.equals(isSuccess);
     }
 
     @Override
     public TxResultRes txResultCacheQuery(TxResultReq txResultReq) {
 
-        boolean isSuccess = false;
         //充值回调
-        isSuccess = redisUtil.hasKey(String.format(RedisKey.REDIS_TRANSACTION_SUCCESS.getKey()
+        boolean isSuccess = redisUtil.hasKey(String.format(RedisKey.REDIS_TRANSACTION_SUCCESS.getKey()
                 , txResultReq.getOrderSn()));
 
         if (isSuccess) {
@@ -275,7 +279,6 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    @Transactional
     public TxResultRes txResultQuery(TxResultReq txResultReq) {
         String txResultKey = String.format(RedisKey.REDIS_TRANSACTION_SUCCESS.getKey(), txResultReq.getOrderSn());
 
