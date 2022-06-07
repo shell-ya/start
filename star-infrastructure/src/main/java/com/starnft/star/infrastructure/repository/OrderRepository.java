@@ -1,6 +1,7 @@
 package com.starnft.star.infrastructure.repository;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.repository.IOrderRepository;
@@ -18,12 +19,11 @@ public class OrderRepository implements IOrderRepository {
     @Resource
     private StarNftOrderMapper starNftOrderMapper;
 
-    private static final String ORDER_PREFIX = "CMV";
-
     @Override
     public boolean createOrder(OrderVO orderVO) {
         StarNftOrder starNftOrder = new StarNftOrder();
-        starNftOrder.setOrderSn(ORDER_PREFIX + orderVO.getOrderSn());
+        //todo 入参里生成
+        starNftOrder.setOrderSn(StarConstants.OrderPrefix.PublishGoods.getPrefix().concat(orderVO.getOrderSn()));
         starNftOrder.setUserId(orderVO.getUserId());
         starNftOrder.setPayAmount(orderVO.getPayAmount());
         starNftOrder.setTotalAmount(orderVO.getTotalAmount());

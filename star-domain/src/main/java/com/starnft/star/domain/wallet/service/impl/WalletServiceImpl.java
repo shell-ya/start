@@ -200,7 +200,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     private WithdrawRecordVO createWithdrawRecordVO(WithDrawReq withDrawReq, long withdrawTradeNo) {
-        return WithdrawRecordVO.builder().withdrawTradeNo(String.valueOf(withdrawTradeNo))
+        return WithdrawRecordVO.builder().withdrawTradeNo(StarConstants.OrderPrefix.WithdrawSn.getPrefix().concat(String.valueOf(withdrawTradeNo)))
                 .walletId(withDrawReq.getWalletId()).bankNo(Long.valueOf(withDrawReq.getBankNo()))
                 .cardName(withDrawReq.getCardName()).channel(withDrawReq.getChannel())
                 .money(new BigDecimal(withDrawReq.getMoney())).uid(withDrawReq.getUid()).build();

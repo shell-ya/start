@@ -3,7 +3,6 @@ package com.starnft.star.application.process.wallet.impl;
 import com.google.common.collect.Lists;
 import com.starnft.star.application.mq.IMessageSender;
 import com.starnft.star.application.mq.constant.TopicConstants;
-import com.starnft.star.application.mq.producer.wallet.WalletProducer;
 import com.starnft.star.application.process.wallet.IWalletCore;
 import com.starnft.star.application.process.wallet.req.PayRecordReq;
 import com.starnft.star.application.process.wallet.req.RechargeFacadeReq;
@@ -271,7 +270,7 @@ public class WalletCore implements IWalletCore {
     private WalletRecordReq walletRecordInit(RechargeFacadeReq rechargeFacadeReq) {
         IIdGenerator iIdGenerator = idGeneratorMap.get(StarConstants.Ids.SnowFlake);
         return WalletRecordReq.builder()
-                .recordSn(String.valueOf(iIdGenerator.nextId()))
+                .recordSn(StarConstants.OrderPrefix.RechargeSn.getPrefix().concat(String.valueOf(iIdGenerator.nextId())))
                 .from_uid(0L) // 充值为0
                 .to_uid(rechargeFacadeReq.getUserId())
                 .payChannel(rechargeFacadeReq.getChannel())

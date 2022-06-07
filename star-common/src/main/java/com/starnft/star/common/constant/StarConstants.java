@@ -281,4 +281,28 @@ public class StarConstants {
         }
     }
 
+    public enum OrderPrefix{
+
+        //充值订单前缀
+        RechargeSn("RC"),
+        //提现订单前缀
+        WithdrawSn("WD"),
+        //发行商品订单前缀
+        PublishGoods("PG"),
+        //市场交易订单前缀
+        TransactionSn("TS")
+
+        ;
+
+        private final String prefix;
+
+        OrderPrefix(String prefix) {
+            this.prefix = prefix;
+        }
+
+        public String getPrefix() {
+            return prefix;
+        }
+    }
+
 }
