@@ -15,6 +15,7 @@ import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.common.utils.DateUtil;
 import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.payment.core.IPaymentService;
@@ -74,7 +75,6 @@ public class WalletCore implements IWalletCore {
     private IMessageSender messageSender;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public RechargeReqResult recharge(@Validated RechargeFacadeReq rechargeFacadeReq) {
         //参数验证
         verifyParam(rechargeFacadeReq);
@@ -91,6 +91,9 @@ public class WalletCore implements IWalletCore {
                 //生成充值单状态为支付中
                 WalletRecordReq walletRecordReq = walletRecordInit(rechargeFacadeReq);
                 boolean isSuccess = walletService.rechargeRecordGenerate(walletRecordReq);
+                if (!isSuccess){
+                    throw new RuntimeException("生成预充值记录失败");
+                }
                 RechargeReqResult rechargeReqResult = new RechargeReqResult();
                 //调用支付领域服务 获取拉起支付参数
                 PaymentRes payResult = paymentService.pay(buildPaymentReq(walletRecordReq, rechargeFacadeReq));
@@ -110,6 +113,7 @@ public class WalletCore implements IWalletCore {
         throw new StarException(StarError.PAY_PROCESS_ERROR);
     }
 
+    @Deprecated
     private void modifyStatus(WalletRecordReq walletRecordReq, PaymentRes payResult) {
         //状态机修改充值单状态
         Result modifyResult = stateHandler.paying(payResult.getOrderSn(), StarConstants.Pay_Status.valueOf(walletRecordReq.getPayStatus()));
