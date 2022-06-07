@@ -63,9 +63,6 @@ public class WalletCore implements IWalletCore {
     private RedisUtil redisUtil;
 
     @Resource
-    private WalletProducer walletProducer;
-
-    @Resource
     private Map<StarConstants.Ids, IIdGenerator> idGeneratorMap;
 
     @Resource
