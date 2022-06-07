@@ -29,6 +29,7 @@ import org.web3j.crypto.CipherException;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.text.NumberFormat;
@@ -116,7 +117,7 @@ public class WalletServiceImpl implements WalletService {
         NumberFormat number = NumberFormat.getNumberInstance();
         number.setMaximumFractionDigits(3);
         percent.setMaximumFractionDigits(4);
-        return new CalculateResult(number.format(calculated), percent.format(config.getChargeRate()));
+        return new CalculateResult(number.format(calculated.setScale(2, BigDecimal.ROUND_HALF_DOWN)), percent.format(config.getChargeRate()));
     }
 
     private String verifyAndGetKey(WithDrawReq withDrawReq) {

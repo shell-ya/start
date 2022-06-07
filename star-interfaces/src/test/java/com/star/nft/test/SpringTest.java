@@ -55,7 +55,7 @@ public class SpringTest {
     @Test
     public void payment() {
         CalculateResult calculateResult = walletService.withdrawMoneyCalculate(
-                new CalculateReq(new BigDecimal("100"), StarConstants.PayChannel.UNION_PAY.name()));
+                new CalculateReq(new BigDecimal("56.81"), StarConstants.PayChannel.BankCard.name()));
 
         System.out.println(calculateResult);
 
