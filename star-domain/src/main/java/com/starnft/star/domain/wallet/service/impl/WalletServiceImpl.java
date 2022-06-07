@@ -227,7 +227,7 @@ public class WalletServiceImpl implements WalletService {
         //充值后当前金额
         BigDecimal curr = walletVO.getBalance().add(rechargeVO.getTotalAmount().abs());
         //增加总收入金额
-        BigDecimal income = walletVO.getWallet_income().add(curr);
+        BigDecimal income = walletVO.getWallet_income().add(rechargeVO.getTotalAmount().abs());
 
         //修改交易记录状态 回写第三方流水号
         WalletRecordVO walletRecordVO = walletRepository.queryWalletRecordBySerialNo(rechargeVO.getOrderSn(), StarConstants.Pay_Status.PAY_ING.name());
