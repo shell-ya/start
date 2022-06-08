@@ -1,5 +1,6 @@
 package com.starnft.star.domain.numbers.repository;
 
+import com.starnft.star.common.enums.UserNumberStatusEnum;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.numbers.model.dto.NumberCirculationAddDTO;
 import com.starnft.star.domain.numbers.model.dto.NumberCirculationDTO;
@@ -21,5 +22,7 @@ public interface INumberRepository {
     Boolean saveNumberCirculationRecord(NumberCirculationAddDTO numberCirculation);
 
     NumberCirculationDTO getLastConsignedCirculation(Long numberId);
+
+    Boolean modifyUserNumberStatus(Long uid, Long numberId, UserNumberStatusEnum statusEnum);
 
 }

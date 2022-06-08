@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.page.PageMethod;
 import com.starnft.star.common.enums.NumberCirculationTypeEnum;
+import com.starnft.star.common.enums.UserNumberStatusEnum;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.numbers.model.dto.NumberCirculationAddDTO;
 import com.starnft.star.domain.numbers.model.dto.NumberCirculationDTO;
@@ -16,8 +17,10 @@ import com.starnft.star.domain.numbers.model.vo.NumberVO;
 import com.starnft.star.domain.numbers.repository.INumberRepository;
 import com.starnft.star.infrastructure.entity.number.StarNftNumberCirculationHist;
 import com.starnft.star.infrastructure.entity.number.StarNftThemeNumber;
+import com.starnft.star.infrastructure.entity.user.StarNftUserTheme;
 import com.starnft.star.infrastructure.mapper.number.StarNftNumberCirculationHistMapper;
 import com.starnft.star.infrastructure.mapper.number.StarNftThemeNumberMapper;
+import com.starnft.star.infrastructure.mapper.user.StarNftUserThemeMapper;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -33,6 +36,8 @@ public class NumberRepository implements INumberRepository {
     StarNftThemeNumberMapper starNftThemeNumberMapper;
     @Resource
     StarNftNumberCirculationHistMapper starNftNumberCirculationHistMapper;
+    @Resource
+    StarNftUserThemeMapper starNftUserThemeMapper;
 
     @Override
     public ResponsePageResult<NumberVO> queryNumber(NumberReq numberReq) {
@@ -119,5 +124,17 @@ public class NumberRepository implements INumberRepository {
                 .beforePrice(hist.getBeforePrice())
                 .afterPrice(hist.getAfterPrice())
                 .build();
+    }
+
+    @Override
+    public Boolean modifyUserNumberStatus(Long uid, Long numberId, UserNumberStatusEnum statusEnum) {
+        return this.starNftUserThemeMapper.update(StarNftUserTheme.builder()
+                        .status(statusEnum.getCode())
+                        .updateAt(new Date())
+                        .updateBy(String.valueOf(uid))
+                        .build(),
+                Wrappers.lambdaUpdate(StarNftUserTheme.class)
+                        .eq(StarNftUserTheme::getSeriesThemeId, numberId)
+                        .eq(StarNftUserTheme::getUserId, uid)) == 1;
     }
 }

@@ -3,6 +3,7 @@ package com.starnft.star.domain.numbers.serivce.impl;
 import com.starnft.star.common.enums.NumberCirculationTypeEnum;
 import com.starnft.star.common.enums.NumberStatusEnum;
 import com.starnft.star.common.enums.SortTypeEnum;
+import com.starnft.star.common.enums.UserNumberStatusEnum;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.RequestConditionPage;
@@ -91,8 +92,10 @@ public class NumberServiceImpl implements NumberService {
                         .beforePrice(numberDetail.getPrice())
                         .afterPrice(request.getPrice())
                         .build());
+        // 修改用户藏品状态
+        Boolean updUserNumberBool = this.numberRepository.modifyUserNumberStatus(uid, request.getNumberId(), UserNumberStatusEnum.ON_CONSIGNMENT);
 
-        if (updBool && saveBool) {
+        if (updBool && saveBool && updUserNumberBool) {
             return Boolean.TRUE;
         }
         throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "寄售失败");
@@ -102,7 +105,7 @@ public class NumberServiceImpl implements NumberService {
     @Override
     public Boolean cancelConsignment(Long uid, Long numberId) {
         Assert.notNull(numberId, () -> new StarException(StarError.PARAETER_UNSUPPORTED, "商品ID不能为空"));
-        
+
         // 判断用户是否是该藏品的拥有者以及藏品是否存在
         NumberDetailVO numberDetail = this.checkNumberOwner(uid, numberId);
 
@@ -133,7 +136,10 @@ public class NumberServiceImpl implements NumberService {
                         .afterPrice(circulation.getBeforePrice())
                         .build());
 
-        if (updBool && saveBool) {
+        // 还原用户藏品状态
+        Boolean updUserNumberBool = this.numberRepository.modifyUserNumberStatus(uid, numberId, UserNumberStatusEnum.PURCHASED);
+
+        if (updBool && saveBool && updUserNumberBool) {
             return Boolean.TRUE;
         }
         throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "取消寄售失败");
