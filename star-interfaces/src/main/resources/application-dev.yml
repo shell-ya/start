@@ -99,7 +99,7 @@ wallet:
 # 发送短信验证码开关
 star:
   sms:
-    enable: false
+    enable: true
 
 rocketmq:
   name-server: 47.99.42.39:9876
