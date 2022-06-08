@@ -34,8 +34,16 @@ public class StarNftWalletConfig extends BaseEntity {
     /**
      * 手续费比例
      */
-    @ApiModelProperty(name = "手续费比例", notes = "")
+    @ApiModelProperty(name = "提现手续费比率", notes = "")
     private BigDecimal chargeRate;
+
+    @ApiModelProperty(name = "版权费比率", notes = "")
+    private BigDecimal copyrightRate;
+
+    @ApiModelProperty(name = "手续费比例", notes = "")
+    private BigDecimal serviceRate;
+
+
     /**
      * 固定手续费
      */
@@ -90,6 +98,22 @@ public class StarNftWalletConfig extends BaseEntity {
 
     public void setChargeRate(BigDecimal chargeRate) {
         this.chargeRate = chargeRate;
+    }
+
+    public BigDecimal getCopyrightRate() {
+        return copyrightRate;
+    }
+
+    public void setCopyrightRate(BigDecimal copyrightRate) {
+        this.copyrightRate = copyrightRate;
+    }
+
+    public BigDecimal getServiceRate() {
+        return serviceRate;
+    }
+
+    public void setServiceRate(BigDecimal serviceRate) {
+        this.serviceRate = serviceRate;
     }
 
     public BigDecimal getStableRate() {

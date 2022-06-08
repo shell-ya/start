@@ -12,6 +12,8 @@
         <result property="withdrawTimes" column="withdraw_times" jdbcType="INTEGER"/>
         <result property="withdrawLimit" column="withdraw_limit" jdbcType="DECIMAL"/>
         <result property="chargeRate" column="charge_rate" jdbcType="DECIMAL"/>
+        <result property="copyrightRate" column="copyright_rate" jdbcType="DECIMAL"/>
+        <result property="serviceRate" column="service_rate" jdbcType="DECIMAL"/>
         <result property="stableRate" column="stable_rate" jdbcType="DECIMAL"/>
         <result property="identityCode" column="identity_code" jdbcType="VARCHAR"/>
         <result property="channel" column="channel" jdbcType="VARCHAR"/>
@@ -29,9 +31,11 @@
             parameterType="com.starnft.star.infrastructure.entity.wallet.dto.WalletConfigDTO">
         insert into star_nft_wallet_config(is_deleted, created_at, created_by, modified_at, modified_by, recharge_limit,
                                            withdraw_times,
-                                           withdraw_limit, charge_rate, stable_rate, identity_code, channel)
+                                           withdraw_limit, charge_rate, copyright_rate, service_rate, stable_rate,
+                                           identity_code, channel)
         values (#{isDeleted}, #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{rechargeLimit},
                 #{withdrawTimes},
-                #{withdrawLimit}, #{chargeRate}, #{stableRate}, #{identityCode}, #{channel})
+                #{withdrawLimit}, #{chargeRate}, #{copyrightRate}, #{serviceRate}, #{stableRate}, #{identityCode},
+                #{channel})
     </insert>
 </mapper>

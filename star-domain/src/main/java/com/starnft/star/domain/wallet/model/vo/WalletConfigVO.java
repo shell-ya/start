@@ -30,6 +30,12 @@ public class WalletConfigVO implements Serializable {
      */
     @ApiModelProperty(name = "手续费比例", notes = "")
     private BigDecimal chargeRate;
+
+    @ApiModelProperty(name = "版权费比率", notes = "")
+    private BigDecimal copyrightRate;
+
+    @ApiModelProperty(name = "手续费比例", notes = "")
+    private BigDecimal serviceRate;
     /**
      * 固定手续费
      */
@@ -76,6 +82,22 @@ public class WalletConfigVO implements Serializable {
 
     public void setChargeRate(BigDecimal chargeRate) {
         this.chargeRate = chargeRate;
+    }
+
+    public BigDecimal getCopyrightRate() {
+        return copyrightRate;
+    }
+
+    public void setCopyrightRate(BigDecimal copyrightRate) {
+        this.copyrightRate = copyrightRate;
+    }
+
+    public BigDecimal getServiceRate() {
+        return serviceRate;
+    }
+
+    public void setServiceRate(BigDecimal serviceRate) {
+        this.serviceRate = serviceRate;
     }
 
     public BigDecimal getStableRate() {

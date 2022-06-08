@@ -142,6 +142,8 @@ public class WalletRepository implements IWalletRepository {
                     .channel(StarConstants.PayChannel.valueOf(config.getChannel()))
                     .identityCode(config.getIdentityCode())
                     .rechargeLimit(config.getRechargeLimit())
+                    .copyrightRate(config.getCopyrightRate())
+                    .serviceRate(config.getServiceRate())
                     .withdrawTimes(config.getWithdrawTimes())
                     .withdrawLimit(config.getWithdrawLimit())
                     .build();
