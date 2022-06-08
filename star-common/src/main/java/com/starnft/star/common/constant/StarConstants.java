@@ -253,6 +253,7 @@ public class StarConstants {
     public enum OrderType {
 
         RECHARGE("RECHARGE", "充值"),
+        PUBLISH_GOODS("PUBLISH_GOODS","发行"),
         ;
 
         private String name;

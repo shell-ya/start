@@ -139,7 +139,7 @@ public class SpringTest {
 
     @Test
     public void mqTest() {
-        messageSender.send("STAR-NOTICE:unread",Optional.ofNullable(NotificationVO.builder()
+        messageSender.send("STAR-NOTICE:unread", Optional.ofNullable(NotificationVO.builder()
                 .toUid("10001").title("标题")
                 .intro("简介").sendTime(new Date()).content("内容").build()));
     }

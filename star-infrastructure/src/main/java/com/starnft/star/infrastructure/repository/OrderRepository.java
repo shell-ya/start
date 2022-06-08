@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Objects;
 
 @Repository
@@ -59,6 +60,14 @@ public class OrderRepository implements IOrderRepository {
     public OrderVO queryOrderByCondition(Long uid, String orderSn) {
         StarNftOrder starNftOrder = queryOrder(uid, orderSn);
         return BeanColverUtil.colver(starNftOrder, OrderVO.class);
+    }
+
+    @Override
+    public List<OrderVO> queryOrders(Long uid, Integer status) {
+        List<StarNftOrder> starNftOrders = starNftOrderMapper.selectList(new LambdaQueryWrapper<StarNftOrder>()
+                .eq(Objects.nonNull(uid), StarNftOrder::getUserId, uid)
+                .eq(status != null, StarNftOrder::getStatus, status));
+        return BeanColverUtil.colverList(starNftOrders, OrderVO.class);
     }
 
     private StarNftOrder queryOrder(Long uid, String orderSn) {
