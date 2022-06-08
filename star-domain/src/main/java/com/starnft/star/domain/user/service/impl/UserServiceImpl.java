@@ -10,6 +10,7 @@ import com.starnft.star.common.po.AccessToken;
 import com.starnft.star.common.utils.Assert;
 import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.sms.interfaces.MessageStrategyInterface;
 import com.starnft.star.domain.user.model.dto.*;
 import com.starnft.star.domain.user.model.vo.*;
 import com.starnft.star.domain.user.repository.IUserRepository;
@@ -24,6 +25,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -46,6 +48,9 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
     @Autowired
     private IUserRepository userRepository;
+
+    @Resource
+    private MessageStrategyInterface messageStrategyInterface;
 
     @Value("${star.sms.enable: false}")
     private Boolean smsEnable;
@@ -123,6 +128,10 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
                 throw new StarException(StarError.VERIFYCODE_FREQUENCY_IS_TOO_HIGH);
             }
             //todo 调用服务商发送短信
+            boolean isSend = messageStrategyInterface.checkCodeMessage(req.getPhone(), code);
+            if (!isSend) {
+                throw new StarException("短信发送失败");
+            }
 
         }
 
