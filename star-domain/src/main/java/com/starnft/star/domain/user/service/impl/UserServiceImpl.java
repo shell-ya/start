@@ -49,7 +49,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     @Autowired
     private IUserRepository userRepository;
 
-    @Resource
+    @Resource(name = "swMessageStrategy")
     private MessageStrategyInterface messageStrategyInterface;
 
     @Value("${star.sms.enable: false}")
