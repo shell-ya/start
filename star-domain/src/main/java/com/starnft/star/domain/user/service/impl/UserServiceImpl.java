@@ -127,7 +127,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
             if (!Objects.isNull(obj)) {
                 throw new StarException(StarError.VERIFYCODE_FREQUENCY_IS_TOO_HIGH);
             }
-            //todo 调用服务商发送短信
+            //调用服务商发送短信
             boolean isSend = this.messageStrategyInterface.checkCodeMessage(req.getPhone(), code);
             if (!isSend) {
                 throw new StarException("短信发送失败");
