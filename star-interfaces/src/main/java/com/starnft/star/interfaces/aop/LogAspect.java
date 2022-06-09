@@ -25,12 +25,9 @@ import java.util.Map;
 @Component
 @Slf4j
 public class LogAspect {
-
     @Pointcut("execution(* com.starnft.star.interfaces.*.*(..))")
     private void controllerAspect() {
     }
-
-
     /**
      * 请求入口
      * @param joinPoint

@@ -45,6 +45,9 @@ public class StarConstants {
      * 主题详细信息缓存名字
      */
     public static final String THEME_DETAIL_CACHE_NAME = ".theme.detail.cache";
+    public  enum RankTypes{
+        Consumption;
+    }
 
     public enum Ids {
         /**
