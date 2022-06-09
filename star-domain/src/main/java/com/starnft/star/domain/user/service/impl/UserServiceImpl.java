@@ -124,11 +124,11 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         String key = String.format(RedisKey.SMS_CODE_LIFE.getKey(), req.getPhone());
         if (this.smsEnable) {
             Object obj = this.redisTemplate.opsForValue().get(key);
-            if (Objects.isNull(obj)) {
+            if (!Objects.isNull(obj)) {
                 throw new StarException(StarError.VERIFYCODE_FREQUENCY_IS_TOO_HIGH);
             }
             //todo 调用服务商发送短信
-            boolean isSend = messageStrategyInterface.checkCodeMessage(req.getPhone(), code);
+            boolean isSend = this.messageStrategyInterface.checkCodeMessage(req.getPhone(), code);
             if (!isSend) {
                 throw new StarException("短信发送失败");
             }
