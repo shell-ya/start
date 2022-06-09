@@ -34,11 +34,8 @@ import java.util.List;
 @RequestMapping(value = "/wallet")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WalletController {
-
     private final IWalletCore walletCore;
-
     private final WalletService walletService;
-
     @ApiOperation("充值")
     @PostMapping("/recharge")
     public RopResponse<RechargeReqResult> recharge(@Validated @RequestBody RechargeFacadeReq req) {
