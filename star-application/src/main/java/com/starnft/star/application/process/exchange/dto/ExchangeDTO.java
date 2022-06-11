@@ -11,6 +11,4 @@ public class ExchangeDTO implements Serializable {
     private Long sellUid;
     private BigDecimal amount;
     private Long goodId;
-
-
 }

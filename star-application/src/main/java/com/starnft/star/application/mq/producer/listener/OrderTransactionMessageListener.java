@@ -12,13 +12,10 @@ import org.springframework.messaging.Message;
 @RocketMQTransactionListener
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class OrderTransactionMessageListener implements RocketMQLocalTransactionListener {
-
-
     @Override
     public RocketMQLocalTransactionState executeLocalTransaction(Message msg, Object arg) {
         return null;
     }
-
     @Override
     public RocketMQLocalTransactionState checkLocalTransaction(Message msg) {
         return null;
