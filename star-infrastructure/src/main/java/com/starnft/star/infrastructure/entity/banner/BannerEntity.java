@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@TableName("banner")
+@TableName("star_banner")
 public class BannerEntity extends BaseEntity {
 
     @TableId(value = "id", type = IdType.AUTO)

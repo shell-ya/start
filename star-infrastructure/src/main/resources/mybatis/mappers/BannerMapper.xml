@@ -3,19 +3,19 @@
 <mapper namespace="com.starnft.star.infrastructure.mapper.banner.BannerMapper">
 
     <select id="queryBanner" resultType="com.starnft.star.infrastructure.entity.banner.BannerEntity">
-        select id,title,img_url,`position` as position
-        from banner
-        where is_deleted = 0
-          and `position` = #{type}
+        SELECT id, title, img_url, `position` AS position, url
+        FROM star_banner
+        WHERE is_deleted = 0
+          AND `position` = #{type}
         ORDER BY sort
-            limit #{size}
+        LIMIT #{size}
         ;
     </select>
 
     <select id="selectBannerList" resultType="com.starnft.star.infrastructure.entity.banner.BannerEntity">
         select
         *
-        from banner
+        from star_banner
         <where>
             1 = 1
             <if test="condition.position != null  ">
