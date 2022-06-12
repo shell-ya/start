@@ -21,7 +21,7 @@ import java.util.List;
  * @Author ： shellya
  */
 @RestController
-@Api(tags = "轮播图相关接口「CentralController」")
+@Api(tags = "轮播图相关接口「BannerController」")
 @RequestMapping("/banner")
 public class BannerController {
 
