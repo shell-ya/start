@@ -10,11 +10,11 @@ import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.wallet.model.req.CardBindReq;
 import com.starnft.star.domain.wallet.model.req.WithDrawReq;
+import com.starnft.star.domain.wallet.model.req.WithdrawCancelReq;
 import com.starnft.star.domain.wallet.model.res.CardBindResult;
 import com.starnft.star.domain.wallet.model.res.WithdrawResult;
 import com.starnft.star.domain.wallet.model.vo.BankRelationVO;
 import com.starnft.star.domain.wallet.service.WalletService;
-import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import com.starnft.star.interfaces.interceptor.UserContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,6 +36,7 @@ import java.util.List;
 public class WalletController {
     private final IWalletCore walletCore;
     private final WalletService walletService;
+
     @ApiOperation("充值")
     @PostMapping("/recharge")
     public RopResponse<RechargeReqResult> recharge(@Validated @RequestBody RechargeFacadeReq req) {
@@ -57,6 +58,13 @@ public class WalletController {
     public RopResponse<WithdrawResult> withdraw(@Validated @RequestBody WithDrawReq req) {
         req.setUid(UserContext.getUserId().getUserId());
         return RopResponse.success(walletCore.withdraw(req));
+    }
+
+    @ApiOperation("提现申请")
+    @PostMapping("/withdraw/cancel")
+    public RopResponse<WithdrawResult> withdrawCancel(@Validated @RequestBody WithdrawCancelReq req) {
+        req.setUid(UserContext.getUserId().getUserId());
+        return RopResponse.success(walletService.withdrawCancel(req));
     }
 
     @ApiOperation("银行卡绑定")

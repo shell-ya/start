@@ -45,22 +45,22 @@
             <if test="wId != null and wId != ''">
                 and w_id = #{wId}
             </if>
-            <if test="uid != null and uid != ''">
+            <if test="uid != null">
                 and uid = #{uid}
             </if>
-            <if test="balance != null and balance != ''">
+            <if test="balance != null">
                 and balance = #{balance}
             </if>
-            <if test="walletIncome != null and walletIncome != ''">
+            <if test="walletIncome != null">
                 and wallet_income = #{walletIncome}
             </if>
-            <if test="walletOutcome != null and walletOutcome != ''">
+            <if test="walletOutcome != null">
                 and wallet_outcome = #{walletOutcome}
             </if>
-            <if test="frozen != null and frozen != ''">
+            <if test="frozen != null">
                 and frozen = #{frozen}
             </if>
-            <if test="frozenFee != null and frozenFee != ''">
+            <if test="frozenFee != null ">
                 and frozen_fee = #{frozenFee}
             </if>
         </where>
@@ -177,25 +177,19 @@
             <if test="modifiedBy != null and modifiedBy != ''">
                 modified_by = #{modifiedBy},
             </if>
-            <if test="wId != null and wId != ''">
-                w_id = #{wId},
-            </if>
-            <if test="uid != null and uid != ''">
-                uid = #{uid},
-            </if>
-            <if test="balance != null and balance != ''">
+            <if test="balance != null">
                 balance = #{balance},
             </if>
-            <if test="walletIncome != null and walletIncome != ''">
+            <if test="walletIncome != null">
                 wallet_income = #{walletIncome},
             </if>
-            <if test="walletOutcome != null and walletOutcome != ''">
+            <if test="walletOutcome != null ">
                 wallet_outcome = #{walletOutcome},
             </if>
-            <if test="frozen != null and frozen != ''">
+            <if test="frozen != null">
                 frozen = #{frozen},
             </if>
-            <if test="frozenFee != null and frozenFee != ''">
+            <if test="frozenFee != null">
                 frozen_fee = #{frozenFee},
             </if>
         </set>
@@ -210,7 +204,7 @@
         </if>
         <if test="wId != null and wId != ''">
             AND
-            wId = #{wId}
+            w_id = #{wId}
         </if>
             ;
     </update>

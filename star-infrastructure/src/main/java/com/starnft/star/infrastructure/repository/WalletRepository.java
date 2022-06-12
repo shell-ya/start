@@ -10,6 +10,7 @@ import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.common.utils.DateUtil;
 import com.starnft.star.common.utils.secure.AESUtil;
 import com.starnft.star.domain.wallet.model.req.RechargeReq;
@@ -31,6 +32,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Repository
@@ -164,6 +166,45 @@ public class WalletRepository implements IWalletRepository {
         return walletRecordToVO(record);
     }
 
+    @Override
+    public List<WalletRecordVO> queryWalletRecordIsPaying(Long uid, Integer tsType, String payStatus) {
+        LambdaQueryWrapper<StarNftWalletRecord> queryWrapper = new LambdaQueryWrapper<>();
+
+        LambdaQueryWrapper<StarNftWalletRecord> eq = queryWrapper.eq(Objects.isNull(uid), StarNftWalletRecord::getFromUid, uid)
+                .eq(Objects.isNull(tsType), StarNftWalletRecord::getTsType, tsType)
+                .eq(StringUtils.isBlank(payStatus), StarNftWalletRecord::getPayStatus, payStatus);
+
+        List<StarNftWalletRecord> starNftWalletRecords = starNftWalletRecordMapper.selectList(eq);
+
+        List<WalletRecordVO> walletRecordVOS = null;
+        for (StarNftWalletRecord starNftWalletRecord : starNftWalletRecords) {
+            walletRecordVOS = BeanColverUtil.colverList(starNftWalletRecords, WalletRecordVO.class);
+        }
+
+        return walletRecordVOS;
+    }
+
+    @Override
+    public List<WithdrawRecordVO> usersWithdrawRecords(Long uid) {
+        List<StarNftWithdrawApply> starNftWithdrawApplies = starNftWithdrawApplyMapper.selectList(new LambdaQueryWrapper<StarNftWithdrawApply>()
+                .eq(Objects.isNull(uid), StarNftWithdrawApply::getWithdrawUid, uid));
+        List<WithdrawRecordVO> withdrawRecordVOS = Lists.newArrayList();
+        for (StarNftWithdrawApply apply : starNftWithdrawApplies) {
+            WithdrawRecordVO.builder().uid(uid).withdrawTradeNo(apply.getWithdrawTradeNo())
+                    .status(apply.getApplyStatus()).money(apply.getWithdrawMoney())
+                    .bankNo(apply.getWithdrawBankNo()).channel(apply.getWithdrawChannel()).build();
+        }
+        return withdrawRecordVOS;
+    }
+
+    @Override
+    public boolean updateWithdrawApply(String applySn, Integer status) {
+        StarNftWithdrawApply apply = new StarNftWithdrawApply();
+        apply.setApplyStatus(status);
+        return starNftWithdrawApplyMapper.update(apply, new LambdaQueryWrapper<StarNftWithdrawApply>()
+                .eq(Objects.nonNull(applySn), StarNftWithdrawApply::getWithdrawTradeNo, applySn)) == 1;
+    }
+
     private StarNftWalletRecord queryWalletRecordPO(String serialNo, String payStatus) {
         StarNftWalletRecord request = new StarNftWalletRecord();
         request.setRecordSn(serialNo);
@@ -184,7 +225,7 @@ public class WalletRepository implements IWalletRepository {
     @Transactional
     public boolean updateWalletRecordStatus(String serialNo, String payStatus) {
 
-        StarNftWalletRecord record = queryWalletRecordPO(serialNo, payStatus);
+        StarNftWalletRecord record = queryWalletRecordPO(serialNo, null);
         if (null == record) {
             throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "记录不存在");
         }
@@ -237,7 +278,7 @@ public class WalletRepository implements IWalletRepository {
         starNftWithdrawApply.setCreatedBy(withdrawRecordVO.getUid());
         starNftWithdrawApply.setCreatedAt(new Date());
         starNftWithdrawApply.setIsDeleted(false);
-        return starNftWithdrawApplyMapper.insert(starNftWithdrawApply);
+        return starNftWithdrawApplyMapper.insertRecord(starNftWithdrawApply);
     }
 
     @Override

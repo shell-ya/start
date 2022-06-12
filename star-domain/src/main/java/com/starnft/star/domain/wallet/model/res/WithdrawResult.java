@@ -13,8 +13,11 @@ import lombok.Data;
 public class WithdrawResult {
 
     @ApiModelProperty(value = "平台提现流水号")
-    private Long withdrawTradeNo;
+    private String withdrawTradeNo;
 
-    @ApiModelProperty(value = "提现状态 0申请中 1提现成功 ")
+    @ApiModelProperty(value = "当前余额")
+    private String currMoney;
+
+    @ApiModelProperty(value = "提现状态 0申请中 1提现成功 -1提现关闭")
     private Integer withdrawStatus;
 }

@@ -3,9 +3,11 @@ package com.starnft.star.common.utils;
 import org.apache.commons.codec.binary.Hex;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.text.NumberFormat;
 
 /**
  * Tool 工具
@@ -48,6 +50,13 @@ public class StarUtils {
             e.printStackTrace();
         }
         return encdeStr;
+    }
+
+
+    public static String formatMoney(BigDecimal money) {
+        NumberFormat number = NumberFormat.getNumberInstance();
+        number.setMinimumIntegerDigits(4);
+        return money.setScale(2, BigDecimal.ROUND_HALF_DOWN).toString();
     }
 
     public static void main(String[] args) {

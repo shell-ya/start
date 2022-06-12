@@ -34,4 +34,8 @@ public class WithdrawRecordVO {
      * 提现渠道
      */
     private String channel;
+    /**
+     * 提现状态
+     */
+    private Integer status;
 }

@@ -14,7 +14,6 @@ public class WithDrawReq {
     /**
      * 提现uid
      */
-    @NotNull(message = "uid 不能为空")
     @ApiModelProperty(value = "uid")
     private Long uid;
     /**

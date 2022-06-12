@@ -1,5 +1,6 @@
 package com.starnft.star.infrastructure.mapper.wallet;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.starnft.star.infrastructure.entity.wallet.StarNftWithdrawApply;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -9,8 +10,8 @@ import org.apache.ibatis.annotations.Mapper;
  * @date : 2022-5-21
  */
 @Mapper
-public interface StarNftWithdrawApplyMapper {
+public interface StarNftWithdrawApplyMapper extends BaseMapper<StarNftWithdrawApply> {
 
-    boolean insert(StarNftWithdrawApply apply);
+    boolean insertRecord(StarNftWithdrawApply apply);
 
 }

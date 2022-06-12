@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 @ApiModel("充值请求")
 public class RechargeFacadeReq implements Serializable {
 
-    @NotNull(message = "userId 不能为空")
     private Long userId;
 
     @NotBlank(message = "钱包id不能为空")

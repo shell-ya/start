@@ -58,22 +58,6 @@ public class WalletRecordVO implements Serializable {
      */
     @ApiModelProperty(name = "交易时间", notes = "")
     private Date payTime;
-    /**
-     * 收款状态 0待收款 -1失败 1成功
-     */
-    private String fetchStatus;
-    /**
-     * 收款时间
-     */
-    private Date fetchTime;
-    /**
-     * 对账状态 0未对账 1已对账
-     */
-    private Integer checkStatus;
-    /**
-     * 对账时间
-     */
-    private Date checkTime;
 
     public String getRecordSn() {
         return recordSn;
@@ -163,35 +147,4 @@ public class WalletRecordVO implements Serializable {
         this.payTime = payTime;
     }
 
-    public String getFetchStatus() {
-        return fetchStatus;
-    }
-
-    public void setFetchStatus(String fetchStatus) {
-        this.fetchStatus = fetchStatus;
-    }
-
-    public Date getFetchTime() {
-        return fetchTime;
-    }
-
-    public void setFetchTime(Date fetchTime) {
-        this.fetchTime = fetchTime;
-    }
-
-    public Integer getCheckStatus() {
-        return checkStatus;
-    }
-
-    public void setCheckStatus(Integer checkStatus) {
-        this.checkStatus = checkStatus;
-    }
-
-    public Date getCheckTime() {
-        return checkTime;
-    }
-
-    public void setCheckTime(Date checkTime) {
-        this.checkTime = checkTime;
-    }
 }

@@ -9,6 +9,7 @@ import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.common.utils.WalletAddrGenerator;
 import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
@@ -29,7 +30,6 @@ import org.web3j.crypto.CipherException;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.text.NumberFormat;
@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 @Slf4j
@@ -130,7 +131,7 @@ public class WalletServiceImpl implements WalletService {
                 new StringBuffer(String.valueOf(withDrawReq.getUid())).append(withDrawReq.getWalletId()));
         //是否超过当日提现次数
         if (redisUtil.hasKey(withdrawTimesKey) &&
-                config.getWithdrawTimes() <= Integer.parseInt((String) redisUtil.get(withdrawTimesKey))) {
+                config.getWithdrawTimes() <= (Integer) redisUtil.get(withdrawTimesKey)) {
             throw new StarException(StarError.OVER_WITHDRAW_TIMES);
         }
         //是否超过限额
@@ -140,6 +141,13 @@ public class WalletServiceImpl implements WalletService {
         //钱包交易状态中锁
         String isTransactionKey = String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
                 new StringBuffer(String.valueOf(withDrawReq.getUid())).append(withDrawReq.getWalletId()));
+        //判断是否有正在进行的提现订单
+        List<WithdrawRecordVO> records = walletRepository.usersWithdrawRecords(withDrawReq.getUid());
+        for (WithdrawRecordVO record : records) {
+            if (record.getStatus() == 0) {
+                throw new StarException(StarError.IS_WITHDRAWING);
+            }
+        }
         //判断当前是否有其他交易正在进行
         if (redisUtil.hasKey(isTransactionKey)) {
             throw new StarException(StarError.IS_TRANSACTION);
@@ -151,9 +159,10 @@ public class WalletServiceImpl implements WalletService {
     public WithdrawResult withdraw(WithDrawReq withDrawReq) {
         //校验提现规则
         String isTransactionKey = verifyAndGetKey(withDrawReq);
-
-        long withdrawTradeNo = idGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId();
-
+        //生成流水号
+        String withdrawTradeNo = StarConstants.OrderPrefix.WithdrawSn.getPrefix().concat(
+                String.valueOf(idGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId()));
+        BigDecimal curr = null;
         try {
             //锁定当前钱包交易
             if (redisLockUtils.lock(isTransactionKey, RedisKey.REDIS_TRANSACTION_ING.getTime())) {
@@ -163,6 +172,7 @@ public class WalletServiceImpl implements WalletService {
                 if (walletResult.getBalance().compareTo(new BigDecimal(withDrawReq.getMoney())) <= 0) {
                     throw new StarException(StarError.BALANCE_NOT_ENOUGH);
                 }
+                curr = new BigDecimal(String.valueOf(walletResult.getBalance().subtract(new BigDecimal(withDrawReq.getMoney()).abs())));
                 Boolean isSuccess = template.execute(status -> {
                     //修改钱包余额
                     WalletVO walletVO = createWithdrawWalletVO(walletResult, withDrawReq);
@@ -173,7 +183,10 @@ public class WalletServiceImpl implements WalletService {
                     //记录交易记录
                     WalletRecordReq walletRecordReq = createWalletRecordReq(withDrawReq, withdrawTradeNo);
                     boolean cSuccess = walletRepository.createWalletRecord(walletRecordReq);
-                    return aSuccess && bSuccess && cSuccess;
+                    if (!(aSuccess && bSuccess && cSuccess)) {
+                        throw new RuntimeException(StarError.DB_RECORD_UNEXPECTED_ERROR.getErrorMessage());
+                    }
+                    return true;
                 });
 
                 //缓存提现次数到Redis
@@ -188,20 +201,60 @@ public class WalletServiceImpl implements WalletService {
         } finally {
             redisLockUtils.unlock(isTransactionKey);
         }
-        return new WithdrawResult(withdrawTradeNo, 0);
+        assert curr != null;
+        return new WithdrawResult(withdrawTradeNo, StarUtils.formatMoney(curr), 0);
     }
 
-    private WalletRecordReq createWalletRecordReq(WithDrawReq withDrawReq, long withdrawTradeNo) {
+    @Override
+    public WithdrawResult withdrawCancel(WithdrawCancelReq cancelReq) {
+        //钱包交易状态中锁
+        String isTransactionKey = String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
+                new StringBuffer(String.valueOf(cancelReq.getUid())).append(cancelReq.getWalletId()));
+        //判断当前是否有其他交易正在进行
+        if (redisUtil.hasKey(isTransactionKey)) {
+            throw new StarException(StarError.IS_TRANSACTION);
+        }
+        AtomicReference<BigDecimal> curr = new AtomicReference<>();
+        if (redisLockUtils.lock(isTransactionKey, RedisKey.REDIS_TRANSACTION_ING.getTime())) {
+            template.execute(status -> {
+                //设置提现记录状态 -1
+                boolean aSuccess = walletRepository.updateWithdrawApply(cancelReq.getWithdrawSn(), -1);
+                //修改交易记录状态
+                boolean bSuccess = walletRepository.updateWalletRecordStatus(cancelReq.getWithdrawSn(), StarConstants.Pay_Status.PAY_CLOSE.name());
+                //回滚钱包金额
+                WalletVO walletVO = createWithdrawCancelWalletVO(cancelReq);
+                curr.set(walletVO.getBalance());
+                boolean cSuccess = walletRepository.modifyWalletBalance(walletVO);
+                if (!(aSuccess && bSuccess && cSuccess)) {
+                    throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR);
+                }
+                return true;
+            });
+        }
+        return new WithdrawResult(cancelReq.getWithdrawSn(), StarUtils.formatMoney(curr.get()), -1);
+    }
+
+    private WalletVO createWithdrawCancelWalletVO(WithdrawCancelReq cancelReq) {
+        WalletVO walletVO = walletRepository.queryWallet(new WalletInfoReq(cancelReq.getWalletId(), cancelReq.getUid()));
+        walletVO.setUid(cancelReq.getUid());
+        walletVO.setWalletId(cancelReq.getWalletId());
+        walletVO.setBalance(walletVO.getBalance().add(walletVO.getFrozen_fee().abs()));
+        walletVO.setWallet_outcome(walletVO.getWallet_outcome().subtract(walletVO.getFrozen_fee().abs()));
+        walletVO.setFrozen_fee(BigDecimal.ZERO.setScale(2, BigDecimal.ROUND_HALF_DOWN));
+        return walletVO;
+    }
+
+    private WalletRecordReq createWalletRecordReq(WithDrawReq withDrawReq, String withdrawTradeNo) {
         return WalletRecordReq.builder().from_uid(withDrawReq.getUid()).to_uid(0L)
-                .recordSn(String.valueOf(withdrawTradeNo))
+                .recordSn(withdrawTradeNo)
                 .payChannel(withDrawReq.getChannel()).payStatus(StarConstants.Pay_Status.PAY_ING.name())
                 .payTime(new Date())
                 .tsMoney(new BigDecimal(withDrawReq.getMoney())).tsType(StarConstants.Transaction_Type.Withdraw.getCode())
                 .build();
     }
 
-    private WithdrawRecordVO createWithdrawRecordVO(WithDrawReq withDrawReq, long withdrawTradeNo) {
-        return WithdrawRecordVO.builder().withdrawTradeNo(StarConstants.OrderPrefix.WithdrawSn.getPrefix().concat(String.valueOf(withdrawTradeNo)))
+    private WithdrawRecordVO createWithdrawRecordVO(WithDrawReq withDrawReq, String withdrawTradeNo) {
+        return WithdrawRecordVO.builder().withdrawTradeNo(withdrawTradeNo)
                 .walletId(withDrawReq.getWalletId()).bankNo(Long.valueOf(withDrawReq.getBankNo()))
                 .cardName(withDrawReq.getCardName()).channel(withDrawReq.getChannel())
                 .money(new BigDecimal(withDrawReq.getMoney())).uid(withDrawReq.getUid()).build();
@@ -211,8 +264,9 @@ public class WalletServiceImpl implements WalletService {
         //提现后余额
         BigDecimal balance = walletResult.getBalance().subtract(new BigDecimal(withDrawReq.getMoney()).abs());
         // 提现成功后 清除冻结金额 提现失败 或取消提现 余额加冻结资金 清除冻结资金还原支出金额
-        return WalletVO.builder().
-                balance(balance)
+        return WalletVO.builder()
+                .uid(withDrawReq.getUid())
+                .balance(balance)
                 .frozen_fee(new BigDecimal(withDrawReq.getMoney()).abs())
                 .wallet_outcome(walletResult.getWallet_outcome().add(new BigDecimal(withDrawReq.getMoney()).abs())).
                 build();

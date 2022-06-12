@@ -64,6 +64,29 @@ public interface IWalletRepository {
     WalletRecordVO queryWalletRecordBySerialNo(String serialNo, String payStatus);
 
     /**
+     * 查询对应状态类型的交易记录
+     *
+     * @param uid       from_uid
+     * @param tsType    交易类型
+     * @param payStatus 交易状态
+     * @return list
+     */
+    List<WalletRecordVO> queryWalletRecordIsPaying(Long uid, Integer tsType, String payStatus);
+
+    /**
+     * 根据uid查询用户的提现记录
+     *
+     * @param uid uid
+     * @return list
+     */
+    List<WithdrawRecordVO> usersWithdrawRecords(Long uid);
+
+    /**
+     * 修改提现申请状态
+     */
+    boolean updateWithdrawApply(String applySn, Integer status);
+
+    /**
      * 更新交易记录状态
      *
      * @param serialNo  流水号
@@ -83,7 +106,6 @@ public interface IWalletRepository {
      */
     boolean updateWalletRecordSuccess(String serialNo, String outTradeNo, String payStatus);
 
-
     /**
      * @param queryReq
      * @return WalletRecordVO
@@ -100,7 +122,6 @@ public interface IWalletRepository {
      * @return
      */
     boolean createWithdrawRecord(WithdrawRecordVO withdrawRecordVO);
-
 
     /**
      * 银行卡绑定

@@ -50,7 +50,8 @@ public enum StarError {
     MESSAGE_TOPIC_NOT_FOUND("400001", "TopicConstants 未找到相应topic,请检查配置"),
     PERSISTENT_FAIL("200002", "数据保存失败"),
 
-    IS_TRANSACTION("300002", "有其他交易正在进行，请先完成正在进行的交易"),
+    IS_TRANSACTION("300002", "有其他交易正在进行，请先完成正在进行的交易!"),
+    IS_WITHDRAWING("300010", "您已有提现订单正在处理,请耐心等待!"),
 
     OVER_WITHDRAW_TIMES("300003", "已达到当日提现最大次数"),
     OVER_WITHDRAW_MONEY("300004", "超过限制提现金额"),

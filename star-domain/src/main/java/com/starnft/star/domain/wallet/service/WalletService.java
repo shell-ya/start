@@ -26,6 +26,9 @@ public interface WalletService {
     //提现
     WithdrawResult withdraw(WithDrawReq withDrawReq);
 
+    //取消提现
+    WithdrawResult withdrawCancel(WithdrawCancelReq cancelReq);
+
     //查询交易记录
     ResponsePageResult<WalletRecordVO> queryTransactionRecord(TransactionRecordQueryReq queryReq);
 

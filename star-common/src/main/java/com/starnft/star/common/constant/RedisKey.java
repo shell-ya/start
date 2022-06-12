@@ -95,7 +95,7 @@ public enum RedisKey {
     /**
      * 提现次数
      */
-    REDIS_WITHDRAW_TIMES(402, StarConstants.SERVICE_NAME.concat(".wallet.withdraw.times:%s"), 24L, TimeUnit.HOURS),
+    REDIS_WITHDRAW_TIMES(402, StarConstants.SERVICE_NAME.concat(".wallet.withdraw.times:%s"), 1L, TimeUnit.HOURS),
 
     /**
      * 交易成功标识
