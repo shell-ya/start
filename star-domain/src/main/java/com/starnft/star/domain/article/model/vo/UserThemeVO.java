@@ -6,8 +6,8 @@ import java.io.Serializable;
 
 @Data
 public class UserThemeVO implements Serializable {
-  private   Long   themeId;
-  private   String themeName;
-  private   String themeImages;
-  private   Integer nums;
+    private Long themeId;
+    private String themeName;
+    private String themeImages;
+    private Integer nums;
 }
