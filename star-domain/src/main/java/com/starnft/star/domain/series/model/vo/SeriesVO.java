@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class SeriesVO implements Serializable {
     private Long id;
     private String seriesName;
-    private Boolean seriesType;
+    private Integer seriesType;
     private String seriesImages;
     private String seriesModels;
     private Integer seriesStatus;
