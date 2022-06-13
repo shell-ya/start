@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.publisher.StarNftPublisherMapper">
+  <resultMap id="BaseResultMap" type="com.starnft.star.infrastructure.entity.publisher.StarNftPublisher">
+    <!--@mbg.generated-->
+    <!--@Table star_nft_publisher-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="publisher" jdbcType="VARCHAR" property="publisher" />
+    <result column="is_base" jdbcType="BOOLEAN" property="isBase" />
+    <result column="pic" jdbcType="LONGVARCHAR" property="pic" />
+    <result column="pid" jdbcType="BIGINT" property="pid" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="modified_at" jdbcType="TIMESTAMP" property="modifiedAt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, publisher, is_base, pic, pid, created_at, modified_at
+  </sql>
+</mapper>

@@ -18,7 +18,7 @@ public class ThemeDetailVO implements Serializable {
 
     private Long seriesId;
 
-    private Boolean themeType;
+    private Integer themeType;
 
     private String themeName;
 

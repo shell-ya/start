@@ -36,7 +36,7 @@ public class StarNftThemeInfo implements Serializable {
      * 主题类型(1-藏品 2-盲盒)
      */
     @TableField(value = "theme_type")
-    private Boolean themeType;
+    private Integer themeType;
 
     /**
      * 主题名称
