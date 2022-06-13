@@ -1,19 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.starnft.star.infrastructure.mapper.publisher.StarNftPublisherMapper">
-  <resultMap id="BaseResultMap" type="com.starnft.star.infrastructure.entity.publisher.StarNftPublisher">
-    <!--@mbg.generated-->
-    <!--@Table star_nft_publisher-->
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="publisher" jdbcType="VARCHAR" property="publisher" />
-    <result column="is_base" jdbcType="BOOLEAN" property="isBase" />
-    <result column="pic" jdbcType="LONGVARCHAR" property="pic" />
-    <result column="pid" jdbcType="BIGINT" property="pid" />
-    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
-    <result column="modified_at" jdbcType="TIMESTAMP" property="modifiedAt" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    <!--@mbg.generated-->
-    id, publisher, is_base, pic, pid, created_at, modified_at
-  </sql>
+    <resultMap id="BaseResultMap" type="com.starnft.star.infrastructure.entity.publisher.StarNftPublisher">
+        <!--@mbg.generated-->
+        <!--@Table star_nft_publisher-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="publisher" jdbcType="VARCHAR" property="publisher"/>
+        <result column="is_base" jdbcType="BOOLEAN" property="isBase"/>
+        <result column="pic" jdbcType="LONGVARCHAR" property="pic"/>
+        <result column="pid" jdbcType="BIGINT" property="pid"/>
+        <result column="created_at" jdbcType="TIMESTAMP" property="createdAt"/>
+        <result column="modified_at" jdbcType="TIMESTAMP" property="modifiedAt"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id, publisher, is_base, pic, pid, created_at, modified_at
+    </sql>
+    <select id="queryPublisherById" resultType="PublisherVO">
+        select a.id        as author_id,
+               a.pic       as author_pic,
+               a.publisher as author_name,
+               b.publisher as publisher_name,
+               b.pic       as publisher_pic,
+               b.id        as publisher_id
+        from star_nft_publisher as a
+                     LEFT JOIN star_nft_publisher b on a.pid = b.id
+        where a.id = #{id}
+    </select>
+
+    <select id="queryPublisherByIds" resultType="PublisherVO">
+        select a.id        as author_id,
+               a.pic       as author_pic,
+               a.publisher as author_name,
+               b.publisher as publisher_name,
+               b.pic       as publisher_pic,
+               b.id        as publisher_id
+        from star_nft_publisher as a
+                     LEFT JOIN star_nft_publisher b on a.pid = b.id where a.id
+        <foreach collection="ids" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
 </mapper>

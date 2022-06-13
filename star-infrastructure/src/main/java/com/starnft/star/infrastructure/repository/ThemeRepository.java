@@ -47,6 +47,7 @@ public class ThemeRepository implements IThemeRepository {
                                 .lssuePrice(item.getLssuePrice())
                                 .publishNumber(item.getPublishNumber())
                                 .themeType(item.getThemeType())
+                                .publisherId(item.getPublisherId())
                                 .tags(item.getTags())
                                 .build()
 
@@ -86,6 +87,7 @@ public class ThemeRepository implements IThemeRepository {
         }
         return ThemeDetailVO
                 .builder()
+                .publisherId(repository.getPublisherId())
                 .id(repository.getId())
                 .themeName(repository.getThemeName())
                 .themePic(repository.getThemePic())

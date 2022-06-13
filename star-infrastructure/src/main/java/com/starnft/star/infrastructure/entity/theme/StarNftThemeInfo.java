@@ -31,7 +31,11 @@ public class StarNftThemeInfo implements Serializable {
      */
     @TableField(value = "series_id")
     private Long seriesId;
-
+    /**
+     * 发行商ID
+     */
+    @TableField(value = "publisher_id")
+    private Long publisherId;
     /**
      * 主题类型(1-藏品 2-盲盒)
      */
