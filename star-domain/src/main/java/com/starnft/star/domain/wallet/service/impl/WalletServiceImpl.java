@@ -121,9 +121,8 @@ public class WalletServiceImpl implements WalletService {
         return new CalculateResult(number.format(calculated.setScale(2, BigDecimal.ROUND_HALF_DOWN)), percent.format(config.getChargeRate()));
     }
 
-    private String verifyAndGetKey(WithDrawReq withDrawReq) {
+    private String verifyAndGetKey(WithDrawReq withDrawReq, WalletConfigVO config) {
         //提现次数确认
-        WalletConfigVO config = WalletConfig.getConfig(StarConstants.PayChannel.valueOf(withDrawReq.getChannel()));
         if (null == config) {
             throw new RuntimeException("该渠道钱包配置为空");
         }
@@ -158,7 +157,8 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public WithdrawResult withdraw(WithDrawReq withDrawReq) {
         //校验提现规则
-        String isTransactionKey = verifyAndGetKey(withDrawReq);
+        WalletConfigVO config = WalletConfig.getConfig(StarConstants.PayChannel.valueOf(withDrawReq.getChannel()));
+        String isTransactionKey = verifyAndGetKey(withDrawReq, config);
         //生成流水号
         String withdrawTradeNo = StarConstants.OrderPrefix.WithdrawSn.getPrefix().concat(
                 String.valueOf(idGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId()));
@@ -181,7 +181,7 @@ public class WalletServiceImpl implements WalletService {
                     WithdrawRecordVO withdrawRecordVO = createWithdrawRecordVO(withDrawReq, withdrawTradeNo);
                     boolean bSuccess = walletRepository.createWithdrawRecord(withdrawRecordVO);
                     //记录交易记录
-                    WalletRecordReq walletRecordReq = createWalletRecordReq(withDrawReq, withdrawTradeNo);
+                    WalletRecordReq walletRecordReq = createWalletRecordReq(withDrawReq, config, withdrawTradeNo);
                     boolean cSuccess = walletRepository.createWalletRecord(walletRecordReq);
                     if (!(aSuccess && bSuccess && cSuccess)) {
                         throw new RuntimeException(StarError.DB_RECORD_UNEXPECTED_ERROR.getErrorMessage());
@@ -244,12 +244,17 @@ public class WalletServiceImpl implements WalletService {
         return walletVO;
     }
 
-    private WalletRecordReq createWalletRecordReq(WithDrawReq withDrawReq, String withdrawTradeNo) {
+    private WalletRecordReq createWalletRecordReq(WithDrawReq withDrawReq, WalletConfigVO config, String withdrawTradeNo) {
+        BigDecimal money = new BigDecimal(withDrawReq.getMoney());
+        BigDecimal cost = money.subtract(money.multiply(config.getChargeRate()));
         return WalletRecordReq.builder().from_uid(withDrawReq.getUid()).to_uid(0L)
                 .recordSn(withdrawTradeNo)
                 .payChannel(withDrawReq.getChannel()).payStatus(StarConstants.Pay_Status.PAY_ING.name())
                 .payTime(new Date())
-                .tsMoney(new BigDecimal(withDrawReq.getMoney())).tsType(StarConstants.Transaction_Type.Withdraw.getCode())
+                .tsMoney(money)
+                .tsCost(cost)
+                .tsFee(money.multiply(config.getChargeRate()))
+                .tsType(StarConstants.Transaction_Type.Withdraw.getCode())
                 .build();
     }
 
@@ -286,14 +291,14 @@ public class WalletServiceImpl implements WalletService {
         //增加总收入金额
         BigDecimal income = walletVO.getWallet_income().add(rechargeVO.getTotalAmount().abs());
 
-        //修改交易记录状态 回写第三方流水号
-        WalletRecordVO walletRecordVO = walletRepository.queryWalletRecordBySerialNo(rechargeVO.getOrderSn(), StarConstants.Pay_Status.PAY_ING.name());
-        if (null == walletRecordVO) {
-            log.error("钱包交易记录状态变化出错,交易记录单号：[{}] , 第三方交易流水号： [{}] ", rechargeVO.getOrderSn(), rechargeVO.getTransSn());
-            throw new RuntimeException("钱包交易记录状态变化出错");
-        }
-
         Boolean isSuccess = template.execute(status -> {
+            //修改交易记录状态 回写第三方流水号
+            WalletRecordVO walletRecordVO = walletRepository.queryWalletRecordBySerialNo(rechargeVO.getOrderSn(), StarConstants.Pay_Status.PAY_ING.name());
+            if (null == walletRecordVO) {
+                log.error("钱包交易记录状态变化出错,交易记录单号：[{}] , 第三方交易流水号： [{}] ", rechargeVO.getOrderSn(), rechargeVO.getTransSn());
+                throw new RuntimeException("钱包交易记录状态变化出错,可能出现消息重复消费");
+            }
+
             Result result = stateHandler.paySuccess(rechargeVO.getOrderSn(),
                     rechargeVO.getTransSn(), StarConstants.Pay_Status.valueOf(walletRecordVO.getPayStatus()));
 

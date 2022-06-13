@@ -15,6 +15,8 @@
         <result property="toUid" column="to_uid" jdbcType="INTEGER"/>
         <result property="tsType" column="ts_type" jdbcType="VARCHAR"/>
         <result property="tsMoney" column="ts_money" jdbcType="DECIMAL"/>
+        <result property="tsCost" column="ts_cost" jdbcType="DECIMAL"/>
+        <result property="tsFee" column="ts_fee" jdbcType="DECIMAL"/>
         <result property="payChannel" column="pay_channel" jdbcType="INTEGER"/>
         <result property="remark" column="remark" jdbcType="VARCHAR"/>
         <result property="payStatus" column="pay_status" jdbcType="INTEGER"/>
@@ -24,7 +26,8 @@
     <select id="selectByLimit" resultMap="StarNftWalletRecordMap"
             parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord">
         select
-        id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,order_sn,out_trade_no,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time
+        id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,order_sn,out_trade_no,from_uid,to_uid,ts_type,ts_money,
+        ts_cost,ts_fee,pay_channel,remark,pay_status,pay_time
         from star_nft_wallet_record
         <where>
             <if test="id != null and id != ''">
@@ -63,8 +66,14 @@
             <if test="tsType != null and tsType != ''">
                 and ts_type = #{tsType}
             </if>
-            <if test="tsMoney != null and tsMoney != ''">
+            <if test="tsMoney != null">
                 and ts_money = #{tsMoney}
+            </if>
+            <if test="tsCost != null">
+                and ts_cost = #{tsCost}
+            </if>
+            <if test="tsFee != null">
+                and ts_fee = #{tsFee}
             </if>
             <if test="payChannel != null and payChannel != ''">
                 and pay_channel = #{payChannel}
@@ -84,7 +93,8 @@
     <select id="queryRecordOnCondition"
             resultType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord">
         select
-        id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,order_sn,out_trade_no,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time
+        id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,order_sn,out_trade_no,from_uid,to_uid,ts_type,ts_money,
+        ts_cost,ts_fee,pay_channel,remark,pay_status,pay_time
         from star_nft_wallet_record
         <where>
             <if test="userId != null and userId != ''">
@@ -109,7 +119,8 @@
         </where>
         union all
         select
-        id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,order_sn,out_trade_no,from_uid,to_uid,ts_type,ts_money,pay_channel,remark,pay_status,pay_time
+        id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,order_sn,out_trade_no,from_uid,to_uid,ts_type,ts_money,
+        ts_cost,ts_fee,pay_channel,remark,pay_status,pay_time
         from star_nft_wallet_record
         <where>
             <if test="userId != null and userId != ''">
@@ -142,11 +153,13 @@
             parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord">
         insert into star_nft_wallet_record(is_deleted, created_at, created_by, modified_at, modified_by, record_sn,
                                            order_sn, out_trade_no,
-                                           from_uid, to_uid, ts_type, ts_money, pay_channel, remark, pay_status,
+                                           from_uid, to_uid, ts_type, ts_money, ts_cost, ts_fee, pay_channel, remark,
+                                           pay_status,
                                            pay_time)
         values (#{isDeleted}, #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{recordSn}, #{orderSn},
                 #{outTradeNo}, #{fromUid},
-                #{toUid}, #{tsType}, #{tsMoney}, #{payChannel}, #{remark}, #{payStatus}, #{payTime})
+                #{toUid}, #{tsType}, #{tsMoney}, #{tsCost}, #{tsFee}, #{payChannel}, #{remark}, #{payStatus},
+                #{payTime})
     </insert>
 
     <!-- 更新数据 -->
@@ -186,8 +199,14 @@
             <if test="tsType != null and tsType != ''">
                 ts_type = #{tsType},
             </if>
-            <if test="tsMoney != null and tsMoney != ''">
+            <if test="tsMoney != null">
                 ts_money = #{tsMoney},
+            </if>
+            <if test="tsCost != null">
+                and ts_cost = #{tsCost}
+            </if>
+            <if test="tsFee != null">
+                and ts_fee = #{tsFee}
             </if>
             <if test="payChannel != null and payChannel != ''">
                 pay_channel = #{payChannel},

@@ -15,7 +15,6 @@ import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
-import com.starnft.star.common.utils.DateUtil;
 import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.payment.core.IPaymentService;
@@ -35,11 +34,10 @@ import com.starnft.star.domain.wallet.service.WalletService;
 import com.starnft.star.domain.wallet.service.stateflow.IStateHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +89,7 @@ public class WalletCore implements IWalletCore {
                 //生成充值单状态为支付中
                 WalletRecordReq walletRecordReq = walletRecordInit(rechargeFacadeReq);
                 boolean isSuccess = walletService.rechargeRecordGenerate(walletRecordReq);
-                if (!isSuccess){
+                if (!isSuccess) {
                     throw new RuntimeException("生成预充值记录失败");
                 }
                 RechargeReqResult rechargeReqResult = new RechargeReqResult();
@@ -280,6 +278,8 @@ public class WalletCore implements IWalletCore {
                 .payChannel(rechargeFacadeReq.getChannel())
                 .tsType(StarConstants.Transaction_Type.Recharge.getCode())
                 .tsMoney(rechargeFacadeReq.getMoney())
+                .tsCost(rechargeFacadeReq.getMoney())
+                .tsFee(BigDecimal.ZERO)
                 .payTime(new Date())
                 .payStatus(StarConstants.Pay_Status.PAY_ING.name())
                 .build();

@@ -68,10 +68,10 @@ public class SpringTest {
                 TopicConstants.WALLET_RECHARGE_DESTINATION.getTag());
         PayCheckRes payCheckRes = new PayCheckRes();
         payCheckRes.setStatus(0);
-        payCheckRes.setOrderSn("RC985179791646916608");
+        payCheckRes.setOrderSn("RC985866872677367808");
         payCheckRes.setTotalAmount(new BigDecimal("10.00"));
         payCheckRes.setUid("985174743233269760");
-        payCheckRes.setTransSn("000000000000000000000000");
+        payCheckRes.setTransSn("0000000000000000000000001");
         payCheckRes.setMessage("good");
         payCheckRes.setPayChannel(StarConstants.PayChannel.BankCard.name());
 

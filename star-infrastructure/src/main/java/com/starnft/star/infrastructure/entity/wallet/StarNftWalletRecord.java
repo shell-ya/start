@@ -36,6 +36,12 @@ public class StarNftWalletRecord extends BaseEntity implements Serializable {
     /** 交易金额 */
     @ApiModelProperty(name = "交易金额",notes = "")
     private BigDecimal tsMoney ;
+    /** 交易金额 */
+    @ApiModelProperty(name = "实际金额",notes = "")
+    private BigDecimal tsCost ;
+    /** 手续费 */
+    @ApiModelProperty(name = "手续费",notes = "")
+    private BigDecimal tsFee ;
     /** 支付渠道 0未知 1支付宝 2微信 3银行卡 4余额 */
     @ApiModelProperty(name = "支付渠道 0未知 1支付宝 2微信 3银行卡 4余额",notes = "")
     private String payChannel ;
@@ -111,6 +117,22 @@ public class StarNftWalletRecord extends BaseEntity implements Serializable {
 
     public void setTsMoney(BigDecimal tsMoney) {
         this.tsMoney = tsMoney;
+    }
+
+    public BigDecimal getTsCost() {
+        return tsCost;
+    }
+
+    public void setTsCost(BigDecimal tsCost) {
+        this.tsCost = tsCost;
+    }
+
+    public BigDecimal getTsFee() {
+        return tsFee;
+    }
+
+    public void setTsFee(BigDecimal tsFee) {
+        this.tsFee = tsFee;
     }
 
     public String getPayChannel() {
