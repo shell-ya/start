@@ -34,7 +34,7 @@ public class StarNftSeries implements Serializable {
      * 系列类型(1-主题 2-盲盒)
      */
     @TableField(value = "series_type")
-    private Boolean seriesType;
+    private Integer seriesType;
 
     /**
      * 创建时间

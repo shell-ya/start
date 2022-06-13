@@ -24,6 +24,7 @@ public class NotifyOrderRepository  implements INotifyOrderRepository {
         starNftNotifyOrder.setId(notifyOrderId);
         starNftNotifyOrder.setUid(notifyOrderReq.getUid());
         starNftNotifyOrder.setOrderSn(notifyOrderReq.getOrderSn());
+        starNftNotifyOrder.setTransSn(notifyOrderReq.getTransSn());
         starNftNotifyOrder.setMessage(notifyOrderReq.getMessage());
         starNftNotifyOrder.setStatus(notifyOrderReq.getStatus());
         starNftNotifyOrder.setPayChannel(notifyOrderReq.getPayChannel());

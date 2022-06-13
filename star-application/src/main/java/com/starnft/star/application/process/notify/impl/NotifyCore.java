@@ -24,7 +24,6 @@ public class NotifyCore {
     IMessageSender messageSender;
     @Resource
     NotifyOrderService notifyOrderService;
-
     public NotifyRes handler(String platform, HttpServletRequest request, HttpServletResponse response) {
         NotifyRes transform = payNotifyService.transform(platform, request, response);
         PayCheckRes payCheckRes = transform.getPayCheckRes();
