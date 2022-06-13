@@ -63,5 +63,6 @@ public class RechargeConsumer implements RocketMQListener<PayCheckRes> {
             throw new RuntimeException("消息重复消费，幂等验证拦截");
         }
         redisUtil.incr(idempotent, 1);
+        redisUtil.expire(idempotent, RedisKey.REDIS_IDEMPOTENT_MARK.getTime(), RedisKey.REDIS_IDEMPOTENT_MARK.getTimeUnit());
     }
 }

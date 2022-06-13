@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 public class ThemeVO implements Serializable {
     private Long id;
     private Integer themeType;
+    private Long seriesId;
     private String themeName;
     private String themePic;
     private Integer publishNumber;

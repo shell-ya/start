@@ -1,5 +1,6 @@
 package com.starnft.star.domain.component;
 
+import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -604,6 +605,16 @@ public class RedisUtil {
     }
 
     /**
+     * 模糊查询获取key值
+     *
+     * @param pattern
+     * @return
+     */
+    public Set hashKeys(String pattern) {
+        return this.redisTemplate.boundHashOps(pattern).keys();
+    }
+
+    /**
      * 使用Redis的消息队列
      *
      * @param channel
@@ -631,6 +642,29 @@ public class RedisUtil {
         boundValueOperations.rightPushAll(values);
         //设置过期时间
         boundValueOperations.expire(timeout, unit);
+    }
+
+    /**
+     * 将数据添加到Redis的list中（从左边添加）
+     *
+     * @param listKey
+     * @param timeout 有效时间
+     * @param unit    时间类型
+     * @param values  待添加的数据
+     */
+    public void addToListLeft(String listKey, long timeout, TimeUnit unit, Object... values) {
+        this.redisTemplate.opsForList().leftPushAll(listKey, values);
+        expire(listKey, timeout, unit);
+    }
+
+    /**
+     * 将数据添加到Redis的list中（从左边添加）
+     */
+    public void hashIncr(String hashKey, String key, Integer value) {
+        //绑定操作
+        BoundHashOperations<String, String, Object> boundValueOperations = this.redisTemplate.boundHashOps(hashKey);
+        //插入数据
+        boundValueOperations.increment(key, value);
     }
 
     /**

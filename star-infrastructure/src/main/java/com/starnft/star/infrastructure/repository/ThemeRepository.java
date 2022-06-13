@@ -71,6 +71,7 @@ public class ThemeRepository implements IThemeRepository {
                         ThemeVO
                                 .builder()
                                 .id(item.getId())
+                                .seriesId(seriesId)
                                 .themeName(item.getThemeName())
                                 .build()
 

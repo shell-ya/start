@@ -105,7 +105,24 @@ public enum RedisKey {
     /**
      * 交易成功标识
      */
-    REDIS_IDEMPOTENT_MARK(201, StarConstants.SERVICE_NAME.concat(".MQ.idempotent.mark:%s"), 1L, TimeUnit.MINUTES),
+    REDIS_IDEMPOTENT_MARK(201, StarConstants.SERVICE_NAME.concat(".MQ.idempotent.mark:%s"), 30L, TimeUnit.MINUTES),
+
+    //======================================= sec kill goods cache =======================================
+
+    /**
+     * 秒杀商品详情
+     */
+    SECKILL_GOODS_INFO(501, StarConstants.SERVICE_NAME.concat(".seckill.goods:%s"), -1L, TimeUnit.MINUTES),
+    /**
+     * 秒杀商品库存队列
+     */
+    SECKILL_GOODS_STOCK_QUEUE(502, StarConstants.SERVICE_NAME.concat(".seckill.stock.queue:%s"), -1L, TimeUnit.HOURS),
+    /**
+     * 秒杀商品库存数量
+     */
+    SECKILL_GOODS_STOCK_NUMBER(503, StarConstants.SERVICE_NAME.concat(".seckill.stock.num"), -1L, TimeUnit.HOURS),
+
+    //======================================= sec kill goods end   =======================================
 
     ;
     private Integer code;

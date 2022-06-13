@@ -1,5 +1,7 @@
 package com.starnft.star.infrastructure.entity.activity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.starnft.star.infrastructure.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -9,7 +11,14 @@ import java.util.Date;
 
 
 @ApiModel(value = "秒杀活动表", description = "")
+@TableName("star_schedule_seckill")
 public class StarScheduleSeckill extends BaseEntity implements Serializable {
+    /**
+     * id
+     */
+    @ApiModelProperty(name = "id", notes = "")
+    @TableId
+    private Long id;
     /**
      * 商家id
      */
@@ -19,12 +28,12 @@ public class StarScheduleSeckill extends BaseEntity implements Serializable {
      * spu id
      */
     @ApiModelProperty(name = "spu id", notes = "")
-    private Integer spuId;
+    private Long spuId;
     /**
      * sku id
      */
     @ApiModelProperty(name = "sku id", notes = "")
-    private Integer skuId;
+    private Long skuId;
     /**
      * 库存
      */
@@ -61,6 +70,14 @@ public class StarScheduleSeckill extends BaseEntity implements Serializable {
     @ApiModelProperty(name = "审核状态 0未审核 1审核通过", notes = "")
     private int status;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Integer getSellerId() {
         return sellerId;
     }
@@ -69,19 +86,19 @@ public class StarScheduleSeckill extends BaseEntity implements Serializable {
         this.sellerId = sellerId;
     }
 
-    public Integer getSpuId() {
+    public Long getSpuId() {
         return spuId;
     }
 
-    public void setSpuId(Integer spuId) {
+    public void setSpuId(Long spuId) {
         this.spuId = spuId;
     }
 
-    public Integer getSkuId() {
+    public Long getSkuId() {
         return skuId;
     }
 
-    public void setSkuId(Integer skuId) {
+    public void setSkuId(Long skuId) {
         this.skuId = skuId;
     }
 
