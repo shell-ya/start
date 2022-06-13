@@ -15,13 +15,14 @@
         <result property="walletOutcome" column="wallet_outcome" jdbcType="DECIMAL"/>
         <result property="frozen" column="frozen" jdbcType="TINYINT"/>
         <result property="frozenFee" column="frozen_fee" jdbcType="DECIMAL"/>
+        <result property="version" column="version" jdbcType="INTEGER"/>
     </resultMap>
 
     <!--分页查询指定行数据-->
     <select id="queryWalletByParams" parameterType="com.starnft.star.infrastructure.entity.wallet.Wallet"
             resultMap="NftWalletMap">
         select
-        id,is_deleted,created_at,created_by,modified_at,modified_by,w_id,uid,balance,wallet_income,wallet_outcome,frozen,frozen_fee
+        id,is_deleted,created_at,created_by,modified_at,modified_by,w_id,uid,balance,wallet_income,wallet_outcome,frozen,frozen_fee,version
         from nft_wallet
         <where>
             <if test="id != null and id != ''">
@@ -62,6 +63,9 @@
             </if>
             <if test="frozenFee != null ">
                 and frozen_fee = #{frozenFee}
+            </if>
+            <if test="version != null ">
+                and version = #{version}
             </if>
         </where>
     </select>
@@ -110,49 +114,29 @@
             <if test="frozenFee != null and frozenFee != ''">
                 and frozen_fee = #{frozenFee}
             </if>
+            <if test="version != null ">
+                and version = #{version}
+            </if>
         </where>
     </select>
 
     <!--新增数据-->
     <insert id="createWallet" useGeneratedKeys="true">
         insert into nft_wallet(is_deleted, created_at, created_by, modified_at, modified_by, w_id, uid, balance,
-                               wallet_income, wallet_outcome, frozen, frozen_fee)
+                               wallet_income, wallet_outcome, frozen, frozen_fee, version)
         values (#{isDeleted}, #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{wId}, #{uid},
-                #{balance}, #{walletIncome}, #{walletOutcome}, #{frozen}, #{frozenFee})
+                #{balance}, #{walletIncome}, #{walletOutcome}, #{frozen}, #{frozenFee}, #{version})
     </insert>
 
     <!-- 批量新增数据 -->
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
         insert into
-        nft_wallet(id,is_deleted,created_at,created_by,modified_at,modified_by,w_id,uid,balance,wallet_income,wallet_outcome,frozen,frozen_fee)
+        nft_wallet(id,is_deleted,created_at,created_by,modified_at,modified_by,w_id,uid,balance,wallet_income,wallet_outcome,frozen,frozen_fee,
+        version)
         values
         <foreach collection="entities" item="entity" separator=",">
-            (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.wId},#{entity.uid},#{entity.balance},#{entity.walletIncome},#{entity.walletOutcome},#{entity.frozen},#{entity.frozenFee})
+            (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.wId},#{entity.uid},#{entity.balance},#{entity.walletIncome},#{entity.walletOutcome},#{entity.frozen},#{entity.frozenFee},#{version})
         </foreach>
-    </insert>
-
-    <!-- 批量新增或按主键更新数据 -->
-    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
-        insert into
-        nft_wallet(id,is_deleted,created_at,created_by,modified_at,modified_by,w_id,uid,balance,wallet_income,wallet_outcome,frozen,frozen_fee)
-        values
-        <foreach collection="entities" item="entity" separator=",">
-            (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.wId},#{entity.uid},#{entity.balance},#{entity.walletIncome},#{entity.walletOutcome},#{entity.frozen},#{entity.frozenFee})
-        </foreach>
-        on duplicate key update
-        id=values(id),
-        is_deleted=values(is_deleted),
-        created_at=values(created_at),
-        created_by=values(created_by),
-        modified_at=values(modified_at),
-        modified_by=values(modified_by),
-        w_id=values(w_id),
-        uid=values(uid),
-        balance=values(balance),
-        wallet_income=values(wallet_income),
-        wallet_outcome=values(wallet_outcome),
-        frozen=values(frozen),
-        frozen_fee=values(frozen_fee)
     </insert>
 
     <!-- 更新数据 -->
@@ -192,8 +176,11 @@
             <if test="frozenFee != null">
                 frozen_fee = #{frozenFee},
             </if>
+            <if test="version != null ">
+                and version= ${version} + 1
+            </if>
         </set>
-            WHERE 1 = 1
+        WHERE 1 = 1
         <if test="id != null and id != ''">
             AND
             id = #{id}
@@ -206,6 +193,10 @@
             AND
             w_id = #{wId}
         </if>
-            ;
+        <if test="version != null">
+            AND
+            version = #{version}
+        </if>
+        ;
     </update>
 </mapper>

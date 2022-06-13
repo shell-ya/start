@@ -113,6 +113,11 @@ public class WalletRepository implements IWalletRepository {
     public boolean modifyWalletBalance(WalletVO walletVO) {
         Wallet wallet = new Wallet();
 
+        Wallet curr = getWallet(new WalletInfoReq(walletVO.getWalletId(), walletVO.getUid()));
+
+        if (curr == null) {
+            throw new RuntimeException("修改的钱包为空：uid:" + walletVO.getUid());
+        }
         wallet.setUid(walletVO.getUid());
         wallet.setwId(walletVO.getWalletId());
         wallet.setBalance(walletVO.getBalance());
@@ -120,6 +125,7 @@ public class WalletRepository implements IWalletRepository {
         wallet.setWalletIncome(walletVO.getWallet_income());
         wallet.setFrozen(walletVO.isFrozen() ? 1 : 0);
         wallet.setFrozenFee(walletVO.getFrozen_fee());
+        wallet.setVersion(curr.getVersion());
 
         Integer isSuccess = walletMapper.updateWallet(wallet);
 
@@ -413,6 +419,8 @@ public class WalletRepository implements IWalletRepository {
         starNftWalletRecord.setPayStatus(walletRecordReq.getPayStatus());
         starNftWalletRecord.setTsType(walletRecordReq.getTsType());
         starNftWalletRecord.setTsMoney(walletRecordReq.getTsMoney());
+        starNftWalletRecord.setTsCost(walletRecordReq.getTsCost());
+        starNftWalletRecord.setTsFee(walletRecordReq.getTsFee());
         starNftWalletRecord.setPayChannel(walletRecordReq.getPayChannel());
         starNftWalletRecord.setPayTime(walletRecordReq.getPayTime());
         starNftWalletRecord.setCreatedBy(walletRecordReq.getFrom_uid() == 0 ? walletRecordReq.getTo_uid() : walletRecordReq.getFrom_uid());
@@ -438,6 +446,7 @@ public class WalletRepository implements IWalletRepository {
         wallet.setWalletOutcome(new BigDecimal(BigDecimal.ZERO.intValue()));
         wallet.setFrozenFee(new BigDecimal(BigDecimal.ZERO.intValue()));
         wallet.setCreatedAt(new Date());
+        wallet.setVersion(0);
         return wallet;
     }
 

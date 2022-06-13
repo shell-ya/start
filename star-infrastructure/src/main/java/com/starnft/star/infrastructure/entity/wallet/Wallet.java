@@ -36,6 +36,9 @@ public class Wallet extends BaseEntity {
     /** 冻结金额 */
     @ApiModelProperty(name = "冻结金额",notes = "")
     private BigDecimal frozenFee ;
+    /** 乐观锁 */
+    @ApiModelProperty(name = "乐观锁",notes = "")
+    private Integer version ;
     /** id */
     public Integer getId(){
         return this.id;
@@ -99,5 +102,13 @@ public class Wallet extends BaseEntity {
 
     public void setFrozenFee(BigDecimal frozenFee) {
         this.frozenFee = frozenFee;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 }

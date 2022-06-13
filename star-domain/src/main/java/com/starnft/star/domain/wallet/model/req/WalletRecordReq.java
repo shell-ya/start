@@ -29,6 +29,14 @@ public class WalletRecordReq implements Serializable {
      * 交易金额
      */
     private BigDecimal tsMoney;
+    /**
+     * 交易金额
+     */
+    private BigDecimal tsCost;
+    /**
+     * 交易金额
+     */
+    private BigDecimal tsFee;
 
     /**
      * 交易渠道
@@ -81,6 +89,22 @@ public class WalletRecordReq implements Serializable {
 
     public void setTsMoney(BigDecimal tsMoney) {
         this.tsMoney = tsMoney;
+    }
+
+    public BigDecimal getTsCost() {
+        return tsCost;
+    }
+
+    public void setTsCost(BigDecimal tsCost) {
+        this.tsCost = tsCost;
+    }
+
+    public BigDecimal getTsFee() {
+        return tsFee;
+    }
+
+    public void setTsFee(BigDecimal tsFee) {
+        this.tsFee = tsFee;
     }
 
     public String getPayChannel() {

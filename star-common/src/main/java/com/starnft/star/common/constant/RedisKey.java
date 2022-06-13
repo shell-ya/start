@@ -101,6 +101,12 @@ public enum RedisKey {
      * 交易成功标识
      */
     REDIS_TRANSACTION_SUCCESS(403, StarConstants.SERVICE_NAME.concat(".transaction.status.success:%s"), 1L, TimeUnit.MINUTES),
+
+    /**
+     * 交易成功标识
+     */
+    REDIS_IDEMPOTENT_MARK(201, StarConstants.SERVICE_NAME.concat(".MQ.idempotent.mark:%s"), 1L, TimeUnit.MINUTES),
+
     ;
     private Integer code;
 
