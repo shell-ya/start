@@ -72,7 +72,7 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
         return iInteract.verifyResAndGet(remoteRes, PaymentRes.class);
     }
 
-    private Map<String, String> getSignAndMap(SdKeysHelper sdKeysHelper, String signString) {
+    protected Map<String, String> getSignAndMap(SdKeysHelper sdKeysHelper, String signString) {
         String signResult = new String(Base64.encodeBase64(sdKeysHelper.digitalSign(signString.getBytes(StandardCharsets.UTF_8),
                 sdKeysHelper.getPrivateKey(), "SHA1WithRSA")));
         Map<String, String> req = new HashMap<>();

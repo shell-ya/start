@@ -78,6 +78,10 @@ public class StarConstants {
          */
         BankCard,
         /**
+         * 快捷绑卡支付
+         */
+        QuickCard,
+        /**
          * 余额
          */
         Balance,
