@@ -6,6 +6,7 @@ import com.starnft.star.application.process.wallet.req.RechargeFacadeReq;
 import com.starnft.star.application.process.wallet.res.RechargeReqResult;
 import com.starnft.star.application.process.wallet.res.TransactionRecord;
 import com.starnft.star.common.RopResponse;
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.wallet.model.req.CardBindReq;
@@ -16,7 +17,10 @@ import com.starnft.star.domain.wallet.model.res.CardBindResult;
 import com.starnft.star.domain.wallet.model.res.WalletResult;
 import com.starnft.star.domain.wallet.model.res.WithdrawResult;
 import com.starnft.star.domain.wallet.model.vo.BankRelationVO;
+import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
+import com.starnft.star.domain.wallet.service.WalletConfig;
 import com.starnft.star.domain.wallet.service.WalletService;
+import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import com.starnft.star.interfaces.interceptor.UserContext;
 import com.starnft.star.interfaces.interceptor.UserResolverInfo;
 import io.swagger.annotations.Api;
@@ -111,6 +115,14 @@ public class WalletController {
     @GetMapping("/balance")
     public RopResponse<WalletResult> getBalance(UserResolverInfo userResolverInfo) {
         return RopResponse.success(this.walletService.queryWalletInfo(new WalletInfoReq(userResolverInfo.getUserId())));
+    }
+
+
+    @ApiOperation("获取钱包手续费率")
+    @GetMapping("/rates")
+    @TokenIgnore
+    public RopResponse<WalletConfigVO> obtainRates() {
+        return RopResponse.success(WalletConfig.getConfig(StarConstants.PayChannel.Market));
     }
 
 }

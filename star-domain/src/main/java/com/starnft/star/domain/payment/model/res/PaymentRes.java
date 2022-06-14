@@ -3,7 +3,6 @@ package com.starnft.star.domain.payment.model.res;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Map;
 
 @Data
 public class PaymentRes implements Serializable {
@@ -16,7 +15,7 @@ public class PaymentRes implements Serializable {
      */
     private String thirdPage;
 
-    private Map<String,String> thirdParam;
+//    private Map<String,String> thirdParam;
 
     private String gatewayApi;
     /**

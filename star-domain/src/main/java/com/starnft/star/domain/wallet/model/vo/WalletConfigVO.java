@@ -28,7 +28,7 @@ public class WalletConfigVO implements Serializable {
     /**
      * 手续费比例
      */
-    @ApiModelProperty(name = "手续费比例", notes = "")
+    @ApiModelProperty(name = "提现手续费比例", notes = "")
     private BigDecimal chargeRate;
 
     @ApiModelProperty(name = "版权费比率", notes = "")

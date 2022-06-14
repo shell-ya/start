@@ -1,7 +1,10 @@
 package com.starnft.star.domain.payment.handler.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Maps;
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.common.exception.StarException;
+import com.starnft.star.common.utils.Assert;
 import com.starnft.star.domain.payment.helper.SdKeysHelper;
 import com.starnft.star.domain.payment.helper.TemplateHelper;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
@@ -14,8 +17,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+
 @Component
-public class SandPayQuickCardPaymentHandler  extends AbstractSandPayHandler {
+public class SandPayQuickCardPaymentHandler extends AbstractSandPayHandler {
     @Override
     public StarConstants.PayChannel getPayChannel() {
         return StarConstants.PayChannel.QuickCard;
@@ -28,10 +32,11 @@ public class SandPayQuickCardPaymentHandler  extends AbstractSandPayHandler {
 
     @Override
     protected void verifyLegality(PaymentRich req) {
-//       Assert.isNull(req.getFrontUrl(),()->new StarException("回显地址不能为空"));
-//       Assert.isNull(req.getUserId(),()->new StarException("用户id不能为空"));
+        Assert.isNull(req.getFrontUrl(), () -> new StarException("回显地址不能为空"));
+        Assert.isNull(req.getUserId(), () -> new StarException("用户id不能为空"));
 //       Assert.isNull(req.getTotalMoney(),()->new StarException("用户id不能为空"));
     }
+
     @SneakyThrows
     @Override
     protected PaymentRes doPay(PaymentRich paymentRich, Map<String, String> vendorConf) {
@@ -48,9 +53,9 @@ public class SandPayQuickCardPaymentHandler  extends AbstractSandPayHandler {
         paymentRes.setOrderSn(paymentRich.getOrderSn());
         paymentRes.setStatus(0);
         paymentRes.setMessage("成功");
-        paymentRes.setThirdParam(req);
+        paymentRes.setThirdPage(JSONUtil.toJsonStr(req));
         paymentRes.setGatewayApi(channelConf.getHttpConf().getApiUrl());
-        return  paymentRes;
+        return paymentRes;
     }
 
     @Override

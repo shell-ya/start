@@ -103,7 +103,7 @@ public enum RedisKey {
     REDIS_TRANSACTION_SUCCESS(403, StarConstants.SERVICE_NAME.concat(".transaction.status.success:%s"), 1L, TimeUnit.MINUTES),
 
     /**
-     * 交易成功标识
+     * 幂等判断
      */
     REDIS_IDEMPOTENT_MARK(201, StarConstants.SERVICE_NAME.concat(".MQ.idempotent.mark:%s"), 30L, TimeUnit.MINUTES),
 

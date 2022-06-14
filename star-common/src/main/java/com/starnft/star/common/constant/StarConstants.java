@@ -45,7 +45,8 @@ public class StarConstants {
      * 主题详细信息缓存名字
      */
     public static final String THEME_DETAIL_CACHE_NAME = ".theme.detail.cache";
-    public  enum RankTypes{
+
+    public enum RankTypes {
         Consumption;
     }
 
@@ -81,6 +82,10 @@ public class StarConstants {
          * 快捷绑卡支付
          */
         QuickCard,
+        /**
+         * 市场
+         */
+        Market,
         /**
          * 余额
          */
@@ -260,7 +265,7 @@ public class StarConstants {
     public enum OrderType {
 
         RECHARGE("RECHARGE", "充值"),
-        PUBLISH_GOODS("PUBLISH_GOODS","发行"),
+        PUBLISH_GOODS("PUBLISH_GOODS", "发行"),
         ;
 
         private String name;
@@ -289,7 +294,7 @@ public class StarConstants {
         }
     }
 
-    public enum OrderPrefix{
+    public enum OrderPrefix {
 
         //充值订单前缀
         RechargeSn("RC"),
@@ -298,9 +303,7 @@ public class StarConstants {
         //发行商品订单前缀
         PublishGoods("PG"),
         //市场交易订单前缀
-        TransactionSn("TS")
-
-        ;
+        TransactionSn("TS");
 
         private final String prefix;
 

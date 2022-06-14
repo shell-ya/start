@@ -10,7 +10,7 @@ import java.io.Serializable;
 @ApiModel("充值响应")
 public class RechargeReqResult implements Serializable {
 
-   //拉起支付参数
+    //拉起支付参数
     @ApiModelProperty(value = "充值单号")
     private String orderSn;
 
@@ -20,6 +20,9 @@ public class RechargeReqResult implements Serializable {
     // 拉起支付跳转的url  后端做拼装处理 不同厂商拉起域名不同
     @ApiModelProperty(value = "拉起支付跳转url")
     private String forward;
+
+    @ApiModelProperty(value = "渠道")
+    private String channel;
 
 
 }

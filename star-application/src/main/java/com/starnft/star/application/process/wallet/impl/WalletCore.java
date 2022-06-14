@@ -99,6 +99,7 @@ public class WalletCore implements IWalletCore {
                     rechargeReqResult.setOrderSn(payResult.getOrderSn());
                     //组装跳转url
                     assembly(rechargeReqResult, payResult);
+                    rechargeReqResult.setChannel(rechargeFacadeReq.getChannel());
                     return rechargeReqResult;
                 }
             } catch (Exception e) {
@@ -125,6 +126,7 @@ public class WalletCore implements IWalletCore {
 
     private void assembly(RechargeReqResult rechargeReqResult, PaymentRes payResult) {
         rechargeReqResult.setNeededParam(payResult.getThirdPage());
+        rechargeReqResult.setForward(payResult.getGatewayApi());
     }
 
     private PaymentRich buildPaymentReq(WalletRecordReq walletRecordReq, RechargeFacadeReq rechargeFacadeReq) {
