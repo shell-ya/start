@@ -34,6 +34,9 @@ public class StarNftOrder extends BaseEntity implements Serializable {
     /** 系列id */
     @ApiModelProperty(name = "系列id",notes = "")
     private Long seriesId ;
+    /** 主题编号 */
+    @ApiModelProperty(name = "主题编号",notes = "")
+    private Integer themeNumber ;
     /** 系列名称 */
     @ApiModelProperty(name = "系列名称",notes = "")
     private String seriesName ;
@@ -100,6 +103,14 @@ public class StarNftOrder extends BaseEntity implements Serializable {
 
     public void setSeriesId(Long seriesId) {
         this.seriesId = seriesId;
+    }
+
+    public Integer getThemeNumber() {
+        return themeNumber;
+    }
+
+    public void setThemeNumber(Integer themeNumber) {
+        this.themeNumber = themeNumber;
     }
 
     public String getSeriesName() {

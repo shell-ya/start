@@ -7,6 +7,7 @@
         <result property="seriesThemeInfoId" column="series_theme_info_id" jdbcType="BIGINT"/>
         <result property="seriesThemeId" column="series_theme_id" jdbcType="BIGINT"/>
         <result property="seriesId" column="series_id" jdbcType="BIGINT"/>
+        <result property="themeNumber" column="theme_number" jdbcType="INTEGER"/>
         <result property="seriesName" column="series_name" jdbcType="VARCHAR"/>
         <result property="themeName" column="theme_name" jdbcType="VARCHAR"/>
         <result property="themePic" column="theme_pic" jdbcType="VARCHAR"/>
@@ -38,6 +39,9 @@
         </if>
         <if test="seriesId != null and seriesId != ''">
             series_id = #{seriesId},
+        </if>
+        <if test="themeNumber != null ">
+            theme_number = #{themeNumber},
         </if>
         <if test="seriesName != null and seriesName != ''">
             series_name = #{seriesName},
@@ -90,6 +94,7 @@
        series_theme_info_id,
        series_theme_id,
        series_id,
+       theme_number,
        series_name,
        theme_name,
        theme_pic,
@@ -106,89 +111,17 @@
        is_delete
     </sql>
 
-    <!-- 通过ID查询单条数据 -->
-    <select id="queryById" resultMap="StarNftOrderMap">
-        select
-        <include refid="content"/>
-        from star_nft_order
-        where id = #{id}
-    </select>
-
-    <!--分页查询指定行数据-->
-    <select id="queryAllByLimit" resultMap="StarNftOrderMap">
-        select
-        <include refid="content" />
-        from star_nft_order
-        <where>
-            <include refid="contentCondition"/>
-        </where>
-        limit #{pageable.offset}, #{pageable.pageSize}
-    </select>
-
-    <!--统计总行数-->
-    <select id="count" resultType="java.lang.Long">
-        select count(1)
-        from star_nft_order
-        <where>
-            <include refid="contentCondition"/>
-        </where>
-    </select>
-
     <!--新增数据-->
     <insert id="createOrder" keyProperty="id" useGeneratedKeys="true"
             parameterType="com.starnft.star.infrastructure.entity.order.StarNftOrder">
-        insert into star_nft_order(order_sn, series_theme_info_id, series_theme_id, series_id, series_name, theme_name,
+        insert into star_nft_order(order_sn, series_theme_info_id, series_theme_id, series_id, theme_number,
+                                   series_name, theme_name,
                                    theme_pic, theme_type, status, user_id, total_amount, pay_amount, pay_number,
                                    created_at, created_by, modified_at, modified_by, is_delete)
-        values (#{orderSn}, #{seriesThemeInfoId}, #{seriesThemeId}, #{seriesId}, #{seriesName}, #{themeName},
+        values (#{orderSn}, #{seriesThemeInfoId}, #{seriesThemeId}, #{seriesId}, #{theme_number}, #{seriesName},
+                #{themeName},
                 #{themePic}, #{themeType}, #{status}, #{userId}, #{totalAmount}, #{payAmount}, #{payNumber},
                 #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{isDelete})
     </insert>
 
-    <!-- 批量新增数据 -->
-    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
-        insert into
-        star_nft_order(id,order_sn,series_theme_info_id,series_theme_id,series_id,series_name,theme_name,theme_pic,theme_type,status,user_id,total_amount,pay_amount,pay_number,created_at,created_by,modified_at,modified_by,is_delete)
-        values
-        <foreach collection="entities" item="entity" separator=",">
-            (#{entity.id},#{entity.orderSn},#{entity.seriesThemeInfoId},#{entity.seriesThemeId},#{entity.seriesId},#{entity.seriesName},#{entity.themeName},#{entity.themePic},#{entity.themeType},#{entity.status},#{entity.userId},#{entity.totalAmount},#{entity.payAmount},#{entity.payNumber},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.isDelete})
-        </foreach>
-    </insert>
-
-    <!-- 批量新增或按主键更新数据 -->
-    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
-        insert into
-        star_nft_order(id,order_sn,series_theme_info_id,series_theme_id,series_id,series_name,theme_name,theme_pic,theme_type,status,user_id,total_amount,pay_amount,pay_number,created_at,created_by,modified_at,modified_by,is_delete)
-        values
-        <foreach collection="entities" item="entity" separator=",">
-            (#{entity.id},#{entity.orderSn},#{entity.seriesThemeInfoId},#{entity.seriesThemeId},#{entity.seriesId},#{entity.seriesName},#{entity.themeName},#{entity.themePic},#{entity.themeType},#{entity.status},#{entity.userId},#{entity.totalAmount},#{entity.payAmount},#{entity.payNumber},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.isDelete})
-        </foreach>
-        on duplicate key update
-        id=values(id),
-        order_sn=values(order_sn),
-        series_theme_info_id=values(series_theme_info_id),
-        series_theme_id=values(series_theme_id),
-        series_id=values(series_id),
-        series_name=values(series_name),
-        theme_name=values(theme_name),
-        theme_pic=values(theme_pic),
-        theme_type=values(theme_type),
-        status=values(status),
-        user_id=values(user_id),
-        total_amount=values(total_amount),
-        pay_amount=values(pay_amount),
-        pay_number=values(pay_number),
-        created_at=values(created_at),
-        created_by=values(created_by),
-        modified_at=values(modified_at),
-        modified_by=values(modified_by),
-        is_delete=values(is_delete)
-    </insert>
-
-    <!--通过主键删除-->
-    <delete id="deleteById">
-        delete
-        from star_nft_order
-        where id = #{id}
-    </delete>
 </mapper>

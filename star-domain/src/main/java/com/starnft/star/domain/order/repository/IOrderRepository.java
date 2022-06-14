@@ -1,5 +1,6 @@
 package com.starnft.star.domain.order.repository;
 
+import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 
 import java.util.List;
@@ -16,6 +17,6 @@ public interface IOrderRepository {
     OrderVO queryOrderByCondition(Long uid, String orderSn);
 
     //查询用户下订单 可按状态查询 查全部 状态传null
-    List<OrderVO> queryOrders(Long uid, Integer status);
+    ResponsePageResult<OrderVO> queryOrders(Long uid, Integer status, int page, int size);
 
 }

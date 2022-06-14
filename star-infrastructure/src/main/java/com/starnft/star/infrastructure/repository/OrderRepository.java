@@ -1,7 +1,10 @@
 package com.starnft.star.infrastructure.repository;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.repository.IOrderRepository;
@@ -11,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,6 +30,7 @@ public class OrderRepository implements IOrderRepository {
         //todo 入参里生成
         starNftOrder.setOrderSn(StarConstants.OrderPrefix.PublishGoods.getPrefix().concat(orderVO.getOrderSn()));
         starNftOrder.setUserId(orderVO.getUserId());
+        starNftOrder.setCreatedAt(new Date());
         starNftOrder.setPayAmount(orderVO.getPayAmount());
         starNftOrder.setTotalAmount(orderVO.getTotalAmount());
         starNftOrder.setPayNumber("0"); //初始化为0
@@ -37,6 +42,8 @@ public class OrderRepository implements IOrderRepository {
         starNftOrder.setThemeName(orderVO.getThemeName());
         starNftOrder.setThemePic(orderVO.getThemePic());
         starNftOrder.setThemeType(orderVO.getThemeType());
+        starNftOrder.setThemeNumber(orderVO.getThemNumber());
+        starNftOrder.setIsDeleted(false);
         return starNftOrderMapper.insert(starNftOrder) == 1;
     }
 
@@ -63,11 +70,15 @@ public class OrderRepository implements IOrderRepository {
     }
 
     @Override
-    public List<OrderVO> queryOrders(Long uid, Integer status) {
-        List<StarNftOrder> starNftOrders = starNftOrderMapper.selectList(new LambdaQueryWrapper<StarNftOrder>()
-                .eq(Objects.nonNull(uid), StarNftOrder::getUserId, uid)
-                .eq(status != null, StarNftOrder::getStatus, status));
-        return BeanColverUtil.colverList(starNftOrders, OrderVO.class);
+    public ResponsePageResult<OrderVO> queryOrders(Long uid, Integer status, int page, int size) {
+        PageInfo<StarNftOrder> orders = PageHelper.startPage(page, size).doSelectPageInfo(
+                () -> starNftOrderMapper.selectList(new LambdaQueryWrapper<StarNftOrder>()
+                        .eq(Objects.nonNull(uid), StarNftOrder::getUserId, uid)
+                        .eq(status != null, StarNftOrder::getStatus, status)));
+
+        List<OrderVO> orderVOS = BeanColverUtil.colverList(orders.getList(), OrderVO.class);
+
+        return new ResponsePageResult<OrderVO>(orderVOS, page, size, orders.getTotal());
     }
 
     private StarNftOrder queryOrder(Long uid, String orderSn) {
