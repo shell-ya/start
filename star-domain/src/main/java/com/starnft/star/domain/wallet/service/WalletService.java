@@ -11,6 +11,9 @@ import java.util.List;
 
 public interface WalletService {
 
+    //渠道参数验证
+    void verifyParam(String channel);
+
     //钱包余额查询
     WalletResult queryWalletInfo(WalletInfoReq walletInfoReq);
 

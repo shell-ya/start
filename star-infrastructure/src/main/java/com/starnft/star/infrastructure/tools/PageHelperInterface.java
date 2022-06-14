@@ -11,8 +11,8 @@ public interface PageHelperInterface {
         ResponsePageResult<R> rResponsePageResult = new ResponsePageResult<>();
         rResponsePageResult.setList(list);
         rResponsePageResult.setPage(pageInfo.getPageNum());
-        rResponsePageResult.setSize(pageInfo.getSize());
-        rResponsePageResult.setTotal(rResponsePageResult.getTotal());
+        rResponsePageResult.setSize(pageInfo.getPageSize());
+        rResponsePageResult.setTotal(pageInfo.getTotal());
         return rResponsePageResult;
     }
 }

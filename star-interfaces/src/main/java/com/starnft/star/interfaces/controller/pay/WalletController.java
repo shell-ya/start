@@ -9,22 +9,22 @@ import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.wallet.model.req.CardBindReq;
+import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
 import com.starnft.star.domain.wallet.model.req.WithDrawReq;
 import com.starnft.star.domain.wallet.model.req.WithdrawCancelReq;
 import com.starnft.star.domain.wallet.model.res.CardBindResult;
+import com.starnft.star.domain.wallet.model.res.WalletResult;
 import com.starnft.star.domain.wallet.model.res.WithdrawResult;
 import com.starnft.star.domain.wallet.model.vo.BankRelationVO;
 import com.starnft.star.domain.wallet.service.WalletService;
 import com.starnft.star.interfaces.interceptor.UserContext;
+import com.starnft.star.interfaces.interceptor.UserResolverInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -41,7 +41,7 @@ public class WalletController {
     @PostMapping("/recharge")
     public RopResponse<RechargeReqResult> recharge(@Validated @RequestBody RechargeFacadeReq req) {
         req.setUserId(UserContext.getUserId().getUserId());
-        return RopResponse.success(walletCore.recharge(req));
+        return RopResponse.success(this.walletCore.recharge(req));
     }
 
 
@@ -49,7 +49,7 @@ public class WalletController {
     @PostMapping("/transactions")
     public RopResponse<ResponsePageResult<TransactionRecord>> transactions(@Validated @RequestBody PayRecordReq req) {
         req.setUserId(UserContext.getUserId().getUserId());
-        return RopResponse.success(walletCore.walletRecordQuery(req));
+        return RopResponse.success(this.walletCore.walletRecordQuery(req));
     }
 
 
@@ -57,21 +57,21 @@ public class WalletController {
     @PostMapping("/withdraw")
     public RopResponse<WithdrawResult> withdraw(@Validated @RequestBody WithDrawReq req) {
         req.setUid(UserContext.getUserId().getUserId());
-        return RopResponse.success(walletCore.withdraw(req));
+        return RopResponse.success(this.walletCore.withdraw(req));
     }
 
     @ApiOperation("提现申请")
     @PostMapping("/withdraw/cancel")
     public RopResponse<WithdrawResult> withdrawCancel(@Validated @RequestBody WithdrawCancelReq req) {
         req.setUid(UserContext.getUserId().getUserId());
-        return RopResponse.success(walletService.withdrawCancel(req));
+        return RopResponse.success(this.walletService.withdrawCancel(req));
     }
 
     @ApiOperation("银行卡绑定")
     @PostMapping("/cardbinding")
     public RopResponse<?> cardBinding(@Validated @RequestBody CardBindReq cardBindReq) {
         cardBindReq.setUid(UserContext.getUserId().getUserId());
-        boolean isSuccess = walletCore.cardBinding(cardBindReq);
+        boolean isSuccess = this.walletCore.cardBinding(cardBindReq);
         if (isSuccess) {
             return RopResponse.successNoData();
         }
@@ -81,7 +81,7 @@ public class WalletController {
     @ApiOperation("已绑定银行卡查询")
     @PostMapping("/bindingslist")
     public RopResponse<List<CardBindResult>> bindingsList() {
-        return RopResponse.success(walletCore.obtainCardBinds(UserContext.getUserId().getUserId()));
+        return RopResponse.success(this.walletCore.obtainCardBinds(UserContext.getUserId().getUserId()));
     }
 
     @ApiOperation("删除银行卡")
@@ -90,7 +90,7 @@ public class WalletController {
         for (BankRelationVO bankRelation : bankRelations) {
             bankRelation.setUid(UserContext.getUserId().getUserId());
         }
-        boolean isSuccess = walletService.deleteCards(bankRelations);
+        boolean isSuccess = this.walletService.deleteCards(bankRelations);
         if (isSuccess) {
             return RopResponse.successNoData();
         }
@@ -101,11 +101,16 @@ public class WalletController {
     @PostMapping("/defaultcardsetting")
     public RopResponse<?> setDefaultCard(@Validated @RequestBody BankRelationVO relationVO) {
         relationVO.setUid(UserContext.getUserId().getUserId());
-        if (walletService.setDefaultCard(relationVO)) {
+        if (this.walletService.setDefaultCard(relationVO)) {
             return RopResponse.successNoData();
         }
         return RopResponse.fail(StarError.SYSTEM_ERROR, "可能您未绑定该卡");
     }
 
+    @ApiOperation("获取钱包余额")
+    @GetMapping("/balance")
+    public RopResponse<WalletResult> getBalance(UserResolverInfo userResolverInfo) {
+        return RopResponse.success(this.walletService.queryWalletInfo(new WalletInfoReq(userResolverInfo.getUserId())));
+    }
 
 }
