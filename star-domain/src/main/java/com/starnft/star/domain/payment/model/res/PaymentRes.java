@@ -15,7 +15,10 @@ public class PaymentRes implements Serializable {
      * 三方支付页面 数据
      */
     private String thirdPage;
+
     private Map<String,String> thirdParam;
+
+    private String gatewayApi;
     /**
      * 支付金额
      */
