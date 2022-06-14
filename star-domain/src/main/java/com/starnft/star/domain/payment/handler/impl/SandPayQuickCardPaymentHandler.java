@@ -2,6 +2,8 @@ package com.starnft.star.domain.payment.handler.impl;
 
 import com.google.common.collect.Maps;
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.common.exception.StarException;
+import com.starnft.star.common.utils.Assert;
 import com.starnft.star.domain.payment.helper.SdKeysHelper;
 import com.starnft.star.domain.payment.helper.TemplateHelper;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
@@ -28,7 +30,9 @@ public class SandPayQuickCardPaymentHandler  extends AbstractSandPayHandler {
 
     @Override
     protected void verifyLegality(PaymentRich req) {
-
+       Assert.isNull(req.getFrontUrl(),()->new StarException("回显地址不能为空"));
+       Assert.isNull(req.getUserId(),()->new StarException("用户id不能为空"));
+//       Assert.isNull(req.getTotalMoney(),()->new StarException("用户id不能为空"));
     }
     @SneakyThrows
     @Override
