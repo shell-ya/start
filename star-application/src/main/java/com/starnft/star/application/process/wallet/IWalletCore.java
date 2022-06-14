@@ -12,6 +12,7 @@ import com.starnft.star.domain.wallet.model.res.CardBindResult;
 import com.starnft.star.domain.wallet.model.res.TxResultRes;
 import com.starnft.star.domain.wallet.model.res.WithdrawResult;
 
+import java.text.ParseException;
 import java.util.List;
 
 public interface IWalletCore {
@@ -21,7 +22,7 @@ public interface IWalletCore {
     RechargeReqResult recharge(RechargeFacadeReq rechargeFacadeReq);
 
     //交易记录查询【带类型筛选】
-    ResponsePageResult<TransactionRecord> walletRecordQuery(PayRecordReq recordReq);
+    ResponsePageResult<TransactionRecord> walletRecordQuery(PayRecordReq recordReq) throws ParseException;
 
     //提现
     WithdrawResult withdraw(WithDrawReq withDrawReq);

@@ -7,7 +7,6 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -24,13 +23,13 @@ public class PayRecordReq extends RequestPage implements Serializable {
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "开始时间")
-    private Date startTime;
+    private String startTime;
     /**
      * 结束时间
      */
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "结束时间")
-    private Date endTime;
+    private String endTime;
     /**
      * 支付状态
      */

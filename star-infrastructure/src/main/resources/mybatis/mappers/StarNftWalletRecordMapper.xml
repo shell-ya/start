@@ -101,8 +101,9 @@
                 and
                 from_uid = #{userId}
             </if>
-            <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
-                and pay_time between #{startDate} and #{endDate}
+            <if test="startDate != null and endDate != null ">
+                and pay_time between DATE_FORMAT(#{startDate}, '%Y-%m-%d %H:%i:%S') and DATE_FORMAT(#{endDate},
+                '%Y-%m-%d %H:%i:%S')
             </if>
 
             <if test="payStatus != null and payStatus != ''">
@@ -128,8 +129,9 @@
                 to_uid = #{userId}
             </if>
 
-            <if test="startDate != null and startDate != '' and endDate != null and endDate != ''">
-                and pay_time between #{startDate} and #{endDate}
+            <if test="startDate != null and endDate != null ">
+                and pay_time between DATE_FORMAT(#{startDate}, '%Y-%m-%d %H:%i:%S') and DATE_FORMAT(#{endDate},
+                '%Y-%m-%d %H:%i:%S')
             </if>
 
             <if test="payStatus != null and payStatus != ''">
@@ -144,7 +146,6 @@
                 </foreach>
             </if>
         </where>
-
         order by pay_time desc
     </select>
 

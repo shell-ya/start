@@ -2,6 +2,7 @@ package com.starnft.star.infrastructure.entity.wallet;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.starnft.star.infrastructure.entity.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -53,6 +54,7 @@ public class StarNftWalletRecord extends BaseEntity implements Serializable {
     private String payStatus ;
     /** 交易时间 */
     @ApiModelProperty(name = "交易时间",notes = "")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date payTime ;
 
     public Long getId() {

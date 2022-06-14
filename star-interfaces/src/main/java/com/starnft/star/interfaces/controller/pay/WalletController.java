@@ -31,6 +31,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.text.ParseException;
 import java.util.List;
 
 @RestController
@@ -51,7 +52,7 @@ public class WalletController {
 
     @ApiOperation("交易记录")
     @PostMapping("/transactions")
-    public RopResponse<ResponsePageResult<TransactionRecord>> transactions(@Validated @RequestBody PayRecordReq req) {
+    public RopResponse<ResponsePageResult<TransactionRecord>> transactions(@Validated @RequestBody PayRecordReq req) throws ParseException {
         req.setUserId(UserContext.getUserId().getUserId());
         return RopResponse.success(this.walletCore.walletRecordQuery(req));
     }

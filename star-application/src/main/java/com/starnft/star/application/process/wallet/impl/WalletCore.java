@@ -1,5 +1,6 @@
 package com.starnft.star.application.process.wallet.impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.google.common.collect.Lists;
 import com.starnft.star.application.mq.IMessageSender;
 import com.starnft.star.application.mq.constant.TopicConstants;
@@ -32,6 +33,7 @@ import com.starnft.star.domain.wallet.model.res.WithdrawResult;
 import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
 import com.starnft.star.domain.wallet.service.WalletService;
 import com.starnft.star.domain.wallet.service.stateflow.IStateHandler;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -147,14 +149,15 @@ public class WalletCore implements IWalletCore {
     }
 
     @Override
+    @SneakyThrows
     public ResponsePageResult<TransactionRecord> walletRecordQuery(PayRecordReq recordReq) {
         ResponsePageResult<WalletRecordVO> walletRecordResult = walletService
                 .queryTransactionRecord(TransactionRecordQueryReq.builder()
                         .page(recordReq.getPage()).size(recordReq.getSize())
                         .userId(recordReq.getUserId())
-                        .startDate(recordReq.getStartTime())
                         .payStatus(recordReq.getPayStatus())
-                        .endDate(recordReq.getEndTime())
+                        .startDate(DateUtil.parseDate(recordReq.getStartTime()).toSqlDate())
+                        .endDate(DateUtil.parseDate(recordReq.getEndTime()).toSqlDate())
                         .transactionType(recordReq.getPayType()).build());
 
         List<TransactionRecord> res = Lists.newArrayList();
