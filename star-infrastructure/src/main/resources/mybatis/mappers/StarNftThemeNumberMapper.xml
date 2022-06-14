@@ -24,7 +24,7 @@
         price, `status`, owenr_by, create_at, create_by, update_at, update_by, is_delete
     </sql>
 
-    <select id="selectNumberDetailId" resultType="com.starnft.star.domain.numbers.model.vo.NumberDetailVO">
+    <select id="selectNumberDetailId" resultType="com.starnft.star.domain.number.model.vo.NumberDetailVO">
         SELECT a.id                   id,
                a.theme_number         number,
                a.contract_address     contract_address,
@@ -43,7 +43,7 @@
           AND a.is_delete = 0
     </select>
 
-    <select id="selectNumberList" resultType="com.starnft.star.domain.numbers.model.vo.NumberVO">
+    <select id="selectNumberList" resultType="com.starnft.star.domain.number.model.vo.NumberVO">
         SELECT
         a.id,
         a.theme_number number,

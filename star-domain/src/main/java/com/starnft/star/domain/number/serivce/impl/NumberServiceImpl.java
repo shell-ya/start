@@ -1,4 +1,4 @@
-package com.starnft.star.domain.numbers.serivce.impl;
+package com.starnft.star.domain.number.serivce.impl;
 
 import com.starnft.star.common.enums.NumberCirculationTypeEnum;
 import com.starnft.star.common.enums.NumberStatusEnum;
@@ -9,18 +9,18 @@ import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.Assert;
-import com.starnft.star.domain.numbers.model.OrderByEnum;
-import com.starnft.star.domain.numbers.model.dto.NumberCirculationAddDTO;
-import com.starnft.star.domain.numbers.model.dto.NumberCirculationDTO;
-import com.starnft.star.domain.numbers.model.dto.NumberQueryDTO;
-import com.starnft.star.domain.numbers.model.dto.NumberUpdateDTO;
-import com.starnft.star.domain.numbers.model.req.NumberConsignmentRequest;
-import com.starnft.star.domain.numbers.model.req.NumberQueryRequest;
-import com.starnft.star.domain.numbers.model.req.NumberReq;
-import com.starnft.star.domain.numbers.model.vo.NumberDetailVO;
-import com.starnft.star.domain.numbers.model.vo.NumberVO;
-import com.starnft.star.domain.numbers.repository.INumberRepository;
-import com.starnft.star.domain.numbers.serivce.NumberService;
+import com.starnft.star.domain.number.model.OrderByEnum;
+import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
+import com.starnft.star.domain.number.model.dto.NumberCirculationDTO;
+import com.starnft.star.domain.number.model.dto.NumberQueryDTO;
+import com.starnft.star.domain.number.model.dto.NumberUpdateDTO;
+import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
+import com.starnft.star.domain.number.model.req.NumberQueryRequest;
+import com.starnft.star.domain.number.model.req.NumberReq;
+import com.starnft.star.domain.number.model.vo.NumberDetailVO;
+import com.starnft.star.domain.number.model.vo.NumberVO;
+import com.starnft.star.domain.number.repository.INumberRepository;
+import com.starnft.star.domain.number.serivce.INumberService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +29,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Service
-public class NumberServiceImpl implements NumberService {
+public class NumberServiceImpl implements INumberService {
     @Resource
     INumberRepository numberRepository;
 
@@ -103,7 +103,7 @@ public class NumberServiceImpl implements NumberService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Boolean cancelConsignment(Long uid, Long numberId) {
+    public Boolean consignmentCancel(Long uid, Long numberId) {
         Assert.notNull(numberId, () -> new StarException(StarError.PARAETER_UNSUPPORTED, "商品ID不能为空"));
 
         // 判断用户是否是该藏品的拥有者以及藏品是否存在

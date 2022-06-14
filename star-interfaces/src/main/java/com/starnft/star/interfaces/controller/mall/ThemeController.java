@@ -2,12 +2,7 @@ package com.starnft.star.interfaces.controller.mall;
 
 import com.starnft.star.application.process.theme.ThemeCore;
 import com.starnft.star.common.RopResponse;
-import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.RequestPage;
-import com.starnft.star.domain.numbers.model.OrderByEnum;
-import com.starnft.star.domain.numbers.model.dto.NumberDTO;
-import com.starnft.star.domain.numbers.model.req.NumberReq;
-import com.starnft.star.domain.numbers.serivce.NumberService;
 import com.starnft.star.domain.theme.model.req.ThemeReq;
 import com.starnft.star.domain.theme.model.res.ThemeRes;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
@@ -26,8 +21,6 @@ public class ThemeController {
 
     @Resource
     ThemeCore themeCore;
-    @Resource
-    NumberService numberService;
 
     @GetMapping("/{seriesId}")
     @ApiOperation("获取系列ID下所有主题")
@@ -57,17 +50,4 @@ public class ThemeController {
         return RopResponse.success(this.themeCore.queryThemeDetail(id));
     }
 
-    @PostMapping("/detail/numbers/{id}")
-    @ApiOperation(value = "主题商品编号列表", hidden = true)
-    @TokenIgnore
-    public RopResponse seriesThemeNumbers(@PathVariable @ApiParam("主题id") Long id, @RequestBody RequestConditionPage<NumberDTO> page) {
-        return RopResponse.success(this.numberService
-                .queryThemeNumber(NumberReq.builder()
-                        .page(page.getPage())
-                        .size(page.getSize())
-                        .upOrDown(page.getCondition().getUpOrDown())
-                        .orderBy(OrderByEnum.getOrderBy(page.getCondition().getOrderBy()))
-                        .isSell(page.getCondition().getIsSell()).id(id).build())
-        );
-    }
 }

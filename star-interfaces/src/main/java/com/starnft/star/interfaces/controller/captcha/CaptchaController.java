@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
  * @date 2022/05/30 19:30
  */
 @RestController
-@Api(tags = "验证码相关接口「CaptchaController」")
+@Api(tags = "图像验证码相关接口「CaptchaController」")
 @RequestMapping("/captcha")
 @RequiredArgsConstructor
 public class CaptchaController {

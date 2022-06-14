@@ -1,4 +1,4 @@
-package com.starnft.star.domain.numbers.model.vo;
+package com.starnft.star.domain.number.model.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

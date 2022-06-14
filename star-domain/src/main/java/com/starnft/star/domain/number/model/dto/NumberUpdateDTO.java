@@ -1,4 +1,4 @@
-package com.starnft.star.domain.numbers.model.dto;
+package com.starnft.star.domain.number.model.dto;
 
 import com.starnft.star.common.enums.NumberStatusEnum;
 import lombok.AllArgsConstructor;

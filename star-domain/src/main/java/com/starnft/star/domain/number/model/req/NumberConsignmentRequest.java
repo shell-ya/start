@@ -1,4 +1,4 @@
-package com.starnft.star.domain.numbers.model.req;
+package com.starnft.star.domain.number.model.req;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

@@ -1,4 +1,4 @@
-package com.starnft.star.domain.numbers.model.dto;
+package com.starnft.star.domain.number.model.dto;
 
 import lombok.Builder;
 import lombok.Data;

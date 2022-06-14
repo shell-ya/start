@@ -1,4 +1,4 @@
-package com.starnft.star.domain.numbers.model;
+package com.starnft.star.domain.number.model;
 
 public enum OrderByEnum {
     /**

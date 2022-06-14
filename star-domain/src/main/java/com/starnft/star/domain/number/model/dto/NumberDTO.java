@@ -1,8 +1,9 @@
-package com.starnft.star.domain.numbers.model.dto;
+package com.starnft.star.domain.number.model.dto;
 
 import lombok.Data;
 
 import java.io.Serializable;
+
 @Data
 
 public class NumberDTO implements Serializable {
