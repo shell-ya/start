@@ -64,6 +64,26 @@ public class WalletServiceImpl implements WalletService {
     @Resource
     private TransactionTemplate template;
 
+    /**
+     * @param channel
+     * @author Ryan Z / haoran
+     * @description 参数验证
+     * @date 2022/5/12
+     */
+    @Override
+    public void verifyParam(String channel) {
+        boolean exist = true;
+        for (StarConstants.PayChannel channelName : StarConstants.PayChannel.values()) {
+            if (channelName.name().equals(channel)) {
+                exist = false;
+                break;
+            }
+        }
+        if (exist) {
+            throw new StarException(StarError.PARAETER_UNSUPPORTED, "渠道代码不存在！");
+        }
+    }
+
     @Override
     public WalletResult queryWalletInfo(WalletInfoReq walletInfoReq) {
         WalletVO walletVO = walletRepository.queryWallet(walletInfoReq);
@@ -112,6 +132,7 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public CalculateResult withdrawMoneyCalculate(CalculateReq calculate) {
 
+        verifyParam(calculate.getChannel());
         WalletConfigVO config = WalletConfig.getConfig(StarConstants.PayChannel.valueOf(calculate.getChannel()));
         BigDecimal calculated = calculate.getMoney().subtract(calculate.getMoney().multiply(config.getChargeRate()));
         NumberFormat percent = NumberFormat.getPercentInstance();
@@ -285,6 +306,9 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public boolean rechargeProcess(@Validated RechargeVO rechargeVO) {
+
+        verifyParam(rechargeVO.getPayChannel());
+
         WalletVO walletVO = walletRepository.queryWallet(new WalletInfoReq(Long.valueOf(rechargeVO.getUid())));
         //充值后当前金额
         BigDecimal curr = walletVO.getBalance().add(rechargeVO.getTotalAmount().abs());
@@ -325,6 +349,7 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public TxResultRes txResultCacheQuery(TxResultReq txResultReq) {
 
+        verifyParam(txResultReq.getPayChannel());
         //充值回调
         boolean isSuccess = redisUtil.hasKey(String.format(RedisKey.REDIS_TRANSACTION_SUCCESS.getKey()
                 , txResultReq.getOrderSn()));

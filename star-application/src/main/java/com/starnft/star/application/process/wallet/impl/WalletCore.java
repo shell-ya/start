@@ -75,7 +75,7 @@ public class WalletCore implements IWalletCore {
     @Override
     public RechargeReqResult recharge(@Validated RechargeFacadeReq rechargeFacadeReq) {
         //参数验证
-        verifyParam(rechargeFacadeReq);
+        walletService.verifyParam(rechargeFacadeReq.getChannel());
 
         String isTransaction = String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
                 new StringBuffer(String.valueOf(rechargeFacadeReq.getUserId())).append(rechargeFacadeReq.getWalletId()));
@@ -165,6 +165,7 @@ public class WalletCore implements IWalletCore {
 
     @Override
     public WithdrawResult withdraw(WithDrawReq withDrawReq) {
+        walletService.verifyParam(withDrawReq.getChannel());
         return walletService.withdraw(withDrawReq);
     }
 
@@ -187,6 +188,7 @@ public class WalletCore implements IWalletCore {
 
     @Override
     public TxResultRes queryTxResult(TxResultReq txResultReq) {
+        walletService.verifyParam(txResultReq.getPayChannel());
         TxResultRes txResultRes = walletService.txResultQuery(txResultReq);
         //根据状态做不同的处理
         if (StarConstants.Pay_Status.PAY_ING.name().equals(txResultRes.getStatus())) {
@@ -239,26 +241,6 @@ public class WalletCore implements IWalletCore {
                 .payTime(walletRecordVO.getPayTime())
                 .payType(payType)
                 .transactionSn(walletRecordVO.getRecordSn()).build();
-    }
-
-    /**
-     * @param rechargeFacadeReq
-     * @author Ryan Z / haoran
-     * @description 参数验证
-     * @date 2022/5/12
-     */
-    private void verifyParam(RechargeFacadeReq rechargeFacadeReq) {
-        String channel = rechargeFacadeReq.getChannel();
-        boolean exist = true;
-        for (StarConstants.PayChannel channelName : StarConstants.PayChannel.values()) {
-            if (channelName.name().equals(rechargeFacadeReq.getChannel())) {
-                exist = false;
-                break;
-            }
-        }
-        if (exist) {
-            throw new StarException(StarError.PARAETER_UNSUPPORTED, "渠道代码不存在！");
-        }
     }
 
 

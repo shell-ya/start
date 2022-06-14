@@ -28,6 +28,8 @@ public class ActivitiesTask {
     private static Logger log = LoggerFactory.getLogger(ActivitiesTask.class);
     private static String strDateFormat = "yyyy-MM-dd HH:mm:ss";
     private static SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
+    //每个商品秒杀间隔
+    private static final int interval = 2;
 
     @Resource
     private RedisUtil redisUtil;
@@ -52,7 +54,7 @@ public class ActivitiesTask {
     public void loadActivities() {
         log.info("当前时间: " + sdf.format(DateUtil.getDaDate()));
         //1.查询所有时间区间 2小时一个时区
-        List<Date> dateMenus = DateUtil.getDateMenus();
+        List<Date> dateMenus = DateUtil.getDateMenus(interval);
 
         for (Date startTime : dateMenus) {
             String startTimeTrim = DateUtil.date2Str(startTime);
@@ -93,7 +95,7 @@ public class ActivitiesTask {
     }
 
     private List<SecKillGoods> loadGoods(Date startTime, Set<String> keys) {
-        List<ActivityVO> activities = activitiesService.loadActivities(startTime, DateUtil.addDateHour(startTime, 2), new ArrayList<>(keys));
+        List<ActivityVO> activities = activitiesService.loadActivities(startTime, DateUtil.addDateHour(startTime, interval), new ArrayList<>(keys));
         if (activities == null) return null;
         ArrayList<@Nullable SecKillGoods> goods = Lists.newArrayList();
         for (ActivityVO activity : activities) {
