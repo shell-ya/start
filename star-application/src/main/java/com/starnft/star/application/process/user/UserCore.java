@@ -43,6 +43,13 @@ public interface UserCore {
     UserVerifyCodeRes getVerifyCode(UserVerifyCodeReq req);
 
     /**
+     *
+     * @param userVerifyCodeReq
+     * @return
+     */
+    Boolean verifyCode(UserVerifyCodeReq userVerifyCodeReq);
+
+    /**
      * 设置密码
      *
      * @param req

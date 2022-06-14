@@ -54,6 +54,13 @@ public class UserController {
         return RopResponse.success(this.userCore.getVerifyCode(req));
     }
 
+    @ApiOperation("校验验证码")
+    @PostMapping("/userinfo/verifycode")
+    @TokenIgnore
+    public RopResponse<Boolean> verifycode(@Validated @RequestBody UserVerifyCodeReq req) {
+        return RopResponse.success(this.userCore.verifyCode(req));
+    }
+
     @ApiOperation("设置初始密码/重置密码")
     @PostMapping("/userinfo/setuppwd")
     @TokenIgnore

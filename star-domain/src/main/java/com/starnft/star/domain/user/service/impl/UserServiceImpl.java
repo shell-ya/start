@@ -151,6 +151,23 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     }
 
     @Override
+    public Boolean verifyCode(UserVerifyCodeDTO req) {
+        //录入redis
+        RedisKey redisKeyEnum = RedisKey.getRedisKeyEnum(req.getVerificationScenes());
+        if (Objects.isNull(redisKeyEnum)){
+            throw new StarException(StarError.PARAETER_UNSUPPORTED , "验证码场景不存在");
+        }
+        String redisKey = String.format(redisKeyEnum.getKey(), req.getPhone());
+        Object obj = redisTemplate.opsForValue().get(redisKey);
+        if (Objects.nonNull(obj)){
+            if (obj.toString().equals(req.getCode())){
+                return Boolean.TRUE;
+            }
+        }
+        return Boolean.FALSE;
+    }
+
+    @Override
     public Boolean setUpPassword(AuthMaterialDTO materialDTO) {
         //校验用户是否存在
         UserInfo userInfo = this.userRepository.queryUserInfoByPhone(materialDTO.getPhone());

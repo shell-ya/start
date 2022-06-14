@@ -52,6 +52,13 @@ public interface IUserService {
     UserVerifyCode getVerifyCode(UserVerifyCodeDTO req);
 
     /**
+     * 校验短信验证码
+     * @param req
+     * @return
+     */
+    Boolean verifyCode(UserVerifyCodeDTO req);
+
+    /**
      * 初始化登录密码
      *
      * @param materialDTO

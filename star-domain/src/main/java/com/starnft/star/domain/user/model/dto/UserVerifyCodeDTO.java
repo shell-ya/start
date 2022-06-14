@@ -20,4 +20,9 @@ public class UserVerifyCodeDTO {
      * 验证码场景： 1=手机验证码登录 2=修改密码 3=修改支付密码
      */
     private Integer verificationScenes;
+
+    /**
+     * 验证码
+     */
+    private String code;
 }

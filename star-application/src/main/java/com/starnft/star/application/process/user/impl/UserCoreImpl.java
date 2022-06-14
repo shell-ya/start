@@ -82,6 +82,12 @@ public class UserCoreImpl implements UserCore {
     }
 
     @Override
+    public Boolean verifyCode(UserVerifyCodeReq req) {
+        UserVerifyCodeDTO userVerifyCodeDTO = BeanColverUtil.colver(req, UserVerifyCodeDTO.class);
+        return this.userService.verifyCode(userVerifyCodeDTO);
+    }
+
+    @Override
     public Boolean setUpPassword(AuthMaterialReq req) {
         //必填参数校验
         Optional.ofNullable(req)
