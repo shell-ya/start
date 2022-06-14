@@ -96,6 +96,7 @@ public class UserController {
     }
 
     @ApiOperation("查询最新的协议信息")
+    @TokenIgnore
     @GetMapping("/userinfo/agreement/queryopenagreement")
     public RopResponse<AgreementRes> queryOpenAgreement(@RequestParam("agreementType") Integer agreementType) {
         return RopResponse.success(this.userCore.queryNewAgreement(agreementType));
