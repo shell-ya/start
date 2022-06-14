@@ -7,6 +7,8 @@ import com.starnft.star.domain.publisher.service.PublisherService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class PublisherServiceImpl implements PublisherService {
@@ -15,5 +17,10 @@ public class PublisherServiceImpl implements PublisherService {
     @Override
     public PublisherVO queryPublisher(PublisherReq req) {
         return publisherRepository.queryPublisher(req);
+    }
+
+    @Override
+    public List<PublisherVO> queryPublisherByIds(Set<Long> collect) {
+        return publisherRepository.queryPublisherByIds(collect);
     }
 }

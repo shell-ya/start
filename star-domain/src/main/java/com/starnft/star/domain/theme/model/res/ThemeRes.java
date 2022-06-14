@@ -1,5 +1,6 @@
-package com.starnft.star.domain.theme.model.vo;
+package com.starnft.star.domain.theme.model.res;
 
+import com.starnft.star.domain.publisher.model.vo.PublisherVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 @Data
-public class ThemeVO implements Serializable {
+public class ThemeRes implements Serializable {
     private Long id;
     private Integer themeType;
     private Long seriesId;
@@ -21,7 +22,8 @@ public class ThemeVO implements Serializable {
     private Integer publishNumber;
     private Byte themeLevel;
     private BigDecimal lssuePrice;
-    private Long publisherId;
+//    private Long publisherId;
     private String tags;
-//    private PublisherVO publisherVO;
+  private PublisherVO publisherVO;
 }
+

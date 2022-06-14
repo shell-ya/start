@@ -41,6 +41,7 @@ public class ThemeRepository implements IThemeRepository {
                         ThemeVO
                                 .builder()
                                 .id(item.getId())
+                                .seriesId(item.getSeriesId())
                                 .themeName(item.getThemeName())
                                 .themeLevel(item.getThemeLevel())
                                 .themePic(item.getThemePic())
@@ -73,6 +74,7 @@ public class ThemeRepository implements IThemeRepository {
                                 .builder()
                                 .id(item.getId())
                                 .seriesId(seriesId)
+                                .publisherId(item.getPublisherId())
                                 .themeName(item.getThemeName())
                                 .build()
 
@@ -91,6 +93,8 @@ public class ThemeRepository implements IThemeRepository {
                 .publisherId(repository.getPublisherId())
                 .id(repository.getId())
                 .themeName(repository.getThemeName())
+                .tags(repository.getTags())
+                .seriesId(repository.getSeriesId())
                 .themePic(repository.getThemePic())
                 .contractAddress(repository.getContractAddress())
                 .descrption(repository.getDescrption())

@@ -22,12 +22,13 @@
     <result column="is_recommend" jdbcType="BOOLEAN" property="isRecommend" />
     <result column="restrict_number" jdbcType="INTEGER" property="restrictNumber" />
     <result column="tags" jdbcType="VARCHAR" property="tags" />
+    <result column="publisher_id" jdbcType="BIGINT" property="publisherId" />
     <result column="contract_address" jdbcType="VARCHAR" property="contractAddress" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
     id, series_id, theme_type, theme_name, theme_pic, publish_number, descrption, theme_level, 
     stock, lssue_price, create_at, create_by, update_at, update_by, is_delete, is_recommend, 
-    restrict_number, tags, contract_address
+    restrict_number, tags, contract_address,publisher_id
   </sql>
 </mapper>
