@@ -61,11 +61,17 @@ public class UserController {
         return RopResponse.success(this.userCore.verifyCode(req));
     }
 
-    @ApiOperation("设置初始密码/重置密码")
+    @ApiOperation("设置初始密码")
     @PostMapping("/userinfo/setuppwd")
+    public RopResponse<Boolean> setUpPassword(UserResolverInfo userResolverInfo, @RequestBody SetupPasswordReq req) {
+        return RopResponse.success(this.userCore.setUpPassword(userResolverInfo.getUserId(), req));
+    }
+
+    @ApiOperation("重置密码/忘记密码")
+    @PostMapping("/userinfo/resetpwd")
     @TokenIgnore
-    public RopResponse<Boolean> setUpPassword(@Validated @RequestBody AuthMaterialReq req) {
-        return RopResponse.success(this.userCore.setUpPassword(req));
+    public RopResponse<Boolean> resetPassword(@RequestBody AuthMaterialReq req) {
+        return RopResponse.success(this.userCore.resetPassword(req));
     }
 
     @ApiOperation("修改密码")
