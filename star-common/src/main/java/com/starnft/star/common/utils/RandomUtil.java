@@ -125,8 +125,17 @@ public class RandomUtil {
      *
      * @param limit 限制随机数的范围，不包括这个数
      */
-    public static long randomLong(long limit) {
+    public static long randomNumber(long limit) {
         return getRandom().nextLong(limit);
+    }
+
+    /**
+     * 获得位数随机数
+     *
+     * @param length 长度
+     */
+    public static long randomLong(int length) {
+        return (long) ((Math.random() * length + 1) * 100000000);
     }
 
     /**
