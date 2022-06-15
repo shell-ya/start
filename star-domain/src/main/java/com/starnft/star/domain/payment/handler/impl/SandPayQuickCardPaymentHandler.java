@@ -42,12 +42,7 @@ public class SandPayQuickCardPaymentHandler extends AbstractSandPayHandler {
     protected PaymentRes doPay(PaymentRich paymentRich, Map<String, String> vendorConf) {
         SdKeysHelper sdKeysHelper = applicationContext.getBean(SdKeysHelper.class);
         TempConf channelConf = getChannelConf(TradeType.Quick_Card_SandPay);
-        //模板解析参数
-//        paymentRich.setUserId(1L);
         String signString = processTemplate(channelConf.getSignTempPath(), paymentRich, vendorConf);
-//        //参数根据第三方加密规则加密
-//        String signResult = new String(Base64.encodeBase64(sdKeysHelper.digitalSign(signString.getBytes(StandardCharsets.UTF_8),
-//                sdKeysHelper.getPrivateKey(), "SHA1WithRSA")));
         Map<String, String> req = getSignAndMap(sdKeysHelper, signString);
         PaymentRes paymentRes = new PaymentRes();
         paymentRes.setTotalMoney(paymentRich.getTotalMoney().toString());
