@@ -120,7 +120,7 @@ public class UserRepository implements IUserRepository {
             addUserInfo.setModifiedBy(req.getCreateBy());
             addUserInfo.setIsDeleted(Boolean.FALSE);
             addUserInfo.setIsActive(Boolean.FALSE);
-            addUserInfo.setAccount(req.getUserId());
+            addUserInfo.setAccount(userId);
             addUserInfo.setNickName(req.getNickName());
             addUserInfo.setPhone(req.getPhone());
             return addUserInfo;
