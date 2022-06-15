@@ -33,7 +33,7 @@ public interface IUserRepository {
      * @param req
      * @return
      */
-    Integer addUserInfo(UserInfoAddDTO req);
+    Long addUserInfo(UserInfoAddDTO req);
 
     /**
      * 查询用户是否存在

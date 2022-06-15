@@ -4,7 +4,10 @@ package com.starnft.star.infrastructure.repository;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.starnft.star.common.enums.LoginStatus;
+import com.starnft.star.common.exception.StarError;
+import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.utils.BeanColverUtil;
+import com.starnft.star.common.utils.RandomUtil;
 import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.user.model.dto.AgreementSignDTO;
 import com.starnft.star.domain.user.model.dto.UserInfoAddDTO;
@@ -98,18 +101,31 @@ public class UserRepository implements IUserRepository {
 
 
     @Override
-    public Integer addUserInfo(UserInfoAddDTO req) {
+    public Long addUserInfo(UserInfoAddDTO req) {
+        UserInfoEntity userInfo = createUserInfo(req);
+        if (this.userInfoMapper.insert(userInfo) == 1) {
+            return userInfo.getAccount();
+        }
+        throw new StarException(StarError.USER_CREATION_ERROR);
+    }
+
+    private UserInfoEntity createUserInfo(UserInfoAddDTO req) {
         UserInfoEntity addUserInfo = new UserInfoEntity();
-        addUserInfo.setCreatedAt(new Date());
-        addUserInfo.setCreatedBy(req.getCreateBy());
-        addUserInfo.setModifiedAt(new Date());
-        addUserInfo.setModifiedBy(req.getCreateBy());
-        addUserInfo.setIsDeleted(Boolean.FALSE);
-        addUserInfo.setIsActive(Boolean.FALSE);
-        addUserInfo.setAccount(req.getUserId());
-        addUserInfo.setNickName(req.getNickName());
-        addUserInfo.setPhone(req.getPhone());
-        return this.userInfoMapper.insert(addUserInfo);
+        Long userId = RandomUtil.randomLong(9);
+        UserInfo userInfo = queryUserInfoByUserId(userId);
+        if (null == userInfo) {
+            addUserInfo.setCreatedAt(new Date());
+            addUserInfo.setCreatedBy(userId);
+            addUserInfo.setModifiedAt(new Date());
+            addUserInfo.setModifiedBy(req.getCreateBy());
+            addUserInfo.setIsDeleted(Boolean.FALSE);
+            addUserInfo.setIsActive(Boolean.FALSE);
+            addUserInfo.setAccount(req.getUserId());
+            addUserInfo.setNickName(req.getNickName());
+            addUserInfo.setPhone(req.getPhone());
+            return addUserInfo;
+        }
+        return createUserInfo(req);
     }
 
     @Transactional

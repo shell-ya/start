@@ -3,6 +3,7 @@ package com.starnft.star.domain.user.service.strategy;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
+import com.starnft.star.common.utils.RandomUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
 import com.starnft.star.domain.user.model.dto.UserInfoAddDTO;
 import com.starnft.star.domain.user.model.dto.UserLoginDTO;
@@ -45,17 +46,13 @@ public class RegisterByVerificationCodeStrategy extends UserRegisterStrategy{
             throw new StarException(StarError.USER_REPEATED);
         }
 
-        Long userId = SnowflakeWorker.generateId();
 
         //用户信息入库
         UserInfoAddDTO userInfoAddDTO = new UserInfoAddDTO();
-        userInfoAddDTO.setCreateBy(userId);
         userInfoAddDTO.setNickName("耿直的NFT玩家");
-        userInfoAddDTO.setUserId(userId);
         userInfoAddDTO.setPhone(registerInfo.getPhone());
-        userRepository.addUserInfo(userInfoAddDTO);
+        return userRepository.addUserInfo(userInfoAddDTO);
 
-        return userId;
     }
 
 }
