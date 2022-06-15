@@ -1,4 +1,4 @@
-package com.starnft.star.domain.payment.handler.impl;
+package com.starnft.star.domain.payment.handler.sandpay;
 
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.payment.model.req.PaymentRich;

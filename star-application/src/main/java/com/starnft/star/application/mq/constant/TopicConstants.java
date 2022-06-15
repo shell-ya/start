@@ -6,8 +6,12 @@ public enum TopicConstants {
     //消息推送未读消息tag
     NOTICE_UNREAD_DESTINATION("STAR-NOTICE:%s", "unread"),
 
-    WALLET_RECHARGE_DESTINATION("STAR-RECHARGE:%s", "callback");
+    //充值topic & tag
+    WALLET_RECHARGE_DESTINATION("STAR-RECHARGE:%s", "callback"),
 
+    //商品秒杀下单 topic & tag
+    ORDER_SEC_KILL_DESTINATION("STAR-SEC-KILL:%s", "ordered"),
+    ;
 
     private String format;
     private String tag;

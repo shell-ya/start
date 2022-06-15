@@ -1,7 +1,7 @@
 package com.starnft.star.application.process.task.activity;
 
 import com.google.common.collect.Lists;
-import com.starnft.star.application.process.task.activity.model.SecKillGoods;
+import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.utils.DateUtil;
 import com.starnft.star.domain.activity.IActivitiesService;

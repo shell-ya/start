@@ -122,6 +122,16 @@ public enum RedisKey {
      */
     SECKILL_GOODS_STOCK_NUMBER(503, StarConstants.SERVICE_NAME.concat(".seckill.stock.num"), -1L, TimeUnit.HOURS),
 
+    /**
+     * 记录用户下单次数
+     */
+    SECKILL_ORDER_REPETITION_TIMES(504, StarConstants.SERVICE_NAME.concat(".seckill.ordered.times"), -1L, TimeUnit.HOURS),
+
+    /**
+     * 用户订单hash
+     */
+    SECKILL_ORDER_USER_MAPPING(504, StarConstants.SERVICE_NAME.concat(".seckill.ordered.mapping"), -1L, TimeUnit.HOURS),
+
     //======================================= sec kill goods end   =======================================
 
     ;

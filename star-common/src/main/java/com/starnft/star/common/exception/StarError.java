@@ -64,6 +64,14 @@ public enum StarError {
     CARD_HAS_BIND("300008", "该银行卡已绑定"),
     PAY_PROCESS_ERROR("300007", "支付异常"),
     REQUEST_TIMEOUT_ERROR("100040", "请求超时,请稍后再试！"),
+
+    REQUEST_OVERFLOW_ERROR("100041", "人太多啦，请稍后再试吧！"),
+
+    GOODS_NOT_FOUND("100042", "下单的商品不存在"),
+
+    ORDER_REPETITION("100043", "请勿重复下单"),
+
+    STOCK_EMPTY_ERROR("100044", "手慢啦，全被抢光了!"),
     ;
 
     private String NS = "";

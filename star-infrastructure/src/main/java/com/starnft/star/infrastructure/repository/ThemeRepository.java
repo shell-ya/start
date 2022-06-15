@@ -4,8 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.theme.model.req.ThemeReq;
+import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.domain.theme.model.vo.ThemeDetailVO;
 import com.starnft.star.domain.theme.model.vo.ThemeVO;
 import com.starnft.star.domain.theme.repository.IThemeRepository;
@@ -16,7 +19,9 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,6 +29,11 @@ import java.util.stream.Collectors;
 public class ThemeRepository implements IThemeRepository {
     @Resource
     StarNftThemeInfoMapper starNftThemeInfoMapper;
+
+    @Resource
+    private RedisUtil redisUtil;
+
+    private static final Map<String, SecKillGoods> goodsMap = new ConcurrentHashMap<>();
 
     @Override
     public ResponsePageResult<ThemeVO> queryTheme(ThemeReq requestPage) {
@@ -104,6 +114,18 @@ public class ThemeRepository implements IThemeRepository {
                 .lssuePrice(repository.getLssuePrice())
                 .publishNumber(repository.getPublishNumber())
                 .build();
+    }
+
+    @Override
+    public SecKillGoods obtainGoodsCache(Long themeId, String time) {
+        String goodsKey = String.format(RedisKey.SECKILL_GOODS_INFO.getKey(), time);
+        SecKillGoods secKillGoods = goodsMap.get(goodsKey + themeId);
+        if (Objects.nonNull(secKillGoods)) return secKillGoods;
+
+        SecKillGoods goods = (SecKillGoods) redisUtil.hget(goodsKey, String.valueOf(themeId));
+        goodsMap.put(goodsKey + themeId, goods);
+        return goods;
+
     }
 
 }
