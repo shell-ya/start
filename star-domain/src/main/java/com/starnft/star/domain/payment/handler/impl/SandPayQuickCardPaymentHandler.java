@@ -32,8 +32,8 @@ public class SandPayQuickCardPaymentHandler extends AbstractSandPayHandler {
 
     @Override
     protected void verifyLegality(PaymentRich req) {
-        Assert.isNull(req.getFrontUrl(), () -> new StarException("回显地址不能为空"));
-        Assert.isNull(req.getUserId(), () -> new StarException("用户id不能为空"));
+        Assert.notNull(req.getFrontUrl(), () -> new StarException("回显地址不能为空"));
+        Assert.notNull(req.getUserId(), () -> new StarException("用户id不能为空"));
 //       Assert.isNull(req.getTotalMoney(),()->new StarException("用户id不能为空"));
     }
 
