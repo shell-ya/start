@@ -1,4 +1,4 @@
-package com.starnft.star.domain.payment.handler.impl;
+package com.starnft.star.domain.payment.handler.sandpay;
 
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Maps;
@@ -34,7 +34,6 @@ public class SandPayQuickCardPaymentHandler extends AbstractSandPayHandler {
     protected void verifyLegality(PaymentRich req) {
         Assert.notNull(req.getFrontUrl(), () -> new StarException("回显地址不能为空"));
         Assert.notNull(req.getUserId(), () -> new StarException("用户id不能为空"));
-//       Assert.isNull(req.getTotalMoney(),()->new StarException("用户id不能为空"));
     }
 
     @SneakyThrows
@@ -54,12 +53,4 @@ public class SandPayQuickCardPaymentHandler extends AbstractSandPayHandler {
         return paymentRes;
     }
 
-    @Override
-    protected Map<String, Object> buildDataModel(Object... data) {
-        HashMap<@Nullable String, @Nullable Object> dataModel = Maps.newHashMap();
-        dataModel.put("param1", data[0]);
-        dataModel.put("param2", data[1]);
-        dataModel.put("helper", TemplateHelper.getInstance());
-        return dataModel;
-    }
 }

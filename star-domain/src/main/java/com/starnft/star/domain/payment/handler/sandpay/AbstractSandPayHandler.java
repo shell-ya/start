@@ -1,4 +1,4 @@
-package com.starnft.star.domain.payment.handler.impl;
+package com.starnft.star.domain.payment.handler.sandpay;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
@@ -123,12 +123,7 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
         dataModel.put("param1", data[0]);
         dataModel.put("param2", data[1]);
         dataModel.put("helper", TemplateHelper.getInstance());
-//        dataModel.put("json", new JSONUtil());
         return dataModel;
-    }
-
-    public static void main(String[] args) {
-
     }
 
 }

@@ -1,4 +1,4 @@
-package com.starnft.star.application.process.task.activity.model;
+package com.starnft.star.domain.theme.model.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

@@ -10,6 +10,7 @@ import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.Assert;
 import com.starnft.star.domain.theme.model.req.ThemeReq;
+import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.domain.theme.model.vo.ThemeDetailVO;
 import com.starnft.star.domain.theme.model.vo.ThemeVO;
 import com.starnft.star.domain.theme.repository.IThemeRepository;
@@ -23,6 +24,7 @@ import java.util.List;
 public class ThemeServiceImpl implements ThemeService {
     @Resource
     IThemeRepository themeRepository;
+
     @Override
     public ResponsePageResult<ThemeVO> queryMainThemeInfo(ThemeReq requestPage) {
         ResponsePageResult<ThemeVO> themeVOResponsePageResult = this.themeRepository.queryTheme(requestPage);
@@ -52,6 +54,10 @@ public class ThemeServiceImpl implements ThemeService {
         return theme;
     }
 
+    @Override
+    public SecKillGoods obtainGoodsCache(Long themeId, String time) {
+        return themeRepository.obtainGoodsCache(themeId, time);
+    }
 
 
 }

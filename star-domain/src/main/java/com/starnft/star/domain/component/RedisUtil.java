@@ -315,7 +315,7 @@ public class RedisUtil {
      * @param by   要增加几(大于0)
      * @return
      */
-    public double hincr(String key, String item, double by) {
+    public Long hincr(String key, String item, Long by) {
         return this.redisTemplate.opsForHash().increment(key, item, by);
     }
 
@@ -450,6 +450,17 @@ public class RedisUtil {
             return null;
         }
     }
+
+
+//    public Object rightPop(String key) {
+//        try {
+//            return this.redisTemplate.opsForList().rightPop(key);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//    }
+
 
     /**
      * 获取list缓存的长度

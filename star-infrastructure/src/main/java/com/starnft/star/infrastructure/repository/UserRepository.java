@@ -101,6 +101,7 @@ public class UserRepository implements IUserRepository {
 
 
     @Override
+    @Transactional
     public Long addUserInfo(UserInfoAddDTO req) {
         UserInfoEntity userInfo = createUserInfo(req);
         if (this.userInfoMapper.insert(userInfo) == 1) {
