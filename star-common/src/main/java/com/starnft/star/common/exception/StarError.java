@@ -39,6 +39,7 @@ public enum StarError {
     PAYPWD_PRE_CHECK_ERROR("100022", "支付密码前置校验不通过"),
     PAYPWD_CHECK_ERROR("100023", "支付密码错误，连续错误%s次后将被冻结6小时，已连续错误%s次"),
     PAYPWD_CHECK_FREEZE("100024", "您输入的支付密码已连续错误%s次，为了您的账号安全，账号已冻结"),
+    USER_SETUP_PASSWORD_ERROR("100025", "该用户已设置过初始登录密码，请勿重复设置"),
 
     IMAGE_CAPTCHA_CHECK_ERROR("100030", "图像验证码校验不通过"),
 

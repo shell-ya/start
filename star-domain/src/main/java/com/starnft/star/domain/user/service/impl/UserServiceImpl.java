@@ -154,13 +154,13 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     public Boolean verifyCode(UserVerifyCodeDTO req) {
         //录入redis
         RedisKey redisKeyEnum = RedisKey.getRedisKeyEnum(req.getVerificationScenes());
-        if (Objects.isNull(redisKeyEnum)){
-            throw new StarException(StarError.PARAETER_UNSUPPORTED , "验证码场景不存在");
+        if (Objects.isNull(redisKeyEnum)) {
+            throw new StarException(StarError.PARAETER_UNSUPPORTED, "验证码场景不存在");
         }
         String redisKey = String.format(redisKeyEnum.getKey(), req.getPhone());
-        Object obj = redisTemplate.opsForValue().get(redisKey);
-        if (Objects.nonNull(obj)){
-            if (obj.toString().equals(req.getCode())){
+        Object obj = this.redisTemplate.opsForValue().get(redisKey);
+        if (Objects.nonNull(obj)) {
+            if (obj.toString().equals(req.getCode())) {
                 return Boolean.TRUE;
             }
         }
@@ -168,22 +168,18 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     }
 
     @Override
-    public Boolean setUpPassword(AuthMaterialDTO materialDTO) {
+    public Boolean setUpPassword(SetupPasswordDTO setupPasswordDTO) {
         //校验用户是否存在
-        UserInfo userInfo = this.userRepository.queryUserInfoByPhone(materialDTO.getPhone());
+        UserInfo userInfo = this.userRepository.queryUserInfoByUserId(setupPasswordDTO.getUid());
         if (Objects.isNull(userInfo)) {
-            log.error("设置初始密码，用户：{}不存在", materialDTO.getPhone());
+            log.error("设置初始密码，用户：{}不存在", setupPasswordDTO.getUid());
             throw new StarException(StarError.USER_NOT_EXISTS);
         }
 
-        //验证码校验
-        String verifiCodeKey = String.format(RedisKey.REDIS_CODE_LOGIN_CHANGE_PWD.getKey(), materialDTO.getPhone());
-        String code = String.valueOf(this.redisTemplate.opsForValue().get(verifiCodeKey));
-        if (!code.equals(materialDTO.getVerificationCode())) {
-            throw new StarException(StarError.CODE_NOT_FUND);
-        }
+        //判断是否已设置过初登录密码
+        Assert.isNull(userInfo.getPassword(), () -> new StarException(StarError.USER_SETUP_PASSWORD_ERROR));
 
-        Integer updateRows = this.userRepository.setUpPassword(userInfo, materialDTO.getPassword());
+        Integer updateRows = this.userRepository.setUpPassword(userInfo, setupPasswordDTO.getPassword());
         return Objects.nonNull(updateRows) ? Boolean.TRUE : Boolean.FALSE;
     }
 
@@ -440,5 +436,25 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         Assert.isTrue(this.redisUtil.hasKey(checkSuccessKey), () -> new StarException(StarError.PAYPWD_PRE_CHECK_ERROR));
         // 使用后删除成功标识
         this.redisUtil.del(checkSuccessKey);
+    }
+
+    @Override
+    public Boolean resetPassword(AuthMaterialDTO materialDTO) {
+        //校验用户是否存在
+        UserInfo userInfo = this.userRepository.queryUserInfoByPhone(materialDTO.getPhone());
+        if (Objects.isNull(userInfo)) {
+            log.error("设置初始密码，用户：{}不存在", materialDTO.getPhone());
+            throw new StarException(StarError.USER_NOT_EXISTS);
+        }
+
+        //验证码校验
+        String verifiCodeKey = String.format(RedisKey.REDIS_CODE_LOGIN_CHANGE_PWD.getKey(), materialDTO.getPhone());
+        String code = String.valueOf(this.redisTemplate.opsForValue().get(verifiCodeKey));
+        if (!code.equals(materialDTO.getVerificationCode())) {
+            throw new StarException(StarError.CODE_NOT_FUND);
+        }
+
+        Integer updateRows = this.userRepository.setUpPassword(userInfo, materialDTO.getPassword());
+        return Objects.nonNull(updateRows) ? Boolean.TRUE : Boolean.FALSE;
     }
 }

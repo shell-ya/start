@@ -7,6 +7,7 @@ import com.starnft.star.common.enums.AgreementSceneEnum;
 import com.starnft.star.common.enums.AgreementTypeEnum;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
+import com.starnft.star.common.utils.Assert;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
 import com.starnft.star.common.utils.secure.AESUtil;
@@ -88,19 +89,15 @@ public class UserCoreImpl implements UserCore {
     }
 
     @Override
-    public Boolean setUpPassword(AuthMaterialReq req) {
+    public Boolean setUpPassword(Long uid, SetupPasswordReq req) {
         //必填参数校验
-        Optional.ofNullable(req)
-                .orElseThrow(() -> new StarException(StarError.PARAETER_UNSUPPORTED, "authMaterialReq 不能为空"));
-        Optional.ofNullable(req.getPassword())
-                .orElseThrow(() -> new StarException(StarError.PARAETER_UNSUPPORTED, "password 不能为空"));
-        Optional.ofNullable(req.getPhone())
-                .orElseThrow(() -> new StarException(StarError.PARAETER_UNSUPPORTED, "phone 不能为空"));
-        Optional.ofNullable(req.getVerificationCode())
-                .orElseThrow(() -> new StarException(StarError.PARAETER_UNSUPPORTED, "verificationCode 不能为空"));
-
-        AuthMaterialDTO authMaterial = BeanColverUtil.colver(req, AuthMaterialDTO.class);
-        return this.userService.setUpPassword(authMaterial);
+        Assert.notNull(req, () -> new StarException(StarError.PARAETER_UNSUPPORTED, "参数不能为空"));
+        Assert.notBlank(req.getPassword(), () -> new StarException(StarError.PARAETER_UNSUPPORTED, "密码不能为空"));
+        return this.userService.setUpPassword(
+                SetupPasswordDTO.builder()
+                        .uid(uid)
+                        .password(req.getPassword())
+                        .build());
     }
 
     @Override
@@ -322,6 +319,22 @@ public class UserCoreImpl implements UserCore {
                 .token(req.getToken())
                 .payPassword(req.getPayPassword())
                 .build());
+    }
+
+    @Override
+    public Boolean resetPassword(AuthMaterialReq req) {
+        //必填参数校验
+        Optional.ofNullable(req)
+                .orElseThrow(() -> new StarException(StarError.PARAETER_UNSUPPORTED, "authMaterialReq 不能为空"));
+        Optional.ofNullable(req.getPassword())
+                .orElseThrow(() -> new StarException(StarError.PARAETER_UNSUPPORTED, "password 不能为空"));
+        Optional.ofNullable(req.getPhone())
+                .orElseThrow(() -> new StarException(StarError.PARAETER_UNSUPPORTED, "phone 不能为空"));
+        Optional.ofNullable(req.getVerificationCode())
+                .orElseThrow(() -> new StarException(StarError.PARAETER_UNSUPPORTED, "verificationCode 不能为空"));
+
+        AuthMaterialDTO authMaterial = BeanColverUtil.colver(req, AuthMaterialDTO.class);
+        return this.userService.resetPassword(authMaterial);
     }
 
     private void popupAgreement(PopupAgreementRes popupAgreementRes

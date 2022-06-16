@@ -217,7 +217,7 @@ public class UserRepository implements IUserRepository {
 
         UpdateWrapper updateWrapper = new UpdateWrapper();
         updateWrapper.eq("user_id", userId);
-        updateWrapper.eq("is_delete", Boolean.FALSE);
+        updateWrapper.eq("is_deleted", Boolean.FALSE);
         return this.userLoginLogMapper.update(userLoginLog, updateWrapper);
     }
 

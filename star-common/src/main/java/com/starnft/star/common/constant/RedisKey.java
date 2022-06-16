@@ -112,25 +112,25 @@ public enum RedisKey {
     /**
      * 秒杀商品详情
      */
-    SECKILL_GOODS_INFO(501, StarConstants.SERVICE_NAME.concat(".seckill.goods:%s"), -1L, TimeUnit.MINUTES),
+    SECKILL_GOODS_INFO(501, StarConstants.SERVICE_NAME.concat(".seckill:goods:%s"), -1L, TimeUnit.MINUTES),
     /**
      * 秒杀商品库存队列
      */
-    SECKILL_GOODS_STOCK_QUEUE(502, StarConstants.SERVICE_NAME.concat(".seckill.stock.queue:%s"), -1L, TimeUnit.HOURS),
+    SECKILL_GOODS_STOCK_QUEUE(502, StarConstants.SERVICE_NAME.concat(".seckill:stock.queue:%s"), -1L, TimeUnit.HOURS),
     /**
      * 秒杀商品库存数量
      */
-    SECKILL_GOODS_STOCK_NUMBER(503, StarConstants.SERVICE_NAME.concat(".seckill.stock.num"), -1L, TimeUnit.HOURS),
+    SECKILL_GOODS_STOCK_NUMBER(503, StarConstants.SERVICE_NAME.concat(".seckill:stock.num"), -1L, TimeUnit.HOURS),
 
     /**
      * 记录用户下单次数
      */
-    SECKILL_ORDER_REPETITION_TIMES(504, StarConstants.SERVICE_NAME.concat(".seckill.ordered.times"), -1L, TimeUnit.HOURS),
+    SECKILL_ORDER_REPETITION_TIMES(504, StarConstants.SERVICE_NAME.concat(".seckill:ordered.times"), -1L, TimeUnit.HOURS),
 
     /**
      * 用户订单hash
      */
-    SECKILL_ORDER_USER_MAPPING(504, StarConstants.SERVICE_NAME.concat(".seckill.ordered.mapping"), -1L, TimeUnit.HOURS),
+    SECKILL_ORDER_USER_MAPPING(504, StarConstants.SERVICE_NAME.concat(".seckill:ordered.mapping"), -1L, TimeUnit.HOURS),
 
     //======================================= sec kill goods end   =======================================
 

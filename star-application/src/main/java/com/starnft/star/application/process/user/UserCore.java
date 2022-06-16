@@ -43,7 +43,6 @@ public interface UserCore {
     UserVerifyCodeRes getVerifyCode(UserVerifyCodeReq req);
 
     /**
-     *
      * @param userVerifyCodeReq
      * @return
      */
@@ -55,7 +54,7 @@ public interface UserCore {
      * @param req
      * @return
      */
-    Boolean setUpPassword(AuthMaterialReq req);
+    Boolean setUpPassword(Long uid, SetupPasswordReq req);
 
     /**
      * 修改密码
@@ -135,4 +134,6 @@ public interface UserCore {
     PayPwdPreCheckRes prePayPasswordCheck(Long uid);
 
     Boolean checkPayPassword(Long uid, PayPwdCheckReq req);
+
+    Boolean resetPassword(AuthMaterialReq req);
 }

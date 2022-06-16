@@ -64,7 +64,9 @@ public class StarNftOrder extends BaseEntity implements Serializable {
     /** 支付单编号 */
     @ApiModelProperty(name = "支付单编号",notes = "")
     private String payNumber ;
-
+    /** 备注 */
+    @ApiModelProperty(name = "备注",notes = "")
+    private String remark ;
     public Long getId() {
         return id;
     }
@@ -183,5 +185,13 @@ public class StarNftOrder extends BaseEntity implements Serializable {
 
     public void setPayNumber(String payNumber) {
         this.payNumber = payNumber;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }

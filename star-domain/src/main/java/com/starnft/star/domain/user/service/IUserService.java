@@ -53,6 +53,7 @@ public interface IUserService {
 
     /**
      * 校验短信验证码
+     *
      * @param req
      * @return
      */
@@ -61,10 +62,9 @@ public interface IUserService {
     /**
      * 初始化登录密码
      *
-     * @param materialDTO
      * @return
      */
-    Boolean setUpPassword(AuthMaterialDTO materialDTO);
+    Boolean setUpPassword(SetupPasswordDTO setupPasswordDTO);
 
     /**
      * 修改账户密码
@@ -186,4 +186,6 @@ public interface IUserService {
      * @param uid
      */
     void assertPayPwdCheckSuccess(Long uid);
+
+    Boolean resetPassword(AuthMaterialDTO authMaterial);
 }

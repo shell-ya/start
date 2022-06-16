@@ -2,8 +2,11 @@ package com.starnft.star.application.mq.consumer;
 
 import com.starnft.star.application.process.order.model.dto.OrderMessageReq;
 import com.starnft.star.common.constant.RedisKey;
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.service.IOrderService;
+import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
@@ -12,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 @Service
 @RocketMQMessageListener(topic = "STAR-SEC-KILL", consumerGroup = "star-consumer-seckill-group", selectorExpression = "ordered")
@@ -23,6 +27,9 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
 
     @Resource
     private IOrderService orderService;
+
+    @Resource
+    private Map<StarConstants.Ids, IIdGenerator> map;
 
 
     @Override
@@ -48,10 +55,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
         if (goodsKey != null) {
 
             //创建订单
-            boolean isSuccess = createPreOrder(message);
-            // message modify to pre order
-            if (isSuccess) {
-                redisUtil.hset(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), String.valueOf(userId), message);
+            if (createPreOrder(message)) {
                 //减库存
                 stockSubtract(userId, time, themeId, goods);
 
@@ -81,7 +85,31 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
     }
 
     private boolean createPreOrder(OrderMessageReq message) {
+        //生成订单流水
+        String orderSn = StarConstants.OrderPrefix.PublishGoods.getPrefix()
+                .concat(String.valueOf(map.get(StarConstants.Ids.SnowFlake).nextId()));
 
+        OrderVO orderVO = OrderVO.builder()
+                .userId(message.getUserId())
+                .orderSn(orderSn)
+                .payAmount(message.getGoods().getSecCost())
+                .seriesId(message.getGoods().getSeriesId())
+                .seriesName(message.getGoods().getSeriesName())
+                .seriesThemeInfoId(message.getGoods().getThemeId())
+                .themeName(message.getGoods().getThemeName())
+                .payAmount(message.getGoods().getSecCost())
+                .themePic(message.getGoods().getThemePic())
+                .themeType(message.getGoods().getThemeType())
+                .totalAmount(message.getGoods().getSecCost())
+                //todo 排队号
+                .themNumber(1)
+                .build();
+        //创建订单
+        boolean isSuccess = orderService.createOrder(orderVO);
+        if (isSuccess) {
+            redisUtil.hset(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), String.valueOf(message.getUserId()), orderVO);
+            return true;
+        }
         return false;
     }
 

@@ -35,4 +35,8 @@ public class SeriesServiceImpl implements SeriesService {
     public List<SeriesVO> querySeriesByType(Integer type) {
         return this.seriesRepository.querySeries(CommodityTypeEnum.getCommodityTypeEnum(type));
     }
+
+    public SeriesVO querySeriesById(Long id) {
+        return this.seriesRepository.querySeriesById(id);
+    }
 }

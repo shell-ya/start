@@ -22,6 +22,7 @@
         <result property="modifiedAt" column="modified_at" jdbcType="DATE"/>
         <result property="modifiedBy" column="modified_by" jdbcType="VARCHAR"/>
         <result property="isDeleted" column="is_delete" jdbcType="BIT"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="contentCondition">
@@ -85,6 +86,9 @@
         <if test="isDelete != null and isDelete != ''">
             is_delete = #{isDelete},
         </if>
+        <if test="remark != null and remark != ''">
+            remark = #{remark},
+        </if>
     </sql>
 
     <sql id="content">
@@ -108,7 +112,8 @@
        created_by,
        modified_at,
        modified_by,
-       is_delete
+       is_delete,
+       remark
     </sql>
 
     <!--新增数据-->
@@ -117,11 +122,11 @@
         insert into star_nft_order(order_sn, series_theme_info_id, series_theme_id, series_id, theme_number,
                                    series_name, theme_name,
                                    theme_pic, theme_type, status, user_id, total_amount, pay_amount, pay_number,
-                                   created_at, created_by, modified_at, modified_by, is_delete)
+                                   created_at, created_by, modified_at, modified_by, is_delete, remark)
         values (#{orderSn}, #{seriesThemeInfoId}, #{seriesThemeId}, #{seriesId}, #{theme_number}, #{seriesName},
                 #{themeName},
                 #{themePic}, #{themeType}, #{status}, #{userId}, #{totalAmount}, #{payAmount}, #{payNumber},
-                #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{isDelete})
+                #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{isDelete}, #{remark})
     </insert>
 
 </mapper>
