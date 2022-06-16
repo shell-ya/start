@@ -57,7 +57,6 @@ public class ActivitiesTask {
      */
     @Scheduled(cron = "0/15 * * * * ?")
     public void loadActivities() {
-        log.info("当前时间: " + sdf.format(DateUtil.getDaDate()));
         //1.查询所有时间区间 2小时一个时区
         List<Date> dateMenus = DateUtil.getDateMenus(interval);
 
@@ -87,6 +86,11 @@ public class ActivitiesTask {
                 redisUtil.addToListLeft(stockKey, RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTime(), RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTimeUnit(), (Object) ids);
                 //设置库存量
                 redisUtil.hashIncr(RedisKey.SECKILL_GOODS_STOCK_NUMBER.getKey(), String.valueOf(secKillGood.getThemeId()), secKillGood.getStock());
+
+                log.info("当前时间: " + sdf.format(DateUtil.getDaDate()));
+                log.info("加载商品 themeId:[{}] , seriesId:[{}] , themeName:[{}] , stock:[{}] time:[{}-{}]",
+                        secKillGood.getThemeId(), secKillGood.getSeriesId(), secKillGood.getThemeName(), secKillGood.getStock(), secKillGood.getStartTime(), secKillGood.getEndTime());
+                ;
             }
         }
     }
