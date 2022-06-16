@@ -3,6 +3,7 @@ package com.starnft.star.infrastructure.repository;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
@@ -41,7 +42,7 @@ public class OrderRepository implements IOrderRepository {
         starNftOrder.setThemeName(orderVO.getThemeName());
         starNftOrder.setThemePic(orderVO.getThemePic());
         starNftOrder.setThemeType(orderVO.getThemeType());
-        starNftOrder.setThemeNumber(orderVO.getThemNumber());
+        starNftOrder.setThemeNumber(orderVO.getThemeNumber());
         starNftOrder.setIsDeleted(false);
         starNftOrder.setRemark(orderVO.getRemark());
         return starNftOrderMapper.insert(starNftOrder) == 1;
@@ -76,9 +77,37 @@ public class OrderRepository implements IOrderRepository {
                         .eq(Objects.nonNull(uid), StarNftOrder::getUserId, uid)
                         .eq(status != null, StarNftOrder::getStatus, status)));
 
-        List<OrderVO> orderVOS = BeanColverUtil.colverList(orders.getList(), OrderVO.class);
+        List<OrderVO> orderVOS = populateValues(orders.getList());
 
         return new ResponsePageResult<OrderVO>(orderVOS, page, size, orders.getTotal());
+    }
+
+    private List<OrderVO> populateValues(List<StarNftOrder> list) {
+        List<OrderVO> orderVOList = Lists.newArrayList();
+        for (StarNftOrder starNftOrder : list) {
+            orderVOList.add(populate(starNftOrder));
+        }
+        return orderVOList;
+    }
+
+    private OrderVO populate(StarNftOrder starNftOrder) {
+        return OrderVO.builder()
+                .userId(starNftOrder.getUserId())
+                .themeNumber(starNftOrder.getThemeNumber())
+                .totalAmount(starNftOrder.getTotalAmount())
+                .themeType(starNftOrder.getThemeType())
+                .themePic(starNftOrder.getThemePic())
+                .payAmount(starNftOrder.getPayAmount())
+                .themeName(starNftOrder.getThemeName())
+                .seriesName(starNftOrder.getSeriesName())
+                .seriesThemeInfoId(starNftOrder.getSeriesThemeInfoId())
+                .seriesId(starNftOrder.getSeriesId())
+                .orderSn(starNftOrder.getOrderSn())
+                .createdAt(starNftOrder.getCreatedAt())
+                .remark(starNftOrder.getRemark())
+                .seriesThemeId(starNftOrder.getSeriesThemeId())
+                .status(starNftOrder.getStatus())
+                .build();
     }
 
     @Override
@@ -86,7 +115,7 @@ public class OrderRepository implements IOrderRepository {
         List<StarNftOrder> starNftOrders = queryOrdersUsers(uid);
         for (StarNftOrder starNftOrder : starNftOrders) {
             if (starNftOrder.getOrderSn().equals(orderSn)) {
-                return BeanColverUtil.colver(starNftOrder, OrderVO.class);
+                return  populate(starNftOrder);
             }
         }
         return null;

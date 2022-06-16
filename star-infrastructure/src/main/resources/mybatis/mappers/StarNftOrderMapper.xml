@@ -21,7 +21,7 @@
         <result property="createdBy" column="created_by" jdbcType="VARCHAR"/>
         <result property="modifiedAt" column="modified_at" jdbcType="DATE"/>
         <result property="modifiedBy" column="modified_by" jdbcType="VARCHAR"/>
-        <result property="isDeleted" column="is_delete" jdbcType="BIT"/>
+        <result property="isDeleted" column="is_deleted" jdbcType="BIT"/>
         <result property="remark" column="remark" jdbcType="VARCHAR"/>
     </resultMap>
 
@@ -84,7 +84,7 @@
             modified_by = #{modifiedBy},
         </if>
         <if test="isDelete != null and isDelete != ''">
-            is_delete = #{isDelete},
+            is_deleted = #{isDelete},
         </if>
         <if test="remark != null and remark != ''">
             remark = #{remark},
@@ -112,7 +112,7 @@
        created_by,
        modified_at,
        modified_by,
-       is_delete,
+       is_deleted,
        remark
     </sql>
 
@@ -122,7 +122,7 @@
         insert into star_nft_order(order_sn, series_theme_info_id, series_theme_id, series_id, theme_number,
                                    series_name, theme_name,
                                    theme_pic, theme_type, status, user_id, total_amount, pay_amount, pay_number,
-                                   created_at, created_by, modified_at, modified_by, is_delete, remark)
+                                   created_at, created_by, modified_at, modified_by, is_deleted, remark)
         values (#{orderSn}, #{seriesThemeInfoId}, #{seriesThemeId}, #{seriesId}, #{theme_number}, #{seriesName},
                 #{themeName},
                 #{themePic}, #{themeType}, #{status}, #{userId}, #{totalAmount}, #{payAmount}, #{payNumber},

@@ -102,7 +102,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
                 .themeType(message.getGoods().getThemeType())
                 .totalAmount(message.getGoods().getSecCost())
                 //todo 排队号
-                .themNumber(1)
+                .themeNumber(1)
                 .build();
         //创建订单
         boolean isSuccess = orderService.createOrder(orderVO);
