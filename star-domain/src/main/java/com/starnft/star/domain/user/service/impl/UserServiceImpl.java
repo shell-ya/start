@@ -464,6 +464,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         if (!isSetting){
             UserInfo userInfo = userRepository.queryUserInfoByUserId(id);
             isSetting=Objects.isNull(userInfo.getPassword());
+            redisTemplate.opsForValue().setBit(RedisKey.REDIS_USER_IS_SETTING_PWD.getKey(), id,isSetting);
         }
         return isSetting;
     }
