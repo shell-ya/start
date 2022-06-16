@@ -38,7 +38,7 @@ public class OrderController {
     final ICurrentLimiter currentLimiter;
 
     @ApiOperation("下单")
-    @PostMapping("/order/grab")
+    @PostMapping("/grab")
     public RopResponse<OrderGrabRes> grab(@Validated @RequestBody OrderGrabReq req) {
         if (!currentLimiter.tryAcquire()) {
             throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
@@ -48,14 +48,14 @@ public class OrderController {
     }
 
     @ApiOperation("查询订单列表")
-    @PostMapping("/order/list")
+    @PostMapping("/list")
     public RopResponse<ResponsePageResult<OrderListRes>> list(@RequestBody OrderListReq req) {
         req.setUserId(UserContext.getUserId().getUserId());
         return RopResponse.success(this.orderService.orderList(req));
     }
 
     @ApiOperation("查询订单详情")
-    @PostMapping("/order/details")
+    @PostMapping("/details")
     public RopResponse<OrderListRes> detail(@RequestBody OrderListReq req) {
         req.setUserId(UserContext.getUserId().getUserId());
         return RopResponse.success(this.orderService.orderDetails(req));

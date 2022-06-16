@@ -35,6 +35,7 @@ import com.starnft.star.domain.wallet.service.WalletService;
 import com.starnft.star.domain.wallet.service.stateflow.IStateHandler;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -156,8 +157,8 @@ public class WalletCore implements IWalletCore {
                         .page(recordReq.getPage()).size(recordReq.getSize())
                         .userId(recordReq.getUserId())
                         .payStatus(recordReq.getPayStatus())
-                        .startDate(DateUtil.parseDate(recordReq.getStartTime()).toSqlDate())
-                        .endDate(DateUtil.parseDate(recordReq.getEndTime()).toSqlDate())
+                        .startDate(StringUtils.isNotBlank(recordReq.getStartTime()) ? DateUtil.parseDate(recordReq.getStartTime()).toSqlDate() : null)
+                        .endDate(StringUtils.isNotBlank(recordReq.getEndTime()) ? DateUtil.parseDate(recordReq.getEndTime()).toSqlDate() : null)
                         .transactionType(recordReq.getPayType()).build());
 
         List<TransactionRecord> res = Lists.newArrayList();

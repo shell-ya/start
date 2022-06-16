@@ -25,6 +25,7 @@
         </encoder>
     </appender>
 
+    <logger name="ShardingSphere-SQL" level="WARN" />
 
     <logger name="org.springframework" additivity="false">
         <level value="info"/>

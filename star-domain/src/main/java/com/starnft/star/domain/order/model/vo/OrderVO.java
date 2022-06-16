@@ -21,7 +21,7 @@ public class OrderVO implements Serializable {
     /** 系列id */
     private Long seriesId;
     /** 主题编号 */
-    private Integer themNumber;
+    private Integer themeNumber;
     /** 系列名称 */
     private String seriesName;
     /** 主题名称 */
@@ -34,6 +34,8 @@ public class OrderVO implements Serializable {
     private BigDecimal totalAmount ;
     /** 应付金额 */
     private BigDecimal payAmount ;
+    /** 订单状态 */
+    private Integer status ;
     /** 创建时间 */
     private Date createdAt ;
     /** 备注 */
