@@ -53,12 +53,12 @@ public class StarNftNumberCirculationHist implements Serializable {
     /**
      * 变化前物主
      */
-    private String beforeOwner;
+    private Long beforeOwner;
 
     /**
      * 变化后物主
      */
-    private String afterOwner;
+    private Long afterOwner;
 
     /**
      * 创建时间

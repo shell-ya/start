@@ -16,10 +16,8 @@ public enum NumberStatusEnum {
 
     SOLD(1, "发行已出售"),
 
-    NOT_CONSIGNED(2, "未寄售"),
-
-    ON_CONSIGNMENT(3, "寄售中");
-
+    ON_CONSIGNMENT(2, "寄售中");
+    
     private final Integer code;
     private final String desc;
 

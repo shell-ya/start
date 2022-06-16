@@ -11,7 +11,6 @@ import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.Assert;
 import com.starnft.star.domain.number.model.OrderByEnum;
 import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
-import com.starnft.star.domain.number.model.dto.NumberCirculationDTO;
 import com.starnft.star.domain.number.model.dto.NumberQueryDTO;
 import com.starnft.star.domain.number.model.dto.NumberUpdateDTO;
 import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
@@ -109,21 +108,21 @@ public class NumberServiceImpl implements INumberService {
         // 判断用户是否是该藏品的拥有者以及藏品是否存在
         NumberDetailVO numberDetail = this.checkNumberOwner(uid, numberId);
 
-        // 判断商品是否已经在寄售中
+        // 判断商品是否在寄售中
         if (!Objects.equals(NumberStatusEnum.ON_CONSIGNMENT.getCode(), numberDetail.getStatus())) {
             throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "该藏品不是是寄售状态 无法取消");
         }
 
         // 获取该商品最后一条寄售记录
-        NumberCirculationDTO circulation = this.numberRepository.getLastConsignedCirculation(numberId);
+        //NumberCirculationDTO circulation = this.numberRepository.getLastConsignedCirculation(numberId);
 
-        // 还原商品价格和状态
+        // 还原商品状态
         Boolean updBool = this.numberRepository.modifyNumberPriceAndStatus(
                 NumberUpdateDTO.builder()
                         .uid(uid)
                         .numberId(numberId)
-                        .price(circulation.getBeforePrice())
-                        .status(NumberStatusEnum.NOT_CONSIGNED)
+                        //.price(circulation.getBeforePrice())
+                        .status(NumberStatusEnum.SOLD)
                         .build());
 
         // 保存取消寄售记录
@@ -132,8 +131,8 @@ public class NumberServiceImpl implements INumberService {
                         .uid(uid)
                         .numberId(numberId)
                         .type(NumberCirculationTypeEnum.CANCEL_CONSIGNMENT)
-                        .beforePrice(numberDetail.getPrice())
-                        .afterPrice(circulation.getBeforePrice())
+                        //.beforePrice(numberDetail.getPrice())
+                        //.afterPrice(circulation.getBeforePrice())
                         .build());
 
         // 还原用户藏品状态
