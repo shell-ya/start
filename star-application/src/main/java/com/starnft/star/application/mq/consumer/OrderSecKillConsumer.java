@@ -46,19 +46,16 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
         if (stockQueueId == null) {
             //清理排队信息
             redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.name(), userId);
-
             return;
         }
 
         String goodsKey = String.format(RedisKey.SECKILL_GOODS_INFO.getKey(), time);
-
         if (goodsKey != null) {
 
             //创建订单
             if (createPreOrder(message)) {
                 //减库存
                 stockSubtract(userId, time, themeId, goods);
-
                 //缓存写进订单状态
 
                 //发送延时mq 取消订单
