@@ -37,20 +37,38 @@ public class CheckIdCardTest {
 
         //2022-05-21 17:04:10.372 +0800 [[TID: N/A] [main] INFO  c.s.s.d.i.s.SwIdentifyStrategy- 身份验证回调「{"tradeNo":"977617813713715200","chargeStatus":1,"message":"true","data":{"birthday":"xxxx","country":"饶平县","orderNo":"011653123850766333","handleTime":"2022-05-21 17:04:10","gender":"1","city":"潮州市","remark":"一致","result":"01","province":"广东省","age":"27"},"code":"200000"}
         PaymentRich req = PaymentRich.builder()
-                .totalMoney(new BigDecimal("12.0")).payChannel(StarConstants.PayChannel.UNION_PAY.name())
+                .totalMoney(new BigDecimal("12.0")).payChannel(StarConstants.PayChannel.BankCard.name())
                 .frontUrl("https://mp.lsnft.cn").clientIp("192.168.1.1")
                 .orderSn(IdUtil.getSnowflake(1, 1).nextIdStr()).userId(1L)
+                .bankNo("6226220647732790")
                 .orderType(StarConstants.OrderType.RECHARGE).build();
-        System.out.println(req.composeCallback());
+//        System.out.println(req.composeCallback());
+
         PaymentRes union_pay = paymentService.pay(req);
-//
-//
         System.out.println(union_pay);
+//        Document document = Jsoup.parse(union_pay.getThirdPage());
+//        Element pay_form = document.getElementById("pay_form");
+//        String action = pay_form.attr("action");
+//        Elements inputs = pay_form.getElementsByTag("input");
+////        String action = pay_form.attr("action");
+//        HashMap<String, Object> maps = new HashMap<>();
+//        for (Element input : inputs) {
+//            String key = input.attr("name");
+//            String value= input.attr("value");
+//            maps.put(key,value);
+//        }
+//        HttpResponse execute = HttpUtil.createPost(action).form(maps).execute();
+//        String location = execute.header("Location");
+//        String s = HttpUtil.get("https://cashier.sandpay.com.cn/gateway/api/order/".concat(location));
+//
+//
+////
+//        System.out.println(s);
 
     }
     @Test
     public void testOrder() {
-        PayCheckReq paymentRich = PayCheckReq.builder().orderSn("983508486673530880").payChannel(StarConstants.PayChannel.UNION_PAY.name()).build();
+        PayCheckReq paymentRich = PayCheckReq.builder().orderSn("983508486673530880").payChannel(StarConstants.PayChannel.BankCard.name()).build();
         PayCheckRes payCheckRes = paymentService.orderCheck(paymentRich);
         System.out.println(payCheckRes);
 

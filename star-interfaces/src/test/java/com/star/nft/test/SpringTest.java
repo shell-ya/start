@@ -41,22 +41,16 @@ public class SpringTest {
     final IMessageSender messageSender;
 
     final ChannelConf channelConf;
-
     final FreeMakerTemplateHelper templateHelper;
-
     final IPaymentRouter paymentRouter;
-
     final PayConf payConf;
     final MessageAdapter messageAdapter;
-
     final WalletService walletService;
-
 
     @Test
     public void payment() {
         CalculateResult calculateResult = walletService.withdrawMoneyCalculate(
                 new CalculateReq(new BigDecimal("56.81"), StarConstants.PayChannel.BankCard.name()));
-
         System.out.println(calculateResult);
 
     }
@@ -123,7 +117,7 @@ public class SpringTest {
     @Test
     public void repoTest() {
 //        System.out.println(ConfigurationHolder.getPayConfig().getChannel());
-        System.out.println(String.format(TopicConstants.NOTICE_UNREAD_DESTINATION.getFormat(), TopicConstants.NOTICE_UNREAD_DESTINATION.getTag()));
+          System.out.println(String.format(TopicConstants.NOTICE_UNREAD_DESTINATION.getFormat(), TopicConstants.NOTICE_UNREAD_DESTINATION.getTag()));
     }
 
     @Test
@@ -133,7 +127,7 @@ public class SpringTest {
 //        String s = JSON.toJSONString(starNftDict);
 //        System.out.println(s);
         JSONObject result = JSON.parseObject(JSON.toJSONString(payRecordReq,
-                SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteNullNumberAsZero));
+        SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteNullNumberAsZero));
         System.out.println(result.toJSONString());
     }
 
