@@ -17,25 +17,25 @@
         <result property="phone" column="phone" jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="condition">
-        <if test="id != null and id != ''">
+        <if test="id != null ">
             and id = #{id}
         </if>
-        <if test="isDeleted != null and isDeleted != ''">
+        <if test="isDeleted != null ">
             and is_deleted = #{isDeleted}
         </if>
-        <if test="createdAt != null and createdAt != ''">
+        <if test="createdAt != null">
             and created_at = #{createdAt}
         </if>
         <if test="createdBy != null and createdBy != ''">
             and created_by = #{createdBy}
         </if>
-        <if test="modifiedAt != null and modifiedAt != ''">
+        <if test="modifiedAt != null">
             and modified_at = #{modifiedAt}
         </if>
         <if test="modifiedBy != null and modifiedBy != ''">
             and modified_by = #{modifiedBy}
         </if>
-        <if test="uid != null and uid != ''">
+        <if test="uid != null ">
             and uid = #{uid}
         </if>
         <if test="nickname != null and nickname != ''">
@@ -56,8 +56,53 @@
         <if test="phone != null and phone != ''">
             and phone = #{phone}
         </if>
-        <if test="isDefault != null and isDefault != ''">
+        <if test="isDefault != null ">
             and is_default = #{isDefault}
+        </if>
+    </sql>
+
+    <sql id="update_condition">
+        <if test="id != null ">
+            id = #{id},
+        </if>
+        <if test="isDeleted != null ">
+            is_deleted = #{isDeleted},
+        </if>
+        <if test="createdAt != null">
+            created_at = #{createdAt},
+        </if>
+        <if test="createdBy != null and createdBy != ''">
+            created_by = #{createdBy},
+        </if>
+        <if test="modifiedAt != null">
+            modified_at = #{modifiedAt},
+        </if>
+        <if test="modifiedBy != null and modifiedBy != ''">
+            modified_by = #{modifiedBy},
+        </if>
+        <if test="uid != null ">
+            uid = #{uid},
+        </if>
+        <if test="nickname != null and nickname != ''">
+            nickname = #{nickname},
+        </if>
+        <if test="cardNo != null and cardNo != ''">
+            card_no = #{cardNo},
+        </if>
+        <if test="cardType != null and cardType != ''">
+            card_type = #{cardType},
+        </if>
+        <if test="cardName != null and cardName != ''">
+            card_name = #{cardName},
+        </if>
+        <if test="bankNameShort != null and bankNameShort != ''">
+            bank_name_short = #{bankNameShort},
+        </if>
+        <if test="phone != null and phone != ''">
+            phone = #{phone},
+        </if>
+        <if test="isDefault != null ">
+            is_default = #{isDefault},
         </if>
     </sql>
     <!--分页查询指定行数据-->
@@ -84,10 +129,10 @@
     <update id="update">
         update star_nft_bank_relation
         <set>
-            <include refid="condition"/>
+            <include refid="update_condition"/>
         </set>
         <where>
-            <if test="uid != null and uid != ''">
+            <if test="uid != null ">
                 and uid = #{uid}
             </if>
             <if test="cardNo != null and cardNo != ''">
@@ -101,7 +146,7 @@
         delete
         from star_nft_bank_relation
         <where>
-            <if test="uid != null and uid != ''">
+            <if test="uid != null ">
                 and uid = #{uid}
             </if>
             <if test="cardNo != null and cardNo != ''">
