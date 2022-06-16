@@ -5,6 +5,7 @@ channel-configs:
       resTempPath: sandpay/sand_pay_response.ftl
       httpConf:
         processType: json
+        bastApi: https://cashier.sandpay.com.cn/gateway/api/order/
         apiUrl: https://cashier.sandpay.com.cn/gateway/api/order/pay
         properties:
           reqHeader: POST
@@ -14,6 +15,7 @@ channel-configs:
       resTempPath: sandpay/sand_pay_response.ftl
       httpConf:
         processType: json
+        bastApi: https://cashier.sandpay.com.cn/gateway/api/order/
         apiUrl: https://cashier.sandpay.com.cn/gateway/api/order/pay
         properties:
           reqHeader: POST
@@ -23,6 +25,7 @@ channel-configs:
       resTempPath: sandpay/sand_order_check_res.ftl
       httpConf:
         processType: json
+        bastApi: https://cashier.sandpay.com.cn/gateway/api/order/
         apiUrl: https://cashier.sandpay.com.cn/gateway/api/order/query
         properties:
           reqHeader: POST
@@ -31,6 +34,7 @@ channel-configs:
       signTempPath: sandpay/sand_quick_card_sign.ftl
       httpConf:
         processType: json
+        bastApi: https://cashier.sandpay.com.cn/gateway/api/order/
         apiUrl: https://cashier.sandpay.com.cn/fastPay/quickPay/index
         properties:
           reqHeader: POST

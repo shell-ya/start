@@ -9,6 +9,9 @@
 "clientIp": "${param1.clientIp}",
 "notifyUrl": "${param2.notify}",
 "orderCode": "${param1.orderSn}",
+"payExtra":{
+  cardNo:"${param1.getBankNo()}"
+},
 "extend": "${param1.composeCallback()}"
 },
 "head":{

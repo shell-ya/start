@@ -11,7 +11,7 @@ public class HttpConf implements Serializable {
     private String processType;
 
     private String apiUrl;
-
+    private String bastApi;
     private Map<String, String> properties;
 
 }
