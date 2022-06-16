@@ -27,7 +27,6 @@ public class OrderRepository implements IOrderRepository {
     @Override
     public boolean createOrder(OrderVO orderVO) {
         StarNftOrder starNftOrder = new StarNftOrder();
-        //todo 入参里生成
         starNftOrder.setOrderSn(orderVO.getOrderSn());
         starNftOrder.setUserId(orderVO.getUserId());
         starNftOrder.setCreatedAt(new Date());
@@ -44,6 +43,7 @@ public class OrderRepository implements IOrderRepository {
         starNftOrder.setThemeType(orderVO.getThemeType());
         starNftOrder.setThemeNumber(orderVO.getThemNumber());
         starNftOrder.setIsDeleted(false);
+        starNftOrder.setRemark(orderVO.getRemark());
         return starNftOrderMapper.insert(starNftOrder) == 1;
     }
 
@@ -81,10 +81,27 @@ public class OrderRepository implements IOrderRepository {
         return new ResponsePageResult<OrderVO>(orderVOS, page, size, orders.getTotal());
     }
 
+    @Override
+    public OrderVO queryOrderDetails(Long uid, String orderSn) {
+        List<StarNftOrder> starNftOrders = queryOrdersUsers(uid);
+        for (StarNftOrder starNftOrder : starNftOrders) {
+            if (starNftOrder.getOrderSn().equals(orderSn)) {
+                return BeanColverUtil.colver(starNftOrder, OrderVO.class);
+            }
+        }
+        return null;
+    }
+
     private StarNftOrder queryOrder(Long uid, String orderSn) {
         //找到对应订单
         return starNftOrderMapper.selectOne(
                 new LambdaQueryWrapper<StarNftOrder>().eq(Objects.nonNull(uid), StarNftOrder::getUserId, uid)
                         .eq(StringUtils.isNotBlank(orderSn), StarNftOrder::getOrderSn, orderSn));
+    }
+
+
+    private List<StarNftOrder> queryOrdersUsers(Long uid) {
+        return starNftOrderMapper.selectList(new LambdaQueryWrapper<StarNftOrder>()
+                .eq(Objects.nonNull(uid), StarNftOrder::getUserId, uid));
     }
 }

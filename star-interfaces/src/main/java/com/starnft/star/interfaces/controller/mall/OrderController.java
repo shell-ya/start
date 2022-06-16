@@ -7,6 +7,10 @@ import com.starnft.star.application.process.order.model.res.OrderGrabRes;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
+import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.domain.order.model.req.OrderListReq;
+import com.starnft.star.domain.order.model.res.OrderListRes;
+import com.starnft.star.domain.order.service.IOrderService;
 import com.starnft.star.interfaces.interceptor.UserContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -29,15 +33,32 @@ public class OrderController {
 
     final IOrderProcessor orderProcessor;
 
+    final IOrderService orderService;
+
     final ICurrentLimiter currentLimiter;
 
     @ApiOperation("下单")
-    @PostMapping("/ordergrab")
-    public RopResponse<OrderGrabRes> recharge(@Validated @RequestBody OrderGrabReq req) {
+    @PostMapping("/order/grab")
+    public RopResponse<OrderGrabRes> grab(@Validated @RequestBody OrderGrabReq req) {
         if (!currentLimiter.tryAcquire()) {
             throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
         }
         req.setUserId(UserContext.getUserId().getUserId());
         return RopResponse.success(this.orderProcessor.orderGrab(req));
     }
+
+    @ApiOperation("查询订单列表")
+    @PostMapping("/order/list")
+    public RopResponse<ResponsePageResult<OrderListRes>> list(@RequestBody OrderListReq req) {
+        req.setUserId(UserContext.getUserId().getUserId());
+        return RopResponse.success(this.orderService.orderList(req));
+    }
+
+    @ApiOperation("查询订单详情")
+    @PostMapping("/order/details")
+    public RopResponse<OrderListRes> detail(@RequestBody OrderListReq req) {
+        req.setUserId(UserContext.getUserId().getUserId());
+        return RopResponse.success(this.orderService.orderDetails(req));
+    }
+
 }

@@ -36,6 +36,7 @@ public class OrderVO implements Serializable {
     private BigDecimal payAmount ;
     /** 创建时间 */
     private Date createdAt ;
-
+    /** 备注 */
+    private String remark ;
 
 }

@@ -9,15 +9,16 @@ public interface IOrderService {
 
     //下单
     boolean createOrder(OrderVO orderVO);
+
     //查询用户订单列表
     ResponsePageResult<OrderListRes> orderList(OrderListReq orderListReq);
 
     //查询用户订单详情
+    OrderListRes orderDetails(OrderListReq orderListReq);
 
     //订单支付状态回写
 
     //取消订单
-
 
 
 }
