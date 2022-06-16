@@ -18,6 +18,11 @@ public class OrderService implements IOrderService {
     IOrderRepository orderRepository;
 
     @Override
+    public boolean createOrder(OrderVO orderVO) {
+        return orderRepository.createOrder(orderVO);
+    }
+
+    @Override
     public ResponsePageResult<OrderListRes> orderList(OrderListReq orderListReq) {
         ResponsePageResult<OrderVO> queryOrders = this.orderRepository.queryOrders(
                 orderListReq.getUserId(), orderListReq.getStatus(), orderListReq.getPage(), orderListReq.getSize());

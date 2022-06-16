@@ -28,7 +28,7 @@ public class OrderRepository implements IOrderRepository {
     public boolean createOrder(OrderVO orderVO) {
         StarNftOrder starNftOrder = new StarNftOrder();
         //todo 入参里生成
-        starNftOrder.setOrderSn(StarConstants.OrderPrefix.PublishGoods.getPrefix().concat(orderVO.getOrderSn()));
+        starNftOrder.setOrderSn(orderVO.getOrderSn());
         starNftOrder.setUserId(orderVO.getUserId());
         starNftOrder.setCreatedAt(new Date());
         starNftOrder.setPayAmount(orderVO.getPayAmount());

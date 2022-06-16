@@ -26,10 +26,11 @@ public class BaseUserService {
 
     /**
      * 根据用户 id 创建 Token 并保存 redis
+     *
      * @param userId
      * @return
      */
-    protected String createUserTokenAndSaveRedis(Long userId){
+    protected String createUserTokenAndSaveRedis(Long userId) {
         //创建token
         AccessToken accessToken = new AccessToken();
         accessToken.setUserId(userId);
@@ -39,7 +40,7 @@ public class BaseUserService {
         String key = String.format(RedisKey.REDIS_USER_TOKEN.getKey(), userId);
 
         //保存Redis
-        redisTemplate.opsForValue().set(key , userToken
+        redisTemplate.opsForValue().set(key, userToken
                 , RedisKey.REDIS_USER_TOKEN.getTime()
                 , RedisKey.REDIS_USER_TOKEN.getTimeUnit());
 
@@ -48,29 +49,31 @@ public class BaseUserService {
 
     /**
      * 清除用户token
+     *
      * @param userId
      * @return
      */
-    protected Boolean cleanUserToken(Long userId){
-        return redisTemplate.delete(RedisKey.REDIS_USER_TOKEN.getKey());
+    protected Boolean cleanUserToken(Long userId) {
+        return redisTemplate.delete(String.format(RedisKey.REDIS_USER_TOKEN.getKey(), userId));
     }
 
 
     /**
      * 校验token并返回用户id
+     *
      * @param token
      * @return
      */
-    public Long checkTokenAndReturnUserId(String token){
+    public Long checkTokenAndReturnUserId(String token) {
         String accountId = JwtUtil.getAccountId(token);
-        if (StringUtils.isNotBlank(accountId)){
+        if (StringUtils.isNotBlank(accountId)) {
             String key = String.format(RedisKey.REDIS_USER_TOKEN.getKey(), accountId);
             String tokenRes = String.valueOf(redisTemplate.opsForValue().get(key));
-            if (StringUtils.isNotBlank(tokenRes) && !"null".equals(tokenRes)){
+            if (StringUtils.isNotBlank(tokenRes) && !"null".equals(tokenRes)) {
                 return Long.valueOf(accountId);
             }
         }
-        throw new  StarException(StarError.TOKEN_EXPIRED_ERROR);
+        throw new StarException(StarError.TOKEN_EXPIRED_ERROR);
     }
 
 

@@ -1,6 +1,8 @@
 package com.starnft.star.application.process.task.activity;
 
 import com.google.common.collect.Lists;
+import com.starnft.star.domain.series.model.vo.SeriesVO;
+import com.starnft.star.domain.series.service.SeriesService;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.utils.DateUtil;
@@ -39,6 +41,9 @@ public class ActivitiesTask {
 
     @Resource
     private ThemeService themeService;
+
+    @Resource
+    private SeriesService seriesService;
 
     /*****
      * 15秒执行一次
@@ -107,6 +112,8 @@ public class ActivitiesTask {
     }
 
     private SecKillGoods copy(ActivityVO activity, ThemeDetailVO detailVO) {
+
+        SeriesVO seriesVO = seriesService.querySeriesById(detailVO.getSeriesId());
         SecKillGoods secKillGoods = new SecKillGoods();
         secKillGoods.setGoodsNum(activity.getGoodsNum());
         secKillGoods.setDescrption(detailVO.getDescrption());
@@ -115,6 +122,8 @@ public class ActivitiesTask {
         secKillGoods.setStock(activity.getStock());
         secKillGoods.setStartTime(activity.getStartTime());
         secKillGoods.setThemeId(detailVO.getId());
+        secKillGoods.setSeriesId(detailVO.getSeriesId());
+        secKillGoods.setSeriesName(seriesVO.getSeriesName());
         secKillGoods.setThemeLevel(detailVO.getThemeLevel());
         secKillGoods.setThemeName(detailVO.getThemeName());
         secKillGoods.setThemePic(detailVO.getThemePic());

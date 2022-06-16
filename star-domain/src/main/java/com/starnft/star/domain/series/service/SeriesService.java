@@ -10,4 +10,6 @@ public interface SeriesService {
     ResponsePageResult<SeriesVO> queryMainSeriesInfo(SeriesReq requestPage);
 
     List<SeriesVO> querySeriesByType(Integer type);
+
+    SeriesVO querySeriesById(Long id);
 }

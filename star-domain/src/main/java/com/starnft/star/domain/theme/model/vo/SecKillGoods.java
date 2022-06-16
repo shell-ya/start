@@ -29,6 +29,12 @@ public class SecKillGoods {
     @ApiModelProperty(name = "主题id", notes = "")
     private Long themeId;
 
+    @ApiModelProperty(name = "系列id", notes = "")
+    private Long  seriesId;
+
+    @ApiModelProperty(name = "系列名称", notes = "")
+    private String  seriesName;
+
     @ApiModelProperty(name = "主题类型", notes = "")
     private Integer themeType;
 

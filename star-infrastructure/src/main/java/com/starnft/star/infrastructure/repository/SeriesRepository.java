@@ -1,11 +1,13 @@
 package com.starnft.star.infrastructure.repository;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.starnft.star.common.enums.CommodityTypeEnum;
 import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.series.model.req.SeriesReq;
 import com.starnft.star.domain.series.model.vo.SeriesVO;
 import com.starnft.star.domain.series.repository.ISeriesRepository;
@@ -68,5 +70,13 @@ public class SeriesRepository implements ISeriesRepository {
                                 .build()
                 )
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public SeriesVO querySeriesById(Long id) {
+
+        StarNftSeries starNftSeries = starNftSeriesMapper.selectById(id);
+        return BeanColverUtil.colver(starNftSeries, SeriesVO.class);
+
     }
 }
