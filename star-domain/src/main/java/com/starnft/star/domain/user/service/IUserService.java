@@ -188,4 +188,7 @@ public interface IUserService {
     void assertPayPwdCheckSuccess(Long uid);
 
     Boolean resetPassword(AuthMaterialDTO authMaterial);
+
+    Boolean queryIsSettingPwd(Long id);
+
 }

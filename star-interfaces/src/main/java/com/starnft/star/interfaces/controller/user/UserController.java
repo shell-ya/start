@@ -88,6 +88,15 @@ public class UserController {
         return RopResponse.success(userGatheringInfoRes);
     }
 
+
+    @ApiOperation("查询用户是否设置登录密码")
+    @PostMapping("/userinfo/isSettingPwd")
+    public RopResponse<Boolean> isSettingPwd() {
+        Long userId = UserContext.getUserId().getUserId();
+        Boolean settingPwd = this.userCore.isSettingPwd(new UserGatheringInfoReq(userId));
+        return RopResponse.success(settingPwd);
+    }
+
     @ApiOperation("发起实名认证")
     @PostMapping("/userinfo/authentication")
     public RopResponse<Boolean> sponsorAuthentication(UserResolverInfo userResolverInfo,

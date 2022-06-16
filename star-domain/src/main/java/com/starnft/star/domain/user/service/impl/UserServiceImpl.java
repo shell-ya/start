@@ -457,4 +457,14 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         Integer updateRows = this.userRepository.setUpPassword(userInfo, materialDTO.getPassword());
         return Objects.nonNull(updateRows) ? Boolean.TRUE : Boolean.FALSE;
     }
+
+    @Override
+    public Boolean queryIsSettingPwd(Long id) {
+        Boolean isSetting = redisTemplate.opsForValue().getBit(RedisKey.REDIS_USER_IS_SETTING_PWD.getKey(), id);
+        if (!isSetting){
+            UserInfo userInfo = userRepository.queryUserInfoByUserId(id);
+            isSetting=Objects.isNull(userInfo.getPassword());
+        }
+        return isSetting;
+    }
 }

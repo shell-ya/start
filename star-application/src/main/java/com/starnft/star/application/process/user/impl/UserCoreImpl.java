@@ -337,6 +337,11 @@ public class UserCoreImpl implements UserCore {
         return this.userService.resetPassword(authMaterial);
     }
 
+    @Override
+    public Boolean isSettingPwd(UserGatheringInfoReq userGatheringInfoReq) {
+        return this.userService.queryIsSettingPwd(userGatheringInfoReq.getUid()  );
+    }
+
     private void popupAgreement(PopupAgreementRes popupAgreementRes
             , List<AgreementVO> agreementVOS
             , Integer authorizationSceneId) {
