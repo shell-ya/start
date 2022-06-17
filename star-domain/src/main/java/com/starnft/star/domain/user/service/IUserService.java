@@ -191,4 +191,7 @@ public interface IUserService {
 
     Boolean queryIsSettingPwd(Long id);
 
+    //设置/修改 支付密码
+    Boolean plyPasswordSetting(UserInfoUpdateDTO userInfoUpdateDTO);
+
 }

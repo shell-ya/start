@@ -35,6 +35,10 @@ public class UserInfoUpdateDTO {
      * 用户头像
      */
     private String avatar;
+    /**
+     * 支付密码
+     */
+    private String oldPlyPassword;
 
     /**
      * 支付密码

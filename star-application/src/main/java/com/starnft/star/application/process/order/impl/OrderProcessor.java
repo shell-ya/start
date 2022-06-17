@@ -11,9 +11,13 @@ import com.starnft.star.common.exception.StarException;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.domain.theme.service.ThemeService;
+import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
+import com.starnft.star.domain.wallet.model.res.WalletResult;
+import com.starnft.star.domain.wallet.service.WalletService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.nio.file.WatchService;
 import java.util.List;
 
 @Service
@@ -27,6 +31,9 @@ public class OrderProcessor implements IOrderProcessor {
 
     @Resource
     private OrderProducer orderProducer;
+
+    @Resource
+    private WalletService walletService;
 
     @Override
     public OrderGrabRes orderGrab(OrderGrabReq orderGrabReq) {
@@ -46,10 +53,15 @@ public class OrderProcessor implements IOrderProcessor {
         //库存验证
         String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), orderGrabReq.getThemeId());
         long stock = redisUtil.lGetListSize(stockKey);
-
         if (stock <= 0) {
             redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUserId()));
             throw new StarException(StarError.STOCK_EMPTY_ERROR);
+        }
+
+        //校验余额
+        WalletResult walletResult = walletService.queryWalletInfo(new WalletInfoReq(orderGrabReq.getUserId()));
+        if (walletResult.getBalance().compareTo(goods.getSecCost()) < 1) {
+            throw new StarException(StarError.BALANCE_NOT_ENOUGH);
         }
 
         //mq 异步下单

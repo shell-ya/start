@@ -461,11 +461,41 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     @Override
     public Boolean queryIsSettingPwd(Long id) {
         Boolean isSetting = redisTemplate.opsForValue().getBit(RedisKey.REDIS_USER_IS_SETTING_PWD.getKey(), id);
-        if (!isSetting){
+        if (!isSetting) {
             UserInfo userInfo = userRepository.queryUserInfoByUserId(id);
-            isSetting=Objects.isNull(userInfo.getPassword());
-            redisTemplate.opsForValue().setBit(RedisKey.REDIS_USER_IS_SETTING_PWD.getKey(), id,isSetting);
+            isSetting = Objects.isNull(userInfo.getPlyPassword());
+            redisTemplate.opsForValue().setBit(RedisKey.REDIS_USER_IS_SETTING_PWD.getKey(), id, isSetting);
         }
         return isSetting;
+    }
+
+    @Override
+    public Boolean plyPasswordSetting(UserInfoUpdateDTO userInfoUpdateDTO) {
+
+        Optional.ofNullable(userInfoUpdateDTO.getPlyPassword()).orElseThrow(() -> new StarException("密码不能为空"));
+
+        //密码长度校验
+        if (userInfoUpdateDTO.getPlyPassword().length() != 6) {
+            throw new StarException("密码长度为6位");
+        }
+
+        //加密
+        userInfoUpdateDTO.setPlyPassword(StarUtils.getSHA256Str(userInfoUpdateDTO.getPlyPassword()));
+
+        UserInfoVO userInfoVO = queryUserInfo(userInfoUpdateDTO.getAccount());
+        Optional.ofNullable(userInfoVO).orElseThrow(() -> new StarException("用户不存在"));
+
+        if (StringUtils.isNotBlank(userInfoVO.getPlyPassword())) {
+            if (StringUtils.isBlank(userInfoUpdateDTO.getOldPlyPassword()) ||
+                    !(StarUtils.getSHA256Str(userInfoUpdateDTO.getOldPlyPassword()).equals(userInfoVO.getPlyPassword()))) {
+                throw new StarException("支付密码不正确");
+            }
+        }
+
+        if (userInfoVO.getPlyPassword() != null && userInfoVO.getPlyPassword().equals(userInfoUpdateDTO.getPlyPassword())) {
+            throw new StarException("修改的密码不能和当前一样");
+        }
+
+        return modifyUserInfo(userInfoUpdateDTO);
     }
 }
