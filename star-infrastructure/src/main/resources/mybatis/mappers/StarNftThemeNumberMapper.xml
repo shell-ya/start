@@ -43,6 +43,25 @@
           AND a.is_delete = 0
     </select>
 
+    <select id="selectConsignThemeNumberDetail" resultType="com.starnft.star.domain.number.model.vo.ThemeNumberVo">
+        SELECT a.id                   number_id,
+               a.theme_number         theme_number,
+               a.price                price,
+               b.id                   theme_info_id,
+               b.theme_name           theme_name,
+               b.theme_pic            theme_pic,
+               c.id                   series_id,
+               c.series_name          series_name
+        FROM star_nft_theme_number a
+                 LEFT JOIN star_nft_theme_info b
+                           ON a.series_theme_info_id = b.id
+                 LEFT JOIN star_nft_series c
+                           ON b.series_id = c.id
+        WHERE a.id = #{id}
+          AND a.is_delete = 0
+          AND a.status = 3
+    </select>
+
     <select id="selectNumberList" resultType="com.starnft.star.domain.number.model.vo.NumberVO">
         SELECT
         a.id,
@@ -69,6 +88,7 @@
             </if>
             AND a.is_delete = 0
             AND b.is_delete = 0
+            AND a.status = 3
         </where>
         <if test="orderBy != null and orderBy != ''">
             ORDER BY a.${orderBy} ${sortType}

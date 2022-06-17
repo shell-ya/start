@@ -1,6 +1,8 @@
 package com.starnft.star.application.process.number;
 
+import com.starnft.star.application.process.number.req.MarketOrderReq;
 import com.starnft.star.application.process.number.res.ConsignDetailRes;
+import com.starnft.star.application.process.number.res.MarketOrderRes;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
@@ -23,4 +25,6 @@ public interface INumberCore {
     Boolean consignmentCancel(Long uid, Long numberId);
 
     ConsignDetailRes obtainConsignDetail(Long id);
+
+    MarketOrderRes marketOrder (MarketOrderReq marketOrderReq);
 }

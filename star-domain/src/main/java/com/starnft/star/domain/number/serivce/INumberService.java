@@ -7,6 +7,7 @@ import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
+import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
 
 public interface INumberService {
     ResponsePageResult<NumberVO> queryThemeNumber(NumberReq numberReq);
@@ -18,4 +19,7 @@ public interface INumberService {
     Boolean consignment(Long uid, NumberConsignmentRequest request);
 
     Boolean consignmentCancel(Long uid, Long numberId);
+
+    ThemeNumberVo getConsignNumberDetail(Long id);
+
 }

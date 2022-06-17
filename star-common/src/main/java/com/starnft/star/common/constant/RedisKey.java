@@ -143,6 +143,11 @@ public enum RedisKey {
 
     //======================================= sec kill goods end   =======================================
 
+    /**
+     * 市场交易锁
+     */
+    MARKET_ORDER_TRANSACTION(504, StarConstants.SERVICE_NAME.concat(".market:transaction:%s"), 3L, TimeUnit.MINUTES),
+
     ;
     private Integer code;
 

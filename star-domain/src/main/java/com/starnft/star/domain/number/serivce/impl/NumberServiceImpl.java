@@ -18,6 +18,7 @@ import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
+import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
 import com.starnft.star.domain.number.repository.INumberRepository;
 import com.starnft.star.domain.number.serivce.INumberService;
 import org.springframework.stereotype.Service;
@@ -142,6 +143,16 @@ public class NumberServiceImpl implements INumberService {
             return Boolean.TRUE;
         }
         throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "取消寄售失败");
+    }
+
+    @Override
+    public ThemeNumberVo getConsignNumberDetail(Long id) {
+        Optional.ofNullable(id)
+                .orElseThrow(() -> new StarException(StarError.GOODS_NOT_FOUND,"商品已被购买"));
+        ThemeNumberVo consignNumber = this.numberRepository.getConsignNumber(id);
+        Optional.ofNullable(consignNumber)
+                .orElseThrow(() -> new StarException(StarError.GOODS_NOT_FOUND,"商品已被购买"));
+        return consignNumber;
     }
 
     private NumberDetailVO checkNumberOwner(Long uid, Long numberId) {

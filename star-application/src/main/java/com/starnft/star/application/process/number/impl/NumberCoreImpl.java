@@ -1,23 +1,40 @@
 package com.starnft.star.application.process.number.impl;
 
 import com.starnft.star.application.process.number.INumberCore;
+import com.starnft.star.application.process.number.req.MarketOrderReq;
 import com.starnft.star.application.process.number.res.ConsignDetailRes;
+import com.starnft.star.application.process.number.res.MarketOrderRes;
+import com.starnft.star.application.process.order.model.dto.OrderMessageReq;
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.Assert;
+import com.starnft.star.domain.component.RedisLockUtils;
+import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
 import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
+import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
 import com.starnft.star.domain.number.serivce.INumberService;
+import com.starnft.star.domain.order.model.vo.OrderVO;
+import com.starnft.star.domain.order.service.IOrderService;
+import com.starnft.star.domain.support.ids.IIdGenerator;
+import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
+import com.starnft.star.domain.wallet.model.res.WalletResult;
 import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
 import com.starnft.star.domain.wallet.service.WalletConfig;
 import com.starnft.star.domain.wallet.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.Map;
+
+import static com.starnft.star.common.exception.StarError.BALANCE_NOT_ENOUGH;
 
 /**
  * @author Harlan
@@ -29,7 +46,11 @@ public class NumberCoreImpl implements INumberCore {
 
     private final INumberService numberService;
     private final WalletService walletService;
-
+    private final IOrderService orderService;
+    private final RedisUtil redisUtil;
+    private final RedisLockUtils redisLockUtils;
+    @Resource
+    private Map<StarConstants.Ids, IIdGenerator> map;
     @Override
     public NumberDetailVO obtainThemeNumberDetail(Long id) {
         return this.numberService.getNumberDetail(id);
@@ -67,5 +88,59 @@ public class NumberCoreImpl implements INumberCore {
                 .copyrightRate(config.getCopyrightRate())
                 .serviceRate(config.getServiceRate())
                 .build();
+    }
+
+    @Override
+    public MarketOrderRes marketOrder(MarketOrderReq marketOrderReq) {
+        //钱包余额充足
+        WalletResult walletResult = walletService.queryWalletInfo(new WalletInfoReq(marketOrderReq.getUserId()));
+        ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(marketOrderReq.getNumberId());
+        if (walletResult.getBalance().compareTo(numberDetail.getPrice()) < 0){
+            throw new StarException(StarError.BALANCE_NOT_ENOUGH);
+        }
+        //获取锁
+        String isTransaction = String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), marketOrderReq.getNumberId());
+        if (redisUtil.hasKey(isTransaction)) {
+            throw new StarException(StarError.GOODS_NOT_FOUND);
+        }
+        if (redisLockUtils.lock(isTransaction, RedisKey.MARKET_ORDER_TRANSACTION.getTime())) {
+            //生成订单
+           if(createPreOrder(numberDetail, marketOrderReq.getUserId())){
+               //发送延时队列
+
+               return new MarketOrderRes(0, StarError.SUCCESS_000000.getErrorMessage());
+           }
+        }
+        throw new StarException(StarError.PAY_PROCESS_ERROR);
+
+    }
+
+    private boolean createPreOrder(ThemeNumberVo numberDetail,Long userId) {
+        //生成订单流水
+        String orderSn = StarConstants.OrderPrefix.TransactionSn.getPrefix()
+                .concat(String.valueOf(map.get(StarConstants.Ids.SnowFlake).nextId()));
+
+        OrderVO orderVO = OrderVO.builder()
+                .userId(userId)
+                .orderSn(orderSn)
+                .payAmount(numberDetail.getPrice())
+                .seriesId(numberDetail.getSeriesId())
+                .seriesName(numberDetail.getSeriesName())
+                .seriesThemeInfoId(numberDetail.getThemeInfoId())
+                .themeName(numberDetail.getThemeName())
+//                .payAmount(numberDetail.getPrice())
+                .themePic(numberDetail.getThemePic())
+                .themeType(numberDetail.getThemeType())
+                .totalAmount(numberDetail.getPrice())
+                //todo 排队号
+                .themeNumber(numberDetail.getThemeNumber())
+                .build();
+        //创建订单
+        return orderService.createOrder(orderVO);
+        //        if (isSuccess) {
+//            redisUtil.hset(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), String.valueOf(message.getUserId()), orderVO);
+//            return true;
+//        }
+//        return false;
     }
 }

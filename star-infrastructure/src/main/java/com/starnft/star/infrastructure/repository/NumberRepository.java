@@ -14,6 +14,7 @@ import com.starnft.star.domain.number.model.dto.NumberUpdateDTO;
 import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
+import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
 import com.starnft.star.domain.number.repository.INumberRepository;
 import com.starnft.star.infrastructure.entity.number.StarNftNumberCirculationHist;
 import com.starnft.star.infrastructure.entity.number.StarNftThemeNumber;
@@ -136,5 +137,10 @@ public class NumberRepository implements INumberRepository {
                 Wrappers.lambdaUpdate(StarNftUserTheme.class)
                         .eq(StarNftUserTheme::getSeriesThemeId, numberId)
                         .eq(StarNftUserTheme::getUserId, uid)) == 1;
+    }
+
+    @Override
+    public ThemeNumberVo getConsignNumber(Long id) {
+        return this.starNftThemeNumberMapper.selectConsignThemeNumberDetail(id);
     }
 }

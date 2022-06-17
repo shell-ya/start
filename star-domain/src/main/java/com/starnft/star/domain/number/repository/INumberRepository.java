@@ -9,6 +9,7 @@ import com.starnft.star.domain.number.model.dto.NumberUpdateDTO;
 import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
+import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
 
 public interface INumberRepository {
     ResponsePageResult<NumberVO> queryNumber(NumberReq numberReq);
@@ -24,5 +25,7 @@ public interface INumberRepository {
     NumberCirculationDTO getLastConsignedCirculation(Long numberId);
 
     Boolean modifyUserNumberStatus(Long uid, Long numberId, UserNumberStatusEnum statusEnum);
+
+    ThemeNumberVo getConsignNumber(Long id);
 
 }
