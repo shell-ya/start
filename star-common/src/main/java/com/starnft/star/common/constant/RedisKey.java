@@ -132,9 +132,14 @@ public enum RedisKey {
     SECKILL_ORDER_REPETITION_TIMES(504, StarConstants.SERVICE_NAME.concat(".seckill:ordered.times"), -1L, TimeUnit.HOURS),
 
     /**
-     * 用户订单hash
+     * 用户订单 hash
      */
-    SECKILL_ORDER_USER_MAPPING(504, StarConstants.SERVICE_NAME.concat(".seckill:ordered.mapping"), -1L, TimeUnit.HOURS),
+    SECKILL_ORDER_USER_MAPPING(505, StarConstants.SERVICE_NAME.concat(".seckill:ordered.mapping"), -1L, TimeUnit.HOURS),
+
+    /**
+     * 用户订单状态 hash
+     */
+    SECKILL_ORDER_USER_STATUS_MAPPING(506, StarConstants.SERVICE_NAME.concat(".seckill:ordered.status"), -1L, TimeUnit.HOURS),
 
     //======================================= sec kill goods end   =======================================
 

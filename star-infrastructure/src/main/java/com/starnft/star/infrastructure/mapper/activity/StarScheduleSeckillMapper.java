@@ -12,4 +12,8 @@ public interface StarScheduleSeckillMapper extends BaseMapper<StarScheduleSeckil
 
     List<StarScheduleSeckill> obtainActivities(@Param("startTime") String startTime, @Param("endTime") String endTime, @Param("keys") List<String> keys);
 
+    StarScheduleSeckill queryByThemeId(@Param("themeId") Integer themeId);
+
+    Integer modifyStock(@Param("themeId") Integer themeId, @Param("stock") Integer stock, @Param("version") Integer version);
+
 }

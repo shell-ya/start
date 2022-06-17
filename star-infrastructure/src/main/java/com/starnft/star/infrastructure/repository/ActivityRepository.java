@@ -18,7 +18,13 @@ public class ActivityRepository implements IActivityRepository {
 
     @Override
     public List<ActivityVO> obtainActivities(String startTime, String endTime, List<String> keys) {
-        List<StarScheduleSeckill> starScheduleSeckills = starScheduleSeckillMapper.obtainActivities(startTime, endTime,keys);
+        List<StarScheduleSeckill> starScheduleSeckills = starScheduleSeckillMapper.obtainActivities(startTime, endTime, keys);
         return BeanColverUtil.colverList(starScheduleSeckills, ActivityVO.class);
+    }
+
+    @Override
+    public boolean modifyStock(Integer spuId, Integer stock) {
+        StarScheduleSeckill starScheduleSeckill = starScheduleSeckillMapper.queryByThemeId(spuId);
+        return starScheduleSeckillMapper.modifyStock(spuId, stock, starScheduleSeckill.getVersion()) == 1;
     }
 }

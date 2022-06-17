@@ -1,8 +1,11 @@
 package com.starnft.star.application.mq.consumer;
 
+import com.starnft.star.application.mq.producer.order.OrderProducer;
 import com.starnft.star.application.process.order.model.dto.OrderMessageReq;
+import com.starnft.star.application.process.order.model.res.OrderGrabStatus;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.domain.activity.IActivitiesService;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.service.IOrderService;
@@ -29,6 +32,12 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
     private IOrderService orderService;
 
     @Resource
+    private OrderProducer orderProducer;
+
+    @Resource
+    private IActivitiesService activitiesService;
+
+    @Resource
     private Map<StarConstants.Ids, IIdGenerator> map;
 
 
@@ -51,19 +60,26 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
 
         String goodsKey = String.format(RedisKey.SECKILL_GOODS_INFO.getKey(), time);
         if (goodsKey != null) {
-
-            //创建订单
-            if (createPreOrder(message)) {
-                //减库存
-                stockSubtract(userId, time, themeId, goods);
-                //缓存写进订单状态
-
-                //发送延时mq 取消订单
-
-                return;
+            try {
+                //生成订单流水
+                String orderSn = StarConstants.OrderPrefix.PublishGoods.getPrefix()
+                        .concat(String.valueOf(map.get(StarConstants.Ids.SnowFlake).nextId()));
+                //创建订单
+                if (createPreOrder(orderSn, message, (int) stockQueueId)) {
+                    //减库存
+                    stockSubtract(userId, time, themeId, goods);
+                    //缓存写进订单状态
+                    OrderGrabStatus orderGrabStatus = new OrderGrabStatus(0, orderSn, time);
+                    redisUtil.hset(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), String.valueOf(userId), orderGrabStatus);
+                    //发送延时mq 取消订单
+                    orderProducer.secOrderRollback(orderGrabStatus);
+                    return;
+                }
+                throw new RuntimeException("创建订单异常!");
+            } catch (RuntimeException e) {
+                log.error("创建订单异常: userId: [{}] , themeId: [{}] , context: [{}]", userId, themeId, goods.toString());
+                throw new RuntimeException(e.getMessage());
             }
-            log.error("创建订单异常: userId: [{}] , themeId: [{}] , context: [{}]", userId, themeId, goods.toString());
-            throw new RuntimeException("创建订单异常!");
         }
 
     }
@@ -75,17 +91,18 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
         goods.setStock(currStock.intValue());
         if (currStock <= 0) {
             //同步库存到mysql
+            boolean modifySuccess = activitiesService.modifyStock(goods.getThemeId().intValue(), goods.getStock());
+            if (!modifySuccess) {
+                log.error("修改库存失败： themeId:[{}] , stock:[{}] ", goods.getThemeId(), goods.getStock());
+                throw new RuntimeException("修改库存失败");
+            }
         } else {
             //刷新商品库存
             redisUtil.hset(String.format(RedisKey.SECKILL_GOODS_INFO.getKey(), time), String.valueOf(themeId), goods);
         }
     }
 
-    private boolean createPreOrder(OrderMessageReq message) {
-        //生成订单流水
-        String orderSn = StarConstants.OrderPrefix.PublishGoods.getPrefix()
-                .concat(String.valueOf(map.get(StarConstants.Ids.SnowFlake).nextId()));
-
+    private boolean createPreOrder(String orderSn, OrderMessageReq message, int stockQueueId) {
         OrderVO orderVO = OrderVO.builder()
                 .userId(message.getUserId())
                 .orderSn(orderSn)
@@ -98,8 +115,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
                 .themePic(message.getGoods().getThemePic())
                 .themeType(message.getGoods().getThemeType())
                 .totalAmount(message.getGoods().getSecCost())
-                //todo 排队号
-                .themeNumber(1)
+                .themeNumber(stockQueueId)
                 .build();
         //创建订单
         boolean isSuccess = orderService.createOrder(orderVO);

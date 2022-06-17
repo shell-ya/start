@@ -69,6 +69,11 @@ public class StarScheduleSeckill extends BaseEntity implements Serializable {
      */
     @ApiModelProperty(name = "审核状态 0未审核 1审核通过", notes = "")
     private int status;
+    /**
+     * 审核状态 0未审核 1审核通过
+     */
+    @ApiModelProperty(name = "版本号 乐观锁", notes = "")
+    private int version;
 
     public Long getId() {
         return id;
@@ -156,5 +161,13 @@ public class StarScheduleSeckill extends BaseEntity implements Serializable {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
     }
 }

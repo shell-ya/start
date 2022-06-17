@@ -18,12 +18,13 @@
         <result property="endTime" column="end_time" jdbcType="DATE"/>
         <result property="goodsDesc" column="goods_desc" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="TINYINT"/>
+        <result property="version" column="version" jdbcType="INTEGER"/>
     </resultMap>
 
     <!--分页查询指定行数据-->
     <select id="obtainActivities" resultMap="StarScheduleSeckillMap">
         select
-        id,is_deleted,created_at,created_by,modified_at,modified_by,seller_id,spu_id,sku_id,stock,goods_num,sec_cost,start_time,end_time,goods_desc,status
+        id,is_deleted,created_at,created_by,modified_at,modified_by,seller_id,spu_id,sku_id,stock,goods_num,sec_cost,start_time,end_time,goods_desc,status,version
         from star_schedule_seckill
         <where>
             status = 1
@@ -45,13 +46,36 @@
             </if>
         </where>
     </select>
+
+    <select id="queryByThemeId" resultMap="StarScheduleSeckillMap">
+        select
+        id,is_deleted,created_at,created_by,modified_at,modified_by,seller_id,spu_id,sku_id,stock,goods_num,sec_cost,start_time,end_time,goods_desc,status,version
+        <where>
+            spu_id = #{themeId}
+        </where>
+    </select>
+
+    <update id="modifyStock" parameterType="com.starnft.star.infrastructure.entity.activity.StarScheduleSeckill">
+        update star_schedule_seckill
+        <set>
+            <if test="stock != null and stock >= 0">
+                stock = #{stock},
+            </if>
+            <if test="version != null ">
+                version = #{version} + 1,
+            </if>
+        </set>
+        where
+        spu_id = #{themeId}
+    </update>
+
     <!-- 批量新增或按主键更新数据 -->
     <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
         insert into
-        star_schedule_seckill(id,is_deleted,created_at,created_by,modified_at,modified_by,seller_id,spu_id,sku_id,stock,goods_num,sec_cost,start_time,end_time,goods_desc,status)
+        star_schedule_seckill(id,is_deleted,created_at,created_by,modified_at,modified_by,seller_id,spu_id,sku_id,stock,goods_num,sec_cost,start_time,end_time,goods_desc,status,version)
         values
         <foreach collection="entities" item="entity" separator=",">
-            (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.sellerId},#{entity.spuId},#{entity.skuId},#{entity.stock},#{entity.goodsNum},#{entity.secCost},#{entity.startTime},#{entity.endTime},#{entity.goodsDesc},#{entity.status})
+            (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.sellerId},#{entity.spuId},#{entity.skuId},#{entity.stock},#{entity.goodsNum},#{entity.secCost},#{entity.startTime},#{entity.endTime},#{entity.goodsDesc},#{entity.status},#{version})
         </foreach>
         on duplicate key update
         id=values(id),
@@ -70,5 +94,6 @@
         end_time=values(end_time),
         goods_desc=values(goods_desc),
         status=values(status)
+        version=values(version)
     </insert>
 </mapper>

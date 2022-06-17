@@ -7,4 +7,7 @@ import java.util.List;
 public interface IActivityRepository {
 
     List<ActivityVO> obtainActivities(String startTime, String endTime, List<String> keys);
+
+    boolean modifyStock(Integer spuId, Integer stock);
+
 }

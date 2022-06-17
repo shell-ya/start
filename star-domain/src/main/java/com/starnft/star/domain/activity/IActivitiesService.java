@@ -8,4 +8,6 @@ import java.util.List;
 public interface IActivitiesService {
 
     List<ActivityVO> loadActivities(Date startTime, Date endTime, List<String> keys);
+
+    boolean modifyStock(Integer spuId, Integer stock);
 }
