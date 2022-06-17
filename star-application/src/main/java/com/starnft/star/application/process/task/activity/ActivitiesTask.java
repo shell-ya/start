@@ -97,8 +97,8 @@ public class ActivitiesTask {
 
     private Long[] pushIds(Integer stock, Long themeId) {
         Long[] ids = new Long[stock];
-        for (int i = 0; i < stock; i++) {
-            ids[i] = themeId;
+        for (int i = 1; i <= stock; i++) {
+            ids[i-1] = (long) i;
         }
         return ids;
     }
