@@ -9,70 +9,26 @@ spring:
       names: ds0
       ds0:
         #type为数据源，如果是Druid数据库连接池，可以去改
-        type: com.zaxxer.hikari.HikariDataSource
+        type: com.alibaba.druid.pool.DruidDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver
-        jdbc-url: jdbc:mysql://sh-cynosdbmysql-grp-ibkpxd68.sql.tencentcdb.com:23543/star?serverTimezone=GMT%2B8&characterEncoding=utf8
+        url: jdbc:mysql://sh-cynosdbmysql-grp-ibkpxd68.sql.tencentcdb.com:23543/star?serverTimezone=GMT%2B8&characterEncoding=utf8
         username: root
         password: wqd1234.
-    #        ds1:
-    #          type: com.alibaba.druid.pool.DruidDataSource
-    #          driver-class-name: com.mysql.cj.jdbc.Driver
-    #          jdbc-url: jdbc:mysql://sh-cynosdbmysql-grp-ibkpxd68.sql.tencentcdb.com:23543/star?serverTimezone=GMT%2B8&characterEncoding=utf8
-    #          username: root
-    #          password: wqd1234.
-    # 分片规则
 
     sharding:
       tables:
-        # 设置逻辑表为 star_nft_order
-        #          star_nft_order:
-        #            actual-data-nodes: ds0.star_nft_order_$->{0..9} # 真实数据节点
-        ##            # 指定 t_order 表里面主键 order_id 生成策略 为 SNOWFLAKE（雪花算法）
-        ##            key-generator:
-        ##              column: order_id
-        ##              type: SNOWFLAKE
-        #            # 指定数据库分片策略，根据 order_id 进行分库，是偶数则添加到 ds0，是奇数则添加到 ds1
-        ##            database-strategy:
-        ##              inline:
-        ##                sharding-column: user_id
-        ##                algorithm-expression: ds$->{order_id % 2}
-        #            # 指定数据表分片策略，根据 order_user_id 进行分表，是偶数则添加到 t_order_0，是奇数则添加到 t_order_1
-        #            table-strategy:
-        #              inline:
-        #                sharding-column: user_id
-        #                algorithm-expression: star_nft_order_$->{user_id%10}
         account_user:
           actual-data-nodes: ds0.account_user_$->{0..9}
-          #            key-generator:
-          #              column: order_item_id
-          #              type: SNOWFLAKE
-          #            database-strategy:
-          #              inline:
-          #                sharding-column: id
-          #                algorithm-expression: ds$->{id % 2}
           table-strategy:
             inline:
               sharding-column: id
               algorithm-expression: account_user_$->{id%10}
       # 设置绑定关系
       binding-tables: account_user
-      # 默认数据源，即未配置分表规则的表数据存储表
-    #        default-data-source: ds0
     # 在日志中SQL语句
     props:
       sql:
         show: true
-  #  datasource:
-  #    username: root
-  #    password: wqd1234.
-  #    type: com.alibaba.druid.pool.DruidDataSource
-  #    url: jdbc:mysql://sh-cynosdbmysql-grp-ibkpxd68.sql.tencentcdb.com:23543/star?serverTimezone=GMT%2B8&characterEncoding=utf8
-  #    driver-class-name: com.mysql.jdbc.Driver
-  #    druid:
-  #      max-active: 20
-  #      initial-size: 5
-  #      min-idle: 5
-  #      max-wait: 60000
   redis:
     host: 124.221.181.84
     database: 0
@@ -84,13 +40,6 @@ spring:
         max-wait: 100000
     timeout: 20000
     password: wqd123456.
-
-server:
-  port: 8089
-
-logging:
-  level:
-    com.starnft.star: debug
 
 wallet:
   file:
