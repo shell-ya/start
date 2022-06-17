@@ -1,7 +1,9 @@
 package com.starnft.star.application.process.number.impl;
 
+import com.starnft.star.application.mq.producer.marketorder.MarketOrderProducer;
 import com.starnft.star.application.process.number.INumberCore;
 import com.starnft.star.application.process.number.req.MarketOrderReq;
+import com.starnft.star.application.process.number.req.MarketOrderStatus;
 import com.starnft.star.application.process.number.res.ConsignDetailRes;
 import com.starnft.star.application.process.number.res.MarketOrderRes;
 import com.starnft.star.application.process.order.model.dto.OrderMessageReq;
@@ -29,6 +31,7 @@ import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
 import com.starnft.star.domain.wallet.service.WalletConfig;
 import com.starnft.star.domain.wallet.service.WalletService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -40,6 +43,7 @@ import static com.starnft.star.common.exception.StarError.BALANCE_NOT_ENOUGH;
  * @author Harlan
  * @date 2022/06/14 22:57
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NumberCoreImpl implements INumberCore {
@@ -49,6 +53,7 @@ public class NumberCoreImpl implements INumberCore {
     private final IOrderService orderService;
     private final RedisUtil redisUtil;
     private final RedisLockUtils redisLockUtils;
+    private MarketOrderProducer marketOrderProducer;
     @Resource
     private Map<StarConstants.Ids, IIdGenerator> map;
     @Override
@@ -104,22 +109,24 @@ public class NumberCoreImpl implements INumberCore {
             throw new StarException(StarError.GOODS_NOT_FOUND);
         }
         if (redisLockUtils.lock(isTransaction, RedisKey.MARKET_ORDER_TRANSACTION.getTime())) {
-            //生成订单
-           if(createPreOrder(numberDetail, marketOrderReq.getUserId())){
-               //发送延时队列
-
-               return new MarketOrderRes(0, StarError.SUCCESS_000000.getErrorMessage());
-           }
+            try{
+                //生成订单
+                String orderSn = StarConstants.OrderPrefix.TransactionSn.getPrefix()
+                        .concat(String.valueOf(map.get(StarConstants.Ids.SnowFlake).nextId()));
+                if(createPreOrder(numberDetail, marketOrderReq.getUserId(),orderSn)){
+                    //发送延时队列
+                    marketOrderProducer.marketOrderRollback(new MarketOrderStatus(0,orderSn));
+                    return new MarketOrderRes(0, StarError.SUCCESS_000000.getErrorMessage());
+                }
+            }catch (Exception e){
+                log.error("创建订单异常: userId: [{}] , themeNumberId: [{}] , context: [{}]",marketOrderReq.getUserId(),marketOrderReq.getNumberId(),numberDetail);
+                throw new RuntimeException(e.getMessage());
+            }
         }
-        throw new StarException(StarError.PAY_PROCESS_ERROR);
-
+        throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
     }
 
-    private boolean createPreOrder(ThemeNumberVo numberDetail,Long userId) {
-        //生成订单流水
-        String orderSn = StarConstants.OrderPrefix.TransactionSn.getPrefix()
-                .concat(String.valueOf(map.get(StarConstants.Ids.SnowFlake).nextId()));
-
+    private boolean createPreOrder(ThemeNumberVo numberDetail,Long userId,String orderSn) {
         OrderVO orderVO = OrderVO.builder()
                 .userId(userId)
                 .orderSn(orderSn)
@@ -132,7 +139,6 @@ public class NumberCoreImpl implements INumberCore {
                 .themePic(numberDetail.getThemePic())
                 .themeType(numberDetail.getThemeType())
                 .totalAmount(numberDetail.getPrice())
-                //todo 排队号
                 .themeNumber(numberDetail.getThemeNumber())
                 .build();
         //创建订单

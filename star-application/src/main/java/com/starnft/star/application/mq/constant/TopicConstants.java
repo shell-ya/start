@@ -15,6 +15,9 @@ public enum TopicConstants {
 
     //商品秒杀延时取消 topic & tag
     ORDER_SEC_KILL_ROLLBACK_DESTINATION("STAR-SEC-ROLLBACK:%s", "rollback"),
+
+    //市场订单延时取消 topic & tag
+    MARKET_ORDER_ROLLBACK_DESTINATION("STAR-MARKET-ROLLBACK:%s", "rollback"),
     ;
 
     private String format;

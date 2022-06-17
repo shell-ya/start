@@ -1,6 +1,7 @@
 package com.starnft.star.domain.number.model.vo;
 
 import lombok.Data;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -10,6 +11,7 @@ import java.math.BigDecimal;
  * @Author ： shellya
  */
 @Data
+@ToString
 public class ThemeNumberVo implements Serializable {
 
     /** 主题编号id */
