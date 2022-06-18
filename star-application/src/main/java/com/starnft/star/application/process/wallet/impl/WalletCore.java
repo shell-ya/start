@@ -144,7 +144,7 @@ public class WalletCore implements IWalletCore {
                 .orderSn(walletRecordReq.getRecordSn())
                 .bankNo(String.valueOf(rechargeFacadeReq.getCardNo()))
                 .clientIp("1.1.1.1")
-                .frontUrl("abc")//todo 查询支付结果页连接
+                .frontUrl(rechargeFacadeReq.getForward())
                 .orderType(StarConstants.OrderType.RECHARGE)
                 .multicastTopic(rechargeCallbackProcessTopic)
                 .build();
