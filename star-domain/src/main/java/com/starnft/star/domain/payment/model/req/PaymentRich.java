@@ -54,7 +54,6 @@ public class PaymentRich implements Serializable {
     /**
      * 订单类型
      */
-    @Deprecated
     private StarConstants.OrderType orderType;
 
 

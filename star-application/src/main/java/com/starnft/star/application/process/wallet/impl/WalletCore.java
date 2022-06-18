@@ -41,6 +41,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -138,7 +139,7 @@ public class WalletCore implements IWalletCore {
         String rechargeCallbackProcessTopic = String.format(TopicConstants.WALLET_RECHARGE_DESTINATION.getFormat(),
                 TopicConstants.WALLET_RECHARGE_DESTINATION.getTag());
 
-        String payTime = DateUtil.format(new Date(), "yyyyMMddHHmmss");
+        String payTime = DateUtil.formatLocalDateTime(LocalDateTime.now());
         String forward = rechargeFacadeReq.getForward()
                 .concat("&orderSn=" + walletRecordReq.getRecordSn() + "&payTime=" + payTime);
         return PaymentRich.builder().payChannel(rechargeFacadeReq.getChannel())
@@ -176,6 +177,7 @@ public class WalletCore implements IWalletCore {
 
     @Override
     public WithdrawResult withdraw(WithDrawReq withDrawReq) {
+        userService.assertPayPwdCheckSuccess(withDrawReq.getUid(), withDrawReq.getPwdToken());
         walletService.verifyParam(withDrawReq.getChannel());
         return walletService.withdraw(withDrawReq);
     }

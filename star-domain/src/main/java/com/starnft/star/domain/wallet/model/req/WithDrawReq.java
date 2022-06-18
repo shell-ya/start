@@ -49,4 +49,11 @@ public class WithDrawReq {
     @ApiModelProperty(value = "提现渠道", required = true)
     private String channel;
 
+    /**
+     * 支付密码校验凭证
+     */
+    @NotBlank(message = "支付密码校验凭证不能为空")
+    @ApiModelProperty(value = "支付密码校验凭证", required = true)
+    private String pwdToken;
+
 }
