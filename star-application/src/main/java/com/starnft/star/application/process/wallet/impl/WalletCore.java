@@ -138,13 +138,16 @@ public class WalletCore implements IWalletCore {
         String rechargeCallbackProcessTopic = String.format(TopicConstants.WALLET_RECHARGE_DESTINATION.getFormat(),
                 TopicConstants.WALLET_RECHARGE_DESTINATION.getTag());
 
+        String payTime = com.starnft.star.common.utils.DateUtil.getCurrentDate("yyyyMMddHHmmss");
+        String forward = rechargeFacadeReq.getForward()
+                .concat("&orderSn=" + walletRecordReq.getRecordSn() + "&payTime=" + payTime);
         return PaymentRich.builder().payChannel(rechargeFacadeReq.getChannel())
                 .totalMoney(rechargeFacadeReq.getMoney())
                 .userId(rechargeFacadeReq.getUserId())
                 .orderSn(walletRecordReq.getRecordSn())
                 .bankNo(String.valueOf(rechargeFacadeReq.getCardNo()))
                 .clientIp("1.1.1.1")
-                .frontUrl(rechargeFacadeReq.getForward())
+                .frontUrl(forward)
                 .orderType(StarConstants.OrderType.RECHARGE)
                 .multicastTopic(rechargeCallbackProcessTopic)
                 .build();
