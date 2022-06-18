@@ -118,7 +118,9 @@
                 </foreach>
             </if>
         </where>
+
         union all
+
         select
         id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,order_sn,out_trade_no,from_uid,to_uid,ts_type,ts_money,
         ts_cost,ts_fee,pay_channel,remark,pay_status,pay_time

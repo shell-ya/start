@@ -31,6 +31,7 @@ import com.starnft.star.domain.wallet.model.res.CardBindResult;
 import com.starnft.star.domain.wallet.model.res.TxResultRes;
 import com.starnft.star.domain.wallet.model.res.WithdrawResult;
 import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
+import com.starnft.star.domain.wallet.model.vo.WithdrawRecordVO;
 import com.starnft.star.domain.wallet.service.WalletService;
 import com.starnft.star.domain.wallet.service.stateflow.IStateHandler;
 import lombok.SneakyThrows;
@@ -169,7 +170,12 @@ public class WalletCore implements IWalletCore {
         List<TransactionRecord> res = Lists.newArrayList();
         for (WalletRecordVO walletRecordVO : walletRecordResult.getList()) {
             TransactionRecord transactionRecord = recordVOConvert(walletRecordVO, recordReq.getUserId());
-            //todo 过滤提现订单查询提现记录填写带驳回原因字段填充响应结果
+            //todo 过滤提现订单查询提现记录填写带驳回原因字段填充响应结果  交易流水号 record_sn 与 提现流水号 withdraw_trade_no
+            if (StarConstants.Transaction_Type.Withdraw.getFont().equals(transactionRecord.getPayType())){
+                WithdrawRecordVO withdrawRecordVO = walletService.queryWithDrawByTradeNo(walletRecordVO.getRecordSn());
+                transactionRecord.setApplyMsg(withdrawRecordVO.getApplyMsg());
+                transactionRecord.setCardNo(String.valueOf(withdrawRecordVO.getBankNo()));
+            }
             res.add(transactionRecord);
         }
         return ResponsePageResult.listReplace(walletRecordResult, res);

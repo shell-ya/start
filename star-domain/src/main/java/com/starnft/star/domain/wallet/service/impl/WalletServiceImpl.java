@@ -435,5 +435,10 @@ public class WalletServiceImpl implements WalletService {
         return walletRepository.setDefaultCard(relationVO);
     }
 
+    @Override
+    public WithdrawRecordVO queryWithDrawByTradeNo(String recordSn) {
+         return walletRepository.queryWithDrawRecordTradeNo(recordSn);
+    }
+
 
 }

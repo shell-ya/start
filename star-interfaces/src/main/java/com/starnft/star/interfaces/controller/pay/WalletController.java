@@ -77,7 +77,7 @@ public class WalletController {
         return RopResponse.success(this.walletCore.withdraw(req));
     }
 
-    @ApiOperation("提现申请")
+    @ApiOperation("取消提现申请")
     @PostMapping("/withdraw/cancel")
     public RopResponse<WithdrawResult> withdrawCancel(@Validated @RequestBody WithdrawCancelReq req) {
         req.setUid(UserContext.getUserId().getUserId());

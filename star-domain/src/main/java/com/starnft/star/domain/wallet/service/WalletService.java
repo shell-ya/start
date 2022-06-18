@@ -6,6 +6,7 @@ import com.starnft.star.domain.wallet.model.res.*;
 import com.starnft.star.domain.wallet.model.vo.BankRelationVO;
 import com.starnft.star.domain.wallet.model.vo.RechargeVO;
 import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
+import com.starnft.star.domain.wallet.model.vo.WithdrawRecordVO;
 
 import java.util.List;
 
@@ -55,4 +56,7 @@ public interface WalletService {
 
     //设置银行卡为默认卡
     boolean setDefaultCard(BankRelationVO relationVO);
+
+    //单号查询提现记录
+    WithdrawRecordVO queryWithDrawByTradeNo(String recordSn);
 }

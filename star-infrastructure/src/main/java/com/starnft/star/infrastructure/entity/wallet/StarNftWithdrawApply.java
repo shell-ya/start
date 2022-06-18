@@ -71,6 +71,9 @@ public class StarNftWithdrawApply extends BaseEntity implements Serializable {
     @ApiModelProperty(name = "提现状态", notes = "")
     private Integer applyStatus;
 
+    @ApiModelProperty(name = "提现消息",notes = "")
+    private String applyMsg;
+
     public Long getId() {
         return id;
     }
@@ -149,5 +152,13 @@ public class StarNftWithdrawApply extends BaseEntity implements Serializable {
 
     public void setApplyStatus(Integer applyStatus) {
         this.applyStatus = applyStatus;
+    }
+
+    public String getApplyMsg() {
+        return applyMsg;
+    }
+
+    public void setApplyMsg(String applyMsg) {
+        this.applyMsg = applyMsg;
     }
 }

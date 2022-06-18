@@ -2,6 +2,7 @@ package com.starnft.star.infrastructure.repository;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
@@ -198,7 +199,9 @@ public class WalletRepository implements IWalletRepository {
         for (StarNftWithdrawApply apply : starNftWithdrawApplies) {
             WithdrawRecordVO.builder().uid(uid).withdrawTradeNo(apply.getWithdrawTradeNo())
                     .status(apply.getApplyStatus()).money(apply.getWithdrawMoney())
-                    .bankNo(apply.getWithdrawBankNo()).channel(apply.getWithdrawChannel()).build();
+                    .bankNo(apply.getWithdrawBankNo()).channel(apply.getWithdrawChannel())
+                    .applyMsg(apply.getApplyMsg())
+                    .build();
         }
         return withdrawRecordVOS;
     }
@@ -209,6 +212,16 @@ public class WalletRepository implements IWalletRepository {
         apply.setApplyStatus(status);
         return starNftWithdrawApplyMapper.update(apply, new LambdaQueryWrapper<StarNftWithdrawApply>()
                 .eq(Objects.nonNull(applySn), StarNftWithdrawApply::getWithdrawTradeNo, applySn)) == 1;
+    }
+
+    @Override
+    public WithdrawRecordVO queryWithDrawRecordTradeNo(String tradeNo) {
+        StarNftWithdrawApply starNftWithdrawApply = starNftWithdrawApplyMapper.selectOne(
+                new LambdaQueryWrapper<StarNftWithdrawApply>().eq(Objects.nonNull(tradeNo),
+                        StarNftWithdrawApply::getWithdrawTradeNo, tradeNo));
+        return WithdrawRecordVO.builder()
+                .applyMsg(starNftWithdrawApply.getApplyMsg())
+                .bankNo(starNftWithdrawApply.getWithdrawBankNo()).build();
     }
 
     private StarNftWalletRecord queryWalletRecordPO(String serialNo, String payStatus) {

@@ -87,6 +87,11 @@ public interface IWalletRepository {
     boolean updateWithdrawApply(String applySn, Integer status);
 
     /**
+     * 根据提现流水号查询提现记录
+     */
+
+    WithdrawRecordVO queryWithDrawRecordTradeNo(String tradeNo);
+    /**
      * 更新交易记录状态
      *
      * @param serialNo  流水号

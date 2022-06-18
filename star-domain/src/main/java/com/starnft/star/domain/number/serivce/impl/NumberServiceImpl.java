@@ -148,7 +148,7 @@ public class NumberServiceImpl implements INumberService {
     @Override
     public ThemeNumberVo getConsignNumberDetail(Long id) {
         Optional.ofNullable(id)
-                .orElseThrow(() -> new StarException(StarError.GOODS_NOT_FOUND,"商品已被购买"));
+                .orElseThrow(() -> new StarException(StarError.VALUE_COULD_NOT_BE_NULL,"商品id不能为空"));
         ThemeNumberVo consignNumber = this.numberRepository.getConsignNumber(id);
         Optional.ofNullable(consignNumber)
                 .orElseThrow(() -> new StarException(StarError.GOODS_NOT_FOUND,"商品已被购买"));

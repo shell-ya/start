@@ -1,6 +1,8 @@
 package com.starnft.star.application.process.wallet.res;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.starnft.star.common.annotations.Desensitized;
+import com.starnft.star.common.enums.SensitiveTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -40,7 +42,7 @@ public class TransactionRecord implements Serializable {
     /**
      * 支付类型
      */
-    @ApiModelProperty(value = "支付类型")
+    @ApiModelProperty(value = "支付类型 1充值 2提现 3退款 4买入 5卖出")
     private String payType;
     /**
      * 支付时间
@@ -57,6 +59,7 @@ public class TransactionRecord implements Serializable {
      * 卡号
      */
     @ApiModelProperty(value = "脱敏卡号")
+    @Desensitized(type = SensitiveTypeEnum.BANK_CARD)
     private String cardNo;
     /**
      * 驳回原因

@@ -38,4 +38,8 @@ public class WithdrawRecordVO {
      * 提现状态
      */
     private Integer status;
+    /**
+     * 提现结果
+     */
+    private String applyMsg;
 }
