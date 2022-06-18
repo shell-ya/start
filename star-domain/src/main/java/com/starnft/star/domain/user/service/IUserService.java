@@ -96,7 +96,7 @@ public interface IUserService {
      * @param req
      * @return
      */
-    Boolean checkPayPassword(CheckPayPassword req);
+    String checkPayPassword(CheckPayPassword req);
 
     /**
      * 发起实名认证
@@ -171,21 +171,14 @@ public interface IUserService {
      * @return
      */
     Boolean modifyUserInfo(UserInfoUpdateDTO userInfoUpd);
-
-    /**
-     * 预校验支付密码
-     *
-     * @param uid
-     * @return
-     */
-    String prePayPasswordCheck(Long uid);
-
+    
     /**
      * 支付密码校验成功判断
      *
-     * @param uid
+     * @param uid   用户id
+     * @param token 支付密码校验时返回的凭证
      */
-    void assertPayPwdCheckSuccess(Long uid);
+    void assertPayPwdCheckSuccess(Long uid, String token);
 
     Boolean resetPassword(AuthMaterialDTO authMaterial);
 

@@ -79,12 +79,7 @@ public enum RedisKey {
     /**
      * 前置支付密码校验令牌
      */
-    REDIS_PRE_PAY_PWD_CHECK_TOKEN(104, StarConstants.SERVICE_NAME.concat(".paypwd.check.pre.%s"), 5L, TimeUnit.MINUTES),
-
-    /**
-     * 支付密码校验成功标识
-     */
-    REDIS_PAY_PWD_CHECK_SUCCESS(105, StarConstants.SERVICE_NAME.concat(".paypwd.check.success.%s"), 5L, TimeUnit.MINUTES),
+    REDIS_PRE_PAY_PWD_CHECK_TOKEN(104, StarConstants.SERVICE_NAME.concat(".paypwd.check.pre.%s"), 30L, TimeUnit.SECONDS),
 
     /**
      * 支付密码错误次数

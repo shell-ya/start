@@ -8,6 +8,7 @@ import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.po.AccessToken;
 import com.starnft.star.common.utils.Assert;
+import com.starnft.star.common.utils.RandomUtil;
 import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.sms.interfaces.MessageStrategyInterface;
@@ -293,12 +294,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     }
 
     @Override
-    public Boolean checkPayPassword(CheckPayPassword req) {
-        // 前置校验凭证
-        String preCheckKey = String.format(RedisKey.REDIS_PRE_PAY_PWD_CHECK_TOKEN.getKey(), req.getUserId());
-        Optional.ofNullable(this.redisUtil.get(preCheckKey))
-                .filter(realToken -> Objects.equals(realToken, req.getToken()))
-                .orElseThrow(() -> new StarException(StarError.PAYPWD_PRE_CHECK_ERROR));
+    public String checkPayPassword(CheckPayPassword req) {
 
         // 判断连续错误次数是否超过限制
         String errorCountKey = String.format(RedisKey.REDIS_PAYPWD_CHECK_ERROR_TIMES.getKey(), req.getUserId());
@@ -313,25 +309,22 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
             throw new StarException(StarError.USER_NOT_EXISTS);
         }
 
-        // 校验成功标识
-        String checkSuccessKey = String.format(RedisKey.REDIS_PAY_PWD_CHECK_SUCCESS.getKey(), req.getUserId());
-
         // 校验密码是否正确
         String payPwd = StarUtils.getSHA256Str(req.getPayPassword());
         if (!Objects.equals(payPwd, userInfo.getPlyPassword())) {
-            // 错误后删除成功标识
-            this.redisUtil.del(checkSuccessKey);
             long errorCount = this.redisUtil.incr(errorCountKey, 1);
             this.redisUtil.expire(errorCountKey, RedisKey.REDIS_PAYPWD_CHECK_ERROR_TIMES.getTime(), RedisKey.REDIS_PAYPWD_CHECK_ERROR_TIMES.getTimeUnit());
             throw new StarException(StarError.PAYPWD_CHECK_ERROR, String.format(StarError.PAYPWD_CHECK_ERROR.getErrorMessage(), StarConstants.PAYPWD_RETRY_COUNT, errorCount));
         }
 
-        // 清空错误次数和前置校验凭证
-        this.redisUtil.del(errorCountKey, preCheckKey);
+        // 清空错误次数
+        this.redisUtil.del(errorCountKey);
 
-        // 保存校验成功标识 供后续业务校验使用 有效期5分钟 使用完需删除
-        this.redisUtil.set(checkSuccessKey, Boolean.TRUE.toString(), RedisKey.REDIS_PAY_PWD_CHECK_SUCCESS.getTime(), RedisKey.REDIS_PAY_PWD_CHECK_SUCCESS.getTimeUnit());
-        return Boolean.TRUE;
+        // 保存校验成功标识 供后续业务校验使用
+        String token = RandomUtil.randomString(16);
+        String preCheckKey = String.format(RedisKey.REDIS_PRE_PAY_PWD_CHECK_TOKEN.getKey(), req.getUserId());
+        this.redisUtil.set(preCheckKey, StarUtils.getSHA256Str(token), RedisKey.REDIS_PRE_PAY_PWD_CHECK_TOKEN.getTime(), RedisKey.REDIS_PRE_PAY_PWD_CHECK_TOKEN.getTimeUnit());
+        return token;
     }
 
     @Override
@@ -421,21 +414,14 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     }
 
     @Override
-    public String prePayPasswordCheck(Long uid) {
-        String token = StarUtils.getVerifyCode();
-        // 保存前置校验凭证
-        String redisKey = String.format(RedisKey.REDIS_PRE_PAY_PWD_CHECK_TOKEN.getKey(), uid);
-        this.redisUtil.set(redisKey, token, RedisKey.REDIS_PRE_PAY_PWD_CHECK_TOKEN.getTime(), RedisKey.REDIS_PRE_PAY_PWD_CHECK_TOKEN.getTimeUnit());
-        return token;
-    }
-
-    @Override
-    public void assertPayPwdCheckSuccess(Long uid) {
-        // 校验成功标识
-        String checkSuccessKey = String.format(RedisKey.REDIS_PAY_PWD_CHECK_SUCCESS.getKey(), uid);
-        Assert.isTrue(this.redisUtil.hasKey(checkSuccessKey), () -> new StarException(StarError.PAYPWD_PRE_CHECK_ERROR));
-        // 使用后删除成功标识
-        this.redisUtil.del(checkSuccessKey);
+    public void assertPayPwdCheckSuccess(Long uid, String token) {
+        // 前置校验凭证
+        String preCheckKey = String.format(RedisKey.REDIS_PRE_PAY_PWD_CHECK_TOKEN.getKey(), uid);
+        Optional.ofNullable(this.redisUtil.get(preCheckKey))
+                .filter(realToken -> Objects.equals(realToken, StarUtils.getSHA256Str(token)))
+                .orElseThrow(() -> new StarException(StarError.PAYPWD_PRE_CHECK_ERROR));
+        // 使用后删除标识
+        this.redisUtil.del(preCheckKey);
     }
 
     @Override
@@ -460,11 +446,11 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
     @Override
     public Boolean queryIsSettingPwd(Long id) {
-        Boolean isSetting = redisTemplate.opsForValue().getBit(RedisKey.REDIS_USER_IS_SETTING_PWD.getKey(), id);
+        Boolean isSetting = this.redisTemplate.opsForValue().getBit(RedisKey.REDIS_USER_IS_SETTING_PWD.getKey(), id);
         if (!isSetting) {
-            UserInfo userInfo = userRepository.queryUserInfoByUserId(id);
+            UserInfo userInfo = this.userRepository.queryUserInfoByUserId(id);
             isSetting = Objects.isNull(userInfo.getPlyPassword());
-            redisTemplate.opsForValue().setBit(RedisKey.REDIS_USER_IS_SETTING_PWD.getKey(), id, isSetting);
+            this.redisTemplate.opsForValue().setBit(RedisKey.REDIS_USER_IS_SETTING_PWD.getKey(), id, isSetting);
         }
         return isSetting;
     }
@@ -482,7 +468,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         //加密
         userInfoUpdateDTO.setPlyPassword(StarUtils.getSHA256Str(userInfoUpdateDTO.getPlyPassword()));
 
-        UserInfoVO userInfoVO = queryUserInfo(userInfoUpdateDTO.getAccount());
+        UserInfoVO userInfoVO = this.queryUserInfo(userInfoUpdateDTO.getAccount());
         Optional.ofNullable(userInfoVO).orElseThrow(() -> new StarException("用户不存在"));
 
         if (StringUtils.isNotBlank(userInfoVO.getPlyPassword())) {
@@ -496,6 +482,6 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
             throw new StarException("修改的密码不能和当前一样");
         }
 
-        return modifyUserInfo(userInfoUpdateDTO);
+        return this.modifyUserInfo(userInfoUpdateDTO);
     }
 }

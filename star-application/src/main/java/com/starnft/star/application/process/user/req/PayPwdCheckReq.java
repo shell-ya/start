@@ -15,10 +15,6 @@ import java.io.Serializable;
 @ApiModel("支付密码校验参数")
 public class PayPwdCheckReq implements Serializable {
 
-    @ApiModelProperty("前置令牌")
-    @NotBlank(message = "令牌不能为空")
-    private String token;
-
     @ApiModelProperty("支付密码")
     @NotBlank(message = "支付密码不能为空")
     private String payPassword;

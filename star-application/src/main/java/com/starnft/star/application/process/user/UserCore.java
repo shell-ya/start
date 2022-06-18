@@ -131,9 +131,7 @@ public interface UserCore {
 
     Boolean modifyUserInfo(Long uid, UserInfoUpdReq req);
 
-    PayPwdPreCheckRes prePayPasswordCheck(Long uid);
-
-    Boolean checkPayPassword(Long uid, PayPwdCheckReq req);
+    PayPwdPreCheckRes checkPayPassword(Long uid, PayPwdCheckReq req);
 
     Boolean resetPassword(AuthMaterialReq req);
 

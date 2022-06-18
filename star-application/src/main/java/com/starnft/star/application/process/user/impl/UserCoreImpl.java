@@ -307,18 +307,13 @@ public class UserCoreImpl implements UserCore {
     }
 
     @Override
-    public PayPwdPreCheckRes prePayPasswordCheck(Long uid) {
-        return new PayPwdPreCheckRes(this.userService.prePayPasswordCheck(uid));
-    }
-
-    @Override
-    public Boolean checkPayPassword(Long uid, PayPwdCheckReq req) {
-        return this.userService.checkPayPassword(CheckPayPassword
-                .builder()
-                .userId(uid)
-                .token(req.getToken())
-                .payPassword(req.getPayPassword())
-                .build());
+    public PayPwdPreCheckRes checkPayPassword(Long uid, PayPwdCheckReq req) {
+        return new PayPwdPreCheckRes(
+                this.userService.checkPayPassword(CheckPayPassword
+                        .builder()
+                        .userId(uid)
+                        .payPassword(req.getPayPassword())
+                        .build()));
     }
 
     @Override
@@ -339,7 +334,7 @@ public class UserCoreImpl implements UserCore {
 
     @Override
     public Boolean isSettingPwd(UserGatheringInfoReq userGatheringInfoReq) {
-        return this.userService.queryIsSettingPwd(userGatheringInfoReq.getUid()  );
+        return this.userService.queryIsSettingPwd(userGatheringInfoReq.getUid());
     }
 
     private void popupAgreement(PopupAgreementRes popupAgreementRes

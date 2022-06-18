@@ -158,15 +158,9 @@ public class UserController {
         return RopResponse.success(this.userCore.modifyUserInfo(userResolverInfo.getUserId(), req));
     }
 
-    @ApiOperation("预支付密码校验")
-    @GetMapping("/paypass/pre")
-    public RopResponse<PayPwdPreCheckRes> prePayPasswordCheck(UserResolverInfo userResolverInfo) {
-        return RopResponse.success(this.userCore.prePayPasswordCheck(userResolverInfo.getUserId()));
-    }
-
     @ApiOperation("校验支付密码")
     @PostMapping("/paypass/auth")
-    public RopResponse<Boolean> checkPayPassword(UserResolverInfo userResolverInfo, @RequestBody @Validated PayPwdCheckReq req) {
+    public RopResponse<PayPwdPreCheckRes> checkPayPassword(UserResolverInfo userResolverInfo, @RequestBody @Validated PayPwdCheckReq req) {
         return RopResponse.success(this.userCore.checkPayPassword(userResolverInfo.getUserId(), req));
     }
 
