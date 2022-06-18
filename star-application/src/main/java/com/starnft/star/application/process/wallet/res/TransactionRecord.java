@@ -28,11 +28,6 @@ public class TransactionRecord implements Serializable {
     @ApiModelProperty(value = "第三方交易流水号")
     private String outTradeNo;
     /**
-     * 订单号
-     */
-    @ApiModelProperty(value = "订单号")
-    private String orderSn;
-    /**
      * 交易金额
      */
     @ApiModelProperty(value = "交易金额")

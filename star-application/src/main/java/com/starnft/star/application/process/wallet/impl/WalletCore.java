@@ -138,7 +138,7 @@ public class WalletCore implements IWalletCore {
         String rechargeCallbackProcessTopic = String.format(TopicConstants.WALLET_RECHARGE_DESTINATION.getFormat(),
                 TopicConstants.WALLET_RECHARGE_DESTINATION.getTag());
 
-        String payTime = com.starnft.star.common.utils.DateUtil.getCurrentDate("yyyyMMddHHmmss");
+        String payTime = DateUtil.format(new Date(), "yyyyMMddHHmmss");
         String forward = rechargeFacadeReq.getForward()
                 .concat("&orderSn=" + walletRecordReq.getRecordSn() + "&payTime=" + payTime);
         return PaymentRich.builder().payChannel(rechargeFacadeReq.getChannel())
@@ -168,7 +168,7 @@ public class WalletCore implements IWalletCore {
         List<TransactionRecord> res = Lists.newArrayList();
         for (WalletRecordVO walletRecordVO : walletRecordResult.getList()) {
             TransactionRecord transactionRecord = recordVOConvert(walletRecordVO, recordReq.getUserId());
-
+            //todo 过滤提现订单查询提现记录填写带驳回原因字段填充响应结果
             res.add(transactionRecord);
         }
         return ResponsePageResult.listReplace(walletRecordResult, res);
@@ -246,7 +246,6 @@ public class WalletCore implements IWalletCore {
                 .userId(userId)
                 .channel(walletRecordVO.getPayChannel())
                 .money(walletRecordVO.getTsMoney())
-                .orderSn(walletRecordVO.getOrderSn())
                 .outTradeNo(walletRecordVO.getOutTradeNo())
                 .status(walletRecordVO.getPayStatus())
                 .payTime(walletRecordVO.getPayTime())
