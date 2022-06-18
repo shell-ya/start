@@ -24,11 +24,11 @@ public class RechargeFacadeReq implements Serializable {
     @ApiModelProperty(value = "金额", required = true)
     private BigDecimal money;
 
-    @NotNull(message = "银行卡号")
+    @NotNull(message = "银行卡号不能为空")
     @ApiModelProperty(value = "银行卡号", required = true)
     private Long cardNo;
 
-    @NotNull(message = "跳转地址")
+    @NotNull(message = "跳转地址不能为空")
     @ApiModelProperty(value = "跳转地址", required = true)
     private String forward;
 
