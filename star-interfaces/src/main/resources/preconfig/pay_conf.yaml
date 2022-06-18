@@ -7,5 +7,5 @@ pay-conf:
         signCertPath: classpath:keys/lsnft.pfx
         signCertPwd: 101750
         sandCertPath: classpath:keys/sand.cer
-        notify: https://testw.infiart.cn//trans/notify/sand
+        notify: https://testw.infiart.cn/trans/notify/sand
 
