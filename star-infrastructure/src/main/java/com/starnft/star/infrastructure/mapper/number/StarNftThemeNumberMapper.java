@@ -13,7 +13,7 @@ import java.util.List;
 
 @Mapper
 public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber> {
-    NumberDetailVO selectNumberDetailId(@Param("id") Long id);
+    NumberDetailVO selectNumberDetailById(@Param("id") Long id);
 
     List<NumberVO> selectNumberList(NumberQueryDTO numberQuery);
 

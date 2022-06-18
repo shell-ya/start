@@ -24,7 +24,7 @@
         price, `status`, owenr_by, create_at, create_by, update_at, update_by, is_delete
     </sql>
 
-    <select id="selectNumberDetailId" resultType="com.starnft.star.domain.number.model.vo.NumberDetailVO">
+    <select id="selectNumberDetailById" resultType="com.starnft.star.domain.number.model.vo.NumberDetailVO">
         SELECT a.id                   id,
                a.theme_number         number,
                a.contract_address     contract_address,
@@ -34,6 +34,7 @@
                a.owner_by             owner_by,
                b.theme_name           name,
                b.theme_pic            picture,
+               b.publish_number       issued_qty,
                b.descrption           descrption,
                b.theme_type           type
         FROM star_nft_theme_number a
@@ -44,14 +45,14 @@
     </select>
 
     <select id="selectConsignThemeNumberDetail" resultType="com.starnft.star.domain.number.model.vo.ThemeNumberVo">
-        SELECT a.id                   number_id,
-               a.theme_number         theme_number,
-               a.price                price,
-               b.id                   theme_info_id,
-               b.theme_name           theme_name,
-               b.theme_pic            theme_pic,
-               c.id                   series_id,
-               c.series_name          series_name
+        SELECT a.id           number_id,
+               a.theme_number theme_number,
+               a.price        price,
+               b.id           theme_info_id,
+               b.theme_name   theme_name,
+               b.theme_pic    theme_pic,
+               c.id           series_id,
+               c.series_name  series_name
         FROM star_nft_theme_number a
                  LEFT JOIN star_nft_theme_info b
                            ON a.series_theme_info_id = b.id
@@ -59,7 +60,7 @@
                            ON b.series_id = c.id
         WHERE a.id = #{id}
           AND a.is_delete = 0
-          AND a.status = 3
+          AND a.status IN (0, 2)
     </select>
 
     <select id="selectNumberList" resultType="com.starnft.star.domain.number.model.vo.NumberVO">
@@ -70,7 +71,8 @@
         a.status,
         b.theme_name,
         b.theme_pic,
-        b.theme_type type
+        b.theme_type type,
+        b.publish_number issued_qty
         FROM star_nft_theme_number a
         INNER JOIN star_nft_theme_info b ON a.series_theme_info_id = b.id
         <where>
@@ -88,7 +90,7 @@
             </if>
             AND a.is_delete = 0
             AND b.is_delete = 0
-            AND a.status = 3
+            AND a.status IN (0,2)
         </where>
         <if test="orderBy != null and orderBy != ''">
             ORDER BY a.${orderBy} ${sortType}

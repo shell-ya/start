@@ -74,7 +74,7 @@ public class NumberRepository implements INumberRepository {
 
     @Override
     public NumberDetailVO getNumberDetail(Long id) {
-        return this.starNftThemeNumberMapper.selectNumberDetailId(id);
+        return this.starNftThemeNumberMapper.selectNumberDetailById(id);
     }
 
     @Override
