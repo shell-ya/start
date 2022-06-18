@@ -2,6 +2,7 @@ package com.starnft.star.application.mq.consumer;
 
 import com.starnft.star.application.process.number.req.MarketOrderStatus;
 import com.starnft.star.domain.order.service.IOrderService;
+import org.apache.rocketmq.spring.annotation.MessageModel;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,7 @@ import javax.annotation.Resource;
  * @Author ： shellya
  */
 @Service
-@RocketMQMessageListener(topic = "STAR-MARKET-ROLLBACK", consumerGroup = "star-consumer-delay-group", selectorExpression = "rollback")
+@RocketMQMessageListener(topic = "STAR-MARKET-ROLLBACK", consumerGroup = "star-consumer-delay-group", selectorExpression = "rollback",messageModel = MessageModel.CLUSTERING)
 public class MarketOrderRollBackConsumer implements RocketMQListener<MarketOrderStatus> {
 
 

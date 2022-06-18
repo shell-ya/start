@@ -1,7 +1,9 @@
 package com.starnft.star.interfaces.controller.mall;
 
 import com.starnft.star.application.process.number.INumberCore;
+import com.starnft.star.application.process.number.req.MarketOrderReq;
 import com.starnft.star.application.process.number.res.ConsignDetailRes;
+import com.starnft.star.application.process.number.res.MarketOrderRes;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
@@ -60,6 +62,11 @@ public class NumbersController {
     @ApiOperation("商品取消寄售")
     public RopResponse<Boolean> cancelConsignment(UserResolverInfo userResolverInfo, @ApiParam("商品id") Long numberId) {
         return RopResponse.success(this.numberCore.consignmentCancel(userResolverInfo.getUserId(), numberId));
+    }
+
+    @PostMapping("/order")
+    public RopResponse<MarketOrderRes> order(MarketOrderReq request){
+        return RopResponse.success(this.numberCore.marketOrder(request));
     }
 
 }
