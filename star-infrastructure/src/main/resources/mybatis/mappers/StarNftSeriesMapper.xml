@@ -15,10 +15,11 @@
     <result column="series_images" jdbcType="LONGVARCHAR" property="seriesImages" />
     <result column="series_models" jdbcType="LONGVARCHAR" property="seriesModels" />
     <result column="series_status" jdbcType="INTEGER" property="seriesStatus" />
+    <result column="series_descrption" jdbcType="LONGVARCHAR" property="seriesDescrption" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
     id, series_name, series_type,series_status, create_at, create_by, update_at, update_by, is_delete,
-    series_images, series_models
+    series_images, series_models,series_descrption
   </sql>
 </mapper>
