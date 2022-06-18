@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 
@@ -48,7 +49,7 @@ public class StarScheduleSeckill extends BaseEntity implements Serializable {
      * 秒杀定价
      */
     @ApiModelProperty(name = "秒杀定价", notes = "")
-    private Double secCost;
+    private BigDecimal secCost;
     /**
      * 开始时间
      */
@@ -123,11 +124,11 @@ public class StarScheduleSeckill extends BaseEntity implements Serializable {
         this.goodsNum = goodsNum;
     }
 
-    public Double getSecCost() {
+    public BigDecimal getSecCost() {
         return secCost;
     }
 
-    public void setSecCost(Double secCost) {
+    public void setSecCost(BigDecimal secCost) {
         this.secCost = secCost;
     }
 

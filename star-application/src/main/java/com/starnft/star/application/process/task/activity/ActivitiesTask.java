@@ -105,7 +105,7 @@ public class ActivitiesTask {
 
     private List<SecKillGoods> loadGoods(Date startTime, Set<String> keys) {
         List<ActivityVO> activities = activitiesService.loadActivities(startTime, DateUtil.addDateHour(startTime, interval), new ArrayList<>(keys));
-        if (activities == null) return null;
+        if (activities == null || activities.size() == 0) return null;
         ArrayList<@Nullable SecKillGoods> goods = Lists.newArrayList();
         for (ActivityVO activity : activities) {
             ThemeDetailVO detailVO = themeService.queryThemeDetail(activity.getSpuId());

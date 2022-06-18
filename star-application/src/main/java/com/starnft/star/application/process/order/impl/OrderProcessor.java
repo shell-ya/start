@@ -17,8 +17,6 @@ import com.starnft.star.domain.wallet.service.WalletService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.nio.file.WatchService;
-import java.util.List;
 
 @Service
 public class OrderProcessor implements IOrderProcessor {
@@ -60,7 +58,7 @@ public class OrderProcessor implements IOrderProcessor {
 
         //校验余额
         WalletResult walletResult = walletService.queryWalletInfo(new WalletInfoReq(orderGrabReq.getUserId()));
-        if (walletResult.getBalance().compareTo(goods.getSecCost()) < 1) {
+        if (walletResult.getBalance().doubleValue() < goods.getSecCost().doubleValue()) {
             throw new StarException(StarError.BALANCE_NOT_ENOUGH);
         }
 

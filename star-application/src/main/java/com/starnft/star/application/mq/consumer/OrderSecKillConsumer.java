@@ -11,6 +11,7 @@ import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.service.IOrderService;
 import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
+import org.apache.rocketmq.spring.annotation.MessageModel;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.slf4j.Logger;
@@ -21,7 +22,8 @@ import javax.annotation.Resource;
 import java.util.Map;
 
 @Service
-@RocketMQMessageListener(topic = "STAR-SEC-KILL", consumerGroup = "star-consumer-seckill-group", selectorExpression = "ordered")
+@RocketMQMessageListener(topic = "STAR-SEC-KILL", consumerGroup = "star-consumer-seckill-group",
+        selectorExpression = "ordered", messageModel = MessageModel.CLUSTERING)
 public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
 
     private static final Logger log = LoggerFactory.getLogger(OrderSecKillConsumer.class);

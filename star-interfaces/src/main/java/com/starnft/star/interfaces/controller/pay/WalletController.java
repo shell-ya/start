@@ -9,11 +9,9 @@ import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.page.ResponsePageResult;
-import com.starnft.star.domain.wallet.model.req.CardBindReq;
-import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
-import com.starnft.star.domain.wallet.model.req.WithDrawReq;
-import com.starnft.star.domain.wallet.model.req.WithdrawCancelReq;
+import com.starnft.star.domain.wallet.model.req.*;
 import com.starnft.star.domain.wallet.model.res.CardBindResult;
+import com.starnft.star.domain.wallet.model.res.TxResultRes;
 import com.starnft.star.domain.wallet.model.res.WalletResult;
 import com.starnft.star.domain.wallet.model.res.WithdrawResult;
 import com.starnft.star.domain.wallet.model.vo.BankRelationVO;
@@ -47,6 +45,20 @@ public class WalletController {
     public RopResponse<RechargeReqResult> recharge(@Validated @RequestBody RechargeFacadeReq req) {
         req.setUserId(UserContext.getUserId().getUserId());
         return RopResponse.success(this.walletCore.recharge(req));
+    }
+
+    @ApiOperation("充值结果查询 最终查单")
+    @PostMapping("/recharge/check")
+    public RopResponse<TxResultRes> check(@Validated @RequestBody TxResultReq req) {
+        req.setUid(UserContext.getUserId().getUserId());
+        return RopResponse.success(this.walletCore.queryTxResult(req));
+    }
+
+    @ApiOperation("充值结果查询 轮训")
+    @PostMapping("/recharge/result")
+    public RopResponse<TxResultRes> result(@Validated @RequestBody TxResultReq req) {
+        req.setUid(UserContext.getUserId().getUserId());
+        return RopResponse.success(this.walletService.txResultCacheQuery(req));
     }
 
 

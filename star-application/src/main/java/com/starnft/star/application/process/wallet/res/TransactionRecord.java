@@ -58,5 +58,15 @@ public class TransactionRecord implements Serializable {
      */
     @ApiModelProperty(value = "支付状态")
     private String status;
+    /**
+     * 卡号
+     */
+    @ApiModelProperty(value = "脱敏卡号")
+    private String cardNo;
+    /**
+     * 驳回原因
+     */
+    @ApiModelProperty(value = "驳回原因")
+    private String applyMsg;
 
 }

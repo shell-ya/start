@@ -142,6 +142,7 @@ public class WalletCore implements IWalletCore {
                 .totalMoney(rechargeFacadeReq.getMoney())
                 .userId(rechargeFacadeReq.getUserId())
                 .orderSn(walletRecordReq.getRecordSn())
+                .bankNo(String.valueOf(rechargeFacadeReq.getCardNo()))
                 .clientIp("1.1.1.1")
                 .frontUrl("abc")//todo 查询支付结果页连接
                 .orderType(StarConstants.OrderType.RECHARGE)
@@ -164,6 +165,7 @@ public class WalletCore implements IWalletCore {
         List<TransactionRecord> res = Lists.newArrayList();
         for (WalletRecordVO walletRecordVO : walletRecordResult.getList()) {
             TransactionRecord transactionRecord = recordVOConvert(walletRecordVO, recordReq.getUserId());
+
             res.add(transactionRecord);
         }
         return ResponsePageResult.listReplace(walletRecordResult, res);

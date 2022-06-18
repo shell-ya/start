@@ -37,9 +37,8 @@ public class SandPayBankCardPaymentHandler extends AbstractSandPayHandler {
     @SneakyThrows
     protected PaymentRes doPay(PaymentRich paymentRich, Map<String, String> vendorConf) {
         TempConf channelConf = getChannelConf(TradeType.Bank_SandPay);
-        PaymentRes paymentRes = super.getPaymentRes(paymentRich, vendorConf, channelConf);
 
-        return paymentRes;
+        return super.getPaymentRes(paymentRich, vendorConf, channelConf);
     }
 
 }

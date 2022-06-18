@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.starnft.star.common.constant.RedisKey;
+import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.theme.model.req.ThemeReq;
@@ -123,6 +124,9 @@ public class ThemeRepository implements IThemeRepository {
         if (Objects.nonNull(secKillGoods)) return secKillGoods;
 
         SecKillGoods goods = (SecKillGoods) redisUtil.hget(goodsKey, String.valueOf(themeId));
+        if (goods == null){
+            throw new StarException("未找到该商品");
+        }
         goodsMap.put(goodsKey + themeId, goods);
         return goods;
 

@@ -486,7 +486,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         Optional.ofNullable(userInfoVO).orElseThrow(() -> new StarException("用户不存在"));
 
         if (StringUtils.isNotBlank(userInfoVO.getPlyPassword())) {
-            if (StringUtils.isBlank(userInfoUpdateDTO.getOldPlyPassword()) ||
+            if (StringUtils.isNotBlank(userInfoUpdateDTO.getOldPlyPassword()) &&
                     !(StarUtils.getSHA256Str(userInfoUpdateDTO.getOldPlyPassword()).equals(userInfoVO.getPlyPassword()))) {
                 throw new StarException("支付密码不正确");
             }
