@@ -41,14 +41,12 @@ public class StdOutImpl implements Log {
 
     @Override
     public void debug(String s) {
-//        System.out.println(s);
-//        log.debug(s);
+        log.debug(s);
     }
 
     @Override
     public void trace(String s) {
-//        System.out.println(s);
-//        log.trace(s);
+        log.trace(s);
     }
 
     @Override

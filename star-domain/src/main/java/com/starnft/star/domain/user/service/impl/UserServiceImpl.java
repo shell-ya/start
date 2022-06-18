@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.Serializable;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -42,7 +43,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     private ApplicationContext applicationContext;
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, Serializable> redisTemplate;
 
     @Autowired
     private RedisUtil redisUtil;
@@ -447,7 +448,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     @Override
     public Boolean queryIsSettingPwd(Long id) {
         Boolean isSetting = this.redisTemplate.opsForValue().getBit(RedisKey.REDIS_USER_IS_SETTING_PWD.getKey(), id);
-        if (!isSetting) {
+        if (Boolean.FALSE.equals(isSetting)) {
             UserInfo userInfo = this.userRepository.queryUserInfoByUserId(id);
             isSetting = Objects.isNull(userInfo.getPlyPassword());
             this.redisTemplate.opsForValue().setBit(RedisKey.REDIS_USER_IS_SETTING_PWD.getKey(), id, isSetting);

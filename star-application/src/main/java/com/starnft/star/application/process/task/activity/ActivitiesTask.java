@@ -83,7 +83,7 @@ public class ActivitiesTask {
                 Long[] ids = pushIds(secKillGood.getStock(), secKillGood.getThemeId());
                 String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), secKillGood.getThemeId());
                 //创建库存队列
-                redisUtil.addToListLeft(stockKey, RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTime(), RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTimeUnit(), (Object) ids);
+                redisUtil.addToListLeft(stockKey, RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTime(), RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTimeUnit(), ids);
                 //设置库存量
                 redisUtil.hashIncr(RedisKey.SECKILL_GOODS_STOCK_NUMBER.getKey(), String.valueOf(secKillGood.getThemeId()), secKillGood.getStock());
 

@@ -10,7 +10,6 @@ import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.utils.Assert;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
-import com.starnft.star.common.utils.secure.AESUtil;
 import com.starnft.star.domain.user.model.dto.*;
 import com.starnft.star.domain.user.model.vo.*;
 import com.starnft.star.domain.user.repository.IUserRepository;
@@ -161,7 +160,7 @@ public class UserCoreImpl implements UserCore {
     private void populateCardsInfo(UserGatheringInfoRes userGatheringInfoRes, List<CardBindResult> cards) {
         for (CardBindResult card : cards) {
             if (1 == card.getIsDefault()) {
-                userGatheringInfoRes.setCollectionAccount(AESUtil.decrypt(card.getCardNo()));
+                userGatheringInfoRes.setCollectionAccount(card.getCardNo());
                 return;
             }
         }
