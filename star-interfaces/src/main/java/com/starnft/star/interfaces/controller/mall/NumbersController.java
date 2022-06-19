@@ -12,6 +12,7 @@ import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
+import com.starnft.star.interfaces.interceptor.UserContext;
 import com.starnft.star.interfaces.interceptor.UserResolverInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -65,7 +66,9 @@ public class NumbersController {
     }
 
     @PostMapping("/order")
-    public RopResponse<MarketOrderRes> order(MarketOrderReq request){
+    @ApiOperation("市场下单")
+    public RopResponse<MarketOrderRes> order(@RequestBody MarketOrderReq request){
+        request.setUserId(UserContext.getUserId().getUserId());
         return RopResponse.success(this.numberCore.marketOrder(request));
     }
 

@@ -51,6 +51,7 @@
                b.id           theme_info_id,
                b.theme_name   theme_name,
                b.theme_pic    theme_pic,
+               b.theme_type   theme_type,
                c.id           series_id,
                c.series_name  series_name
         FROM star_nft_theme_number a

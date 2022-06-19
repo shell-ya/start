@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class MarketOrderRes {
+    private String orderSn;
     private Integer status;
     private String message;
 }
