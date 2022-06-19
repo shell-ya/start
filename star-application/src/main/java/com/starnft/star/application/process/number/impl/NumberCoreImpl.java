@@ -53,7 +53,7 @@ public class NumberCoreImpl implements INumberCore {
     private final IOrderService orderService;
     private final RedisUtil redisUtil;
     private final RedisLockUtils redisLockUtils;
-    private MarketOrderProducer marketOrderProducer;
+    private final MarketOrderProducer marketOrderProducer;
     @Resource
     private Map<StarConstants.Ids, IIdGenerator> map;
     @Override
@@ -116,7 +116,7 @@ public class NumberCoreImpl implements INumberCore {
                 if(createPreOrder(numberDetail, marketOrderReq.getUserId(),orderSn)){
                     //发送延时队列
                     marketOrderProducer.marketOrderRollback(new MarketOrderStatus(0,orderSn));
-                    return new MarketOrderRes(0, StarError.SUCCESS_000000.getErrorMessage());
+                    return new MarketOrderRes(orderSn,0, StarError.SUCCESS_000000.getErrorMessage());
                 }
             }catch (Exception e){
                 log.error("创建订单异常: userId: [{}] , themeNumberId: [{}] , context: [{}]",marketOrderReq.getUserId(),marketOrderReq.getNumberId(),numberDetail);
@@ -134,12 +134,14 @@ public class NumberCoreImpl implements INumberCore {
                 .seriesId(numberDetail.getSeriesId())
                 .seriesName(numberDetail.getSeriesName())
                 .seriesThemeInfoId(numberDetail.getThemeInfoId())
+                .seriesThemeId(numberDetail.getThemeInfoId())
                 .themeName(numberDetail.getThemeName())
 //                .payAmount(numberDetail.getPrice())
                 .themePic(numberDetail.getThemePic())
                 .themeType(numberDetail.getThemeType())
                 .totalAmount(numberDetail.getPrice())
                 .themeNumber(numberDetail.getThemeNumber())
+                .themeType(numberDetail.getThemeType())
                 .build();
         //创建订单
         return orderService.createOrder(orderVO);

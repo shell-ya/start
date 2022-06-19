@@ -51,6 +51,7 @@
                b.id           theme_info_id,
                b.theme_name   theme_name,
                b.theme_pic    theme_pic,
+               b.theme_type   theme_type,
                c.id           series_id,
                c.series_name  series_name
         FROM star_nft_theme_number a
@@ -60,7 +61,7 @@
                            ON b.series_id = c.id
         WHERE a.id = #{id}
           AND a.is_delete = 0
-          AND a.status IN (0, 2)
+          AND a.status = 2
     </select>
 
     <select id="selectNumberList" resultType="com.starnft.star.domain.number.model.vo.NumberVO">

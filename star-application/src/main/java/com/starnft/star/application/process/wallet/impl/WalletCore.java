@@ -142,7 +142,7 @@ public class WalletCore implements IWalletCore {
 
         String payTime = DateUtil.formatLocalDateTime(LocalDateTime.now());
         String forward = rechargeFacadeReq.getForward()
-                .concat("&orderSn=" + walletRecordReq.getRecordSn() + "&payTime=" + payTime);
+                .concat("&transactionSn=" + walletRecordReq.getRecordSn() + "&payTime=" + payTime);
         return PaymentRich.builder().payChannel(rechargeFacadeReq.getChannel())
                 .totalMoney(rechargeFacadeReq.getMoney())
                 .userId(rechargeFacadeReq.getUserId())

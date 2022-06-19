@@ -30,6 +30,7 @@ public class OrderRepository implements IOrderRepository {
         StarNftOrder starNftOrder = new StarNftOrder();
         starNftOrder.setOrderSn(orderVO.getOrderSn());
         starNftOrder.setUserId(orderVO.getUserId());
+        starNftOrder.setCreatedBy(orderVO.getUserId());
         starNftOrder.setCreatedAt(new Date());
         starNftOrder.setPayAmount(orderVO.getPayAmount());
         starNftOrder.setTotalAmount(orderVO.getTotalAmount());

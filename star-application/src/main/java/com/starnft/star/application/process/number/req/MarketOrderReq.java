@@ -1,5 +1,7 @@
 package com.starnft.star.application.process.number.req;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -10,8 +12,10 @@ import java.io.Serializable;
  * @Author ： shellya
  */
 @Data
+@ApiModel
 public class MarketOrderReq implements Serializable {
 
+    @ApiModelProperty(value = "主题编号")
     private Long numberId;
     private Long userId;
 }
