@@ -60,7 +60,7 @@
                            ON b.series_id = c.id
         WHERE a.id = #{id}
           AND a.is_delete = 0
-          AND a.status IN (0, 2)
+          AND a.status = 2
     </select>
 
     <select id="selectNumberList" resultType="com.starnft.star.domain.number.model.vo.NumberVO">
