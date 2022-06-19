@@ -39,6 +39,7 @@ public class NotifyCore {
                 .uid(Long.parseLong(payCheckRes.getUid()))
                 .build();
         notifyOrderService.saveOrder(req);
+
         messageSender.asyncSend(transform.getTopic(), Optional.of(transform.getPayCheckRes()), null, null);
         return transform;
     }

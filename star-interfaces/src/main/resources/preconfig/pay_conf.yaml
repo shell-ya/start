@@ -7,6 +7,6 @@ pay-conf:
         signCertPath: classpath:keys/lywc.pfx
         signCertPwd: 971223
         sandCertPath: classpath:keys/sand.cer
-      #  notify: https://cmapi.infiart.cn/api/trans/notify/sand
-        notify: http://criclemeta.natapp1.cc/trans/notify/sand
+        notify: https://cmapi.infiart.cn/api/trans/notify/sand
+      #  notify: http://criclemeta.natapp1.cc/trans/notify/sand
 

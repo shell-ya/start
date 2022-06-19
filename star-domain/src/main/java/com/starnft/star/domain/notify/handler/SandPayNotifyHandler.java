@@ -1,5 +1,6 @@
 package com.starnft.star.domain.notify.handler;
 
+import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.starnft.star.common.enums.PlatformTypeEnum;
 import com.starnft.star.domain.payment.helper.SdKeysHelper;
@@ -34,6 +35,7 @@ public class SandPayNotifyHandler implements INotifyHandler {
                 log.error("签名值(sign)为：" + sign);
             } else {
                 JSONObject dataJson = JSONObject.parseObject(data);
+                log.info("回调进来的数据为{}", JSONUtil.toJsonStr(dataJson));
                 if (dataJson != null) {
                     if (dataJson.getJSONObject("head").getString("respCode").equals("000000")) {
                         JSONObject extend = dataJson.getJSONObject("body").getJSONObject("extend");
