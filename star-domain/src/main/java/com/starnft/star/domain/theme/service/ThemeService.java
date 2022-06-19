@@ -16,4 +16,6 @@ public interface ThemeService {
     List<ThemeVO> queryThemesBySeriesId(Long seriesId);
 
     SecKillGoods obtainGoodsCache(Long themeId, String time);
+
+    ResponsePageResult<ThemeVO> obtainRecommendTheme(ThemeReq req);
 }

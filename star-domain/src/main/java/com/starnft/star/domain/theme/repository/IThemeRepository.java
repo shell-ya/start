@@ -18,4 +18,5 @@ public interface IThemeRepository {
     //缓存中获取秒杀商品信息
     SecKillGoods obtainGoodsCache(Long themeId, String time);
 
+    ResponsePageResult<ThemeVO> queryRecommendTheme(ThemeReq req);
 }

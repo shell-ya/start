@@ -68,7 +68,7 @@ public class NumberRepository implements INumberRepository {
         pageResult.setPage(result.getPageNum());
         pageResult.setList(list);
         pageResult.setTotal(result.getTotal());
-        pageResult.setSize(result.getSize());
+        pageResult.setSize(result.getPageSize());
         return pageResult;
     }
 
@@ -81,7 +81,7 @@ public class NumberRepository implements INumberRepository {
     public ResponsePageResult<NumberVO> listNumber(NumberQueryDTO param) {
         PageInfo<NumberVO> result = PageMethod.startPage(param.getPage(), param.getSize())
                 .doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectNumberList(param));
-        return new ResponsePageResult<>(result.getList(), result.getPageNum(), result.getSize(), result.getTotal());
+        return new ResponsePageResult<>(result.getList(), result.getPageNum(), result.getPageSize(), result.getTotal());
     }
 
     @Override

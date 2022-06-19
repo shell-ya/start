@@ -27,8 +27,7 @@ public class ThemeServiceImpl implements ThemeService {
 
     @Override
     public ResponsePageResult<ThemeVO> queryMainThemeInfo(ThemeReq requestPage) {
-        ResponsePageResult<ThemeVO> themeVOResponsePageResult = this.themeRepository.queryTheme(requestPage);
-        return themeVOResponsePageResult;
+        return this.themeRepository.queryTheme(requestPage);
     }
 
     @Override
@@ -38,8 +37,7 @@ public class ThemeServiceImpl implements ThemeService {
     @CacheRefresh(refresh = 3600 * 6, stopRefreshAfterLastAccess = 3600 * 3)
     @CachePenetrationProtect
     public ThemeDetailVO queryThemeDetail(Long id) {
-        ThemeDetailVO themeDetailVO = this.themeRepository.queryThemeDetail(id);
-        return themeDetailVO;
+        return this.themeRepository.queryThemeDetail(id);
     }
 
     @Override
@@ -50,13 +48,17 @@ public class ThemeServiceImpl implements ThemeService {
     @CachePenetrationProtect
     public List<ThemeVO> queryThemesBySeriesId(Long seriesId) {
         Assert.notNull(seriesId, () -> new StarException(StarError.PARAETER_UNSUPPORTED, "系列id不能为空"));
-        List<ThemeVO> theme = this.themeRepository.queryTheme(seriesId);
-        return theme;
+        return this.themeRepository.queryTheme(seriesId);
     }
 
     @Override
     public SecKillGoods obtainGoodsCache(Long themeId, String time) {
-        return themeRepository.obtainGoodsCache(themeId, time);
+        return this.themeRepository.obtainGoodsCache(themeId, time);
+    }
+
+    @Override
+    public ResponsePageResult<ThemeVO> obtainRecommendTheme(ThemeReq req) {
+        return this.themeRepository.queryRecommendTheme(req);
     }
 
 

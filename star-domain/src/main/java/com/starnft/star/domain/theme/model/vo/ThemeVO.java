@@ -1,5 +1,7 @@
 package com.starnft.star.domain.theme.model.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,16 +14,30 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 @Data
+@ApiModel
 public class ThemeVO implements Serializable {
+    @ApiModelProperty("主题id")
     private Long id;
+    @ApiModelProperty("主题类型")
     private Integer themeType;
+    @ApiModelProperty("系列id")
     private Long seriesId;
+    @ApiModelProperty("主题名称")
     private String themeName;
+    @ApiModelProperty("主题图片")
     private String themePic;
+    @ApiModelProperty("发行数量")
     private Integer publishNumber;
+    @ApiModelProperty("主题级别")
     private Byte themeLevel;
+    @ApiModelProperty("发行价格")
     private BigDecimal lssuePrice;
-    private Long publisherId;
+    @ApiModelProperty("标记")
     private String tags;
-//    private PublisherVO publisherVO;
+    @ApiModelProperty("发行商id")
+    private Long publisherId;
+    @ApiModelProperty("发行商名称")
+    private String publisherName;
+    @ApiModelProperty("发行商图标")
+    private String publisherPic;
 }

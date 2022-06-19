@@ -2,9 +2,11 @@ package com.starnft.star.interfaces.controller.mall;
 
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.page.RequestPage;
+import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.series.model.req.SeriesReq;
 import com.starnft.star.domain.series.service.SeriesService;
 import com.starnft.star.domain.theme.model.req.ThemeReq;
+import com.starnft.star.domain.theme.model.vo.ThemeVO;
 import com.starnft.star.domain.theme.service.ThemeService;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import io.swagger.annotations.Api;
@@ -29,10 +31,10 @@ public class CentralController {
     @PostMapping("/theme")
     @ApiOperation("首页主题推荐接口")
     @TokenIgnore
-    public RopResponse mainTheme(@RequestBody RequestPage requestPage) {
+    public RopResponse<ResponsePageResult<ThemeVO>> mainTheme(@RequestBody RequestPage requestPage) {
         return RopResponse.success(
                 this.themeService
-                        .queryMainThemeInfo(ThemeReq.builder()
+                        .obtainRecommendTheme(ThemeReq.builder()
                                 .page(requestPage.getPage())
                                 .size(requestPage.getSize())
                                 .isRecommend(Boolean.TRUE)
@@ -42,7 +44,7 @@ public class CentralController {
 
     //主页显示系列
     @PostMapping("/series")
-    @ApiOperation("首页系列推荐接口")
+    @ApiOperation(value = "首页系列推荐接口", hidden = true)
     @TokenIgnore
     public RopResponse mainSeries(@RequestBody RequestPage requestPage) {
         return RopResponse.success(

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.page.PageMethod;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
@@ -121,10 +122,12 @@ public class ThemeRepository implements IThemeRepository {
     public SecKillGoods obtainGoodsCache(Long themeId, String time) {
         String goodsKey = String.format(RedisKey.SECKILL_GOODS_INFO.getKey(), time);
         SecKillGoods secKillGoods = goodsMap.get(goodsKey + themeId);
-        if (Objects.nonNull(secKillGoods)) return secKillGoods;
+        if (Objects.nonNull(secKillGoods)) {
+            return secKillGoods;
+        }
 
-        SecKillGoods goods = (SecKillGoods) redisUtil.hget(goodsKey, String.valueOf(themeId));
-        if (goods == null){
+        SecKillGoods goods = (SecKillGoods) this.redisUtil.hget(goodsKey, String.valueOf(themeId));
+        if (goods == null) {
             throw new StarException("未找到该商品");
         }
         goodsMap.put(goodsKey + themeId, goods);
@@ -132,4 +135,10 @@ public class ThemeRepository implements IThemeRepository {
 
     }
 
+    @Override
+    public ResponsePageResult<ThemeVO> queryRecommendTheme(ThemeReq param) {
+        PageInfo<ThemeVO> result = PageMethod.startPage(param.getPage(), param.getSize())
+                .doSelectPageInfo(() -> this.starNftThemeInfoMapper.selectRecommendThemes(param));
+        return new ResponsePageResult<>(result.getList(), result.getPageNum(), result.getPageSize(), result.getTotal());
+    }
 }
