@@ -15,6 +15,7 @@ import org.apache.rocketmq.client.producer.SendStatus;
 import org.apache.rocketmq.client.producer.TransactionSendResult;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.apache.rocketmq.spring.support.RocketMQHeaders;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +38,10 @@ public class RocketMQProducer implements IMessageSender {
     @Resource
     private IMessageLogRepository messageLogRepository;
 
+
+    @Value("${namespace: rocketmq-8geezgooejbg|STAR%}")
+    private String namespace;
+
     /**
      * @param topic 格式 topic:tag
      * @author Ryan Z / haoran
@@ -47,12 +52,16 @@ public class RocketMQProducer implements IMessageSender {
     public <T> void send(final String topic, final Optional<T> message) {
         verifyFormat(topic);
         message.ifPresent(msg -> {
-            SendResult sendResult = template.syncSend(topic, JSONObject.toJSONString(msg));
+            SendResult sendResult = template.syncSend(getCompleteTopic(topic), JSONObject.toJSONString(msg));
             String msgId = sendResult.getMsgId();
             SendStatus sendStatus = sendResult.getSendStatus();
             persistMessage(topic, msg, sendResult, sendStatus, msgId);
         });
 
+    }
+
+    private String getCompleteTopic(String topic) {
+        return namespace + topic;
     }
 
     /**
@@ -64,9 +73,9 @@ public class RocketMQProducer implements IMessageSender {
     @Override
     public <T> void asyncSend(final String topic, final Optional<T> message,
                               Consumer<SendResult> operationIfSuccess, Runnable failOperation) {
-        verifyFormat(topic);
+//        verifyFormat(topic);
         message.ifPresent(msg -> {
-            template.asyncSend(topic, JSONObject.toJSONString(msg), new SendCallback() {
+            template.asyncSend(getCompleteTopic(topic), JSONObject.toJSONString(msg), new SendCallback() {
                 @Override
                 public void onSuccess(SendResult sendResult) {
                     String msgId = sendResult.getMsgId();
@@ -109,7 +118,7 @@ public class RocketMQProducer implements IMessageSender {
     public <T> void syncSendDelay(final String topic, final Optional<T> message, long timeout, int delayLevel) {
         verifyFormat(topic);
         message.ifPresent(msg -> {
-            SendResult sendResult = template.syncSend(topic,
+            SendResult sendResult = template.syncSend(getCompleteTopic(topic),
                     MessageBuilder.withPayload(JSONObject.toJSONString(msg)).build(), timeout, delayLevel);
             String msgId = sendResult.getMsgId();
             SendStatus sendStatus = sendResult.getSendStatus();
@@ -126,7 +135,7 @@ public class RocketMQProducer implements IMessageSender {
     public <T> void syncSendOrderly(final String topic, List<T> messages, String hashKey) {
         verifyFormat(topic);
         for (T message : messages) {
-            SendResult sendResult = this.template.syncSendOrderly(topic,
+            SendResult sendResult = this.template.syncSendOrderly(getCompleteTopic(topic),
                     MessageBuilder.withPayload(JSONObject.toJSONString(message)).build(), hashKey);
             String msgId = sendResult.getMsgId();
             SendStatus sendStatus = sendResult.getSendStatus();
@@ -149,7 +158,7 @@ public class RocketMQProducer implements IMessageSender {
         verifyFormat(topic);
         message.ifPresent(msg -> {
             TransactionSendResult result = template.sendMessageInTransaction(transactionGroup,
-                    topic,
+                    getCompleteTopic(topic),
                     MessageBuilder.withPayload(msg)
                             .setHeader(RocketMQHeaders.TRANSACTION_ID,
                                     String.valueOf(idGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId()))
@@ -176,10 +185,10 @@ public class RocketMQProducer implements IMessageSender {
     private <T> void persistMessage(String topic, T message, SendResult result, SendStatus sendStatus, String msgId) {
         if (sendStatus.equals(SendStatus.SEND_OK)) {
             if (log.isDebugEnabled()) {
-                log.debug("[{}] 消息发送成功，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message));
+                log.debug("[{}] 消息发送成功，消息id: {} 消息内容:{}", getCompleteTopic(topic), msgId, JSONObject.toJSONString(message));
             }
         } else {
-            log.error("[{}] 消息发送失败，消息id: {} 消息内容:{}", topic, msgId, JSONObject.toJSONString(message));
+            log.error("[{}] 消息发送失败，消息id: {} 消息内容:{}", getCompleteTopic(topic), msgId, JSONObject.toJSONString(message));
             //消息记录落盘
             boolean isSuccess = writeLog(topic, JSONObject.toJSONString(message), result.getMsgId(), sendStatus.name());
             if (!isSuccess) {
@@ -208,7 +217,7 @@ public class RocketMQProducer implements IMessageSender {
                 .messageBody(JSONObject.toJSONString(message))
                 .status(sendStatus)
                 .terminate(StarConstants.MESSAGE_TERMINAL.Producer.name())
-                .topic(topic).build());
+                .topic(getCompleteTopic(topic)).build());
     }
 
 

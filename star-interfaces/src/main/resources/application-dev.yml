@@ -50,23 +50,24 @@ star:
   sms:
     enable: true
 
+#rocketmq配置信息
 rocketmq:
-  name-server: 47.99.42.39:9876
+  # tdmq-rocketmq服务接入地址
+  name-server: rocketmq-8geezgooejbg.rocketmq.ap-gz.public.tencenttdmq.com:9876
+  # 生产者配置
   producer:
+  # 生产者组名
     group: star-producer-group
-    isOnOff: on
-    sendMsgTimeout: 30000
-    maxMessageSize: 4096
-    retryTimesWhenSendFailed: 2
+    # 角色密钥
+    access-key: eyJrZXlJZCI6InJvY2tldG1xLThnZWV6Z29vZWpiZyIsImFsZyI6IkhTMjU2In0.eyJzdWIiOiJyb2NrZXRtcS04Z2Vlemdvb2VqYmdfc3VwZXIifQ.r2CfEbotMkzf8JSc50xX650LkBfXpPAuZiqcZ0F9ijU
+    # 已授权的角色名称
+    secret-key: super
+  # 消费者公共配置
   consumer:
-    listeners: # 配置某个消费分组，是否监听指定 Topic 。结构为 Map<消费者分组, <Topic, Boolean>> 。默认情况下，不配置表示监听。
-      test-consumer-group:
-        topic1: false # 关闭 test-consumer-group 对 topic1 的监听消费
-#    isOnOff: on
-#    group: star-consumer-group
-#    consumeThreadMin: 20
-#    consumeThreadMax: 64
-#    consumeMessageBatchMaxSize: 1
+    # 角色密钥
+    access-key: eyJrZXlJZCI6InJvY2tldG1xLThnZWV6Z29vZWpiZyIsImFsZyI6IkhTMjU2In0.eyJzdWIiOiJyb2NrZXRtcS04Z2Vlemdvb2VqYmdfc3VwZXIifQ.r2CfEbotMkzf8JSc50xX650LkBfXpPAuZiqcZ0F9ijU
+    # 已授权的角色名称
+    secret-key: super
 
 # 验证码相关配置
 captcha:

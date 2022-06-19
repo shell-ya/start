@@ -16,7 +16,8 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @Service
-@RocketMQMessageListener(topic = "STAR-MARKET-ROLLBACK", consumerGroup = "star-consumer-delay-group", selectorExpression = "rollback",messageModel = MessageModel.CLUSTERING)
+@RocketMQMessageListener(topic = "${consumer.topic.market}", consumerGroup = "${consumer.group.market}",
+        selectorExpression = "rollback", messageModel = MessageModel.CLUSTERING)
 public class MarketOrderRollBackConsumer implements RocketMQListener<MarketOrderStatus> {
 
 
@@ -26,6 +27,6 @@ public class MarketOrderRollBackConsumer implements RocketMQListener<MarketOrder
     @Override
     public void onMessage(MarketOrderStatus marketOrderStatus) {
         //订单若仍是待支付状态 取消订单
-        log.info("订单详情：{}",marketOrderStatus.toString());
+        log.info("订单详情：{}", marketOrderStatus.toString());
     }
 }

@@ -62,10 +62,10 @@ public class SpringTest {
                 TopicConstants.WALLET_RECHARGE_DESTINATION.getTag());
         PayCheckRes payCheckRes = new PayCheckRes();
         payCheckRes.setStatus(0);
-        payCheckRes.setOrderSn("RC985866872677367808");
-        payCheckRes.setTotalAmount(new BigDecimal("10.00"));
+        payCheckRes.setOrderSn("RC988226768479584256");
+        payCheckRes.setTotalAmount(new BigDecimal("1.00"));
         payCheckRes.setUid("985174743233269760");
-        payCheckRes.setTransSn("0000000000000000000000001");
+        payCheckRes.setTransSn("0000000000000000000000002");
         payCheckRes.setMessage("good");
         payCheckRes.setPayChannel(StarConstants.PayChannel.BankCard.name());
 
@@ -117,7 +117,7 @@ public class SpringTest {
     @Test
     public void repoTest() {
 //        System.out.println(ConfigurationHolder.getPayConfig().getChannel());
-          System.out.println(String.format(TopicConstants.NOTICE_UNREAD_DESTINATION.getFormat(), TopicConstants.NOTICE_UNREAD_DESTINATION.getTag()));
+        System.out.println(String.format(TopicConstants.NOTICE_UNREAD_DESTINATION.getFormat(), TopicConstants.NOTICE_UNREAD_DESTINATION.getTag()));
     }
 
     @Test
@@ -127,7 +127,7 @@ public class SpringTest {
 //        String s = JSON.toJSONString(starNftDict);
 //        System.out.println(s);
         JSONObject result = JSON.parseObject(JSON.toJSONString(payRecordReq,
-        SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteNullNumberAsZero));
+                SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteNullNumberAsZero));
         System.out.println(result.toJSONString());
     }
 

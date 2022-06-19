@@ -1,14 +1,14 @@
 package com.starnft.star.application.process.task.activity;
 
 import com.google.common.collect.Lists;
-import com.starnft.star.domain.series.model.vo.SeriesVO;
-import com.starnft.star.domain.series.service.SeriesService;
-import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.utils.DateUtil;
 import com.starnft.star.domain.activity.IActivitiesService;
 import com.starnft.star.domain.activity.model.vo.ActivityVO;
 import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.series.model.vo.SeriesVO;
+import com.starnft.star.domain.series.service.SeriesService;
+import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.domain.theme.model.vo.ThemeDetailVO;
 import com.starnft.star.domain.theme.service.ThemeService;
 import org.checkerframework.checker.nullness.qual.Nullable;

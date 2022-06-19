@@ -7,7 +7,7 @@ import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.stereotype.Service;
 
 @Service
-@RocketMQMessageListener(topic = "STAR-SEC-ROLLBACK", consumerGroup = "star-consumer-secrollback-group"
+@RocketMQMessageListener(topic = "${consumer.topic.secrollback}", consumerGroup = "${consumer.group.secrollback}"
         , selectorExpression = "rollback", messageModel = MessageModel.CLUSTERING)
 public class OrderSecRollbackConsumer implements RocketMQListener<OrderGrabStatus> {
 

@@ -22,7 +22,7 @@ import javax.annotation.Resource;
 import java.util.Map;
 
 @Service
-@RocketMQMessageListener(topic = "STAR-SEC-KILL", consumerGroup = "star-consumer-seckill-group",
+@RocketMQMessageListener(topic = "${consumer.topic.seckill}", consumerGroup = "${consumer.group.seckill}",
         selectorExpression = "ordered", messageModel = MessageModel.CLUSTERING)
 public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
 

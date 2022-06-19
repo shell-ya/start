@@ -2,7 +2,6 @@ package com.starnft.star.infrastructure.repository;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
@@ -266,9 +265,10 @@ public class WalletRepository implements IWalletRepository {
 
         LambdaQueryWrapper<StarNftWalletRecord> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(StringUtils.isNotBlank(serialNo), StarNftWalletRecord::getRecordSn, serialNo);
-        record.setOutTradeNo(outTradeNo);
-        record.setPayStatus(payStatus);
-        return starNftWalletRecordMapper.update(record, wrapper) == 1;
+        StarNftWalletRecord change = new StarNftWalletRecord();
+        change.setOutTradeNo(outTradeNo);
+        change.setPayStatus(payStatus);
+        return starNftWalletRecordMapper.update(change, wrapper) == 1;
     }
 
     @Override
