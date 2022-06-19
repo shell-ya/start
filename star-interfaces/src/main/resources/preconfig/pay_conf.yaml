@@ -3,9 +3,10 @@ pay-conf:
       #channelName: #WeChatPay #厂商下所有位置唯一可以去掉该属性 让该属性为null
     - vendor: SandPay
       properties:
-        mid: 6888806043502
-        signCertPath: classpath:keys/lsnft.pfx
-        signCertPwd: 101750
+        mid: 6888806044846
+        signCertPath: classpath:keys/lywc.pfx
+        signCertPwd: 971223
         sandCertPath: classpath:keys/sand.cer
-        notify: https://testw.infiart.cn/trans/notify/sand
+      #  notify: https://cmapi.infiart.cn/api/trans/notify/sand
+        notify: http://criclemeta.natapp1.cc/trans/notify/sand
 

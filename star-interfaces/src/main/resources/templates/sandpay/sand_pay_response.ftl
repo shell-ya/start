@@ -6,6 +6,7 @@
             "code": -1 ,
             "message":"${param2.head.respMsg}",
     </#if>
+<#--<#if param2?? && param2.head.respCode == '000000'>-->
     "context":
         {
             "orderSn":"${param2.body.orderCode}",
@@ -19,4 +20,5 @@
                 "message":"${param2.head.respMsg}"
             </#if>
         }
+<#--</#if>-->
 }

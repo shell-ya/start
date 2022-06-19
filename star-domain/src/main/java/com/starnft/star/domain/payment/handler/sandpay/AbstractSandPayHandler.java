@@ -65,6 +65,7 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
 
         //模板解析相应参数
         JSONObject resObj = JSONUtil.parseObj(respData);
+        log.info("返回的数据为：{}",JSONUtil.toJsonStr(resObj));
         String resModel = super.processTemplate(channelConf.getResTempPath(), paymentRich, resObj);
         RemoteRes remoteRes = JSON.parseObject(resModel, RemoteRes.class);
 
