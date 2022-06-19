@@ -15,7 +15,7 @@ import java.util.List;
 @Mapper
 public interface BannerMapper extends BaseMapper<BannerEntity> {
 
-    List<BannerEntity> queryBanner(@Param("type") String type, @Param("size") int size);
+    List<BannerEntity> queryBanner(@Param("type") String type);
 
     List<BannerEntity> selectBannerList(@Param("condition") BannerConditionDto condition);
 }

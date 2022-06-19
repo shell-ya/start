@@ -8,7 +8,6 @@
         WHERE is_deleted = 0
           AND `position` = #{type}
         ORDER BY sort
-        LIMIT #{size}
         ;
     </select>
 

@@ -23,7 +23,7 @@ public class BannerRepository implements IBannerRepository {
 
     @Override
     public List<BannerVo> queryBanner(BannerReq req) {
-        List<BannerEntity> bannerList = this.bannerMapper.queryBanner(req.getType(), req.getSize());
+        List<BannerEntity> bannerList = this.bannerMapper.queryBanner(req.getType());
         return bannerList.stream().map(item -> BannerVo.builder()
                 .title(item.getTitle())
                 .imgUrl(item.getImgUrl())
