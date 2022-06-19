@@ -31,9 +31,9 @@ public class BannerController {
     @ApiOperation("获取展示的轮播图")
     @GetMapping(value = "/show")
     @TokenIgnore
-    public RopResponse<List<BannerVo>> show(@ApiParam("展示位置 1：头部  2：中间  3：底部") @RequestParam("type") String type, @ApiParam("轮播图数量") @RequestParam("size") int size) {
+    public RopResponse<List<BannerVo>> show(@ApiParam("展示位置 1：头部  2：中间  3：底部") @RequestParam("type") String type) {
         return RopResponse.success(
-                this.bannerService.queryBannerVo(BannerReq.builder().size(size).type(type).build())
+                this.bannerService.queryBannerVo(BannerReq.builder().type(type).build())
         );
     }
 

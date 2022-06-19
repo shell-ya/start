@@ -108,7 +108,7 @@ public class NumberCoreImpl implements INumberCore {
         if (redisUtil.hasKey(isTransaction)) {
             throw new StarException(StarError.GOODS_NOT_FOUND);
         }
-        if (redisLockUtils.lock(isTransaction, RedisKey.MARKET_ORDER_TRANSACTION.getTime())) {
+        if (redisLockUtils.lock(isTransaction, 3000L)) {
             try{
                 //生成订单
                 String orderSn = StarConstants.OrderPrefix.TransactionSn.getPrefix()
@@ -134,7 +134,7 @@ public class NumberCoreImpl implements INumberCore {
                 .seriesId(numberDetail.getSeriesId())
                 .seriesName(numberDetail.getSeriesName())
                 .seriesThemeInfoId(numberDetail.getThemeInfoId())
-                .seriesThemeId(numberDetail.getThemeInfoId())
+                .seriesThemeId(numberDetail.getNumberId())
                 .themeName(numberDetail.getThemeName())
 //                .payAmount(numberDetail.getPrice())
                 .themePic(numberDetail.getThemePic())
