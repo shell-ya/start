@@ -16,5 +16,4 @@ public class SwMessageStrategy implements MessageStrategyInterface {
         String format = StrFormatter.format(SmsTemplate.check_code_template, code, 5);
         return swMessageDistributor.delivery(mobile,format);
     }
-
 }
