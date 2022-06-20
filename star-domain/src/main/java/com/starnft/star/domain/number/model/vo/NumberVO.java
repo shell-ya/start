@@ -20,6 +20,8 @@ public class NumberVO implements Serializable {
     private Long id;
     @ApiModelProperty("商品编号")
     private Long number;
+    @ApiModelProperty("主题id")
+    private Long themeId;
     @ApiModelProperty("发行数量")
     private Integer issuedQty;
     @ApiModelProperty("商品名称")
