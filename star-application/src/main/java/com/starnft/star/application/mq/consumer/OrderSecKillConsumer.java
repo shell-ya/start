@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.Map;
 
 @Service
@@ -57,6 +58,9 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
         if (stockQueueId == null) {
             //清理排队信息
             redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.name(), userId);
+            //抢单失败
+            redisUtil.hset(String.format(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), themeId),
+                    String.valueOf(userId), new OrderGrabStatus(userId, -1, null, time));
             return;
         }
 
@@ -71,15 +75,16 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
                     //减库存
                     stockSubtract(userId, time, themeId, goods);
                     //缓存写进订单状态
-                    OrderGrabStatus orderGrabStatus = new OrderGrabStatus(0, orderSn, time);
-                    redisUtil.hset(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), String.valueOf(userId), orderGrabStatus);
+                    OrderGrabStatus orderGrabStatus = new OrderGrabStatus(userId, 1, orderSn, time);
+                    String statusMap = String.format(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), themeId);
+                    redisUtil.hset(statusMap, String.valueOf(userId), orderGrabStatus);
                     //发送延时mq 取消订单
                     orderProducer.secOrderRollback(orderGrabStatus);
                     return;
                 }
                 throw new RuntimeException("创建订单异常!");
             } catch (RuntimeException e) {
-                log.error("创建订单异常: userId: [{}] , themeId: [{}] , context: [{}]", userId, themeId, goods.toString());
+                log.error("创建订单异常: userId: [{}] , themeId: [{}] , context: [{}]", userId, themeId, goods.toString(), e);
                 throw new RuntimeException(e.getMessage());
             }
         }
@@ -118,11 +123,14 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
                 .themeType(message.getGoods().getThemeType())
                 .totalAmount(message.getGoods().getSecCost())
                 .themeNumber(stockQueueId)
+                .status(0)
+                .createdAt(new Date())
                 .build();
         //创建订单
         boolean isSuccess = orderService.createOrder(orderVO);
         if (isSuccess) {
-            redisUtil.hset(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), String.valueOf(message.getUserId()), orderVO);
+            String userOrderMapping = String.format(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), message.getGoods().getThemeId());
+            redisUtil.hset(userOrderMapping, String.valueOf(message.getUserId()), orderVO);
             return true;
         }
         return false;

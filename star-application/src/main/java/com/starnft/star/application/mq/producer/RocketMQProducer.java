@@ -185,12 +185,13 @@ public class RocketMQProducer implements IMessageSender {
     private <T> void persistMessage(String topic, T message, SendResult result, SendStatus sendStatus, String msgId) {
         if (sendStatus.equals(SendStatus.SEND_OK)) {
             if (log.isDebugEnabled()) {
+                boolean isSuccess = writeLog(topic, JSONObject.toJSONString(message), result.getMsgId(), sendStatus.name());
                 log.debug("[{}] 消息发送成功，消息id: {} 消息内容:{}", getCompleteTopic(topic), msgId, JSONObject.toJSONString(message));
             }
         } else {
+            boolean isSuccess = writeLog(topic, JSONObject.toJSONString(message), result.getMsgId(), sendStatus.name());
             log.error("[{}] 消息发送失败，消息id: {} 消息内容:{}", getCompleteTopic(topic), msgId, JSONObject.toJSONString(message));
             //消息记录落盘
-            boolean isSuccess = writeLog(topic, JSONObject.toJSONString(message), result.getMsgId(), sendStatus.name());
             if (!isSuccess) {
                 throw new RuntimeException(StarError.PERSISTENT_FAIL.getErrorMessage());
             }

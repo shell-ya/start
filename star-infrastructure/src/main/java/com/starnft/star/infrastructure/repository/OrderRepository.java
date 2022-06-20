@@ -4,14 +4,17 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
+import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.repository.IOrderRepository;
 import com.starnft.star.infrastructure.entity.order.StarNftOrder;
 import com.starnft.star.infrastructure.mapper.order.StarNftOrderMapper;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -24,6 +27,9 @@ public class OrderRepository implements IOrderRepository {
 
     @Resource
     private StarNftOrderMapper starNftOrderMapper;
+
+    @Resource
+    private RedisUtil redisUtill;
 
     @Override
     public boolean createOrder(OrderVO orderVO) {
@@ -52,7 +58,7 @@ public class OrderRepository implements IOrderRepository {
     @Override
     public boolean updateOrder(Long uid, String orderSn, Integer modifiedStatus, String payNumber) {
 
-        StarNftOrder starNftOrder = queryOrder(uid, orderSn);
+        StarNftOrder starNftOrder = new StarNftOrder();
         //更新状态
         starNftOrder.setStatus(modifiedStatus);
         //会写支付单号
@@ -68,7 +74,14 @@ public class OrderRepository implements IOrderRepository {
 
     public OrderVO queryOrderByCondition(Long uid, String orderSn) {
         StarNftOrder starNftOrder = queryOrder(uid, orderSn);
-        return BeanColverUtil.colver(starNftOrder, OrderVO.class);
+        return orderTransfer(starNftOrder);
+    }
+
+    private OrderVO orderTransfer(StarNftOrder starNftOrder) {
+        return OrderVO.builder().orderSn(starNftOrder.getOrderSn()).status(starNftOrder.getStatus()).seriesThemeId(starNftOrder.getSeriesThemeId()).seriesId(starNftOrder.getSeriesId())
+                .remark(starNftOrder.getRemark()).createdAt(starNftOrder.getCreatedAt()).seriesThemeInfoId(starNftOrder.getSeriesThemeInfoId()).seriesName(starNftOrder.getSeriesName())
+                .themeName(starNftOrder.getThemeName()).themeType(starNftOrder.getThemeType()).themePic(starNftOrder.getThemePic()).themeNumber(starNftOrder.getThemeNumber())
+                .payAmount(starNftOrder.getPayAmount()).totalAmount(starNftOrder.getTotalAmount()).userId(starNftOrder.getUserId()).build();
     }
 
     @Override
@@ -116,10 +129,19 @@ public class OrderRepository implements IOrderRepository {
         List<StarNftOrder> starNftOrders = queryOrdersUsers(uid);
         for (StarNftOrder starNftOrder : starNftOrders) {
             if (starNftOrder.getOrderSn().equals(orderSn)) {
-                return  populate(starNftOrder);
+                return populate(starNftOrder);
             }
         }
         return null;
+    }
+
+    @Override
+    public OrderVO obtainSecKillOrder(Long uid, Long themeId) {
+        Object order = redisUtill.hget(String.format(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), themeId), String.valueOf(uid));
+        if (order == null) {
+            return null;
+        }
+        return (OrderVO) order;
     }
 
     private StarNftOrder queryOrder(Long uid, String orderSn) {

@@ -1,9 +1,13 @@
 package com.starnft.star.interfaces.controller.mall;
 
 import com.starnft.star.application.process.limit.ICurrentLimiter;
+import com.starnft.star.application.process.number.req.MarketOrderReq;
+import com.starnft.star.application.process.number.res.MarketOrderRes;
 import com.starnft.star.application.process.order.IOrderProcessor;
+import com.starnft.star.application.process.order.model.req.OrderCancelReq;
 import com.starnft.star.application.process.order.model.req.OrderGrabReq;
 import com.starnft.star.application.process.order.model.res.OrderGrabRes;
+import com.starnft.star.application.process.order.model.res.OrderGrabStatus;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
@@ -11,6 +15,7 @@ import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.order.model.req.OrderListReq;
 import com.starnft.star.domain.order.model.res.OrderListRes;
 import com.starnft.star.domain.order.service.IOrderService;
+import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
 import com.starnft.star.interfaces.interceptor.UserContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -59,6 +64,34 @@ public class OrderController {
     public RopResponse<OrderListRes> detail(@RequestBody OrderListReq req) {
         req.setUserId(UserContext.getUserId().getUserId());
         return RopResponse.success(this.orderService.orderDetails(req));
+    }
+
+    @ApiOperation("查询下单状态")
+    @PostMapping("/status")
+    public RopResponse<OrderGrabStatus> orderedStatus(@RequestBody OrderGrabReq req) {
+        req.setUserId(UserContext.getUserId().getUserId());
+        return RopResponse.success(this.orderProcessor.obtainSecKIllStatus(req));
+    }
+
+    @ApiOperation("查询抢单成功秒杀订单")
+    @PostMapping("/killed/details")
+    public RopResponse<OrderListRes> orderedDetails(@RequestBody OrderGrabReq req) {
+        req.setUserId(UserContext.getUserId().getUserId());
+        return RopResponse.success(this.orderProcessor.obtainSecKillOrder(req));
+    }
+
+    @ApiOperation("取消秒杀订单")
+    @PostMapping("/killed/cancel")
+    public RopResponse<OrderPlaceRes> killedCancel(@RequestBody OrderCancelReq req) {
+        req.setUid(UserContext.getUserId().getUserId());
+        return RopResponse.success(this.orderProcessor.cancelSecOrder(req));
+    }
+
+    @PostMapping("/market/grab")
+    @ApiOperation("市场下单")
+    public RopResponse<MarketOrderRes> order(@RequestBody MarketOrderReq request) {
+        request.setUserId(UserContext.getUserId().getUserId());
+        return RopResponse.success(this.orderProcessor.marketOrder(request));
     }
 
 }

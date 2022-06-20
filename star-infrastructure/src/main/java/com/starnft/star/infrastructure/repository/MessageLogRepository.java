@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 @Repository
 public class MessageLogRepository implements IMessageLogRepository {
@@ -21,6 +22,9 @@ public class MessageLogRepository implements IMessageLogRepository {
     public boolean writeLog(MessageLogVO messageLogVO) {
         StarNftMessageLog starNftMessageLog = new StarNftMessageLog();
         BeanUtils.copyProperties(messageLogVO, starNftMessageLog);
+        starNftMessageLog.setIsDeleted(Boolean.FALSE);
+        starNftMessageLog.setCreatedAt(new Date());
+        starNftMessageLog.setCreatedBy(0L);
         return starNftMessageLogMapper.insert(starNftMessageLog) == 1;
     }
 }

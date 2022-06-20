@@ -5,6 +5,7 @@ import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.page.RequestPage;
 import com.starnft.star.domain.theme.model.req.ThemeReq;
 import com.starnft.star.domain.theme.model.res.ThemeRes;
+import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,6 +49,13 @@ public class ThemeController {
     @TokenIgnore
     public RopResponse seriesTheme(@PathVariable @ApiParam("主题id") Long id) {
         return RopResponse.success(this.themeCore.queryThemeDetail(id));
+    }
+
+    @PostMapping("/seckill/list")
+    @ApiOperation("秒杀商品列表")
+    @TokenIgnore
+    public RopResponse<List<SecKillGoods>> seriesTheme() {
+        return RopResponse.success(this.themeCore.querySecKillThemes());
     }
 
 }

@@ -21,5 +21,7 @@ public interface IOrderRepository {
 
     OrderVO queryOrderDetails(Long uid, String orderSn);
 
+    //查询秒杀缓存订单
+    OrderVO obtainSecKillOrder(Long uid, Long themeId);
 
 }

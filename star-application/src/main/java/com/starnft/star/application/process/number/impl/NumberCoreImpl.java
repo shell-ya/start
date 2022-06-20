@@ -1,12 +1,11 @@
 package com.starnft.star.application.process.number.impl;
 
-import com.starnft.star.application.mq.producer.marketorder.MarketOrderProducer;
+import com.starnft.star.application.mq.producer.order.OrderProducer;
 import com.starnft.star.application.process.number.INumberCore;
 import com.starnft.star.application.process.number.req.MarketOrderReq;
 import com.starnft.star.application.process.number.req.MarketOrderStatus;
 import com.starnft.star.application.process.number.res.ConsignDetailRes;
 import com.starnft.star.application.process.number.res.MarketOrderRes;
-import com.starnft.star.application.process.order.model.dto.OrderMessageReq;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
@@ -32,12 +31,12 @@ import com.starnft.star.domain.wallet.service.WalletConfig;
 import com.starnft.star.domain.wallet.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Map;
 
-import static com.starnft.star.common.exception.StarError.BALANCE_NOT_ENOUGH;
 
 /**
  * @author Harlan
@@ -45,7 +44,7 @@ import static com.starnft.star.common.exception.StarError.BALANCE_NOT_ENOUGH;
  */
 @Slf4j
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class NumberCoreImpl implements INumberCore {
 
     private final INumberService numberService;
@@ -53,7 +52,7 @@ public class NumberCoreImpl implements INumberCore {
     private final IOrderService orderService;
     private final RedisUtil redisUtil;
     private final RedisLockUtils redisLockUtils;
-    private final MarketOrderProducer marketOrderProducer;
+    private final OrderProducer orderProducer;
     @Resource
     private Map<StarConstants.Ids, IIdGenerator> map;
     @Override
@@ -95,60 +94,4 @@ public class NumberCoreImpl implements INumberCore {
                 .build();
     }
 
-    @Override
-    public MarketOrderRes marketOrder(MarketOrderReq marketOrderReq) {
-        //钱包余额充足
-        WalletResult walletResult = walletService.queryWalletInfo(new WalletInfoReq(marketOrderReq.getUserId()));
-        ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(marketOrderReq.getNumberId());
-        if (walletResult.getBalance().compareTo(numberDetail.getPrice()) < 0){
-            throw new StarException(StarError.BALANCE_NOT_ENOUGH);
-        }
-        //获取锁
-        String isTransaction = String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), marketOrderReq.getNumberId());
-        if (redisUtil.hasKey(isTransaction)) {
-            throw new StarException(StarError.GOODS_NOT_FOUND);
-        }
-        if (redisLockUtils.lock(isTransaction, 3000L)) {
-            try{
-                //生成订单
-                String orderSn = StarConstants.OrderPrefix.TransactionSn.getPrefix()
-                        .concat(String.valueOf(map.get(StarConstants.Ids.SnowFlake).nextId()));
-                if(createPreOrder(numberDetail, marketOrderReq.getUserId(),orderSn)){
-                    //发送延时队列
-                    marketOrderProducer.marketOrderRollback(new MarketOrderStatus(0,orderSn));
-                    return new MarketOrderRes(orderSn,0, StarError.SUCCESS_000000.getErrorMessage());
-                }
-            }catch (Exception e){
-                log.error("创建订单异常: userId: [{}] , themeNumberId: [{}] , context: [{}]",marketOrderReq.getUserId(),marketOrderReq.getNumberId(),numberDetail);
-                throw new RuntimeException(e.getMessage());
-            }
-        }
-        throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
-    }
-
-    private boolean createPreOrder(ThemeNumberVo numberDetail,Long userId,String orderSn) {
-        OrderVO orderVO = OrderVO.builder()
-                .userId(userId)
-                .orderSn(orderSn)
-                .payAmount(numberDetail.getPrice())
-                .seriesId(numberDetail.getSeriesId())
-                .seriesName(numberDetail.getSeriesName())
-                .seriesThemeInfoId(numberDetail.getThemeInfoId())
-                .seriesThemeId(numberDetail.getNumberId())
-                .themeName(numberDetail.getThemeName())
-//                .payAmount(numberDetail.getPrice())
-                .themePic(numberDetail.getThemePic())
-                .themeType(numberDetail.getThemeType())
-                .totalAmount(numberDetail.getPrice())
-                .themeNumber(numberDetail.getThemeNumber())
-                .themeType(numberDetail.getThemeType())
-                .build();
-        //创建订单
-        return orderService.createOrder(orderVO);
-        //        if (isSuccess) {
-//            redisUtil.hset(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), String.valueOf(message.getUserId()), orderVO);
-//            return true;
-//        }
-//        return false;
-    }
 }

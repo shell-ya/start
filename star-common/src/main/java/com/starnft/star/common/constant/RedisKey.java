@@ -129,19 +129,22 @@ public enum RedisKey {
     /**
      * 用户订单 hash
      */
-    SECKILL_ORDER_USER_MAPPING(505, StarConstants.SERVICE_NAME.concat(".seckill:ordered.mapping"), -1L, TimeUnit.HOURS),
+    SECKILL_ORDER_USER_MAPPING(505, StarConstants.SERVICE_NAME.concat(".seckill:ordered.mapping:%s"), -1L, TimeUnit.HOURS),
 
     /**
      * 用户订单状态 hash
      */
-    SECKILL_ORDER_USER_STATUS_MAPPING(506, StarConstants.SERVICE_NAME.concat(".seckill:ordered.status"), -1L, TimeUnit.HOURS),
+    SECKILL_ORDER_USER_STATUS_MAPPING(506, StarConstants.SERVICE_NAME.concat(".seckill:ordered.status:%s"), -1L, TimeUnit.HOURS),
+
+
+    SECKILL_ORDER_TRANSACTION(507, StarConstants.SERVICE_NAME.concat(".seckill:ordered:transaction:%s"), 3L, TimeUnit.MINUTES),
 
     //======================================= sec kill goods end   =======================================
 
     /**
      * 市场交易锁
      */
-    MARKET_ORDER_TRANSACTION(504, StarConstants.SERVICE_NAME.concat(".market:transaction:%s"), 3L, TimeUnit.MINUTES),
+    MARKET_ORDER_TRANSACTION(508, StarConstants.SERVICE_NAME.concat(".market:transaction:%s"), 3L, TimeUnit.MINUTES),
 
     ;
     private Integer code;

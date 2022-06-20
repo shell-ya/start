@@ -266,6 +266,7 @@ public class StarConstants {
 
         RECHARGE("RECHARGE", "充值"),
         PUBLISH_GOODS("PUBLISH_GOODS", "发行"),
+        MARKET_GOODS("MARKET_GOODS", "市场订单"),
         ;
 
         private String name;

@@ -7,6 +7,7 @@ import com.google.common.collect.Maps;
 import com.starnft.star.application.mq.IMessageSender;
 import com.starnft.star.application.mq.constant.TopicConstants;
 import com.starnft.star.application.process.notification.vo.NotificationVO;
+import com.starnft.star.application.process.theme.ThemeCore;
 import com.starnft.star.application.process.wallet.req.PayRecordReq;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.template.FreeMakerTemplateHelper;
@@ -17,6 +18,7 @@ import com.starnft.star.domain.sms.adapter.MessageAdapter;
 import com.starnft.star.domain.support.process.assign.TradeType;
 import com.starnft.star.domain.support.process.config.ChannelConf;
 import com.starnft.star.domain.support.process.config.TempConf;
+import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.domain.wallet.model.req.CalculateReq;
 import com.starnft.star.domain.wallet.model.res.CalculateResult;
 import com.starnft.star.domain.wallet.service.WalletService;
@@ -46,6 +48,14 @@ public class SpringTest {
     final PayConf payConf;
     final MessageAdapter messageAdapter;
     final WalletService walletService;
+    final ThemeCore themeCore;
+
+    @Test
+    public void goods() {
+        List<SecKillGoods> secKillGoods = themeCore.querySecKillThemes();
+        secKillGoods.forEach(good -> System.out.println(JSON.toJSONString(good)));
+
+    }
 
     @Test
     public void payment() {

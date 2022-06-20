@@ -171,7 +171,7 @@ public class WalletCore implements IWalletCore {
         for (WalletRecordVO walletRecordVO : walletRecordResult.getList()) {
             TransactionRecord transactionRecord = recordVOConvert(walletRecordVO, recordReq.getUserId());
             //todo 过滤提现订单查询提现记录填写带驳回原因字段填充响应结果  交易流水号 record_sn 与 提现流水号 withdraw_trade_no
-            if (StarConstants.Transaction_Type.Withdraw.getFont().equals(transactionRecord.getPayType())){
+            if (StarConstants.Transaction_Type.Withdraw.getFont().equals(transactionRecord.getPayType())) {
                 WithdrawRecordVO withdrawRecordVO = walletService.queryWithDrawByTradeNo(walletRecordVO.getRecordSn());
                 transactionRecord.setApplyMsg(withdrawRecordVO.getApplyMsg());
                 transactionRecord.setCardNo(String.valueOf(withdrawRecordVO.getBankNo()));
@@ -191,13 +191,13 @@ public class WalletCore implements IWalletCore {
     @Override
     public boolean cardBinding(CardBindReq cardBindReq) {
         if (cardBindReq.getCardNo().length() < 13 || cardBindReq.getCardNo().length() > 19) {
-            throw new StarException("卡号长度错误");
+            throw new StarException(StarError.CARD_LENGTH_ERROR);
         }
         UserInfoVO userInfoVO = userService.queryUserInfo(cardBindReq.getUid());
         cardBindReq.setNickname(userInfoVO.getNickName());
         List<CardBindResult> cardBindResults = obtainCardBinds(cardBindReq.getUid());
         if (cardBindResults.size() >= 5) {
-            throw new StarException("银行卡超过绑定5张上限");
+            throw new StarException(StarError.CARD_BIND_NUMS_ERROR);
         }
         if (cardBindReq.getIsDefault() == null || cardBindReq.getIsDefault() == 0) {
             cardBindReq.setIsDefault(cardBindResults.size() >= 1 ? 0 : 1);

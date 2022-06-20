@@ -65,11 +65,5 @@ public class NumbersController {
         return RopResponse.success(this.numberCore.consignmentCancel(userResolverInfo.getUserId(), numberId));
     }
 
-    @PostMapping("/order")
-    @ApiOperation("市场下单")
-    public RopResponse<MarketOrderRes> order(@RequestBody MarketOrderReq request){
-        request.setUserId(UserContext.getUserId().getUserId());
-        return RopResponse.success(this.numberCore.marketOrder(request));
-    }
 
 }

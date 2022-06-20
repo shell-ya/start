@@ -26,5 +26,4 @@ public interface INumberCore {
 
     ConsignDetailRes obtainConsignDetail(Long id);
 
-    MarketOrderRes marketOrder (MarketOrderReq marketOrderReq);
 }

@@ -63,6 +63,9 @@ public enum StarError {
     CARD_BINDING_FAILED("300005", "银行卡绑定失败"),
     CARD_NOT_BINDING_FAILED("300006", "你还没有绑定银行卡"),
     CARD_HAS_BIND("300008", "该银行卡已绑定"),
+
+    CARD_LENGTH_ERROR("300009", "卡号长度错误"),
+    CARD_BIND_NUMS_ERROR("300010", "银行卡超过绑定上限"),
     PAY_PROCESS_ERROR("300007", "支付异常"),
     REQUEST_TIMEOUT_ERROR("100040", "请求超时,请稍后再试！"),
 
@@ -73,6 +76,9 @@ public enum StarError {
     ORDER_REPETITION("100043", "请勿重复下单"),
 
     STOCK_EMPTY_ERROR("100044", "手慢啦，全被抢光了!"),
+    ORDER_DO_NOT_EXIST("100045", "未找到该订单"),
+    ORDER_STATUS_ERROR("100046", "订单状态异常"),
+    ORDER_CANCEL_ERROR("100047", "取消订单失败"),
     ;
 
     private String NS = "";

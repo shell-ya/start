@@ -2,6 +2,7 @@ package com.starnft.star.application.mq.producer.order;
 
 import com.starnft.star.application.mq.constant.TopicConstants;
 import com.starnft.star.application.mq.producer.BaseProducer;
+import com.starnft.star.application.process.number.req.MarketOrderStatus;
 import com.starnft.star.application.process.order.model.dto.OrderMessageReq;
 import com.starnft.star.application.process.order.model.res.OrderGrabStatus;
 import org.apache.rocketmq.client.producer.SendResult;
@@ -33,6 +34,18 @@ public class OrderProducer extends BaseProducer {
     public void secOrderRollback(OrderGrabStatus status) {
 
         String destination = String.format(TopicConstants.ORDER_SEC_KILL_ROLLBACK_DESTINATION.getFormat(), TopicConstants.ORDER_SEC_KILL_ROLLBACK_DESTINATION.getTag());
+
+        messageSender.syncSendDelay(destination, Optional.of(status), 3000L, 7);
+    }
+
+    /**
+     * 关闭订单
+     *
+     * @param status 订单状态
+     */
+    public void marketOrderRollback(MarketOrderStatus status) {
+
+        String destination = String.format(TopicConstants.MARKET_ORDER_ROLLBACK_DESTINATION.getFormat(), TopicConstants.MARKET_ORDER_ROLLBACK_DESTINATION.getTag());
 
         messageSender.syncSendDelay(destination, Optional.of(status), 3000L, 7);
     }

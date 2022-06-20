@@ -20,14 +20,14 @@ public class OrderWaitPayState extends AbstractOrderState {
 
     @Override
     public Result payComplete(Long uid, String orderSn, String payNumber, StarConstants.ORDER_STATE orderState) {
-        boolean isSuccess = orderRepository.updateOrder(uid, orderSn, orderState.getCode(), payNumber);
+        boolean isSuccess = orderRepository.updateOrder(uid, orderSn, StarConstants.ORDER_STATE.COMPLETED.getCode(), payNumber);
         return isSuccess ? Result.buildSuccessResult() : Result.buildErrorResult("状态修改为已完成失败");
     }
 
 
     @Override
     public Result payCancel(Long uid, String orderSn, StarConstants.ORDER_STATE orderState) {
-        boolean isSuccess = orderRepository.updateOrder(uid, orderSn, orderState.getCode(), null);
+        boolean isSuccess = orderRepository.updateOrder(uid, orderSn, StarConstants.ORDER_STATE.PAY_CANCEL.getCode(), null);
         return isSuccess ? Result.buildSuccessResult() : Result.buildErrorResult("状态修改为已取消失败");
     }
 }

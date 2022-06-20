@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 public interface PublisherService {
- PublisherVO queryPublisher(PublisherReq id);
+    PublisherVO queryPublisher(PublisherReq id);
 
     List<PublisherVO> queryPublisherByIds(Set<Long> collect);
 
