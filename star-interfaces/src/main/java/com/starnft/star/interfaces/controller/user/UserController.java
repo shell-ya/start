@@ -5,9 +5,7 @@ import com.starnft.star.application.process.user.req.*;
 import com.starnft.star.application.process.user.res.*;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.domain.user.model.dto.AuthenticationNameDTO;
-import com.starnft.star.domain.user.model.dto.UserInfoUpdateDTO;
 import com.starnft.star.domain.user.model.vo.UserPlyPasswordVO;
-import com.starnft.star.domain.user.service.IUserService;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import com.starnft.star.interfaces.interceptor.UserContext;
 import com.starnft.star.interfaces.interceptor.UserResolverInfo;
@@ -16,8 +14,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import javax.annotation.Resource;
 
 /**
  * @author WeiChunLAI
@@ -30,10 +26,6 @@ public class UserController {
 
     @Autowired
     private UserCore userCore;
-
-    @Resource
-    private IUserService userService;
-
 
     @ApiOperation("短信验证码登录/注册")
     @PostMapping("/userinfo/loginbyphone")
@@ -164,14 +156,19 @@ public class UserController {
         return RopResponse.success(this.userCore.checkPayPassword(userResolverInfo.getUserId(), req));
     }
 
-    @ApiOperation("设置支付密码")
+
+    @ApiOperation("初始化支付密码/忘记支付密码")
+    @PostMapping("/paypass/resetpwd")
+    public RopResponse<Boolean> resetPayPassword(UserResolverInfo userResolverInfo, @RequestBody @Validated ResetPayPwdReq req) {
+        req.setUserId(userResolverInfo.getUserId());
+        return RopResponse.success(this.userCore.resetPayPassword(req));
+    }
+
+    @ApiOperation("修改支付密码")
     @PostMapping("/paypass/setting")
-    public RopResponse<Boolean> setPayPassword(@RequestBody @Validated UserPlyPasswordVO userPlyPasswordVO) {
-        UserInfoUpdateDTO userInfoUpdateDTO = new UserInfoUpdateDTO();
-        userInfoUpdateDTO.setPlyPassword(userPlyPasswordVO.getPlyPassword());
-        userInfoUpdateDTO.setAccount(UserContext.getUserId().getUserId());
-        userInfoUpdateDTO.setOldPlyPassword(userPlyPasswordVO.getOldPlyPassword());
-        return RopResponse.success(this.userService.plyPasswordSetting(userInfoUpdateDTO));
+    public RopResponse<Boolean> setPayPassword(UserResolverInfo userResolverInfo, @RequestBody @Validated UserPlyPasswordVO userPlyPasswordVO) {
+        userPlyPasswordVO.setUserId(userResolverInfo.getUserId());
+        return RopResponse.success(this.userCore.plyPasswordSetting(userPlyPasswordVO));
     }
 
 }

@@ -15,4 +15,6 @@ public class PayPasswordDTO {
     private String verificationCode;
 
     private String phone;
+
+    private String token;
 }

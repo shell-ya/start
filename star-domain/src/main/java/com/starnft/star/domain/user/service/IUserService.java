@@ -171,7 +171,7 @@ public interface IUserService {
      * @return
      */
     Boolean modifyUserInfo(UserInfoUpdateDTO userInfoUpd);
-    
+
     /**
      * 支付密码校验成功判断
      *
@@ -180,11 +180,15 @@ public interface IUserService {
      */
     void assertPayPwdCheckSuccess(Long uid, String token);
 
+    void assertPayPwdCheckSuccess(Long uid, String token, boolean clear);
+
+    void clearPayPwdCheckSuccessToken(Long uid);
+
     Boolean resetPassword(AuthMaterialDTO authMaterial);
 
     Boolean queryIsSettingPwd(Long id);
 
-    //设置/修改 支付密码
-    Boolean plyPasswordSetting(UserInfoUpdateDTO userInfoUpdateDTO);
+    //修改 支付密码
+    Boolean plyPasswordSetting(PayPasswordDTO payPasswordDTO);
 
 }

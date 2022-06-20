@@ -14,8 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CheckPayPassword {
 
-    private String token;
-
     private Long userId;
 
     private String payPassword;

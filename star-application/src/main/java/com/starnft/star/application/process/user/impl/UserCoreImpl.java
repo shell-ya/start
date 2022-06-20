@@ -336,6 +336,18 @@ public class UserCoreImpl implements UserCore {
         return this.userService.queryIsSettingPwd(userGatheringInfoReq.getUid());
     }
 
+    @Override
+    public Boolean resetPayPassword(ResetPayPwdReq req) {
+        PayPasswordDTO payPasswordDTO = BeanColverUtil.colver(req, PayPasswordDTO.class);
+        return this.userService.changePayPassword(payPasswordDTO);
+    }
+
+    @Override
+    public Boolean plyPasswordSetting(UserPlyPasswordVO req) {
+        PayPasswordDTO payPasswordDTO = BeanColverUtil.colver(req, PayPasswordDTO.class);
+        return this.userService.plyPasswordSetting(payPasswordDTO);
+    }
+
     private void popupAgreement(PopupAgreementRes popupAgreementRes
             , List<AgreementVO> agreementVOS
             , Integer authorizationSceneId) {

@@ -264,6 +264,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
     @Override
     public Boolean changePayPassword(PayPasswordDTO req) {
+
         //校验用户是否存在
         UserInfo userInfo = this.userRepository.queryUserInfoByUserId(req.getUserId());
         if (Objects.isNull(userInfo)) {
@@ -276,6 +277,11 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         Optional.ofNullable(req)
                 .filter(a -> a.getVerificationCode().equals(code))
                 .orElseThrow(() -> new StarException(StarError.CODE_NOT_FUND));
+
+        //密码长度校验
+        if (req.getPayPassword().length() != 6) {
+            throw new StarException(StarError.PARAETER_UNSUPPORTED, "密码长度为6位");
+        }
 
         //校验距离上次修改密码是否超过24小时
         String changeSuccessKey = String.format(RedisKey.REDIS_CHANGE_PAY_PWD_SUCCESS_EXPIRED.getKey(), userInfo.getAccount());
@@ -416,12 +422,26 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
     @Override
     public void assertPayPwdCheckSuccess(Long uid, String token) {
+        this.assertPayPwdCheckSuccess(uid, token, true);
+    }
+
+    @Override
+    public void assertPayPwdCheckSuccess(Long uid, String token, boolean clear) {
         // 前置校验凭证
         String preCheckKey = String.format(RedisKey.REDIS_PRE_PAY_PWD_CHECK_TOKEN.getKey(), uid);
         Optional.ofNullable(this.redisUtil.get(preCheckKey))
                 .filter(realToken -> Objects.equals(realToken, StarUtils.getSHA256Str(token)))
                 .orElseThrow(() -> new StarException(StarError.PAYPWD_PRE_CHECK_ERROR));
-        // 使用后删除标识
+        if (clear) {
+            // 使用后删除标识
+            this.clearPayPwdCheckSuccessToken(uid);
+        }
+    }
+
+    @Override
+    public void clearPayPwdCheckSuccessToken(Long uid) {
+        // 前置校验凭证
+        String preCheckKey = String.format(RedisKey.REDIS_PRE_PAY_PWD_CHECK_TOKEN.getKey(), uid);
         this.redisUtil.del(preCheckKey);
     }
 
@@ -457,32 +477,40 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     }
 
     @Override
-    public Boolean plyPasswordSetting(UserInfoUpdateDTO userInfoUpdateDTO) {
+    public Boolean plyPasswordSetting(PayPasswordDTO req) {
 
-        Optional.ofNullable(userInfoUpdateDTO.getPlyPassword()).orElseThrow(() -> new StarException("密码不能为空"));
+        Optional.ofNullable(req.getToken()).orElseThrow(() -> new StarException(StarError.PARAETER_UNSUPPORTED, "支付密码校验凭证不能为空"));
+        Optional.ofNullable(req.getPayPassword()).orElseThrow(() -> new StarException(StarError.PARAETER_UNSUPPORTED, "密码不能为空"));
+
+        //判断支付密码是否校验成功
+        this.assertPayPwdCheckSuccess(req.getUserId(), req.getToken(), false);
 
         //密码长度校验
-        if (userInfoUpdateDTO.getPlyPassword().length() != 6) {
-            throw new StarException("密码长度为6位");
+        if (req.getPayPassword().length() != 6) {
+            throw new StarException(StarError.PARAETER_UNSUPPORTED, "密码长度为6位");
         }
 
+        UserInfoVO userInfoVO = this.queryUserInfo(req.getUserId());
+        Optional.ofNullable(userInfoVO).orElseThrow(() -> new StarException(StarError.USER_NOT_EXISTS));
+
+        UserInfoUpdateDTO userInfoUpdateDTO = new UserInfoUpdateDTO();
+        userInfoUpdateDTO.setAccount(req.getUserId());
         //加密
-        userInfoUpdateDTO.setPlyPassword(StarUtils.getSHA256Str(userInfoUpdateDTO.getPlyPassword()));
+        userInfoUpdateDTO.setPlyPassword(StarUtils.getSHA256Str(req.getPayPassword()));
 
-        UserInfoVO userInfoVO = this.queryUserInfo(userInfoUpdateDTO.getAccount());
-        Optional.ofNullable(userInfoVO).orElseThrow(() -> new StarException("用户不存在"));
-
-        if (StringUtils.isNotBlank(userInfoVO.getPlyPassword())) {
+        /*if (StringUtils.isNotBlank(userInfoVO.getPlyPassword())) {
             if (StringUtils.isNotBlank(userInfoUpdateDTO.getOldPlyPassword()) &&
                     !(StarUtils.getSHA256Str(userInfoUpdateDTO.getOldPlyPassword()).equals(userInfoVO.getPlyPassword()))) {
                 throw new StarException("支付密码不正确");
             }
-        }
+        }*/
 
         if (userInfoVO.getPlyPassword() != null && userInfoVO.getPlyPassword().equals(userInfoUpdateDTO.getPlyPassword())) {
-            throw new StarException("修改的密码不能和当前一样");
+            throw new StarException(StarError.PARAETER_UNSUPPORTED, "修改的密码不能和当前一样");
         }
 
+        //清除凭证
+        this.clearPayPwdCheckSuccessToken(req.getUserId());
         return this.modifyUserInfo(userInfoUpdateDTO);
     }
 }
