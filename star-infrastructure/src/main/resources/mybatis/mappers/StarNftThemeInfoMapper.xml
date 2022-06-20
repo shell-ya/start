@@ -52,4 +52,10 @@
           AND a.is_delete = 0
     </select>
 
+    <select id="selectThemeIssuedQty" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        FROM star_nft_theme_number
+        WHERE series_theme_info_id = #{themeId}
+    </select>
+
 </mapper>

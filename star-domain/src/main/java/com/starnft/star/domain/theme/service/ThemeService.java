@@ -18,4 +18,7 @@ public interface ThemeService {
     SecKillGoods obtainGoodsCache(Long themeId, String time);
 
     ResponsePageResult<ThemeVO> obtainRecommendTheme(ThemeReq req);
+
+    Integer obtainThemeIssuedQty(Long themeId);
+
 }

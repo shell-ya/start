@@ -19,4 +19,7 @@ public interface IThemeRepository {
     SecKillGoods obtainGoodsCache(Long themeId, String time);
 
     ResponsePageResult<ThemeVO> queryRecommendTheme(ThemeReq req);
+
+    Integer obtainThemeIssuedQty(Long themeId);
+
 }

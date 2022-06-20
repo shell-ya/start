@@ -141,4 +141,9 @@ public class ThemeRepository implements IThemeRepository {
                 .doSelectPageInfo(() -> this.starNftThemeInfoMapper.selectRecommendThemes(param));
         return new ResponsePageResult<>(result.getList(), result.getPageNum(), result.getPageSize(), result.getTotal());
     }
+
+    @Override
+    public Integer obtainThemeIssuedQty(Long themeId) {
+        return this.starNftThemeInfoMapper.selectThemeIssuedQty(themeId);
+    }
 }
