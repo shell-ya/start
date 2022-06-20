@@ -12,6 +12,7 @@ import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.order.model.req.OrderListReq;
 import com.starnft.star.domain.order.model.res.OrderListRes;
+import com.starnft.star.domain.order.model.vo.MarketCancelOrderVo;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.repository.IOrderRepository;
 import com.starnft.star.domain.order.service.IOrderService;
@@ -101,5 +102,10 @@ public class OrderService implements IOrderService {
         }
 
         throw new StarException(StarError.ORDER_CANCEL_ERROR);
+    }
+
+    public boolean cancelOrder(MarketCancelOrderVo cancelOrderVo) {
+        return this.orderRepository.updateOrder(cancelOrderVo.getUid(), cancelOrderVo.getOrderSn(),
+                StarConstants.ORDER_STATE.PAY_CANCEL.getCode(),null);
     }
 }
