@@ -70,7 +70,7 @@ public class CheckIdCardTest {
     public void testRefund() {
         RefundReq build = RefundReq.builder()
                 .refundOrderSn(IdUtil.getSnowflake(1, 1).nextIdStr())
-                .orderSn("RC988753779992166400")
+                .orderSn("RC988813119503597568")
                 .composeCallback("11")
                 .reason("退款")
                 .payChannel(StarConstants.PayChannel.BankCard.name())

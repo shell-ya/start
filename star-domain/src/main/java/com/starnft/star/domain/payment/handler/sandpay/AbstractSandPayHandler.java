@@ -148,16 +148,13 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
       //响应验签
       boolean valid = sdKeysHelper.verifyDigitalSign(respData.getBytes("utf-8"),
               Base64.decodeBase64(sign), sdKeysHelper.getPublicKey(), "SHA1WithRSA");
-
       if (!valid) throw new RuntimeException("签名校验出错");
-      //
-
       JSONObject resObj = JSONUtil.parseObj(respData);
-
+      log.info("回来的参数为：{}",JSONUtil.toJsonStr(resObj));
       String resModel = super.processTemplate(channelConf.getResTempPath(), resObj, vendorConf);
-
       RemoteRes remoteRes = JSON.parseObject(resModel, RemoteRes.class);
-
-      return iInteract.verifyResAndGet(remoteRes, RefundRes.class);
+      RefundRes refundRes = iInteract.verifyResAndGet(remoteRes, RefundRes.class);
+//      if (refundRes)
+      return refundRes;
   }
 }
