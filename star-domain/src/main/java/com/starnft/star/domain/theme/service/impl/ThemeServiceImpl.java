@@ -61,5 +61,10 @@ public class ThemeServiceImpl implements ThemeService {
         return this.themeRepository.queryRecommendTheme(req);
     }
 
+    @Override
+    public Integer obtainThemeIssuedQty(Long themeId) {
+        Assert.notNull(themeId, () -> new StarException(StarError.PARAETER_UNSUPPORTED, "主题id不能为空"));
+        return this.themeRepository.obtainThemeIssuedQty(themeId);
+    }
 
 }

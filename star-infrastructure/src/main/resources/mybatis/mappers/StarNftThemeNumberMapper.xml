@@ -11,7 +11,7 @@
         <result column="chain_identification" jdbcType="VARCHAR" property="chainIdentification"/>
         <result column="price" jdbcType="DECIMAL" property="price"/>
         <result column="status" jdbcType="BOOLEAN" property="status"/>
-        <result column="owner_by" jdbcType="VARCHAR" property="owenrBy"/>
+        <result column="owner_by" jdbcType="VARCHAR" property="ownerBy"/>
         <result column="create_at" jdbcType="TIMESTAMP" property="createAt"/>
         <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
         <result column="update_at" jdbcType="TIMESTAMP" property="updateAt"/>
@@ -32,9 +32,9 @@
                a.price                price,
                a.status               status,
                a.owner_by             owner_by,
+               b.id                   theme_id,
                b.theme_name           name,
                b.theme_pic            picture,
-               b.publish_number       issued_qty,
                b.descrption           descrption,
                b.theme_type           type
         FROM star_nft_theme_number a
@@ -65,15 +65,14 @@
     </select>
 
     <select id="selectNumberList" resultType="com.starnft.star.domain.number.model.vo.NumberVO">
-        SELECT
-        a.id,
+        SELECT a.id id,
         a.theme_number number,
-        a.price,
-        a.status,
-        b.theme_name,
-        b.theme_pic,
-        b.theme_type type,
-        b.publish_number issued_qty
+        a.price price,
+        a.status status,
+        b.id theme_id,
+        b.theme_name theme_name,
+        b.theme_pic theme_pic,
+        b.theme_type type
         FROM star_nft_theme_number a
         INNER JOIN star_nft_theme_info b ON a.series_theme_info_id = b.id
         <where>
@@ -98,4 +97,5 @@
         </if>
 
     </select>
+
 </mapper>

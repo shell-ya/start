@@ -22,6 +22,8 @@ import java.math.BigDecimal;
 public class NumberDetailVO implements Serializable {
     @ApiModelProperty("商品id")
     private Long id;
+    @ApiModelProperty("主题id")
+    private Long themeId;
     @ApiModelProperty("商品编号")
     private Long number;
     @ApiModelProperty("发行数量")

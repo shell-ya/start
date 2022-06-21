@@ -127,15 +127,16 @@ public class OrderProcessor implements IOrderProcessor {
         if (redisUtil.hasKey(isTransaction)) {
             throw new StarException(StarError.GOODS_NOT_FOUND);
         }
-        if (redisLockUtils.lock(isTransaction, 3000L)) {
+        long lockTimes = RedisKey.MARKET_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.MARKET_ORDER_TRANSACTION.getTime());
+        if (redisLockUtils.lock(isTransaction, lockTimes)) {
             try {
                 //生成订单
                 String orderSn = StarConstants.OrderPrefix.TransactionSn.getPrefix()
                         .concat(String.valueOf(idsIIdGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId()));
                 if (createPreOrder(numberDetail, marketOrderReq.getUserId(), orderSn)) {
                     //发送延时队列
-                    orderProducer.marketOrderRollback(new MarketOrderStatus(0, orderSn));
-                    return new MarketOrderRes(orderSn, 0, StarError.SUCCESS_000000.getErrorMessage());
+                    orderProducer.marketOrderRollback(new MarketOrderStatus(marketOrderReq.getUserId(),0, orderSn));
+                    return new MarketOrderRes(orderSn, 0, StarError.SUCCESS_000000.getErrorMessage(),lockTimes);
                 }
             } catch (Exception e) {
                 log.error("创建订单异常: userId: [{}] , themeNumberId: [{}] , context: [{}]", marketOrderReq.getUserId(), marketOrderReq.getNumberId(), numberDetail);
