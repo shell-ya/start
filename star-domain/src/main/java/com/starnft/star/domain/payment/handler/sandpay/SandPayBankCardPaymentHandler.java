@@ -33,6 +33,7 @@ public class SandPayBankCardPaymentHandler extends AbstractSandPayHandler {
         Assert.notNull(req.getBankNo(), () -> new StarException("银行卡号不能为空"));
     }
 
+
     @Override
     @SneakyThrows
     protected PaymentRes doPay(PaymentRich paymentRich, Map<String, String> vendorConf) {

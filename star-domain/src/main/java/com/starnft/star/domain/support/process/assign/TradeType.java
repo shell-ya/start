@@ -6,5 +6,6 @@ public enum TradeType {
     //杉德支付(支付渠道)
     Union_SandPay,
     Bank_SandPay,
+    Sand_Refund,
     Quick_Card_SandPay
 }

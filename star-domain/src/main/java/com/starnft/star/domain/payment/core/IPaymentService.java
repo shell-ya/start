@@ -3,8 +3,10 @@ package com.starnft.star.domain.payment.core;
 
 import com.starnft.star.domain.payment.model.req.PayCheckReq;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
+import com.starnft.star.domain.payment.model.req.RefundReq;
 import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
+import com.starnft.star.domain.payment.model.res.RefundRes;
 
 import java.util.List;
 
@@ -16,4 +18,5 @@ public interface IPaymentService {
     List<String> obtainSupported();
     PaymentRes pay(PaymentRich payReq);
     PayCheckRes orderCheck(PayCheckReq payReq);
+    RefundRes refund(RefundReq refundReq);
 }

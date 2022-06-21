@@ -6,8 +6,10 @@ import com.starnft.star.domain.payment.core.IPaymentService;
 import com.starnft.star.domain.payment.handler.IPaymentHandler;
 import com.starnft.star.domain.payment.model.req.PayCheckReq;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
+import com.starnft.star.domain.payment.model.req.RefundReq;
 import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
+import com.starnft.star.domain.payment.model.res.RefundRes;
 import com.starnft.star.domain.payment.router.IPaymentRouter;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.stereotype.Service;
@@ -41,5 +43,11 @@ public class PaymentService implements IPaymentService {
     public PayCheckRes orderCheck(PayCheckReq payReq) {
         IPaymentHandler iPaymentHandler = paymentRouter.payRoute(payReq.getPayChannel());
         return iPaymentHandler.orderCheck(payReq);
+    }
+
+    @Override
+    public RefundRes refund(RefundReq refundReq) {
+        IPaymentHandler iPaymentHandler = paymentRouter.payRoute(refundReq.getPayChannel());
+        return iPaymentHandler.refund(refundReq);
     }
 }

@@ -10,8 +10,10 @@ import com.starnft.star.domain.payment.helper.SdKeysHelper;
 import com.starnft.star.domain.payment.helper.TemplateHelper;
 import com.starnft.star.domain.payment.model.req.PayCheckReq;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
+import com.starnft.star.domain.payment.model.req.RefundReq;
 import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
+import com.starnft.star.domain.payment.model.res.RefundRes;
 import com.starnft.star.domain.support.process.IInteract;
 import com.starnft.star.domain.support.process.assign.StarRequestMethod;
 import com.starnft.star.domain.support.process.assign.TradeType;
@@ -126,5 +128,36 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
         dataModel.put("helper", TemplateHelper.getInstance());
         return dataModel;
     }
+  @SuppressWarnings("DuplicatedCode")
+  @SneakyThrows
+  protected RefundRes doRefund(RefundReq refundReq, Map<String, String> vendorConf){
+      TempConf channelConf = getChannelConf(TradeType.Sand_Refund);
+      String signString = processTemplate(channelConf.getSignTempPath(), refundReq, vendorConf);
+      SdKeysHelper sdKeysHelper = applicationContext.getBean(SdKeysHelper.class);
+      Map<String, String> req = getSignAndMap(sdKeysHelper, signString);
+      IInteract iInteract = obtainProcessInteraction(StarConstants.ProcessType.JSON);
+      String context = iInteract.interact(ConnContext.builder()
+              .formData(req).httpHeaders(new HttpHeaders())
+              .restMethod(StarRequestMethod.POST_FORM)
+              .url(channelConf.getHttpConf().getApiUrl()).build(), () -> null);
+      //参数解密
+      String result = URLDecoder.decode(Objects.requireNonNull(context), "utf-8");
+      Map<String, String> data = TemplateHelper.getInstance().convertResultStringToMap(result);
+      String sign = data.get("sign");
+      String respData = data.get("data");
+      //响应验签
+      boolean valid = sdKeysHelper.verifyDigitalSign(respData.getBytes("utf-8"),
+              Base64.decodeBase64(sign), sdKeysHelper.getPublicKey(), "SHA1WithRSA");
 
+      if (!valid) throw new RuntimeException("签名校验出错");
+      //
+
+      JSONObject resObj = JSONUtil.parseObj(respData);
+
+      String resModel = super.processTemplate(channelConf.getResTempPath(), resObj, vendorConf);
+
+      RemoteRes remoteRes = JSON.parseObject(resModel, RemoteRes.class);
+
+      return iInteract.verifyResAndGet(remoteRes, RefundRes.class);
+  }
 }

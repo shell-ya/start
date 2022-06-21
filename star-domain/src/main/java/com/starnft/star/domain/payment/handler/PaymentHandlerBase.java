@@ -5,8 +5,10 @@ import com.starnft.star.common.template.TemplateHelper;
 import com.starnft.star.domain.payment.config.PaymentConfiguration;
 import com.starnft.star.domain.payment.model.req.PayCheckReq;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
+import com.starnft.star.domain.payment.model.req.RefundReq;
 import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
+import com.starnft.star.domain.payment.model.res.RefundRes;
 import com.starnft.star.domain.support.process.ProcessInteractionHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
@@ -21,6 +23,21 @@ public abstract class PaymentHandlerBase
 
     protected ApplicationContext applicationContext;
 
+
+    @Override
+    public RefundRes refund(RefundReq refundReq) {
+
+        Map<String, String> vendorConf = super.getVendorConf(getVendor(), getPayChannel());
+
+        if (null == vendorConf) {
+            throw new RuntimeException("配置信息未被加载，请检查配置！");
+        }
+        //执行支付流程
+        return doRefund(refundReq, vendorConf);
+    }
+
+
+    protected abstract RefundRes doRefund(RefundReq refundReq, Map<String, String> vendorConf);
 
     /**
      * @param paymentRich 是一个聚合对象 里面包含用户信息 订单信息等支付所需要的信息
@@ -83,6 +100,8 @@ public abstract class PaymentHandlerBase
      * @date 2022/5/25
      */
     protected abstract void verifyLegality(PaymentRich req);
+
+
 
 
     /**

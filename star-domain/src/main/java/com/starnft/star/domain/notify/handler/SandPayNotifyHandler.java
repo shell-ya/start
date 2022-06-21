@@ -27,8 +27,11 @@ public class SandPayNotifyHandler implements INotifyHandler {
         // 验证签名
         boolean valid;
         try {
-            valid = sdKeysHelper.verifyDigitalSign(data.getBytes("utf-8"), Base64.decodeBase64(sign),
-                    sdKeysHelper.getPublicKey(), "SHA1WithRSA");
+            valid = sdKeysHelper.verifyDigitalSign(
+                    data.getBytes("utf-8"),
+                    Base64.decodeBase64(sign),
+                    sdKeysHelper.getPublicKey(),
+                    "SHA1WithRSA");
             if (!valid) {
                 log.error("verify sign fail.");
                 log.error("签名字符串(data)为：" + data);

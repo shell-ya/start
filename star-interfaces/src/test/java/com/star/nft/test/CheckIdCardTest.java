@@ -6,8 +6,10 @@ import com.starnft.star.domain.identify.strategy.SwIdentifyStrategy;
 import com.starnft.star.domain.payment.core.IPaymentService;
 import com.starnft.star.domain.payment.model.req.PayCheckReq;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
+import com.starnft.star.domain.payment.model.req.RefundReq;
 import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
+import com.starnft.star.domain.payment.model.res.RefundRes;
 import com.starnft.star.domain.user.model.dto.UserInfoAddDTO;
 import com.starnft.star.infrastructure.repository.UserRepository;
 import com.starnft.star.interfaces.StarApplication;
@@ -62,6 +64,19 @@ public class CheckIdCardTest {
 ////
 //        System.out.println(s);
 
+    }
+
+    @Test
+    public void testRefund() {
+        RefundReq build = RefundReq.builder()
+                .refundOrderSn(IdUtil.getSnowflake(1, 1).nextIdStr())
+                .orderSn("RC988753779992166400")
+                .composeCallback("11")
+                .reason("退款")
+                .payChannel(StarConstants.PayChannel.BankCard.name())
+                .totalMoney(new BigDecimal("0.15"))
+                .build();
+        RefundRes refund = paymentService.refund(build);
     }
     @Test
     public void testOrder() {

@@ -8,5 +8,5 @@ pay-conf:
         signCertPwd: 971223
         sandCertPath: classpath:keys/sand.cer
         notify: https://cmapi.infiart.cn/api/trans/notify/sand
-      #  notify: http://criclemeta.natapp1.cc/trans/notify/sand
+        refundNotify: http://criclemeta.natapp1.cc/trans/refundNotify/sand
 
