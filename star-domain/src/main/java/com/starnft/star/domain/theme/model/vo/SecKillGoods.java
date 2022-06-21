@@ -1,5 +1,6 @@
 package com.starnft.star.domain.theme.model.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,19 +23,24 @@ public class SecKillGoods implements Serializable {
     private BigDecimal secCost;
 
     @ApiModelProperty(name = "开始时间", notes = "")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private Date startTime;
 
     @ApiModelProperty(name = "结束时间", notes = "")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private Date endTime;
+
+    @ApiModelProperty(name = "时间戳", notes = "")
+    private String time;
 
     @ApiModelProperty(name = "主题id", notes = "")
     private Long themeId;
 
     @ApiModelProperty(name = "系列id", notes = "")
-    private Long  seriesId;
+    private Long seriesId;
 
     @ApiModelProperty(name = "系列名称", notes = "")
-    private String  seriesName;
+    private String seriesName;
 
     @ApiModelProperty(name = "主题类型", notes = "")
     private Integer themeType;

@@ -59,4 +59,7 @@ public interface WalletService {
 
     //单号查询提现记录
     WithdrawRecordVO queryWithDrawByTradeNo(String recordSn);
+
+    //交易操作
+    boolean doTransaction(TransReq transReq);
 }

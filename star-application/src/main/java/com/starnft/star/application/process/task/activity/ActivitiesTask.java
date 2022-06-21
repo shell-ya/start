@@ -63,7 +63,7 @@ public class ActivitiesTask {
         for (Date startTime : dateMenus) {
             String startTimeTrim = DateUtil.date2Str(startTime);
             String goodsKey = String.format(RedisKey.SECKILL_GOODS_INFO.getKey(), startTimeTrim);
-            Set<String> keys = redisUtil.hashKeys(goodsKey);
+            Set keys = redisUtil.hashKeys(goodsKey);
             //执行查询 加载时区内待秒杀商品
             List<SecKillGoods> secKillGoods = loadGoods(startTime, keys);
             //加载进缓存
@@ -110,6 +110,7 @@ public class ActivitiesTask {
         for (ActivityVO activity : activities) {
             ThemeDetailVO detailVO = themeService.queryThemeDetail(activity.getSpuId());
             SecKillGoods good = copy(activity, detailVO);
+            good.setTime(DateUtil.date2Str(startTime));
             goods.add(good);
         }
         return goods;

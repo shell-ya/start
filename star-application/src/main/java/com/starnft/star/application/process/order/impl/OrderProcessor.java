@@ -8,8 +8,10 @@ import com.starnft.star.application.process.order.IOrderProcessor;
 import com.starnft.star.application.process.order.model.dto.OrderMessageReq;
 import com.starnft.star.application.process.order.model.req.OrderCancelReq;
 import com.starnft.star.application.process.order.model.req.OrderGrabReq;
+import com.starnft.star.application.process.order.model.req.OrderPayReq;
 import com.starnft.star.application.process.order.model.res.OrderGrabRes;
 import com.starnft.star.application.process.order.model.res.OrderGrabStatus;
+import com.starnft.star.application.process.order.model.res.OrderPayDetailRes;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
@@ -33,7 +35,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.Map;
 
 @Slf4j
@@ -109,6 +110,12 @@ public class OrderProcessor implements IOrderProcessor {
     }
 
     @Override
+    public OrderPayDetailRes orderPay(OrderPayReq orderPayReq) {
+
+        return null;
+    }
+
+    @Override
     public OrderPlaceRes cancelSecOrder(OrderCancelReq orderGrabReq) {
         return orderService.orderCancel(orderGrabReq.getUid(), orderGrabReq.getOrderSn(), StarConstants.OrderType.PUBLISH_GOODS);
     }
@@ -135,8 +142,8 @@ public class OrderProcessor implements IOrderProcessor {
                         .concat(String.valueOf(idsIIdGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId()));
                 if (createPreOrder(numberDetail, marketOrderReq.getUserId(), orderSn)) {
                     //发送延时队列
-                    orderProducer.marketOrderRollback(new MarketOrderStatus(marketOrderReq.getUserId(),0, orderSn));
-                    return new MarketOrderRes(orderSn, 0, StarError.SUCCESS_000000.getErrorMessage(),lockTimes);
+                    orderProducer.marketOrderRollback(new MarketOrderStatus(marketOrderReq.getUserId(), 0, orderSn));
+                    return new MarketOrderRes(orderSn, 0, StarError.SUCCESS_000000.getErrorMessage(), lockTimes);
                 }
             } catch (Exception e) {
                 log.error("创建订单异常: userId: [{}] , themeNumberId: [{}] , context: [{}]", marketOrderReq.getUserId(), marketOrderReq.getNumberId(), numberDetail);
@@ -156,7 +163,7 @@ public class OrderProcessor implements IOrderProcessor {
                 .seriesThemeInfoId(numberDetail.getThemeInfoId())
                 .seriesThemeId(numberDetail.getNumberId())
                 .themeName(numberDetail.getThemeName())
-//                .payAmount(numberDetail.getPrice())
+                //.payAmount(numberDetail.getPrice())
                 .themePic(numberDetail.getThemePic())
                 .themeType(numberDetail.getThemeType())
                 .totalAmount(numberDetail.getPrice())
@@ -165,10 +172,5 @@ public class OrderProcessor implements IOrderProcessor {
                 .build();
         //创建订单
         return orderService.createOrder(orderVO);
-        //        if (isSuccess) {
-//            redisUtil.hset(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), String.valueOf(message.getUserId()), orderVO);
-//            return true;
-//        }
-//        return false;
     }
 }

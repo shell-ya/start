@@ -236,7 +236,7 @@ public class WalletServiceImpl implements WalletService {
             throw new StarException(StarError.IS_TRANSACTION);
         }
         AtomicReference<BigDecimal> curr = new AtomicReference<>();
-        if (redisLockUtils.lock(isTransactionKey, RedisKey.REDIS_TRANSACTION_ING.getTime())) {
+        if (redisLockUtils.lock(isTransactionKey, RedisKey.REDIS_TRANSACTION_ING.getTimeUnit().toSeconds(RedisKey.REDIS_TRANSACTION_ING.getTime()))) {
             template.execute(status -> {
                 //设置提现记录状态 -1
                 boolean aSuccess = walletRepository.updateWithdrawApply(cancelReq.getWithdrawSn(), -1);
@@ -304,6 +304,7 @@ public class WalletServiceImpl implements WalletService {
         return walletRepository.queryTransactionRecordByCondition(queryReq);
     }
 
+    // TODO need to optimize with method doTransaction(TransReq transReq)
     @Override
     public boolean rechargeProcess(@Validated RechargeVO rechargeVO) {
 
@@ -327,9 +328,9 @@ public class WalletServiceImpl implements WalletService {
                     rechargeVO.getTransSn(), StarConstants.Pay_Status.valueOf(walletRecordVO.getPayStatus()));
 
             //记录余额变动记录
-            boolean logWrite = walletRepository.createWalletLog(RechargeReq.builder().walletId(walletVO.getWalletId())
-                    .userId(walletVO.getUid()).money(rechargeVO.getTotalAmount()).currentMoney(curr).payChannel(rechargeVO.getPayChannel())
-                    .payNo(rechargeVO.getOrderSn()).build());
+            boolean logWrite = walletRepository.createWalletLog(WalletLogReq.builder().walletId(walletVO.getWalletId())
+                    .userId(walletVO.getUid()).offset(rechargeVO.getTotalAmount()).currentMoney(curr).payChannel(rechargeVO.getPayChannel())
+                    .orderNo(rechargeVO.getOrderSn()).build());
 
             //修改余额
             boolean balanceModify = walletRepository.modifyWalletBalance(WalletVO.builder().uid(Long.valueOf(rechargeVO.getUid()))
@@ -437,8 +438,40 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public WithdrawRecordVO queryWithDrawByTradeNo(String recordSn) {
-         return walletRepository.queryWithDrawRecordTradeNo(recordSn);
+        return walletRepository.queryWithDrawRecordTradeNo(recordSn);
     }
+
+    @Override
+    public boolean doTransaction(TransReq transReq) {
+
+        WalletVO walletVO = walletRepository.queryWallet(new WalletInfoReq(transReq.getUid()));
+
+        if (walletVO == null) {
+            throw new RuntimeException("未找到钱包");
+        }
+        //如果是负数 验证余额是否充足
+        if (transReq.getPayAmount().signum() == -1 && walletVO.getBalance().compareTo(transReq.getPayAmount().abs()) < 0) {
+            throw new StarException(StarError.BALANCE_NOT_ENOUGH);
+        }
+
+        BigDecimal curr = walletVO.getBalance().add(transReq.getPayAmount());
+
+        Boolean isSuccess = template.execute(status -> {
+            //记录钱包记录
+            boolean logWrite = walletRepository.createWalletLog(WalletLogReq.builder().walletId(walletVO.getWalletId())
+                    .userId(walletVO.getUid()).offset(transReq.getTotalAmount()).currentMoney(curr).payChannel(transReq.getPayChannel())
+                    .orderNo(transReq.getOrderSn()).build());
+            //修改余额
+            boolean balanceModify = walletRepository.modifyWalletBalance(WalletVO.builder().uid(Long.valueOf(transReq.getUid()))
+                    .balance(curr)
+                    .wallet_income(transReq.getPayAmount().signum() >= 0 ? curr : null)
+                    .wallet_outcome(transReq.getPayAmount().signum() == -1 ? curr : null)
+                    .build());
+            return logWrite && balanceModify;
+        });
+        return isSuccess;
+    }
+
 
 
 }

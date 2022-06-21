@@ -13,10 +13,7 @@ import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.common.utils.DateUtil;
 import com.starnft.star.common.utils.secure.AESUtil;
-import com.starnft.star.domain.wallet.model.req.RechargeReq;
-import com.starnft.star.domain.wallet.model.req.TransactionRecordQueryReq;
-import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
-import com.starnft.star.domain.wallet.model.req.WalletRecordReq;
+import com.starnft.star.domain.wallet.model.req.*;
 import com.starnft.star.domain.wallet.model.vo.*;
 import com.starnft.star.domain.wallet.repository.IWalletRepository;
 import com.starnft.star.infrastructure.entity.wallet.*;
@@ -103,8 +100,8 @@ public class WalletRepository implements IWalletRepository {
 
     @Override
     @Transactional
-    public boolean createWalletLog(RechargeReq rechargeReq) {
-        StarNftWalletLog starNftWalletLog = initWalletLog(rechargeReq);
+    public boolean createWalletLog(WalletLogReq walletLogReq) {
+        StarNftWalletLog starNftWalletLog = initWalletLog(walletLogReq);
         return starNftWalletLogMapper.createChargeLog(starNftWalletLog) == 1;
     }
 
@@ -465,20 +462,20 @@ public class WalletRepository implements IWalletRepository {
     /**
      * 填充钱包变化记录实体
      *
-     * @param rechargeReq 钱包变化记录信息
+     * @param walletLogReq 钱包变化记录信息
      * @return 钱包变化记录实体
      */
-    private StarNftWalletLog initWalletLog(RechargeReq rechargeReq) {
+    private StarNftWalletLog initWalletLog(WalletLogReq walletLogReq) {
         StarNftWalletLog starNftWalletLog = new StarNftWalletLog();
-        starNftWalletLog.setUid(rechargeReq.getUserId());
-        starNftWalletLog.setwId(rechargeReq.getWalletId());
-        starNftWalletLog.setBalanceOffset(rechargeReq.getMoney());
-        starNftWalletLog.setCurrentBalance(rechargeReq.getCurrentMoney());
-        starNftWalletLog.setRecordSn(rechargeReq.getPayNo());
+        starNftWalletLog.setUid(walletLogReq.getUserId());
+        starNftWalletLog.setwId(walletLogReq.getWalletId());
+        starNftWalletLog.setBalanceOffset(walletLogReq.getOffset());
+        starNftWalletLog.setCurrentBalance(walletLogReq.getCurrentMoney());
+        starNftWalletLog.setRecordSn(walletLogReq.getOrderNo());
         starNftWalletLog.setDisplay(0);
         starNftWalletLog.setCreatedAt(new Date());
-        starNftWalletLog.setCreatedBy(rechargeReq.getUserId());
-        starNftWalletLog.setChannel(rechargeReq.getPayChannel());
+        starNftWalletLog.setCreatedBy(walletLogReq.getUserId());
+        starNftWalletLog.setChannel(walletLogReq.getPayChannel());
 
         return starNftWalletLog;
     }

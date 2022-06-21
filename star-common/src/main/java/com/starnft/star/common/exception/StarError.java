@@ -71,7 +71,7 @@ public enum StarError {
 
     REQUEST_OVERFLOW_ERROR("100041", "人太多啦，请稍后再试吧！"),
 
-    GOODS_NOT_FOUND("100042", "下单的商品不存在"),
+    GOODS_NOT_FOUND("100042", "商品不存在"),
 
     ORDER_REPETITION("100043", "请勿重复下单"),
 

@@ -14,8 +14,8 @@
         <result property="stock" column="stock" jdbcType="INTEGER"/>
         <result property="goodsNum" column="goods_num" jdbcType="INTEGER"/>
         <result property="secCost" column="sec_cost" jdbcType="DECIMAL"/>
-        <result property="startTime" column="start_time" jdbcType="DATE"/>
-        <result property="endTime" column="end_time" jdbcType="DATE"/>
+        <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
+        <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
         <result property="goodsDesc" column="goods_desc" jdbcType="VARCHAR"/>
         <result property="status" column="status" jdbcType="TINYINT"/>
         <result property="version" column="version" jdbcType="INTEGER"/>
@@ -50,6 +50,7 @@
     <select id="queryByThemeId" resultMap="StarScheduleSeckillMap">
         select
         id,is_deleted,created_at,created_by,modified_at,modified_by,seller_id,spu_id,sku_id,stock,goods_num,sec_cost,start_time,end_time,goods_desc,status,version
+        from star_schedule_seckill
         <where>
             spu_id = #{themeId}
         </where>

@@ -12,15 +12,16 @@ public interface IPaymentHandler {
 
     //支付
     PaymentRes pay(PaymentRich payReq);
+
     //查单
     PayCheckRes orderCheck(PayCheckReq payCheckReq);
+
     //支付渠道
     StarConstants.PayChannel getPayChannel();
+
     //厂商信息
     StarConstants.Pay_Vendor getVendor();
 
-
-
-     RefundRes refund(RefundReq refundReq);
+    RefundRes refund(RefundReq refundReq);
 
 }

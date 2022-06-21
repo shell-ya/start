@@ -622,8 +622,8 @@ public class RedisUtil {
      * @param pattern
      * @return
      */
-    public Set hashKeys(String pattern) {
-        return this.redisTemplate.boundHashOps(pattern).keys();
+    public Set<Object> hashKeys(String pattern) {
+        return this.redisTemplate.opsForHash().keys(pattern);
     }
 
     /**

@@ -1,10 +1,7 @@
 package com.starnft.star.domain.wallet.repository;
 
 import com.starnft.star.common.page.ResponsePageResult;
-import com.starnft.star.domain.wallet.model.req.RechargeReq;
-import com.starnft.star.domain.wallet.model.req.TransactionRecordQueryReq;
-import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
-import com.starnft.star.domain.wallet.model.req.WalletRecordReq;
+import com.starnft.star.domain.wallet.model.req.*;
 import com.starnft.star.domain.wallet.model.vo.*;
 
 import java.util.List;
@@ -33,7 +30,7 @@ public interface IWalletRepository {
      * @param rechargeReq 充值变化请求
      * @return
      */
-    boolean createWalletLog(RechargeReq rechargeReq);
+    boolean createWalletLog(WalletLogReq rechargeReq);
 
     /**
      * 修改钱包余额
