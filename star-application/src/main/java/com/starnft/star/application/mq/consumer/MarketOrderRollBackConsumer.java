@@ -6,6 +6,7 @@ import com.starnft.star.domain.order.model.req.OrderListReq;
 import com.starnft.star.domain.order.model.res.OrderListRes;
 import com.starnft.star.domain.order.model.vo.MarketCancelOrderVo;
 import com.starnft.star.domain.order.service.IOrderService;
+import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.MessageModel;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
@@ -13,6 +14,7 @@ import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Objects;
 
 /**
  * @Date 2022/6/17 5:49 PM
@@ -33,17 +35,21 @@ public class MarketOrderRollBackConsumer implements RocketMQListener<MarketOrder
         //订单若仍是待支付状态 取消订单
         log.info("订单详情：{}", marketOrderStatus.toString());
 
-        //查看订单仍是支付中状态
-        OrderListRes orderListRes = orderService.orderDetails(new OrderListReq(0, 0, marketOrderStatus.getUserId(), marketOrderStatus.getStatus(), marketOrderStatus.getOrderSn()));
-        if (!StarConstants.ORDER_STATE.WAIT_PAY.getCode().equals(orderListRes.getStatus())){
-            log.info("用户：[{}]，订单:[{}]已完成",marketOrderStatus.getUserId(),marketOrderStatus.getOrderSn());
-            return;
+        OrderPlaceRes orderPlaceRes = orderService.orderCancel(marketOrderStatus.getUserId(), marketOrderStatus.getOrderSn(), StarConstants.OrderType.MARKET_GOODS);
+        if (orderPlaceRes == null || !Objects.equals(orderPlaceRes.getOrderStatus(), StarConstants.ORDER_STATE.PAY_CANCEL.getCode())) {
+            log.error("[{}] 数据修改异常 message = [{}]", this.getClass().getSimpleName(), marketOrderStatus);
         }
-        //仍是支付中 改为 取消状态 否则不处理
-        orderService.cancelOrder(
-                MarketCancelOrderVo.builder()
-                        .uid(marketOrderStatus.getUserId())
-                        .orderSn(marketOrderStatus.getOrderSn())
-                        .build());
+        //查看订单仍是支付中状态
+//        OrderListRes orderListRes = orderService.orderDetails(new OrderListReq(0, 0, marketOrderStatus.getUserId(), marketOrderStatus.getStatus(), marketOrderStatus.getOrderSn()));
+//        if (!StarConstants.ORDER_STATE.WAIT_PAY.getCode().equals(orderListRes.getStatus())){
+//            log.info("用户：[{}]，订单:[{}]已完成",marketOrderStatus.getUserId(),marketOrderStatus.getOrderSn());
+//            return;
+//        }
+//        //仍是支付中 改为 取消状态 否则不处理
+//        orderService.cancelOrder(
+//                MarketCancelOrderVo.builder()
+//                        .uid(marketOrderStatus.getUserId())
+//                        .orderSn(marketOrderStatus.getOrderSn())
+//                        .build());
     }
 }

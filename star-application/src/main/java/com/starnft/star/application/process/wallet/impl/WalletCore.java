@@ -89,7 +89,7 @@ public class WalletCore implements IWalletCore {
             throw new StarException(StarError.IS_TRANSACTION);
         }
         //锁定当前钱包交易
-        if (redisLockUtils.lock(isTransaction, RedisKey.REDIS_TRANSACTION_ING.getTime())) {
+        if (redisLockUtils.lock(isTransaction, RedisKey.REDIS_TRANSACTION_ING.getTimeUnit().toSeconds(RedisKey.REDIS_TRANSACTION_ING.getTime()))) {
             try {
                 //生成充值单状态为支付中
                 WalletRecordReq walletRecordReq = walletRecordInit(rechargeFacadeReq);

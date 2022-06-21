@@ -1,6 +1,5 @@
 package com.starnft.star.application.process.number.impl;
 
-import com.starnft.star.application.mq.producer.order.OrderProducer;
 import com.starnft.star.application.process.number.INumberCore;
 import com.starnft.star.application.process.number.res.ConsignDetailRes;
 import com.starnft.star.common.constant.StarConstants;
@@ -9,19 +8,15 @@ import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.Assert;
-import com.starnft.star.domain.component.RedisLockUtils;
-import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
 import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
 import com.starnft.star.domain.number.serivce.INumberService;
-import com.starnft.star.domain.order.service.IOrderService;
 import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.theme.service.ThemeService;
 import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
 import com.starnft.star.domain.wallet.service.WalletConfig;
-import com.starnft.star.domain.wallet.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,11 +39,11 @@ public class NumberCoreImpl implements INumberCore {
 
     private final INumberService numberService;
     private final ThemeService themeService;
-    private final WalletService walletService;
-    private final IOrderService orderService;
-    private final RedisUtil redisUtil;
-    private final RedisLockUtils redisLockUtils;
-    private final OrderProducer orderProducer;
+//    private final WalletService walletService;
+//    private final IOrderService orderService;
+//    private final RedisUtil redisUtil;
+//    private final RedisLockUtils redisLockUtils;
+//    private final OrderProducer orderProducer;
     @Resource
     private Map<StarConstants.Ids, IIdGenerator> map;
 

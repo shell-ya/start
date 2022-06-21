@@ -186,7 +186,7 @@ public class WalletServiceImpl implements WalletService {
         BigDecimal curr = null;
         try {
             //锁定当前钱包交易
-            if (redisLockUtils.lock(isTransactionKey, RedisKey.REDIS_TRANSACTION_ING.getTime())) {
+            if (redisLockUtils.lock(isTransactionKey, RedisKey.REDIS_TRANSACTION_ING.getTimeUnit().toSeconds(RedisKey.REDIS_TRANSACTION_ING.getTime()))) {
                 //查询钱包余额是否足够并将提现金额先扣除
                 WalletResult walletResult = queryWalletInfo(new WalletInfoReq(withDrawReq.getUid()));
                 //余额是否足够提现

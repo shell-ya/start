@@ -34,7 +34,7 @@ public class OrderSecRollbackConsumer implements RocketMQListener<OrderGrabStatu
         //防止用户在时间快结束时支付
         String lockKey = String.format(RedisKey.SECKILL_ORDER_TRANSACTION.getKey(), message.getOrderSn());
         try {
-            if (redisLockUtils.lock(lockKey, RedisKey.SECKILL_ORDER_TRANSACTION.getTime())) {
+            if (redisLockUtils.lock(lockKey, RedisKey.SECKILL_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.SECKILL_ORDER_TRANSACTION.getTime()))) {
                 OrderPlaceRes orderPlaceRes = orderService.orderCancel(message.getUid(), message.getOrderSn(), StarConstants.OrderType.PUBLISH_GOODS);
                 if (orderPlaceRes == null || !Objects.equals(orderPlaceRes.getOrderStatus(), StarConstants.ORDER_STATE.PAY_CANCEL.getCode())) {
                     log.error("[{}] 数据修改异常 message = [{}]", this.getClass().getSimpleName(), message);
