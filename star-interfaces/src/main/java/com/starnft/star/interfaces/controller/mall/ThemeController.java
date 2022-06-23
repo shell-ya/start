@@ -1,9 +1,13 @@
 package com.starnft.star.interfaces.controller.mall;
 
 import com.starnft.star.application.process.theme.ThemeCore;
+import com.starnft.star.application.process.theme.req.FirstLaunchThemesReq;
+import com.starnft.star.application.process.theme.res.FirstLaunchThemeRes;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.page.RequestPage;
+import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.theme.model.req.ThemeReq;
+import com.starnft.star.domain.theme.model.res.ThemeDetailRes;
 import com.starnft.star.domain.theme.model.res.ThemeRes;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
@@ -33,7 +37,7 @@ public class ThemeController {
     @PostMapping("/page/{id}")
     @ApiOperation("获取系列ID下所有主题 - 分页")
     @TokenIgnore
-    public RopResponse seriesTheme(@PathVariable @ApiParam("系列id") Long id, @RequestBody RequestPage requestPage) {
+    public RopResponse<ResponsePageResult<ThemeRes>> seriesTheme(@PathVariable @ApiParam("系列id") Long id, @RequestBody RequestPage requestPage) {
         return RopResponse.success(
                 this.themeCore
                         .queryMainThemeInfo(ThemeReq.builder()
@@ -47,7 +51,7 @@ public class ThemeController {
     @PostMapping("/detail/{id}")
     @ApiOperation("主题详情")
     @TokenIgnore
-    public RopResponse seriesTheme(@PathVariable @ApiParam("主题id") Long id) {
+    public RopResponse<ThemeDetailRes> seriesTheme(@PathVariable @ApiParam("主题id") Long id) {
         return RopResponse.success(this.themeCore.queryThemeDetail(id));
     }
 
@@ -56,6 +60,13 @@ public class ThemeController {
     @TokenIgnore
     public RopResponse<List<SecKillGoods>> seriesTheme() {
         return RopResponse.success(this.themeCore.querySecKillThemes());
+    }
+
+    @PostMapping("/firstLaunch")
+    @ApiOperation("获取首发主题")
+    @TokenIgnore
+    public RopResponse<ResponsePageResult<FirstLaunchThemeRes>> obtainFirstLaunchThemes(@RequestBody FirstLaunchThemesReq req) {
+        return RopResponse.success(this.themeCore.obtainFirstLaunchThemes(req));
     }
 
 }

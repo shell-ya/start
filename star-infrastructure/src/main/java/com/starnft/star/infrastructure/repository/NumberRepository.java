@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.page.PageMethod;
 import com.starnft.star.common.enums.NumberCirculationTypeEnum;
-import com.starnft.star.common.enums.UserNumberStatusEnum;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
@@ -89,7 +88,7 @@ public class NumberRepository implements INumberRepository {
     }
 
     @Override
-    public Boolean modifyNumberPriceAndStatus(NumberUpdateDTO param) {
+    public Boolean modifyNumberInfo(NumberUpdateDTO param) {
         return this.starNftThemeNumberMapper.updateById(
                 StarNftThemeNumber.builder()
                         .id(param.getNumberId())
@@ -132,18 +131,6 @@ public class NumberRepository implements INumberRepository {
     }
 
     @Override
-    public Boolean modifyUserNumberStatus(Long uid, Long numberId, UserNumberStatusEnum statusEnum) {
-        return this.starNftUserThemeMapper.update(StarNftUserTheme.builder()
-                        .status(statusEnum.getCode())
-                        .updateAt(new Date())
-                        .updateBy(String.valueOf(uid))
-                        .build(),
-                Wrappers.lambdaUpdate(StarNftUserTheme.class)
-                        .eq(StarNftUserTheme::getSeriesThemeId, numberId)
-                        .eq(StarNftUserTheme::getUserId, uid)) == 1;
-    }
-
-    @Override
     public ThemeNumberVo getConsignNumber(Long id) {
         return this.starNftThemeNumberMapper.selectConsignThemeNumberDetail(id);
     }
@@ -156,7 +143,7 @@ public class NumberRepository implements INumberRepository {
         StarNftThemeNumber starNftThemeNumber = new StarNftThemeNumber();
         starNftThemeNumber.setStatus(status);
 
-        return starNftThemeNumberMapper.update(starNftThemeNumber, wrapper) == 1;
+        return this.starNftThemeNumberMapper.update(starNftThemeNumber, wrapper) == 1;
     }
 
     @Override
@@ -168,15 +155,15 @@ public class NumberRepository implements INumberRepository {
         userTheme.setSource(userThemeMappingVO.getSource());
         userTheme.setCreateBy(userThemeMappingVO.getUserId());
         userTheme.setIsDelete(Boolean.FALSE);
-        return starNftUserThemeMapper.insert(userTheme) == 1;
+        return this.starNftUserThemeMapper.insert(userTheme) == 1;
     }
 
     @Override
     public ThemeNumberVo queryNumberExist(Integer themeNumber, Long themeId) {
         LambdaQueryWrapper<StarNftThemeNumber> wrapper = new LambdaQueryWrapper<>();
-        StarNftThemeNumber starNftThemeNumber = starNftThemeNumberMapper.selectOne(wrapper.eq(Objects.nonNull(themeNumber), StarNftThemeNumber::getThemeNumber, themeNumber)
+        StarNftThemeNumber starNftThemeNumber = this.starNftThemeNumberMapper.selectOne(wrapper.eq(Objects.nonNull(themeNumber), StarNftThemeNumber::getThemeNumber, themeNumber)
                 .eq(Objects.nonNull(themeId), StarNftThemeNumber::getSeriesThemeInfoId, themeId));
-        return copyToVO(starNftThemeNumber);
+        return this.copyToVO(starNftThemeNumber);
     }
 
     private ThemeNumberVo copyToVO(StarNftThemeNumber starNftThemeNumber) {
