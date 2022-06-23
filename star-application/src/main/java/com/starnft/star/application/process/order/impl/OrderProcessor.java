@@ -138,7 +138,7 @@ public class OrderProcessor implements IOrderProcessor {
                 WalletPayResult walletPayResult = walletService.doWalletPay(createWalletPayReq(orderPayReq));
                 if (ResultCode.SUCCESS.getCode().equals(walletPayResult.getStatus())) {
                     Boolean isSuccess = template.execute(status -> {
-                        //商品发放 // TODO: 2022/6/23  市场
+                        //商品发放 // TODO: 2022/6/23  市场 如果支付接口响应过慢 该操作可异步化 最终一致性即可
                         boolean handover = numberService.handover(buildHandOverReq(orderPayReq));
                         //订单状态更新
                         Result result = orderStateHandler.payComplete(orderPayReq.getUserId(), orderPayReq.getOrderSn(), orderPayReq.getOrderSn(), StarConstants.ORDER_STATE.WAIT_PAY);
