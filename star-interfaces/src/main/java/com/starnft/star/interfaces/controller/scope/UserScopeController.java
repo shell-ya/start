@@ -8,6 +8,7 @@ import com.starnft.star.domain.scope.model.res.ScoreRecordRes;
 import com.starnft.star.domain.scope.service.IScopeRecordService;
 import com.starnft.star.interfaces.interceptor.UserContext;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserScopeController {
 //    private final IScopeCore iScopeCore;
     private final IScopeRecordService iScopeRecordService;
-
+    @ApiOperation("基本记录")
     @PostMapping("/record")
     public RopResponse<ResponsePageResult<ScoreRecordRes>> record(@RequestBody RequestPage request){
         QueryScoreRecordReq queryScoreRecordReq = new QueryScoreRecordReq();
