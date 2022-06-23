@@ -29,7 +29,7 @@ public class StarNftUserScope implements Serializable {
     /**
      * 用户id
      */
-    @TableId(value = "user_id", type = IdType.INPUT)
+    @TableField(value = "user_id")
     @ApiModelProperty(value="用户id")
     private Long userId;
 

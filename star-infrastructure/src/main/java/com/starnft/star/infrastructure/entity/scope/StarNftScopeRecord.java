@@ -6,13 +6,14 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 @ApiModel(value="com-starnft-star-infrastructure-entity-scope-StarNftScopeRecord")
 @Data
@@ -25,7 +26,7 @@ public class StarNftScopeRecord implements Serializable {
     @ApiModelProperty(value="")
     private Long id;
 
-    @TableId(value = "user_id", type = IdType.INPUT)
+    @TableField(value = "user_id")
     @ApiModelProperty(value="")
     private Long userId;
 
