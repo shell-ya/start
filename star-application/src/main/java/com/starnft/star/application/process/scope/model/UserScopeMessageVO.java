@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 @Data
 public class UserScopeMessageVO implements Serializable {
-    private Integer eventCode;
+    private Integer eventGroup;
     private BigDecimal scope;
     private Long userId;
 }

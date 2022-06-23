@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.scope.StarNftScopeRecordMapper">
+  <resultMap id="BaseResultMap" type="com.starnft.star.infrastructure.entity.scope.StarNftScopeRecord">
+    <!--@mbg.generated-->
+    <!--@Table star_nft_scope_record-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <id column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="scope" jdbcType="DECIMAL" property="scope" />
+    <result column="mold" jdbcType="INTEGER" property="mold" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, user_id, `scope`, mold, remarks, created_at
+  </sql>
+</mapper>
