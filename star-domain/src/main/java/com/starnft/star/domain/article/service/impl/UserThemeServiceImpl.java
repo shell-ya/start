@@ -1,5 +1,6 @@
 package com.starnft.star.domain.article.service.impl;
 
+import com.starnft.star.common.enums.UserNumberStatusEnum;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.article.model.req.UserHaveNumbersReq;
 import com.starnft.star.domain.article.model.req.UserHaveSeriesReq;
@@ -17,18 +18,29 @@ import javax.annotation.Resource;
 public class UserThemeServiceImpl implements UserThemeService {
     @Resource
     IUserThemeRepository userThemeRepository;
+
     @Override
     public ResponsePageResult<UserSeriesVO> queryUserArticleSeriesInfo(UserHaveSeriesReq userHaveSeriesReq) {
-        return userThemeRepository.queryUserArticleSeriesInfo(userHaveSeriesReq);
+        return this.userThemeRepository.queryUserArticleSeriesInfo(userHaveSeriesReq);
     }
 
     @Override
     public ResponsePageResult<UserThemeVO> queryUserArticleThemeInfo(UserHaveThemeReq userHaveThemeReq) {
-        return userThemeRepository.queryUserArticleThemeInfo(userHaveThemeReq);
+        return this.userThemeRepository.queryUserArticleThemeInfo(userHaveThemeReq);
     }
 
     @Override
     public ResponsePageResult<UserNumbersVO> queryUserArticleNumberInfo(UserHaveNumbersReq userHaveNumbersReq) {
-        return userThemeRepository.queryUserArticleNumberInfo(userHaveNumbersReq);
+        return this.userThemeRepository.queryUserArticleNumberInfo(userHaveNumbersReq);
+    }
+
+    @Override
+    public UserNumbersVO queryUserNumberInfo(Long uid, Long numberId) {
+        return this.userThemeRepository.queryUserNumberInfo(uid, numberId);
+    }
+
+    @Override
+    public Boolean modifyUserNumberStatus(Long uid, Long numberId, UserNumberStatusEnum statusEnum) {
+        return this.userThemeRepository.modifyUserNumberStatus(uid, numberId, statusEnum);
     }
 }

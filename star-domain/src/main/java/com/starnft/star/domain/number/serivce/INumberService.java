@@ -2,8 +2,9 @@ package com.starnft.star.domain.number.serivce;
 
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
+import com.starnft.star.domain.number.model.dto.NumberUpdateDTO;
 import com.starnft.star.domain.number.model.req.HandoverReq;
-import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
 import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
@@ -17,10 +18,6 @@ public interface INumberService {
 
     ResponsePageResult<NumberVO> listNumber(RequestConditionPage<NumberQueryRequest> request);
 
-    Boolean consignment(Long uid, NumberConsignmentRequest request);
-
-    Boolean consignmentCancel(Long uid, Long numberId);
-
     ThemeNumberVo getConsignNumberDetail(Long id);
 
     //查询对应编号藏品信息
@@ -28,5 +25,10 @@ public interface INumberService {
 
     //物品转移
     boolean handover(HandoverReq handoverReq);
+
+
+    Boolean modifyNumberInfo(NumberUpdateDTO param);
+
+    Boolean saveNumberCirculationRecord(NumberCirculationAddDTO numberCirculation);
 
 }

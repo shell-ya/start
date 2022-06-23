@@ -2,12 +2,14 @@ package com.starnft.star.domain.article.model.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
 
 @Data
 @ApiModel
+@Builder
 public class UserNumbersVO {
     @ApiModelProperty("主题id")
     private Long themeId;
@@ -21,4 +23,6 @@ public class UserNumbersVO {
     private String themeImages;
     @ApiModelProperty("购买价格")
     private BigDecimal price;
+    @ApiModelProperty("状态")
+    private Integer status;
 }

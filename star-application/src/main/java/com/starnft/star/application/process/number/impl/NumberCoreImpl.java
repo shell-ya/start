@@ -3,11 +3,18 @@ package com.starnft.star.application.process.number.impl;
 import com.starnft.star.application.process.number.INumberCore;
 import com.starnft.star.application.process.number.res.ConsignDetailRes;
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.common.enums.NumberCirculationTypeEnum;
+import com.starnft.star.common.enums.NumberStatusEnum;
+import com.starnft.star.common.enums.UserNumberStatusEnum;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.Assert;
+import com.starnft.star.domain.article.model.vo.UserNumbersVO;
+import com.starnft.star.domain.article.service.UserThemeService;
+import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
+import com.starnft.star.domain.number.model.dto.NumberUpdateDTO;
 import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
 import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
@@ -21,10 +28,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -39,7 +48,8 @@ public class NumberCoreImpl implements INumberCore {
 
     private final INumberService numberService;
     private final ThemeService themeService;
-//    private final WalletService walletService;
+    private final UserThemeService userThemeService;
+    //    private final WalletService walletService;
 //    private final IOrderService orderService;
 //    private final RedisUtil redisUtil;
 //    private final RedisLockUtils redisLockUtils;
@@ -68,14 +78,78 @@ public class NumberCoreImpl implements INumberCore {
         return numberList;
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean consignment(Long uid, NumberConsignmentRequest request) {
-        return this.numberService.consignment(uid, request);
+        // 校验是否拥有该藏品
+        UserNumbersVO userNumbers = this.checkNumberOwner(uid, request.getNumberId());
+
+        if (!Objects.equals(userNumbers.getStatus(), UserNumberStatusEnum.PURCHASED.getCode())) {
+            throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "只有已购买状态的藏品才能进行转售");
+        }
+        // 修改商品价格和状态
+        Boolean updBool = this.numberService.modifyNumberInfo(
+                NumberUpdateDTO.builder()
+                        .uid(uid)
+                        .numberId(request.getNumberId())
+                        .price(request.getPrice())
+                        .status(NumberStatusEnum.ON_CONSIGNMENT)
+                        .build());
+        // 保存寄售记录
+        Boolean saveBool = this.numberService.saveNumberCirculationRecord(
+                NumberCirculationAddDTO.builder()
+                        .uid(uid)
+                        .numberId(request.getNumberId())
+                        .type(NumberCirculationTypeEnum.CONSIGNMENT)
+                        .beforePrice(userNumbers.getPrice())
+                        .afterPrice(request.getPrice())
+                        .build());
+
+        // 修改用户藏品状态
+        Boolean updUserNumberBool = this.userThemeService.modifyUserNumberStatus(uid, request.getNumberId(), UserNumberStatusEnum.ON_CONSIGNMENT);
+
+        if (updBool && saveBool && Boolean.TRUE.equals(updUserNumberBool)) {
+            return Boolean.TRUE;
+        }
+        throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "寄售失败");
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public Boolean consignmentCancel(Long uid, Long numberId) {
-        return this.numberService.consignmentCancel(uid, numberId);
+        Assert.notNull(numberId, () -> new StarException(StarError.PARAETER_UNSUPPORTED, "商品ID不能为空"));
+
+        // 校验是否拥有该藏品
+        UserNumbersVO userNumbers = this.checkNumberOwner(uid, numberId);
+
+        // 判断商品是否在寄售中
+        if (!Objects.equals(UserNumberStatusEnum.ON_CONSIGNMENT.getCode(), userNumbers.getStatus())) {
+            throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "该藏品不是是寄售状态 无法取消");
+        }
+
+        // 还原商品状态
+        Boolean updBool = this.numberService.modifyNumberInfo(
+                NumberUpdateDTO.builder()
+                        .uid(uid)
+                        .numberId(numberId)
+                        .status(NumberStatusEnum.SOLD)
+                        .build());
+
+        // 保存取消寄售记录
+        Boolean saveBool = this.numberService.saveNumberCirculationRecord(
+                NumberCirculationAddDTO.builder()
+                        .uid(uid)
+                        .numberId(numberId)
+                        .type(NumberCirculationTypeEnum.CANCEL_CONSIGNMENT)
+                        .build());
+
+        // 还原用户藏品状态
+        Boolean updUserNumberBool = this.userThemeService.modifyUserNumberStatus(uid, numberId, UserNumberStatusEnum.PURCHASED);
+
+        if (updBool && saveBool && updUserNumberBool) {
+            return Boolean.TRUE;
+        }
+        throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "取消寄售失败");
     }
 
     @Override
@@ -95,6 +169,12 @@ public class NumberCoreImpl implements INumberCore {
                 .copyrightRate(config.getCopyrightRate())
                 .serviceRate(config.getServiceRate())
                 .build();
+    }
+
+    private UserNumbersVO checkNumberOwner(Long uid, Long numberId) {
+        UserNumbersVO userNumberInfo = this.userThemeService.queryUserNumberInfo(uid, numberId);
+        Assert.notNull(userNumberInfo, () -> new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "你不是该藏品的拥有者 无法进行相关操作"));
+        return userNumberInfo;
     }
 
 }
