@@ -9,6 +9,7 @@ import com.starnft.star.common.enums.NumberCirculationTypeEnum;
 import com.starnft.star.common.enums.UserNumberStatusEnum;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
+import com.starnft.star.common.utils.SnowflakeWorker;
 import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
 import com.starnft.star.domain.number.model.dto.NumberCirculationDTO;
 import com.starnft.star.domain.number.model.dto.NumberQueryDTO;
@@ -161,7 +162,10 @@ public class NumberRepository implements INumberRepository {
     @Override
     public boolean createUserNumberMapping(UserThemeMappingVO userThemeMappingVO) {
         StarNftUserTheme userTheme = BeanColverUtil.colver(userThemeMappingVO, StarNftUserTheme.class);
+        userTheme.setId(SnowflakeWorker.generateId());
+        userTheme.setSeriesThemeInfoId(userThemeMappingVO.getSeriesThemeInfoId());
         userTheme.setCreateAt(new Date());
+        userTheme.setSource(userThemeMappingVO.getSource());
         userTheme.setCreateBy(userThemeMappingVO.getUserId());
         userTheme.setIsDelete(Boolean.FALSE);
         return starNftUserThemeMapper.insert(userTheme) == 1;

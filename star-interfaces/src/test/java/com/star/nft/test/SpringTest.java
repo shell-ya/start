@@ -7,8 +7,10 @@ import com.google.common.collect.Maps;
 import com.starnft.star.application.mq.IMessageSender;
 import com.starnft.star.application.mq.constant.TopicConstants;
 import com.starnft.star.application.process.notification.vo.NotificationVO;
+import com.starnft.star.application.process.order.IOrderProcessor;
+import com.starnft.star.application.process.order.model.req.OrderPayReq;
+import com.starnft.star.application.process.order.model.res.OrderPayDetailRes;
 import com.starnft.star.application.process.theme.ThemeCore;
-import com.starnft.star.application.process.wallet.req.PayRecordReq;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.template.FreeMakerTemplateHelper;
 import com.starnft.star.domain.payment.config.container.PayConf;
@@ -49,6 +51,29 @@ public class SpringTest {
     final MessageAdapter messageAdapter;
     final WalletService walletService;
     final ThemeCore themeCore;
+
+    final IOrderProcessor orderProcessor;
+
+
+    @Test
+    void orderPay() {
+        OrderPayReq orderPayReq = new OrderPayReq();
+        orderPayReq.setUserId(985174743233269760L);
+        orderPayReq.setOrderSn("PG989506609413750784");
+        orderPayReq.setPayAmount("10.00");
+        orderPayReq.setChannel(StarConstants.PayChannel.Balance.name());
+        orderPayReq.setFee("0.00");
+        orderPayReq.setFromUid(0L);
+        orderPayReq.setToUid(985174743233269760L);
+        orderPayReq.setTotalPayAmount("10.00");
+        orderPayReq.setNumberId(39L);
+        orderPayReq.setThemeId(6L);
+        orderPayReq.setSeriesId(2L);
+        orderPayReq.setType(3);
+        orderPayReq.setCategoryType(1);
+        OrderPayDetailRes orderPayDetailRes = orderProcessor.orderPay(orderPayReq);
+        System.out.println(JSON.toJSONString(orderPayDetailRes));
+    }
 
     @Test
     public void goods() {
@@ -132,11 +157,11 @@ public class SpringTest {
 
     @Test
     public void test() {
-        PayRecordReq payRecordReq = new PayRecordReq();
+        ;
 //        starNftDict.setDictDesc("1");
 //        String s = JSON.toJSONString(starNftDict);
 //        System.out.println(s);
-        JSONObject result = JSON.parseObject(JSON.toJSONString(payRecordReq,
+        JSONObject result = JSON.parseObject(JSON.toJSONString(new OrderPayReq(),
                 SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.WriteNullNumberAsZero));
         System.out.println(result.toJSONString());
     }

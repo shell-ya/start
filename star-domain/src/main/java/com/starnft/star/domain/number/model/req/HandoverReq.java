@@ -27,6 +27,9 @@ public class HandoverReq implements Serializable {
     @ApiModelProperty(value = "藏品id")
     private Long numberId;
 
+    @ApiModelProperty(value = "系列id")
+    private Long seriesId;
+
     @ApiModelProperty(value = "主题id")
     private Long themeId;
 

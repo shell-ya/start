@@ -120,6 +120,8 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
             log.error("藏品可能未上架 themeId:[] , themeNumber:[{}]", message.getGoods().getThemeId(), stockQueueId);
             throw new RuntimeException("查询藏品失败！");
         }
+        //todo 填充藏品厂商机构信息
+
         OrderVO orderVO = OrderVO.builder()
                 .userId(message.getUserId())
                 .orderSn(orderSn)

@@ -33,6 +33,13 @@ public class StarNftUserTheme implements Serializable {
     private Long id;
 
     /**
+     * 系列id
+     */
+    @TableField(value = "series_id")
+    @ApiModelProperty(value = "系列id")
+    private Long seriesId;;
+
+    /**
      * 主题信息id
      */
     @TableField(value = "series_theme_info_id")

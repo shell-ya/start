@@ -13,6 +13,11 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class UserThemeMappingVO implements Serializable {
 
+    /**
+     * 系列id
+     */
+    @ApiModelProperty(value = "系列id")
+    private Long seriesId;
 
     /**
      * 主题信息id

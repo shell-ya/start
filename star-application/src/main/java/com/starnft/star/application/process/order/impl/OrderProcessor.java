@@ -34,6 +34,7 @@ import com.starnft.star.domain.order.service.stateflow.impl.OrderStateHandler;
 import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.domain.theme.service.ThemeService;
+import com.starnft.star.domain.user.service.IUserService;
 import com.starnft.star.domain.wallet.model.req.WalletPayRequest;
 import com.starnft.star.domain.wallet.model.res.WalletPayResult;
 import com.starnft.star.domain.wallet.service.WalletService;
@@ -57,6 +58,7 @@ public class OrderProcessor implements IOrderProcessor {
     private final WalletService walletService;
     private final IOrderService orderService;
     private final RedisLockUtils redisLockUtils;
+    private final IUserService userService;
     private final INumberService numberService;
     private final OrderStateHandler orderStateHandler;
     private final Map<StarConstants.Ids, IIdGenerator> idsIIdGeneratorMap;
@@ -122,7 +124,10 @@ public class OrderProcessor implements IOrderProcessor {
 
     @Override
     public OrderPayDetailRes orderPay(OrderPayReq orderPayReq) {
+        //验证订单
 
+        //验证支付凭证
+//        userService.assertPayPwdCheckSuccess(orderPayReq.getUserId(), orderPayReq.getPayToken());
         //规则验证
         walletService.balanceVerify(orderPayReq.getUserId(), new BigDecimal(orderPayReq.getPayAmount()));
         String lockKey = String.format(RedisKey.SECKILL_ORDER_TRANSACTION.getKey(), orderPayReq.getOrderSn());
@@ -154,13 +159,16 @@ public class OrderProcessor implements IOrderProcessor {
 
     private HandoverReq buildHandOverReq(OrderPayReq orderPayReq) {
         HandoverReq handoverReq = new HandoverReq();
-        handoverReq.setToUid(orderPayReq.getUserId());
+        handoverReq.setUid(orderPayReq.getUserId());
         handoverReq.setFromUid(orderPayReq.getFromUid());// TODO: 2022/6/23 publish id
         handoverReq.setToUid(orderPayReq.getToUid());
         handoverReq.setPreMoney(new BigDecimal(orderPayReq.getPayAmount()));
         handoverReq.setCurrMoney(new BigDecimal(orderPayReq.getPayAmount()));
         handoverReq.setItemStatus(NumberStatusEnum.SOLD.getCode());
+        handoverReq.setThemeId(orderPayReq.getThemeId());
         handoverReq.setNumberId(orderPayReq.getNumberId());
+        handoverReq.setCategoryType(orderPayReq.getCategoryType());
+        handoverReq.setSeriesId(orderPayReq.getSeriesId());
         handoverReq.setType(NumberCirculationTypeEnum.PURCHASE.getCode());
         return handoverReq;
     }
@@ -171,6 +179,7 @@ public class OrderProcessor implements IOrderProcessor {
         BigDecimal payAmount = new BigDecimal(orderPayReq.getPayAmount());
         walletPayRequest.setTotalPayAmount(new BigDecimal(orderPayReq.getTotalPayAmount()));
         walletPayRequest.setFee(new BigDecimal(orderPayReq.getFee()));
+        walletPayRequest.setTotalPayAmount(new BigDecimal(orderPayReq.getTotalPayAmount()));
         walletPayRequest.setPayAmount(payAmount.signum() == -1 ? payAmount : payAmount.negate());
         return walletPayRequest;
     }

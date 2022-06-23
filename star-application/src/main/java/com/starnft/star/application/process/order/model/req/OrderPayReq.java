@@ -19,6 +19,9 @@ public class OrderPayReq implements Serializable {
     @ApiModelProperty(value = "to uid 购买方uid")
     private Long toUid;
 
+    @ApiModelProperty(value = "系列id")
+    private Long seriesId;
+
     @ApiModelProperty(value = "藏品id")
     private Long numberId;
 
@@ -43,9 +46,15 @@ public class OrderPayReq implements Serializable {
     @ApiModelProperty(value = "交易类型 充值1 提现2 买入3 卖出4 退款5")
     private Integer type;
 
+    @ApiModelProperty(value = "藏品类型 1藏品 2盲盒")
+    private Integer categoryType;
+
     @ApiModelProperty(value = "交易渠道 支付宝 AliPay，云闪付 UNION_PAY，微信 WeChatPay，银行卡 BankCard，" +
             "快捷绑卡支付 QuickCard，余额 Balance  市场交易 秒杀都仅能用余额支付，剩下的都是扩展预留")
     private String channel;
+
+    @ApiModelProperty(value = "支付密码校验凭证")
+    private String payToken;
 
 
 }

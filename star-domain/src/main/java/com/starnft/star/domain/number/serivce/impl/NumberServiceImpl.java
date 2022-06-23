@@ -192,6 +192,7 @@ public class NumberServiceImpl implements INumberService {
         userThemeMappingVO.setSeriesThemeId(handoverReq.getNumberId());
         userThemeMappingVO.setStatus(UserNumberStatusEnum.PURCHASED.getCode());
         userThemeMappingVO.setSource(handoverReq.getCategoryType());
+        userThemeMappingVO.setSeriesId(handoverReq.getSeriesId());
         userThemeMappingVO.setSeriesThemeInfoId(handoverReq.getThemeId());
         return userThemeMappingVO;
     }

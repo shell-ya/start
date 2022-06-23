@@ -169,7 +169,7 @@ public class WalletServiceImpl implements WalletService {
                 .payStatus(walletPayRequest.getStatus()).payChannel(walletPayRequest.getChannel())
                 .tsMoney(walletPayRequest.getTotalPayAmount()).to_uid(walletPayRequest.getToUid())
                 .from_uid(walletPayRequest.getFromUid()).tsCost(walletPayRequest.getPayAmount())
-                .tsFee(walletPayRequest.getFee()).build();
+                .tsType(walletPayRequest.getType()).tsFee(walletPayRequest.getFee()).build();
     }
 
     @Override
