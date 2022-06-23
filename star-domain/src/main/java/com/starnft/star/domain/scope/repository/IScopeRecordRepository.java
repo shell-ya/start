@@ -7,6 +7,6 @@ import com.starnft.star.domain.scope.model.res.ScoreRecordRes;
 
 public interface IScopeRecordRepository {
    ResponsePageResult<ScoreRecordRes>  queryScopeRecordPageByUserId(QueryScoreRecordReq  queryScoreRecordReq);
-   Boolean queryScopeRecordPagesByUserId(AddScoreRecordReq scoreRecordReq);
+   Boolean insertScopeRecord(AddScoreRecordReq scoreRecordReq);
 
 }
