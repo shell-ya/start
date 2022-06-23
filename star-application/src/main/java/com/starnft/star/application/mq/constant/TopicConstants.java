@@ -18,6 +18,8 @@ public enum TopicConstants {
 
     //市场订单延时取消 topic & tag
     MARKET_ORDER_ROLLBACK_DESTINATION("STAR-MARKET-ROLLBACK:%s", "rollback"),
+
+    CREDITS_PROCESS_DESTINATION("STAR-CREDIT:%s", "modify"),
     ;
 
     private String format;
