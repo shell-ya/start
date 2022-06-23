@@ -6,8 +6,10 @@ import com.starnft.star.application.process.number.res.MarketOrderRes;
 import com.starnft.star.application.process.order.IOrderProcessor;
 import com.starnft.star.application.process.order.model.req.OrderCancelReq;
 import com.starnft.star.application.process.order.model.req.OrderGrabReq;
+import com.starnft.star.application.process.order.model.req.OrderPayReq;
 import com.starnft.star.application.process.order.model.res.OrderGrabRes;
 import com.starnft.star.application.process.order.model.res.OrderGrabStatus;
+import com.starnft.star.application.process.order.model.res.OrderPayDetailRes;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
@@ -80,8 +82,16 @@ public class OrderController {
         return RopResponse.success(this.orderProcessor.obtainSecKillOrder(req));
     }
 
-    @ApiOperation("取消秒杀订单")
+    @ApiOperation("秒杀订单支付")
     @PostMapping("/killed/cancel")
+    public RopResponse<OrderPayDetailRes> killedCancel(@RequestBody OrderPayReq req) {
+        req.setUserId(UserContext.getUserId().getUserId());
+        return RopResponse.success(this.orderProcessor.orderPay(req));
+    }
+
+
+    @ApiOperation("取消秒杀订单")
+    @PostMapping("/killed/pay")
     public RopResponse<OrderPlaceRes> killedCancel(@RequestBody OrderCancelReq req) {
         req.setUid(UserContext.getUserId().getUserId());
         return RopResponse.success(this.orderProcessor.cancelSecOrder(req));
