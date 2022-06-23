@@ -2,14 +2,18 @@ package com.starnft.star.domain.article.model.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 @Data
 @ApiModel
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserNumbersVO {
     @ApiModelProperty("主题id")
     private Long themeId;
