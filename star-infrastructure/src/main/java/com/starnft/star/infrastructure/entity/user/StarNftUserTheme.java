@@ -65,7 +65,7 @@ public class StarNftUserTheme implements Serializable {
      */
     @TableField(value = "`source`")
     @ApiModelProperty(value = "购买来源(1-藏品 2-盲盒)")
-    private Boolean source;
+    private Integer source;
 
     /**
      * 税前价格

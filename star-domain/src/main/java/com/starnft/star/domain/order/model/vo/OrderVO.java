@@ -12,6 +12,8 @@ import java.util.Date;
 public class OrderVO implements Serializable {
 
     private Long userId;
+    /** 订单id */
+    private Long id;
     /** 订单编号 */
     private String orderSn;
     /** 主题信息 */
@@ -20,6 +22,8 @@ public class OrderVO implements Serializable {
     private Long seriesThemeInfoId;
     /** 系列id */
     private Long seriesId;
+    /** 藏品id */
+    private Long numberId;
     /** 主题编号 */
     private Integer themeNumber;
     /** 系列名称 */

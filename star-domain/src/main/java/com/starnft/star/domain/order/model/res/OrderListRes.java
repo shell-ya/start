@@ -13,6 +13,8 @@ import java.util.Date;
 @ApiModel("订单数据响应")
 public class OrderListRes implements Serializable {
 
+    @ApiModelProperty(value = "订单id")
+    private Long id;
     @ApiModelProperty(value = "订单号")
     private String orderSn;
     @ApiModelProperty(value = "主题编号")

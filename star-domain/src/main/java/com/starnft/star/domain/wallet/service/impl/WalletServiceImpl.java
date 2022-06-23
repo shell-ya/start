@@ -64,6 +64,8 @@ public class WalletServiceImpl implements WalletService {
     @Resource
     private TransactionTemplate template;
 
+    private ThreadLocal<Boolean> isVerified = new ThreadLocal<>();
+
     /**
      * @param channel
      * @author Ryan Z / haoran
@@ -82,6 +84,20 @@ public class WalletServiceImpl implements WalletService {
         if (exist) {
             throw new StarException(StarError.PARAETER_UNSUPPORTED, "渠道代码不存在！");
         }
+    }
+
+    @Override
+    public void balanceVerify(Long uid, BigDecimal money) {
+        WalletResult walletResult = queryWalletInfo(new WalletInfoReq(uid));
+        if (walletResult.getBalance().compareTo(money.abs()) < 0) {
+            throw new StarException(StarError.BALANCE_NOT_ENOUGH);
+        }
+        isVerified.set(Boolean.TRUE);
+    }
+
+    @Override
+    public void threadClear() {
+        this.isVerified.remove();
     }
 
     @Override
@@ -105,6 +121,55 @@ public class WalletServiceImpl implements WalletService {
         walletResult.setWallet_income(walletVO.getWallet_income());
         walletResult.setWallet_outcome(walletVO.getWallet_outcome());
         return walletResult;
+    }
+
+    @Override
+    public WalletPayResult doWalletPay(WalletPayRequest walletPayRequest) {
+        String isTransactionKey = String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(), walletPayRequest.getUserId());
+        try {
+            if (redisLockUtils.lock(isTransactionKey, RedisKey.REDIS_TRANSACTION_ING.getTimeUnit().toSeconds(RedisKey.REDIS_TRANSACTION_ING.getTime()))) {
+                Boolean isSuccess = template.execute(status -> {
+                    //创建或修改交易记录表
+                    boolean doRecord = false;
+                    if (walletPayRequest.getDoModifyRecord() == null) {
+                        doRecord = rechargeRecordGenerate(buildRecordReq(walletPayRequest));
+                    } else {
+                        Result result = walletPayRequest.getDoModifyRecord().get();
+                        doRecord = ResultCode.SUCCESS.getCode().equals(result.getCode());
+                    }
+                    //记录钱包log 修改余额
+                    boolean doTransaction = doTransaction(createTransReq(walletPayRequest));
+                    return doRecord && doTransaction;
+                });
+                if (isSuccess) {
+                    return new WalletPayResult(walletPayRequest.getOrderSn(), walletPayRequest.getOutTradeNo(), ResultCode.SUCCESS.getCode(), new Date());
+                }
+
+            }
+        } finally {
+            redisLockUtils.unlock(isTransactionKey);
+        }
+        throw new StarException(StarError.BALANCE_PAY_ERROR);
+    }
+
+    private TransReq createTransReq(WalletPayRequest walletPayRequest) {
+        TransReq transReq = new TransReq();
+        transReq.setOrderSn(walletPayRequest.getOrderSn());
+        transReq.setUid(walletPayRequest.getUserId());
+        transReq.setOutTradeNo(walletPayRequest.getOutTradeNo());
+        transReq.setPayAmount(walletPayRequest.getPayAmount());
+        transReq.setPayChannel(walletPayRequest.getChannel());
+        transReq.setTotalAmount(walletPayRequest.getTotalPayAmount());
+        transReq.setTsType(walletPayRequest.getType());
+        return transReq;
+    }
+
+    private WalletRecordReq buildRecordReq(WalletPayRequest walletPayRequest) {
+        return WalletRecordReq.builder().recordSn(walletPayRequest.getOrderSn()).payTime(new Date())
+                .payStatus(walletPayRequest.getStatus()).payChannel(walletPayRequest.getChannel())
+                .tsMoney(walletPayRequest.getTotalPayAmount()).to_uid(walletPayRequest.getToUid())
+                .from_uid(walletPayRequest.getFromUid()).tsCost(walletPayRequest.getPayAmount())
+                .tsFee(walletPayRequest.getFee()).build();
     }
 
     @Override
@@ -159,8 +224,7 @@ public class WalletServiceImpl implements WalletService {
             throw new StarException(StarError.OVER_WITHDRAW_MONEY);
         }
         //钱包交易状态中锁
-        String isTransactionKey = String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
-                new StringBuffer(String.valueOf(withDrawReq.getUid())).append(withDrawReq.getWalletId()));
+        String isTransactionKey = String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(), withDrawReq.getUid());
         //判断是否有正在进行的提现订单
         List<WithdrawRecordVO> records = walletRepository.usersWithdrawRecords(withDrawReq.getUid());
         for (WithdrawRecordVO record : records) {
@@ -189,9 +253,11 @@ public class WalletServiceImpl implements WalletService {
             if (redisLockUtils.lock(isTransactionKey, RedisKey.REDIS_TRANSACTION_ING.getTimeUnit().toSeconds(RedisKey.REDIS_TRANSACTION_ING.getTime()))) {
                 //查询钱包余额是否足够并将提现金额先扣除
                 WalletResult walletResult = queryWalletInfo(new WalletInfoReq(withDrawReq.getUid()));
-                //余额是否足够提现
-                if (walletResult.getBalance().compareTo(new BigDecimal(withDrawReq.getMoney())) <= 0) {
-                    throw new StarException(StarError.BALANCE_NOT_ENOUGH);
+                if (!isVerified.get()) {
+                    //余额是否足够提现
+                    if (walletResult.getBalance().compareTo(new BigDecimal(withDrawReq.getMoney())) <= 0) {
+                        throw new StarException(StarError.BALANCE_NOT_ENOUGH);
+                    }
                 }
                 curr = new BigDecimal(String.valueOf(walletResult.getBalance().subtract(new BigDecimal(withDrawReq.getMoney()).abs())));
                 Boolean isSuccess = template.execute(status -> {
@@ -229,8 +295,7 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public WithdrawResult withdrawCancel(WithdrawCancelReq cancelReq) {
         //钱包交易状态中锁
-        String isTransactionKey = String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
-                new StringBuffer(String.valueOf(cancelReq.getUid())).append(cancelReq.getWalletId()));
+        String isTransactionKey = String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(), cancelReq.getUid());
         //判断当前是否有其他交易正在进行
         if (redisUtil.hasKey(isTransactionKey)) {
             throw new StarException(StarError.IS_TRANSACTION);
@@ -445,17 +510,17 @@ public class WalletServiceImpl implements WalletService {
     public boolean doTransaction(TransReq transReq) {
 
         WalletVO walletVO = walletRepository.queryWallet(new WalletInfoReq(transReq.getUid()));
-
         if (walletVO == null) {
             throw new RuntimeException("未找到钱包");
         }
-        //如果是负数 验证余额是否充足
-        if (transReq.getPayAmount().signum() == -1 && walletVO.getBalance().compareTo(transReq.getPayAmount().abs()) < 0) {
-            throw new StarException(StarError.BALANCE_NOT_ENOUGH);
+        if (!isVerified.get()) {
+            //如果是负数 验证余额是否充足
+            if (transReq.getPayAmount().signum() == -1 && walletVO.getBalance().compareTo(transReq.getPayAmount().abs()) < 0) {
+                throw new StarException(StarError.BALANCE_NOT_ENOUGH);
+            }
         }
 
         BigDecimal curr = walletVO.getBalance().add(transReq.getPayAmount());
-
         Boolean isSuccess = template.execute(status -> {
             //记录钱包记录
             boolean logWrite = walletRepository.createWalletLog(WalletLogReq.builder().walletId(walletVO.getWalletId())
@@ -464,14 +529,13 @@ public class WalletServiceImpl implements WalletService {
             //修改余额
             boolean balanceModify = walletRepository.modifyWalletBalance(WalletVO.builder().uid(Long.valueOf(transReq.getUid()))
                     .balance(curr)
-                    .wallet_income(transReq.getPayAmount().signum() >= 0 ? curr : null)
-                    .wallet_outcome(transReq.getPayAmount().signum() == -1 ? curr : null)
+                    .wallet_income(transReq.getPayAmount().signum() >= 0 ? walletVO.getWallet_income().add(transReq.getPayAmount()) : null)
+                    .wallet_outcome(transReq.getPayAmount().signum() == -1 ? walletVO.getWallet_outcome().add(transReq.getPayAmount()) : null)
                     .build());
             return logWrite && balanceModify;
         });
         return isSuccess;
     }
-
 
 
 }

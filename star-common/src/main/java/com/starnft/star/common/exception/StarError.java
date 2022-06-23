@@ -48,6 +48,7 @@ public enum StarError {
     VALUE_COULD_NOT_BE_NULL("100022", "必须值不能为空"),
 
     BALANCE_NOT_ENOUGH("300001", "余额不足"),
+    BALANCE_PAY_ERROR("300012", "余额支付失败"),
 
 
     COS_ERROR("500001", "cos异常"),

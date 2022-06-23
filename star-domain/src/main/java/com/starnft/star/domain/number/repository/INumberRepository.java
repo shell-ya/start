@@ -10,6 +10,7 @@ import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
 import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
+import com.starnft.star.domain.number.model.vo.UserThemeMappingVO;
 
 public interface INumberRepository {
     ResponsePageResult<NumberVO> queryNumber(NumberReq numberReq);
@@ -27,5 +28,11 @@ public interface INumberRepository {
     Boolean modifyUserNumberStatus(Long uid, Long numberId, UserNumberStatusEnum statusEnum);
 
     ThemeNumberVo getConsignNumber(Long id);
+
+    boolean modifyNumberStatus(Long numberId, Long uid, Integer status);
+
+    boolean createUserNumberMapping(UserThemeMappingVO userThemeMappingVO);
+
+    ThemeNumberVo queryNumberExist(Integer themeNumber, Long themeId);
 
 }

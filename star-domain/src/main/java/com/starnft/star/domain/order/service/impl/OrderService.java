@@ -18,12 +18,10 @@ import com.starnft.star.domain.order.repository.IOrderRepository;
 import com.starnft.star.domain.order.service.IOrderService;
 import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
 import com.starnft.star.domain.order.service.stateflow.IOrderStateHandler;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class OrderService implements IOrderService {
@@ -57,7 +55,7 @@ public class OrderService implements IOrderService {
         Assert.notBlank(orderListReq.getOrderSn(), () -> {
             throw new StarException("订单号不能为空");
         });
-        OrderVO orderVO = this.orderRepository.queryOrderDetails(orderListReq.getUserId(), orderListReq.getOrderSn());
+        OrderVO orderVO = this.orderRepository.queryOrderDetails(orderListReq.getOrderId());
         return BeanColverUtil.colver(orderVO, OrderListRes.class);
     }
 
@@ -65,7 +63,7 @@ public class OrderService implements IOrderService {
     public OrderListRes obtainSecKillOrder(Long uid, Long themeId) {
         OrderVO orderVO = orderRepository.obtainSecKillOrder(uid, themeId);
         if (orderVO == null) return null;
-
+        //todo builder类型无法使用bean Copy
         return BeanColverUtil.colver(orderVO, OrderListRes.class);
     }
 

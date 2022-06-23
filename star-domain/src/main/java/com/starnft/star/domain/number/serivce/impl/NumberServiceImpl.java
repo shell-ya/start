@@ -13,16 +13,19 @@ import com.starnft.star.domain.number.model.OrderByEnum;
 import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
 import com.starnft.star.domain.number.model.dto.NumberQueryDTO;
 import com.starnft.star.domain.number.model.dto.NumberUpdateDTO;
+import com.starnft.star.domain.number.model.req.HandoverReq;
 import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
 import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
 import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
+import com.starnft.star.domain.number.model.vo.UserThemeMappingVO;
 import com.starnft.star.domain.number.repository.INumberRepository;
 import com.starnft.star.domain.number.serivce.INumberService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
 import java.util.Objects;
@@ -32,6 +35,9 @@ import java.util.Optional;
 public class NumberServiceImpl implements INumberService {
     @Resource
     INumberRepository numberRepository;
+
+    @Resource
+    TransactionTemplate template;
 
     @Override
     public ResponsePageResult<NumberVO> queryThemeNumber(NumberReq numberReq) {
@@ -148,11 +154,61 @@ public class NumberServiceImpl implements INumberService {
     @Override
     public ThemeNumberVo getConsignNumberDetail(Long id) {
         Optional.ofNullable(id)
-                .orElseThrow(() -> new StarException(StarError.VALUE_COULD_NOT_BE_NULL,"商品id不能为空"));
+                .orElseThrow(() -> new StarException(StarError.VALUE_COULD_NOT_BE_NULL, "商品id不能为空"));
         ThemeNumberVo consignNumber = this.numberRepository.getConsignNumber(id);
         Optional.ofNullable(consignNumber)
-                .orElseThrow(() -> new StarException(StarError.GOODS_NOT_FOUND,"商品已被购买"));
+                .orElseThrow(() -> new StarException(StarError.GOODS_NOT_FOUND, "商品已被购买"));
         return consignNumber;
+    }
+
+    @Override
+    public ThemeNumberVo queryNumberExist(Integer themeNumber, Long themeId) {
+        return numberRepository.queryNumberExist(themeNumber, themeId);
+    }
+
+    @Override
+    public boolean handover(HandoverReq handoverReq) {
+        NumberDetailVO numberDetail = numberRepository.getNumberDetail(handoverReq.getNumberId());
+
+        if (numberDetail == null) {
+            throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "未找到对应藏品");
+        }
+
+        return Boolean.TRUE.equals(template.execute(status -> {
+            //记录藏品变化log
+            Boolean logged = numberRepository.saveNumberCirculationRecord(createLog(handoverReq));
+            //修改藏品售卖状态
+            boolean modified = numberRepository.modifyNumberStatus(handoverReq.getNumberId(), handoverReq.getUid(), handoverReq.getItemStatus());
+            //创建用户藏品所属关系
+            boolean created = numberRepository.createUserNumberMapping(createMapping(handoverReq));
+            return logged && modified && created;
+        }));
+
+    }
+
+    private UserThemeMappingVO createMapping(HandoverReq handoverReq) {
+        UserThemeMappingVO userThemeMappingVO = new UserThemeMappingVO();
+        userThemeMappingVO.setUserId(String.valueOf(handoverReq.getUid()));
+        userThemeMappingVO.setSeriesThemeId(handoverReq.getNumberId());
+        userThemeMappingVO.setStatus(UserNumberStatusEnum.PURCHASED.getCode());
+        userThemeMappingVO.setSource(handoverReq.getCategoryType());
+        userThemeMappingVO.setSeriesThemeInfoId(handoverReq.getThemeId());
+        return userThemeMappingVO;
+    }
+
+    private NumberCirculationAddDTO createLog(HandoverReq handoverReq) {
+        return NumberCirculationAddDTO.builder().numberId(handoverReq.getNumberId())
+                .uid(handoverReq.getUid()).type(typeMapping(handoverReq.getType()))
+                .beforePrice(handoverReq.getPreMoney()).afterPrice(handoverReq.getCurrMoney()).build();
+    }
+
+    private NumberCirculationTypeEnum typeMapping(Integer type) {
+        for (NumberCirculationTypeEnum value : NumberCirculationTypeEnum.values()) {
+            if (value.getCode().equals(type)) {
+                return value;
+            }
+        }
+        return null;
     }
 
     private NumberDetailVO checkNumberOwner(Long uid, Long numberId) {

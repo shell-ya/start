@@ -82,8 +82,7 @@ public class WalletCore implements IWalletCore {
         //参数验证
         walletService.verifyParam(rechargeFacadeReq.getChannel());
 
-        String isTransaction = String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
-                new StringBuffer(String.valueOf(rechargeFacadeReq.getUserId())).append(rechargeFacadeReq.getWalletId()));
+        String isTransaction = String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(), rechargeFacadeReq.getUserId());
 
         if (redisUtil.hasKey(isTransaction)) {
             throw new StarException(StarError.IS_TRANSACTION);
@@ -183,9 +182,17 @@ public class WalletCore implements IWalletCore {
 
     @Override
     public WithdrawResult withdraw(WithDrawReq withDrawReq) {
+        //验证支付凭证
         userService.assertPayPwdCheckSuccess(withDrawReq.getUid(), withDrawReq.getPwdToken());
+        //验证参数合法性
         walletService.verifyParam(withDrawReq.getChannel());
-        return walletService.withdraw(withDrawReq);
+        //验证余额
+        walletService.balanceVerify(withDrawReq.getUid(), new BigDecimal(withDrawReq.getMoney()));
+        try {
+            return walletService.withdraw(withDrawReq);
+        } finally {
+            walletService.threadClear();
+        }
     }
 
     @Override

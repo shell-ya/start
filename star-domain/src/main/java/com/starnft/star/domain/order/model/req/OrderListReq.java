@@ -11,6 +11,9 @@ public class OrderListReq extends RequestPage implements Serializable {
 
     private Long userId;
 
+    @ApiModelProperty(value = "订单id")
+    private Long orderId;
+
     @ApiModelProperty(value = "订单号")
     private String orderSn;
 
@@ -22,6 +25,14 @@ public class OrderListReq extends RequestPage implements Serializable {
         this.userId = userId;
         this.status = status;
         this.orderSn = orderSn;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 
     public Long getUserId() {

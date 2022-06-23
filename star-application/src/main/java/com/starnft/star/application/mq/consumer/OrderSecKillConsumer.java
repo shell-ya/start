@@ -7,11 +7,12 @@ import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.activity.IActivitiesService;
 import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
+import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.service.IOrderService;
 import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
-import org.apache.rocketmq.spring.annotation.MessageModel;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.slf4j.Logger;
@@ -23,8 +24,7 @@ import java.util.Date;
 import java.util.Map;
 
 @Service
-@RocketMQMessageListener(topic = "${consumer.topic.seckill}", consumerGroup = "${consumer.group.seckill}",
-        selectorExpression = "ordered", messageModel = MessageModel.CLUSTERING)
+@RocketMQMessageListener(topic = "${consumer.topic.seckill}", consumerGroup = "${consumer.group.seckill}", selectorExpression = "ordered")
 public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
 
     private static final Logger log = LoggerFactory.getLogger(OrderSecKillConsumer.class);
@@ -39,6 +39,9 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
 
     @Resource
     private IActivitiesService activitiesService;
+
+    @Resource
+    private INumberService numberService;
 
     @Resource
     private Map<StarConstants.Ids, IIdGenerator> map;
@@ -110,6 +113,13 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
     }
 
     private boolean createPreOrder(String orderSn, OrderMessageReq message, int stockQueueId) {
+        //查询对应藏品编号是否存在
+        ThemeNumberVo themeNumberVo = numberService.queryNumberExist(stockQueueId, message.getGoods().getThemeId());
+
+        if (themeNumberVo == null) {
+            log.error("藏品可能未上架 themeId:[] , themeNumber:[{}]", message.getGoods().getThemeId(), stockQueueId);
+            throw new RuntimeException("查询藏品失败！");
+        }
         OrderVO orderVO = OrderVO.builder()
                 .userId(message.getUserId())
                 .orderSn(orderSn)
@@ -117,6 +127,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
                 .seriesId(message.getGoods().getSeriesId())
                 .seriesName(message.getGoods().getSeriesName())
                 .seriesThemeInfoId(message.getGoods().getThemeId())
+                .numberId(themeNumberVo.getNumberId())
                 .themeName(message.getGoods().getThemeName())
                 .payAmount(message.getGoods().getSecCost())
                 .themePic(message.getGoods().getThemePic())

@@ -5,16 +5,13 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.starnft.star.common.constant.RedisKey;
-import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.page.ResponsePageResult;
-import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.repository.IOrderRepository;
 import com.starnft.star.infrastructure.entity.order.StarNftOrder;
 import com.starnft.star.infrastructure.mapper.order.StarNftOrderMapper;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -106,6 +103,7 @@ public class OrderRepository implements IOrderRepository {
 
     private OrderVO populate(StarNftOrder starNftOrder) {
         return OrderVO.builder()
+                .id(starNftOrder.getId())
                 .userId(starNftOrder.getUserId())
                 .themeNumber(starNftOrder.getThemeNumber())
                 .totalAmount(starNftOrder.getTotalAmount())
@@ -125,14 +123,9 @@ public class OrderRepository implements IOrderRepository {
     }
 
     @Override
-    public OrderVO queryOrderDetails(Long uid, String orderSn) {
-        List<StarNftOrder> starNftOrders = queryOrdersUsers(uid);
-        for (StarNftOrder starNftOrder : starNftOrders) {
-            if (starNftOrder.getOrderSn().equals(orderSn)) {
-                return populate(starNftOrder);
-            }
-        }
-        return null;
+    public OrderVO queryOrderDetails(Long id) {
+        StarNftOrder starNftOrder = starNftOrderMapper.selectById(id);
+        return populate(starNftOrder);
     }
 
     @Override

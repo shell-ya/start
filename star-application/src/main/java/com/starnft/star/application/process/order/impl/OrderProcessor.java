@@ -12,29 +12,38 @@ import com.starnft.star.application.process.order.model.req.OrderPayReq;
 import com.starnft.star.application.process.order.model.res.OrderGrabRes;
 import com.starnft.star.application.process.order.model.res.OrderGrabStatus;
 import com.starnft.star.application.process.order.model.res.OrderPayDetailRes;
+import com.starnft.star.common.Result;
+import com.starnft.star.common.ResultCode;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.common.enums.NumberCirculationTypeEnum;
+import com.starnft.star.common.enums.NumberStatusEnum;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
+import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.number.model.req.HandoverReq;
 import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
 import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.order.model.res.OrderListRes;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.service.IOrderService;
 import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
+import com.starnft.star.domain.order.service.stateflow.impl.OrderStateHandler;
 import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.domain.theme.service.ThemeService;
-import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
-import com.starnft.star.domain.wallet.model.res.WalletResult;
+import com.starnft.star.domain.wallet.model.req.WalletPayRequest;
+import com.starnft.star.domain.wallet.model.res.WalletPayResult;
 import com.starnft.star.domain.wallet.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 @Slf4j
@@ -49,7 +58,10 @@ public class OrderProcessor implements IOrderProcessor {
     private final IOrderService orderService;
     private final RedisLockUtils redisLockUtils;
     private final INumberService numberService;
+    private final OrderStateHandler orderStateHandler;
     private final Map<StarConstants.Ids, IIdGenerator> idsIIdGeneratorMap;
+
+    private final TransactionTemplate template;
 
     @Override
     public OrderGrabRes orderGrab(OrderGrabReq orderGrabReq) {
@@ -61,10 +73,10 @@ public class OrderProcessor implements IOrderProcessor {
         }
 
         //用户下单次数验证 防重复下单
-        Long userOrderedCount = redisUtil.hincr(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUserId()), 1L);
-        if (userOrderedCount > 1) {
-            throw new StarException(StarError.ORDER_REPETITION);
-        }
+//        Long userOrderedCount = redisUtil.hincr(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUserId()), 1L);
+//        if (userOrderedCount > 1) {
+//            throw new StarException(StarError.ORDER_REPETITION);
+//        }
 
         //库存验证
         String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), orderGrabReq.getThemeId());
@@ -75,10 +87,7 @@ public class OrderProcessor implements IOrderProcessor {
         }
 
         //校验余额
-        WalletResult walletResult = walletService.queryWalletInfo(new WalletInfoReq(orderGrabReq.getUserId()));
-        if (walletResult.getBalance().doubleValue() < goods.getSecCost().doubleValue()) {
-            throw new StarException(StarError.BALANCE_NOT_ENOUGH);
-        }
+        walletService.balanceVerify(orderGrabReq.getUserId(), goods.getSecCost());
 
         try {
             //排队中状态
@@ -91,6 +100,8 @@ public class OrderProcessor implements IOrderProcessor {
         } catch (Exception e) {
             log.error("异步下单失败 uid:[{}] , themeId:[{}] ,time: [{}] , goods: [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), orderGrabReq.getTime(), goods, e);
             throw new RuntimeException(e);
+        } finally {
+            walletService.threadClear();
         }
     }
 
@@ -112,7 +123,56 @@ public class OrderProcessor implements IOrderProcessor {
     @Override
     public OrderPayDetailRes orderPay(OrderPayReq orderPayReq) {
 
-        return null;
+        //规则验证
+        walletService.balanceVerify(orderPayReq.getUserId(), new BigDecimal(orderPayReq.getPayAmount()));
+        String lockKey = String.format(RedisKey.SECKILL_ORDER_TRANSACTION.getKey(), orderPayReq.getOrderSn());
+        try {
+            //锁住当前订单交易
+            if (redisLockUtils.lock(lockKey, RedisKey.SECKILL_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.SECKILL_ORDER_TRANSACTION.getTime()))) {
+                //余额支付
+                WalletPayResult walletPayResult = walletService.doWalletPay(createWalletPayReq(orderPayReq));
+                if (ResultCode.SUCCESS.getCode().equals(walletPayResult.getStatus())) {
+                    Boolean isSuccess = template.execute(status -> {
+                        //商品发放 // TODO: 2022/6/23  市场
+                        boolean handover = numberService.handover(buildHandOverReq(orderPayReq));
+                        //订单状态更新
+                        Result result = orderStateHandler.payComplete(orderPayReq.getUserId(), orderPayReq.getOrderSn(), orderPayReq.getOrderSn(), StarConstants.ORDER_STATE.WAIT_PAY);
+                        return ResultCode.SUCCESS.getCode().equals(result.getCode()) && handover;
+                    });
+                    if (isSuccess) {
+                        return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn());
+                    }
+                    throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "订单处理异常！");
+                }
+            }
+        } finally {
+            walletService.threadClear();
+            redisLockUtils.unlock(lockKey);
+        }
+        throw new StarException(StarError.PAY_PROCESS_ERROR);
+    }
+
+    private HandoverReq buildHandOverReq(OrderPayReq orderPayReq) {
+        HandoverReq handoverReq = new HandoverReq();
+        handoverReq.setToUid(orderPayReq.getUserId());
+        handoverReq.setFromUid(orderPayReq.getFromUid());// TODO: 2022/6/23 publish id
+        handoverReq.setToUid(orderPayReq.getToUid());
+        handoverReq.setPreMoney(new BigDecimal(orderPayReq.getPayAmount()));
+        handoverReq.setCurrMoney(new BigDecimal(orderPayReq.getPayAmount()));
+        handoverReq.setItemStatus(NumberStatusEnum.SOLD.getCode());
+        handoverReq.setNumberId(orderPayReq.getNumberId());
+        handoverReq.setType(NumberCirculationTypeEnum.PURCHASE.getCode());
+        return handoverReq;
+    }
+
+    private WalletPayRequest createWalletPayReq(OrderPayReq orderPayReq) {
+        WalletPayRequest walletPayRequest = BeanColverUtil.colver(orderPayReq, WalletPayRequest.class);
+        walletPayRequest.setStatus(StarConstants.Pay_Status.PAY_SUCCESS.name());
+        BigDecimal payAmount = new BigDecimal(orderPayReq.getPayAmount());
+        walletPayRequest.setTotalPayAmount(new BigDecimal(orderPayReq.getTotalPayAmount()));
+        walletPayRequest.setFee(new BigDecimal(orderPayReq.getFee()));
+        walletPayRequest.setPayAmount(payAmount.signum() == -1 ? payAmount : payAmount.negate());
+        return walletPayRequest;
     }
 
     @Override
@@ -123,17 +183,15 @@ public class OrderProcessor implements IOrderProcessor {
 
     @Override
     public MarketOrderRes marketOrder(MarketOrderReq marketOrderReq) {
-        //钱包余额充足
-        WalletResult walletResult = walletService.queryWalletInfo(new WalletInfoReq(marketOrderReq.getUserId()));
+
         ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(marketOrderReq.getNumberId());
-        if (walletResult.getBalance().compareTo(numberDetail.getPrice()) < 0) {
-            throw new StarException(StarError.BALANCE_NOT_ENOUGH);
-        }
         //获取锁
         String isTransaction = String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), marketOrderReq.getNumberId());
         if (redisUtil.hasKey(isTransaction)) {
             throw new StarException(StarError.GOODS_NOT_FOUND);
         }
+        //钱包余额充足
+        walletService.balanceVerify(marketOrderReq.getUserId(), numberDetail.getPrice());
         long lockTimes = RedisKey.MARKET_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.MARKET_ORDER_TRANSACTION.getTime());
         if (redisLockUtils.lock(isTransaction, lockTimes)) {
             try {
@@ -148,6 +206,8 @@ public class OrderProcessor implements IOrderProcessor {
             } catch (Exception e) {
                 log.error("创建订单异常: userId: [{}] , themeNumberId: [{}] , context: [{}]", marketOrderReq.getUserId(), marketOrderReq.getNumberId(), numberDetail);
                 throw new RuntimeException(e.getMessage());
+            } finally {
+                walletService.threadClear();
             }
         }
         throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);

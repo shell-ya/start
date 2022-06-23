@@ -7,9 +7,9 @@
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="series_theme_info_id" jdbcType="BIGINT" property="seriesThemeInfoId"/>
         <result column="series_theme_id" jdbcType="BIGINT" property="seriesThemeId"/>
-        <result column="status" jdbcType="BOOLEAN" property="status"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
         <result column="user_id" jdbcType="VARCHAR" property="userId"/>
-        <result column="source" jdbcType="BOOLEAN" property="source"/>
+        <result column="source" jdbcType="INTEGER" property="source"/>
         <result column="pre_tax_price" jdbcType="DECIMAL" property="preTaxPrice"/>
         <result column="platform_tax" jdbcType="DECIMAL" property="platformTax"/>
         <result column="copyright_tax" jdbcType="DECIMAL" property="copyrightTax"/>

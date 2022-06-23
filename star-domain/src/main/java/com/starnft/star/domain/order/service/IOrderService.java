@@ -22,8 +22,6 @@ public interface IOrderService {
     //秒杀订单缓存查询
     OrderListRes obtainSecKillOrder(Long uid, Long themeId);
 
-    //订单支付状态回写
-
     //取消订单
     OrderPlaceRes orderCancel(Long uid, String orderSn, StarConstants.OrderType orderType);
 

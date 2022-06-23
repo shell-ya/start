@@ -8,6 +8,7 @@ import com.starnft.star.domain.wallet.model.vo.RechargeVO;
 import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
 import com.starnft.star.domain.wallet.model.vo.WithdrawRecordVO;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface WalletService {
@@ -15,8 +16,17 @@ public interface WalletService {
     //渠道参数验证
     void verifyParam(String channel);
 
+    //校验余额
+    void balanceVerify(Long uid, BigDecimal money);
+
+    //清理threadLocal
+    void threadClear();
+
     //钱包余额查询
     WalletResult queryWalletInfo(WalletInfoReq walletInfoReq);
+
+    //钱包余额支付
+    WalletPayResult doWalletPay(WalletPayRequest walletPayRequest);
 
     //生成预充值记录
     boolean rechargeRecordGenerate(WalletRecordReq walletRecordReq);
@@ -62,4 +72,5 @@ public interface WalletService {
 
     //交易操作
     boolean doTransaction(TransReq transReq);
+
 }

@@ -3,8 +3,6 @@ package com.starnft.star.domain.order.repository;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 
-import java.util.List;
-
 public interface IOrderRepository {
 
     //下单
@@ -19,7 +17,7 @@ public interface IOrderRepository {
     //查询用户下订单 可按状态查询 查全部 状态传null
     ResponsePageResult<OrderVO> queryOrders(Long uid, Integer status, int page, int size);
 
-    OrderVO queryOrderDetails(Long uid, String orderSn);
+    OrderVO queryOrderDetails(Long id);
 
     //查询秒杀缓存订单
     OrderVO obtainSecKillOrder(Long uid, Long themeId);

@@ -22,9 +22,12 @@ public interface IOrderProcessor {
     //查询用户下单订单状态
     OrderGrabStatus obtainSecKIllStatus(OrderGrabReq orderGrabReq);
 
+    //订单支付
     OrderPayDetailRes orderPay(OrderPayReq orderPayReq);
 
+    //秒杀订单取消
     OrderPlaceRes cancelSecOrder(OrderCancelReq orderGrabReq);
+
     //市场下单
     MarketOrderRes marketOrder(MarketOrderReq marketOrderReq);
 }
