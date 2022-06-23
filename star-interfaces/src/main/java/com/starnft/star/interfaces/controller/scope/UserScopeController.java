@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Api(tags = "积分接口「WalletController」")
+@Api(tags = "积分接口「UserScopeController」")
 @RequestMapping(value = "/scope")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserScopeController {
