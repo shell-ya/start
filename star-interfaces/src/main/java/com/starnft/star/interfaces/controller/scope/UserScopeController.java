@@ -1,6 +1,5 @@
 package com.starnft.star.interfaces.controller.scope;
 
-import com.starnft.star.application.process.scope.IScopeCore;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.page.RequestPage;
 import com.starnft.star.common.page.ResponsePageResult;
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/scope")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserScopeController {
-    private final IScopeCore iScopeCore;
+//    private final IScopeCore iScopeCore;
     private final IScopeRecordService iScopeRecordService;
 
     @PostMapping("/record")
