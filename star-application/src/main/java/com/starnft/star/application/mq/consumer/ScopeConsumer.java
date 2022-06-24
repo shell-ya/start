@@ -12,7 +12,7 @@ import javax.annotation.Resource;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@RocketMQMessageListener(topic = "${consumer.topic.credits}", consumerGroup = "${consumer.group.credits}", selectorExpression = "unread")
+@RocketMQMessageListener(topic = "${consumer.topic.credits}", consumerGroup = "${consumer.group.credits}", selectorExpression = "modify")
 public class ScopeConsumer implements RocketMQListener<UserScopeMessageVO> {
    @Resource
     IScopeCore iScopeCore;

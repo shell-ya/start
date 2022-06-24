@@ -8,7 +8,7 @@ import com.starnft.star.domain.scope.service.IUserScopeService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.Objects;
+import java.util.List;
 
 @Component
 public class ScopeCopeImpl implements IScopeCore {
@@ -21,8 +21,8 @@ public class ScopeCopeImpl implements IScopeCore {
         //获取是事件
         Integer eventGroup = userScopeMessageVO.getEventGroup();
         //查询不到积分配置直接返回不进行积分操作
-        ScopeConfigRes scopeConfigRes = iScopeConfigService.queryScoreConfigByCode(eventGroup);
-        if (Objects.isNull(scopeConfigRes)) return;
+        List<ScopeConfigRes> scopeConfigRes1 = iScopeConfigService.queryScoreConfigByCode(eventGroup);
+//        if (Objects.isNull(scopeConfigRes)) return;
 
 
     }

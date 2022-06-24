@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 public class UserScopeRes {
+    private Integer scopeType;
     private Long userId;
     private BigDecimal scope;
 

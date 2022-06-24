@@ -2,7 +2,9 @@ package com.starnft.star.domain.scope.service;
 
 import com.starnft.star.domain.scope.model.res.ScopeConfigRes;
 
+import java.util.List;
+
 public interface IScopeConfigService {
 
- ScopeConfigRes queryScoreConfigByCode(Integer code);
+ List<ScopeConfigRes> queryScoreConfigByCode(Integer code);
 }

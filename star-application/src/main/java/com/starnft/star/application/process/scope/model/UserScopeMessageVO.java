@@ -9,5 +9,6 @@ import java.math.BigDecimal;
 public class UserScopeMessageVO implements Serializable {
     private Integer eventGroup;
     private BigDecimal scope;
+    private Integer scopeType;
     private Long userId;
 }

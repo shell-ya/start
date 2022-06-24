@@ -13,5 +13,4 @@ public class ScopeConfigRes {
 
     private Integer eventStatus;
 
-
 }

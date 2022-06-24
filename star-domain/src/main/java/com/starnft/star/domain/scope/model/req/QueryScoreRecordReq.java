@@ -12,4 +12,5 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class QueryScoreRecordReq  extends RequestPage {
     private Long userId;
+    private Integer scopeType;
 }
