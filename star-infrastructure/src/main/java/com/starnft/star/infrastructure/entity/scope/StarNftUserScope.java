@@ -53,6 +53,9 @@ public class StarNftUserScope implements Serializable {
     @TableField(value = "modified_at")
     @ApiModelProperty(value="更新时间")
     private Date modifiedAt;
+    @TableField(value = "scope_type")
+    @ApiModelProperty(value="积分类型")
+    private Integer scopeType;
     @TableField(value = "version")
     @ApiModelProperty(value="版本号")
     private Integer version;
@@ -68,4 +71,5 @@ public class StarNftUserScope implements Serializable {
 
     public static final String COL_MODIFIED_AT = "modified_at";
     public static final String COL_VERSION = "version";
+    public static final String COL_SCOPE_TYPE = "scope_type";
 }

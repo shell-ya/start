@@ -9,4 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserScopeReq {
     private  Long userId;
+    private Integer scopeType;
 }

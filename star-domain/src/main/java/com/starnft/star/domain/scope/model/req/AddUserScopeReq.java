@@ -6,4 +6,5 @@ import java.math.BigDecimal;
 public class AddUserScopeReq {
     private Long userId;
     private BigDecimal scope;
+    private Integer scopeType;
 }
