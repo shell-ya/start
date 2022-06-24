@@ -54,7 +54,7 @@ public class UserThemeRepository implements IUserThemeRepository, PageHelperInte
     public UserNumbersVO queryUserNumberInfo(Long uid, Long numberId) {
         StarNftUserTheme starNftUserTheme = this.starNftUserThemeMapper.selectOne(Wrappers.lambdaQuery(StarNftUserTheme.class)
                 .eq(StarNftUserTheme::getUserId, uid)
-                .eq(StarNftUserTheme::getSeriesThemeInfoId, numberId));
+                .eq(StarNftUserTheme::getSeriesThemeId, numberId));
         if (Objects.isNull(starNftUserTheme)) {
             return null;
         }

@@ -1,8 +1,6 @@
 package com.starnft.star.interfaces.controller.mall;
 
 import com.starnft.star.application.process.theme.ThemeCore;
-import com.starnft.star.application.process.theme.req.FirstLaunchThemesReq;
-import com.starnft.star.application.process.theme.res.FirstLaunchThemeRes;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.page.RequestPage;
 import com.starnft.star.common.page.ResponsePageResult;
@@ -60,13 +58,6 @@ public class ThemeController {
     @TokenIgnore
     public RopResponse<List<SecKillGoods>> seriesTheme() {
         return RopResponse.success(this.themeCore.querySecKillThemes());
-    }
-
-    @PostMapping("/firstLaunch")
-    @ApiOperation("获取首发主题")
-    @TokenIgnore
-    public RopResponse<ResponsePageResult<FirstLaunchThemeRes>> obtainFirstLaunchThemes(@RequestBody FirstLaunchThemesReq req) {
-        return RopResponse.success(this.themeCore.obtainFirstLaunchThemes(req));
     }
 
 }

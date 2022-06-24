@@ -83,15 +83,15 @@ public class OrderController {
     }
 
     @ApiOperation("秒杀订单支付")
-    @PostMapping("/killed/cancel")
-    public RopResponse<OrderPayDetailRes> killedCancel(@RequestBody OrderPayReq req) {
+    @PostMapping("/killed/pay")
+    public RopResponse<OrderPayDetailRes> orderPay(@RequestBody OrderPayReq req) {
         req.setUserId(UserContext.getUserId().getUserId());
         return RopResponse.success(this.orderProcessor.orderPay(req));
     }
 
 
     @ApiOperation("取消秒杀订单")
-    @PostMapping("/killed/pay")
+    @PostMapping("/killed/cancel")
     public RopResponse<OrderPlaceRes> killedCancel(@RequestBody OrderCancelReq req) {
         req.setUid(UserContext.getUserId().getUserId());
         return RopResponse.success(this.orderProcessor.cancelSecOrder(req));

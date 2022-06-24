@@ -5,6 +5,7 @@ import com.starnft.star.application.process.order.model.dto.OrderMessageReq;
 import com.starnft.star.application.process.order.model.res.OrderGrabStatus;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.common.utils.SnowflakeWorker;
 import com.starnft.star.domain.activity.IActivitiesService;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
@@ -123,6 +124,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
         //todo 填充藏品厂商机构信息
 
         OrderVO orderVO = OrderVO.builder()
+                .id(SnowflakeWorker.generateId())
                 .userId(message.getUserId())
                 .orderSn(orderSn)
                 .payAmount(message.getGoods().getSecCost())
@@ -130,6 +132,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
                 .seriesName(message.getGoods().getSeriesName())
                 .seriesThemeInfoId(message.getGoods().getThemeId())
                 .numberId(themeNumberVo.getNumberId())
+                .seriesThemeId(themeNumberVo.getNumberId())
                 .themeName(message.getGoods().getThemeName())
                 .payAmount(message.getGoods().getSecCost())
                 .themePic(message.getGoods().getThemePic())
@@ -138,6 +141,8 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
                 .themeNumber(stockQueueId)
                 .status(0)
                 .createdAt(new Date())
+                .expire(180L)
+                .orderType(StarConstants.OrderType.PUBLISH_GOODS.getName())
                 .build();
         //创建订单
         boolean isSuccess = orderService.createOrder(orderVO);

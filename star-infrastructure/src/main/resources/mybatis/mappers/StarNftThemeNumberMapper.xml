@@ -7,7 +7,7 @@
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="series_theme_info_id" jdbcType="BIGINT" property="seriesThemeInfoId"/>
         <result column="theme_number" jdbcType="BIGINT" property="themeNumber"/>
-        <result column=" contract_address" jdbcType="VARCHAR" property="contractAddress"/>
+        <result column="contract_address" jdbcType="VARCHAR" property="contractAddress"/>
         <result column="chain_identification" jdbcType="VARCHAR" property="chainIdentification"/>
         <result column="price" jdbcType="DECIMAL" property="price"/>
         <result column="status" jdbcType="BOOLEAN" property="status"/>

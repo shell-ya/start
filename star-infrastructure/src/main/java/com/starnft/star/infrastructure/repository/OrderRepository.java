@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
 import com.starnft.star.common.constant.RedisKey;
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.order.model.vo.OrderVO;
@@ -119,6 +120,8 @@ public class OrderRepository implements IOrderRepository {
                 .remark(starNftOrder.getRemark())
                 .seriesThemeId(starNftOrder.getSeriesThemeId())
                 .status(starNftOrder.getStatus())
+                .expire(180L)
+                .orderType(starNftOrder.getOrderSn().startsWith("PG") ? StarConstants.OrderType.PUBLISH_GOODS.getName() : StarConstants.OrderType.MARKET_GOODS.getName())
                 .build();
     }
 
