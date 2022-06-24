@@ -7,7 +7,6 @@ import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.order.service.IOrderService;
 import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.spring.annotation.MessageModel;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.stereotype.Service;
@@ -17,8 +16,7 @@ import java.util.Objects;
 
 @Slf4j
 @Service
-@RocketMQMessageListener(topic = "${consumer.topic.secrollback}", consumerGroup = "${consumer.group.secrollback}"
-        , selectorExpression = "rollback", messageModel = MessageModel.CLUSTERING)
+@RocketMQMessageListener(topic = "${consumer.topic.secrollback}", consumerGroup = "${consumer.group.secrollback}", selectorExpression = "rollback")
 public class OrderSecRollbackConsumer implements RocketMQListener<OrderGrabStatus> {
 
 
