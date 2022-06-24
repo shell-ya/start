@@ -60,6 +60,7 @@ public class ScopeRecordRepository implements IScopeRecordRepository, PageHelper
         starNftScopeRecord.setMold(scoreRecordReq.getMold());
         starNftScopeRecord.setRemarks(scoreRecordReq.getRemarks());
         starNftScopeRecord.setUserId(scoreRecordReq.getUserId());
+        starNftScopeRecord.setScopeType(scoreRecordReq.getScopeType());
          return starNftScopeRecordMapper.insert(starNftScopeRecord)>0?Boolean.TRUE:Boolean.FALSE;
     }
 }

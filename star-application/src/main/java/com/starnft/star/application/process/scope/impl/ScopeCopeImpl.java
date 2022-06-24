@@ -32,22 +32,36 @@ public class ScopeCopeImpl implements IScopeCore {
         Integer eventGroup = userScopeMessageVO.getEventGroup();
         //查询不到积分配置直接返回不进行积分操作
         List<ScopeConfigRes> scopeConfigRes = iScopeConfigService.queryScoreConfigByCode(eventGroup);
-        scopeConfigRes.stream().filter(item -> item.getScopeType().equals(userScopeMessageVO.getScopeType()))
-                .findAny()
-                .ifPresent((scopeConfig) -> {
-                    UpdateUserScopeReq updateUserScopeReq = new UpdateUserScopeReq();
-                    updateUserScopeReq.setUserId(userScopeMessageVO.getUserId());
-                    updateUserScopeReq.setScopeType(userScopeMessageVO.getScopeType());
-                    updateUserScopeReq.setScope(userScopeMessageVO.getScope());
-                    iUserScopeService.updateUserScopeByUserId(updateUserScopeReq);
-                    AddScoreRecordReq addScoreRecordReq = new AddScoreRecordReq();
-                    addScoreRecordReq.setScope(userScopeMessageVO.getScope());
-                    addScoreRecordReq.setUserId(userScopeMessageVO.getUserId());
-                    addScoreRecordReq.setRemarks(String.format(scopeConfig.getEventDesc(), userScopeMessageVO.getScope().toString()));
-                    addScoreRecordReq.setCreatedAt(new Date());
-                    addScoreRecordReq.setMold(userScopeMessageVO.getScope().compareTo(BigDecimal.ZERO)<=0?0:1);
-                    iScopeRecordService.insertScopeRecord(addScoreRecordReq);
-                });
+        for (ScopeConfigRes scopeConfig : scopeConfigRes) {
+            UpdateUserScopeReq updateUserScopeReq = getUpdateUserScopeReq(userScopeMessageVO, scopeConfig);
+            iUserScopeService.updateUserScopeByUserId(updateUserScopeReq);
+            AddScoreRecordReq addScoreRecordReq = getAddScoreRecordReq(userScopeMessageVO, scopeConfig);
+            iScopeRecordService.insertScopeRecord(addScoreRecordReq);
+        }
 
+    }
+
+
+
+
+
+
+    private UpdateUserScopeReq getUpdateUserScopeReq(UserScopeMessageVO userScopeMessageVO, ScopeConfigRes scopeConfig) {
+        UpdateUserScopeReq updateUserScopeReq = new UpdateUserScopeReq();
+        updateUserScopeReq.setUserId(userScopeMessageVO.getUserId());
+        updateUserScopeReq.setScopeType(scopeConfig.getScopeType());
+        updateUserScopeReq.setScope(userScopeMessageVO.getScope());
+        return updateUserScopeReq;
+    }
+
+    private AddScoreRecordReq getAddScoreRecordReq(UserScopeMessageVO userScopeMessageVO, ScopeConfigRes scopeConfig) {
+        AddScoreRecordReq addScoreRecordReq = new AddScoreRecordReq();
+        addScoreRecordReq.setScope(userScopeMessageVO.getScope());
+        addScoreRecordReq.setUserId(userScopeMessageVO.getUserId());
+        addScoreRecordReq.setRemarks(String.format(scopeConfig.getEventDesc(), userScopeMessageVO.getScope().toString()));
+        addScoreRecordReq.setCreatedAt(new Date());
+        addScoreRecordReq.setScopeType(scopeConfig.getScopeType());
+        addScoreRecordReq.setMold(userScopeMessageVO.getScope().compareTo(BigDecimal.ZERO)<=0?0:1);
+        return addScoreRecordReq;
     }
 }

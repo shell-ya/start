@@ -21,22 +21,15 @@ public class UserScopeServiceImpl  implements IUserScopeService {
     @Transactional
     @Override
     public UserScopeRes updateUserScopeByUserId(UpdateUserScopeReq updateUserScopeReq) {
-        UserScopeReq userScopeReq = new UserScopeReq();
-        userScopeReq.setUserId(updateUserScopeReq.getUserId());
+        UserScopeReq userScopeReq = getUserScopeReq(updateUserScopeReq);
         UserScopeRes resultUserScopeRes = userScopeRepository.queryUserScopeByUserId(userScopeReq);
        if (Objects.nonNull(resultUserScopeRes)){
            UpdateUserScopeReq insertScope = new UpdateUserScopeReq();
-           BigDecimal totalScope = resultUserScopeRes.getScope().add(updateUserScopeReq.getScope());
-           insertScope.setScope(totalScope);
-           insertScope.setScope(totalScope);
-           insertScope.setUserId(userScopeReq.getUserId());
-           insertScope.setVersion(resultUserScopeRes.getVersion());
+           extractedUpdateUserScope(updateUserScopeReq, userScopeReq, resultUserScopeRes, insertScope);
            userScopeRepository.updateUserScopeByUserId(insertScope);
        }else{
            AddUserScopeReq addUserScopeReq = new AddUserScopeReq();
-           addUserScopeReq.setScope(updateUserScopeReq.getScope());
-           addUserScopeReq.setUserId(userScopeReq.getUserId());
-           resultUserScopeRes.setScope(updateUserScopeReq.getScope());
+           extractedInsertUserScope(updateUserScopeReq, addUserScopeReq);
            userScopeRepository.insertUserScopeByUserId(addUserScopeReq);
        }
         return resultUserScopeRes;
@@ -50,5 +43,28 @@ public class UserScopeServiceImpl  implements IUserScopeService {
                         .scope(new BigDecimal(0))
                         .userId(userScopeReq.getUserId())
                         .build());
+    }
+
+
+
+    private UserScopeReq getUserScopeReq(UpdateUserScopeReq updateUserScopeReq) {
+        UserScopeReq userScopeReq = new UserScopeReq();
+        userScopeReq.setUserId(updateUserScopeReq.getUserId());
+        userScopeReq.setScopeType(updateUserScopeReq.getScopeType());
+        return userScopeReq;
+    }
+
+    private void extractedInsertUserScope(UpdateUserScopeReq updateUserScopeReq, AddUserScopeReq addUserScopeReq) {
+        addUserScopeReq.setScope(updateUserScopeReq.getScope());
+        addUserScopeReq.setUserId(updateUserScopeReq.getUserId());
+        addUserScopeReq.setScopeType(updateUserScopeReq.getScopeType());
+    }
+
+    private void extractedUpdateUserScope(UpdateUserScopeReq updateUserScopeReq, UserScopeReq userScopeReq, UserScopeRes resultUserScopeRes, UpdateUserScopeReq insertScope) {
+        BigDecimal totalScope = resultUserScopeRes.getScope().add(updateUserScopeReq.getScope());
+        insertScope.setScope(totalScope);
+        insertScope.setScopeType(updateUserScopeReq.getScopeType());
+        insertScope.setUserId(userScopeReq.getUserId());
+        insertScope.setVersion(resultUserScopeRes.getVersion());
     }
 }

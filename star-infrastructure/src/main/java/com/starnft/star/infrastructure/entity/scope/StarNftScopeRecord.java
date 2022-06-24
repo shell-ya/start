@@ -29,7 +29,9 @@ public class StarNftScopeRecord implements Serializable {
     @TableField(value = "user_id")
     @ApiModelProperty(value="")
     private Long userId;
-
+    @TableField(value = "scope_type")
+    @ApiModelProperty(value="")
+    private Integer scopeType;
     @TableField(value = "`scope`")
     @ApiModelProperty(value="")
     private BigDecimal scope;
