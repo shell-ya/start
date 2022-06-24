@@ -9,6 +9,8 @@ public class ScopeConfigRes {
 
     private Integer eventCode;
 
+    private Integer scopeType;
+
     private String eventDesc;
 
     private Integer eventStatus;
