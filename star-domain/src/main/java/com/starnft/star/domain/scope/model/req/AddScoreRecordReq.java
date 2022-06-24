@@ -10,6 +10,7 @@ public class AddScoreRecordReq {
     private Long userId;
     private BigDecimal scope;
     private Integer mold;
+    private Integer scopeType;
     private String remarks;
     private Date createdAt;
 }

@@ -1,6 +1,7 @@
 package com.starnft.star.domain.scope.service.impl;
 
 import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.domain.scope.model.req.AddScoreRecordReq;
 import com.starnft.star.domain.scope.model.req.QueryScoreRecordReq;
 import com.starnft.star.domain.scope.model.res.ScoreRecordRes;
 import com.starnft.star.domain.scope.repository.IScopeRecordRepository;
@@ -17,5 +18,10 @@ public class ScopeRecordServiceImpl implements IScopeRecordService {
     @Override
     public ResponsePageResult<ScoreRecordRes> getScoreRecord(QueryScoreRecordReq queryScoreRecordReq) {
         return  iScopeRecordRepository.queryScopeRecordPageByUserId(queryScoreRecordReq);
+    }
+
+    @Override
+    public Boolean insertScopeRecord(AddScoreRecordReq addScoreRecordReq) {
+        return iScopeRecordRepository.insertScopeRecord(addScoreRecordReq);
     }
 }

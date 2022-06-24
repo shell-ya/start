@@ -27,6 +27,7 @@ public class ScopeConfigRepository implements IScopeConfigRepository {
             ScopeConfigRes scopeConfigRes = new ScopeConfigRes();
             scopeConfigRes.setEventCode(item.getEventCode());
             scopeConfigRes.setEventDesc(item.getEventDesc());
+            scopeConfigRes.setScopeType(item.getScopeType());
             scopeConfigRes.setEventStatus(item.getEventStatus());
             scopeConfigRes.setEventName(item.getEventName());
             return scopeConfigRes;

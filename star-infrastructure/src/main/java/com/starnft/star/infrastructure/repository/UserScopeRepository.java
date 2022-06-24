@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.Objects;
 
 @Repository
 public class UserScopeRepository   implements IUserScopeRepository {
@@ -24,9 +25,11 @@ public class UserScopeRepository   implements IUserScopeRepository {
                 .eq(StarNftUserScope.COL_USER_ID, req.getUserId())
                 .eq(StarNftUserScope.COL_SCOPE_TYPE,req.getScopeType())
         );
+        if (Objects.isNull(starNftUserScope)) return  null;
         UserScopeRes userScopeRes = new UserScopeRes();
         userScopeRes.setScope(starNftUserScope.getUserScope());
         userScopeRes.setUserId(starNftUserScope.getUserId());
+        userScopeRes.setVersion(starNftUserScope.getVersion());
         return  userScopeRes;
     }
 

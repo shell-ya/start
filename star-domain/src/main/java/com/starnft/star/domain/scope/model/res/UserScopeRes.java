@@ -15,5 +15,6 @@ public class UserScopeRes {
     private Integer scopeType;
     private Long userId;
     private BigDecimal scope;
+    private Integer version;
 
 }

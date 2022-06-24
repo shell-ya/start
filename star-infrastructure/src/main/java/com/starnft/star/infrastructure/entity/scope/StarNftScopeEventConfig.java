@@ -61,8 +61,10 @@ public class StarNftScopeEventConfig implements Serializable {
      */
     @TableField(value = "is_deleted")
     @ApiModelProperty(value="是否删除")
-    private Byte isDeleted;
-
+    private Boolean isDeleted;
+    @TableField(value = "scope_type")
+    @ApiModelProperty(value="积分类型")
+    private Integer scopeType;
     /**
      * 创建时间
      */

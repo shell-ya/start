@@ -28,8 +28,9 @@ public class UserScopeServiceImpl  implements IUserScopeService {
            UpdateUserScopeReq insertScope = new UpdateUserScopeReq();
            BigDecimal totalScope = resultUserScopeRes.getScope().add(updateUserScopeReq.getScope());
            insertScope.setScope(totalScope);
-           resultUserScopeRes.setScope(totalScope);
+           insertScope.setScope(totalScope);
            insertScope.setUserId(userScopeReq.getUserId());
+           insertScope.setVersion(resultUserScopeRes.getVersion());
            userScopeRepository.updateUserScopeByUserId(insertScope);
        }else{
            AddUserScopeReq addUserScopeReq = new AddUserScopeReq();
