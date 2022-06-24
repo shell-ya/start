@@ -32,4 +32,5 @@ public interface INumberRepository {
 
     ThemeNumberVo queryNumberExist(Integer themeNumber, Long themeId);
 
+    boolean updateUserNumberMapping(UserThemeMappingVO updateThemeMappingVo);
 }

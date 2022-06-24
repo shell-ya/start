@@ -44,6 +44,12 @@ public class UserThemeMappingVO implements Serializable {
     private String userId;
 
     /**
+     * 拥有者
+     */
+    @ApiModelProperty(value = "拥有者")
+    private String beforeUserId;
+
+    /**
      * 购买来源(1-藏品 2-盲盒)
      */
     @ApiModelProperty(value = "购买来源(1-藏品 2-盲盒)")

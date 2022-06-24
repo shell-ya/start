@@ -48,5 +48,8 @@ public class HandoverReq implements Serializable {
     @ApiModelProperty(value = "变化后价格")
     private BigDecimal currMoney;
 
+    @ApiModelProperty(value = "订单类型 ture 发行 、false 市场订单")
+    private Boolean orderType;
+
 
 }

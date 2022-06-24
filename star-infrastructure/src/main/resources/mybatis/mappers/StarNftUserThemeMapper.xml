@@ -79,4 +79,14 @@
           AND u.is_delete = 0
     </select>
 
+    <update id="updateUserThemeMapping" >
+        update star_nft_user_theme set user_id = #{userId},status = #{status}
+        where
+            series_id = #{seriesId}
+        and series_theme_info_id = #{seriesThemeInfoId}
+        and series_theme_id = #{seriesThemeId}
+        and status = 1
+        and user_id = #{beforeUserId}
+    </update>
+
 </mapper>

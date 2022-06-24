@@ -166,6 +166,11 @@ public class NumberRepository implements INumberRepository {
         return this.copyToVO(starNftThemeNumber);
     }
 
+    @Override
+    public boolean updateUserNumberMapping(UserThemeMappingVO updateThemeMappingVo) {
+        return this.starNftUserThemeMapper.updateUserThemeMapping(updateThemeMappingVo);
+    }
+
     private ThemeNumberVo copyToVO(StarNftThemeNumber starNftThemeNumber) {
         ThemeNumberVo themeNumberVo = BeanColverUtil.colver(starNftThemeNumber, ThemeNumberVo.class);
         themeNumberVo.setNumberId(starNftThemeNumber.getId());

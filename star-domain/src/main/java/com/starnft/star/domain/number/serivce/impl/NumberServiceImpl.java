@@ -94,10 +94,24 @@ public class NumberServiceImpl implements INumberService {
             //修改藏品售卖状态
             boolean modified = this.numberRepository.modifyNumberStatus(handoverReq.getNumberId(), handoverReq.getUid(), handoverReq.getItemStatus());
             //创建用户藏品所属关系
-            boolean created = this.numberRepository.createUserNumberMapping(this.createMapping(handoverReq));
+            boolean created =  Boolean.TRUE.equals(handoverReq.getOrderType()) ?
+                    this.numberRepository.createUserNumberMapping(this.createMapping(handoverReq)) :
+                    this.numberRepository.updateUserNumberMapping(this.updateMapping(handoverReq));
             return logged && modified && created;
         }));
 
+    }
+
+    private UserThemeMappingVO updateMapping(HandoverReq handoverReq) {
+        UserThemeMappingVO userThemeMappingVO = new UserThemeMappingVO();
+        userThemeMappingVO.setUserId(String.valueOf(handoverReq.getUid()));
+        userThemeMappingVO.setBeforeUserId(String.valueOf(handoverReq.getFromUid()));
+        userThemeMappingVO.setStatus(UserNumberStatusEnum.PURCHASED.getCode());
+        userThemeMappingVO.setSeriesId(handoverReq.getSeriesId());
+        userThemeMappingVO.setSeriesThemeInfoId(handoverReq.getThemeId());
+        userThemeMappingVO.setSeriesThemeId(handoverReq.getNumberId());
+//        userThemeMappingVO.setPreTaxPrice(handoverReq.getPreMoney());
+        return userThemeMappingVO;
     }
 
     @Override

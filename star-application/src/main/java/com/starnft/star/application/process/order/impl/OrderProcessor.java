@@ -170,6 +170,7 @@ public class OrderProcessor implements IOrderProcessor {
         handoverReq.setCategoryType(orderPayReq.getCategoryType());
         handoverReq.setSeriesId(orderPayReq.getSeriesId());
         handoverReq.setType(NumberCirculationTypeEnum.PURCHASE.getCode());
+        handoverReq.setOrderType(orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.PublishGoods.getPrefix(),2));
         return handoverReq;
     }
 
@@ -193,9 +194,9 @@ public class OrderProcessor implements IOrderProcessor {
     @Override
     public MarketOrderRes marketOrder(MarketOrderReq marketOrderReq) {
 
-        ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(marketOrderReq.getNumberId());
+        ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(marketOrderReq.getId());
         //获取锁
-        String isTransaction = String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), marketOrderReq.getNumberId());
+        String isTransaction = String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), marketOrderReq.getId());
         if (redisUtil.hasKey(isTransaction)) {
             throw new StarException(StarError.GOODS_NOT_FOUND);
         }
@@ -213,7 +214,7 @@ public class OrderProcessor implements IOrderProcessor {
                     return new MarketOrderRes(orderSn, 0, StarError.SUCCESS_000000.getErrorMessage(), lockTimes);
                 }
             } catch (Exception e) {
-                log.error("创建订单异常: userId: [{}] , themeNumberId: [{}] , context: [{}]", marketOrderReq.getUserId(), marketOrderReq.getNumberId(), numberDetail);
+                log.error("创建订单异常: userId: [{}] , themeNumberId: [{}] , context: [{}]", marketOrderReq.getUserId(), marketOrderReq.getUserId(), numberDetail);
                 throw new RuntimeException(e.getMessage());
             } finally {
                 walletService.threadClear();
