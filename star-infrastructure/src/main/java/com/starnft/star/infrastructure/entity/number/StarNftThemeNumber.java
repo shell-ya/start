@@ -49,7 +49,7 @@ public class StarNftThemeNumber implements Serializable {
     /**
      * 合约地址
      */
-    @TableField(value = "` contract_address`")
+    @TableField(value = "`contract_address`")
     @ApiModelProperty(value = "合约地址")
     private String contractAddress;
 

@@ -18,12 +18,14 @@ import com.starnft.star.domain.order.repository.IOrderRepository;
 import com.starnft.star.domain.order.service.IOrderService;
 import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
 import com.starnft.star.domain.order.service.stateflow.IOrderStateHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Objects;
 
 @Service
+@Slf4j
 public class OrderService implements IOrderService {
 
     @Resource
@@ -55,6 +57,9 @@ public class OrderService implements IOrderService {
         Assert.notBlank(orderListReq.getOrderSn(), () -> {
             throw new StarException("订单号不能为空");
         });
+        Assert.notNull(orderListReq.getOrderId(), () -> {
+            throw new StarException("订单id不能为空");
+        });
         OrderVO orderVO = this.orderRepository.queryOrderDetails(orderListReq.getOrderId());
         return BeanColverUtil.colver(orderVO, OrderListRes.class);
     }
@@ -73,6 +78,10 @@ public class OrderService implements IOrderService {
         OrderVO orderVO = orderRepository.queryOrderByCondition(uid, orderSn);
         if (orderVO == null) {
             throw new StarException(StarError.ORDER_DO_NOT_EXIST);
+        }
+        if (orderVO.getStatus().equals(StarConstants.ORDER_STATE.PAY_CANCEL.getCode())) {
+            log.info("订单已被取消！ orderSn：[{}]", orderSn);
+            return null;
         }
         if (!orderVO.getStatus().equals(StarConstants.ORDER_STATE.WAIT_PAY.getCode())) {
             throw new StarException(StarError.ORDER_STATUS_ERROR, "该订单无法取消");
@@ -104,6 +113,6 @@ public class OrderService implements IOrderService {
 
     public boolean cancelOrder(MarketCancelOrderVo cancelOrderVo) {
         return this.orderRepository.updateOrder(cancelOrderVo.getUid(), cancelOrderVo.getOrderSn(),
-                StarConstants.ORDER_STATE.PAY_CANCEL.getCode(),null);
+                StarConstants.ORDER_STATE.PAY_CANCEL.getCode(), null);
     }
 }
