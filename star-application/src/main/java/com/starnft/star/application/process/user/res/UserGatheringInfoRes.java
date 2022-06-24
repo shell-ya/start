@@ -32,6 +32,9 @@ public class UserGatheringInfoRes implements Serializable {
     @ApiModelProperty("余额")
     private BigDecimal balance;
 
+    @ApiModelProperty("积分")
+    private BigDecimal scope;
+
     @ApiModelProperty("收款账户")
     private String collectionAccount;
 

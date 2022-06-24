@@ -10,6 +10,9 @@ import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.utils.Assert;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
+import com.starnft.star.domain.scope.model.req.UserScopeReq;
+import com.starnft.star.domain.scope.model.res.UserScopeRes;
+import com.starnft.star.domain.scope.service.IUserScopeService;
 import com.starnft.star.domain.user.model.dto.*;
 import com.starnft.star.domain.user.model.vo.*;
 import com.starnft.star.domain.user.repository.IUserRepository;
@@ -44,7 +47,8 @@ public class UserCoreImpl implements UserCore {
 
     @Resource
     private WalletService walletService;
-
+    @Resource
+    private IUserScopeService userScopeService;
     @Autowired
     IUserRepository userRepository;
 
@@ -136,8 +140,14 @@ public class UserCoreImpl implements UserCore {
         //获取收款银行卡
         List<CardBindResult> cards = this.walletService.obtainCards(req.getUid());
         this.populateCardsInfo(userGatheringInfoRes, cards);
-
+       //获取用户积分信息
+        UserScopeRes userScopeRes = this.userScopeService.getUserScopeByUserId(new UserScopeReq(req.getUid()));
+        this.populateScopeInfo(userGatheringInfoRes, userScopeRes);
         return userGatheringInfoRes;
+    }
+
+    private void populateScopeInfo(UserGatheringInfoRes userGatheringInfoRes, UserScopeRes userScopeRes) {
+        userGatheringInfoRes.setScope(userScopeRes.getScope());
     }
 
 

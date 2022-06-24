@@ -26,4 +26,13 @@ public class NotifyController {
             notifyCore.handler(platform, request, response);
             return "success";
     }
+
+    @ResponseBody
+    @TokenIgnore
+    @RequestMapping("/refundNotify/{platform}")
+    public String refundNotify(@PathVariable("platform")String platform,HttpServletRequest request, HttpServletResponse response) {
+        log.info("############回调进入了#################");
+//        notifyCore.handler(platform, request, response);
+        return "success";
+    }
 }
