@@ -7,19 +7,9 @@ import java.util.Date;
 
 @Data
 public class AddScoreRecordReq {
-
-
-
-
     private Long userId;
-
-
     private BigDecimal scope;
-
-
     private Integer mold;
-
     private String remarks;
-
     private Date createdAt;
 }
