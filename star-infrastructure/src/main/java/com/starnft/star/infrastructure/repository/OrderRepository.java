@@ -32,6 +32,7 @@ public class OrderRepository implements IOrderRepository {
     @Override
     public boolean createOrder(OrderVO orderVO) {
         StarNftOrder starNftOrder = new StarNftOrder();
+        starNftOrder.setId(orderVO.getId());
         starNftOrder.setOrderSn(orderVO.getOrderSn());
         starNftOrder.setUserId(orderVO.getUserId());
         starNftOrder.setCreatedBy(orderVO.getUserId());

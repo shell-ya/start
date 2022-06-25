@@ -1,5 +1,6 @@
 package com.starnft.star.domain.number.model.req;
 
+import com.starnft.star.common.constant.StarConstants;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -49,7 +50,7 @@ public class HandoverReq implements Serializable {
     private BigDecimal currMoney;
 
     @ApiModelProperty(value = "订单类型 ture 发行 、false 市场订单")
-    private Boolean orderType;
+    private StarConstants.OrderType orderType;
 
 
 }

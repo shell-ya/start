@@ -17,6 +17,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @ApiModel
 public class MarketOrderRes {
+    @ApiModelProperty(value = "订单id")
+    private Long orderId;
     @ApiModelProperty(value = "订单号")
     private String orderSn;
     @ApiModelProperty(value = "订单状态")

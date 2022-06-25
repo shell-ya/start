@@ -1,7 +1,9 @@
 package com.starnft.star.application.mq.consumer;
 
 import com.starnft.star.application.process.number.req.MarketOrderStatus;
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.order.model.req.OrderListReq;
 import com.starnft.star.domain.order.model.res.OrderListRes;
 import com.starnft.star.domain.order.model.vo.MarketCancelOrderVo;
@@ -30,15 +32,26 @@ public class MarketOrderRollBackConsumer implements RocketMQListener<MarketOrder
     @Resource
     private IOrderService orderService;
 
+
+    @Resource
+    private RedisLockUtils redisLockUtils;
+
     @Override
     public void onMessage(MarketOrderStatus marketOrderStatus) {
         //订单若仍是待支付状态 取消订单
         log.info("订单详情：{}", marketOrderStatus.toString());
+        String lockKey = String.format(RedisKey.SECKILL_ORDER_TRANSACTION.getKey(), marketOrderStatus.getOrderSn());
+        try {
+                if (redisLockUtils.lock(lockKey, RedisKey.SECKILL_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.SECKILL_ORDER_TRANSACTION.getTime()))) {
 
-        OrderPlaceRes orderPlaceRes = orderService.orderCancel(marketOrderStatus.getUserId(), marketOrderStatus.getOrderSn(), StarConstants.OrderType.MARKET_GOODS);
-        if (orderPlaceRes == null || !Objects.equals(orderPlaceRes.getOrderStatus(), StarConstants.ORDER_STATE.PAY_CANCEL.getCode())) {
-            log.error("[{}] 数据修改异常 message = [{}]", this.getClass().getSimpleName(), marketOrderStatus);
-        }
+                    OrderPlaceRes orderPlaceRes = orderService.orderCancel(marketOrderStatus.getUserId(), marketOrderStatus.getOrderSn(), StarConstants.OrderType.MARKET_GOODS);
+                    if (orderPlaceRes == null || !Objects.equals(orderPlaceRes.getOrderStatus(), StarConstants.ORDER_STATE.PAY_CANCEL.getCode())) {
+                        log.error("[{}] 数据修改异常 message = [{}]", this.getClass().getSimpleName(), marketOrderStatus);
+                    }
+                }
+            } finally {
+                redisLockUtils.unlock(lockKey);
+            }
         //查看订单仍是支付中状态
 //        OrderListRes orderListRes = orderService.orderDetails(new OrderListReq(0, 0, marketOrderStatus.getUserId(), marketOrderStatus.getStatus(), marketOrderStatus.getOrderSn()));
 //        if (!StarConstants.ORDER_STATE.WAIT_PAY.getCode().equals(orderListRes.getStatus())){

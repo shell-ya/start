@@ -99,7 +99,7 @@ public class OrderController {
 
     @PostMapping("/market/grab")
     @ApiOperation("市场下单")
-    public RopResponse<MarketOrderRes> order(@RequestBody MarketOrderReq request) {
+    public RopResponse<OrderListRes> order(@RequestBody MarketOrderReq request) {
         request.setUserId(UserContext.getUserId().getUserId());
         return RopResponse.success(this.orderProcessor.marketOrder(request));
     }

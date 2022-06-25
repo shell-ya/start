@@ -1,5 +1,6 @@
 package com.starnft.star.domain.number.model.vo;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.ToString;
 
@@ -32,5 +33,7 @@ public class ThemeNumberVo implements Serializable {
     private Long seriesId;
     /** 系列名称 */
     private String seriesName;
+    /**  拥有者    */
+    private Long ownerBy;
 
 }

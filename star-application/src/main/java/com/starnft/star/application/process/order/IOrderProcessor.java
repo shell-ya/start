@@ -29,5 +29,5 @@ public interface IOrderProcessor {
     OrderPlaceRes cancelSecOrder(OrderCancelReq orderGrabReq);
 
     //市场下单
-    MarketOrderRes marketOrder(MarketOrderReq marketOrderReq);
+    OrderListRes marketOrder(MarketOrderReq marketOrderReq);
 }

@@ -1,5 +1,6 @@
 package com.starnft.star.domain.number.serivce.impl;
 
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.enums.NumberCirculationTypeEnum;
 import com.starnft.star.common.enums.SortTypeEnum;
 import com.starnft.star.common.enums.UserNumberStatusEnum;
@@ -94,7 +95,7 @@ public class NumberServiceImpl implements INumberService {
             //修改藏品售卖状态
             boolean modified = this.numberRepository.modifyNumberStatus(handoverReq.getNumberId(), handoverReq.getUid(), handoverReq.getItemStatus());
             //创建用户藏品所属关系
-            boolean created =  Boolean.TRUE.equals(handoverReq.getOrderType()) ?
+            boolean created =  StarConstants.OrderType.PUBLISH_GOODS.equals(handoverReq.getOrderType()) ?
                     this.numberRepository.createUserNumberMapping(this.createMapping(handoverReq)) :
                     this.numberRepository.updateUserNumberMapping(this.updateMapping(handoverReq));
             return logged && modified && created;

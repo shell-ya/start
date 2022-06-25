@@ -45,6 +45,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 @Slf4j
@@ -170,7 +171,8 @@ public class OrderProcessor implements IOrderProcessor {
         handoverReq.setCategoryType(orderPayReq.getCategoryType());
         handoverReq.setSeriesId(orderPayReq.getSeriesId());
         handoverReq.setType(NumberCirculationTypeEnum.PURCHASE.getCode());
-        handoverReq.setOrderType(orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.PublishGoods.getPrefix(),2));
+        handoverReq.setOrderType(orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.PublishGoods.getPrefix(),2) ?
+                StarConstants.OrderType.PUBLISH_GOODS : StarConstants.OrderType.MARKET_GOODS);
         return handoverReq;
     }
 
@@ -192,9 +194,11 @@ public class OrderProcessor implements IOrderProcessor {
 
 
     @Override
-    public MarketOrderRes marketOrder(MarketOrderReq marketOrderReq) {
+    public OrderListRes marketOrder(MarketOrderReq marketOrderReq) {
 
         ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(marketOrderReq.getNumberId());
+        //禁止购买挂失商品
+        if (marketOrderReq.getUserId().equals(numberDetail.getOwnerBy())) throw new StarException(StarError.GOODS_SELF_ERROR);
         //获取锁
         String isTransaction = String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), marketOrderReq.getNumberId());
         if (redisUtil.hasKey(isTransaction)) {
@@ -208,10 +212,12 @@ public class OrderProcessor implements IOrderProcessor {
                 //生成订单
                 String orderSn = StarConstants.OrderPrefix.TransactionSn.getPrefix()
                         .concat(String.valueOf(idsIIdGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId()));
-                if (createPreOrder(numberDetail, marketOrderReq.getUserId(), orderSn)) {
+                long id = idsIIdGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId();
+                if (createPreOrder(numberDetail, marketOrderReq.getUserId(), orderSn,id)) {
                     //发送延时队列
                     orderProducer.marketOrderRollback(new MarketOrderStatus(marketOrderReq.getUserId(), 0, orderSn));
-                    return new MarketOrderRes(orderSn, 0, StarError.SUCCESS_000000.getErrorMessage(), lockTimes);
+//                    return new OrderListRes(id,orderSn, 0, StarError.SUCCESS_000000.getErrorMessage(), lockTimes);
+                    return buildOrderResp(numberDetail,marketOrderReq.getUserId(),orderSn,id);
                 }
             } catch (Exception e) {
                 log.error("创建订单异常: userId: [{}] , themeNumberId: [{}] , context: [{}]", marketOrderReq.getUserId(), marketOrderReq.getNumberId(), numberDetail);
@@ -223,8 +229,31 @@ public class OrderProcessor implements IOrderProcessor {
         throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
     }
 
-    private boolean createPreOrder(ThemeNumberVo numberDetail, Long userId, String orderSn) {
+    private OrderListRes buildOrderResp(ThemeNumberVo numberDetail, Long userId, String orderSn, Long id) {
+        OrderListRes res = new OrderListRes();
+        res.setId(id);
+        res.setOrderSn(orderSn);
+        res.setPayAmount(numberDetail.getPrice());
+        res.setSeriesId(numberDetail.getSeriesId());
+        res.setSeriesThemeInfoId(numberDetail.getThemeInfoId());
+        res.setNumberId(numberDetail.getNumberId());
+        res.setSeriesThemeId(numberDetail.getNumberId());
+        res.setThemeName(numberDetail.getThemeName());
+        res.setThemePic(numberDetail.getThemePic());
+        res.setThemeType(numberDetail.getThemeType());
+        res.setTotalAmount(numberDetail.getPrice());
+        res.setThemeNumber(numberDetail.getThemeNumber());
+        res.setStatus(0);
+        res.setCreatedAt(new Date());
+        res.setExpire(180L);
+        res.setOrderType(StarConstants.OrderType.MARKET_GOODS.getName());
+        return res;
+    }
+
+
+    private boolean createPreOrder(ThemeNumberVo numberDetail, Long userId, String orderSn,Long id) {
         OrderVO orderVO = OrderVO.builder()
+                .id(id)
                 .userId(userId)
                 .orderSn(orderSn)
                 .payAmount(numberDetail.getPrice())
