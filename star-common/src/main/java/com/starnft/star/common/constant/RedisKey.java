@@ -40,7 +40,7 @@ public enum RedisKey {
     /**
      * 修改支付密码
      */
-    REDIS_CODE_LOGIN_CHANGE_PAYPWD(4, StarConstants.SERVICE_NAME.concat(".login.changpaypwd.%s"), 60L, TimeUnit.SECONDS),
+    REDIS_CODE_LOGIN_CHANGE_PAYPWD(4, StarConstants.SERVICE_NAME.concat(".login.changpaypwd.%s"), 5L, TimeUnit.MINUTES),
 
     /**
      * 实名认证验证码
