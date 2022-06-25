@@ -90,10 +90,10 @@ public class UserController {
 
 
     @ApiOperation("查询用户是否设置支付密码")
-    @PostMapping("/userinfo/isSettingPwd")
-    public RopResponse<Boolean> isSettingPwd() {
+    @PostMapping("/userinfo/isSettingPayPassword")
+    public RopResponse<Boolean> isSettingPayPassword() {
         Long userId = UserContext.getUserId().getUserId();
-        Boolean settingPwd = this.userCore.isSettingPwd(new UserGatheringInfoReq(userId));
+        Boolean settingPwd = this.userCore.isSettingPayPassword(new UserGatheringInfoReq(userId));
         return RopResponse.success(settingPwd);
     }
 

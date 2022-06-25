@@ -186,7 +186,7 @@ public interface IUserService {
 
     Boolean resetPassword(AuthMaterialDTO authMaterial);
 
-    Boolean queryIsSettingPwd(Long id);
+    Boolean isSettingPayPassword(Long id);
 
     //修改 支付密码
     Boolean plyPasswordSetting(PayPasswordDTO payPasswordDTO);

@@ -341,8 +341,8 @@ public class UserCoreImpl implements UserCore {
     }
 
     @Override
-    public Boolean isSettingPwd(UserGatheringInfoReq userGatheringInfoReq) {
-        return this.userService.queryIsSettingPwd(userGatheringInfoReq.getUid());
+    public Boolean isSettingPayPassword(UserGatheringInfoReq userGatheringInfoReq) {
+        return this.userService.isSettingPayPassword(userGatheringInfoReq.getUid());
     }
 
     @Override

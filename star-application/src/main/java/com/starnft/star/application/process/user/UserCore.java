@@ -136,7 +136,7 @@ public interface UserCore {
 
     Boolean resetPassword(AuthMaterialReq req);
 
-    Boolean isSettingPwd(UserGatheringInfoReq userGatheringInfoReq);
+    Boolean isSettingPayPassword(UserGatheringInfoReq userGatheringInfoReq);
 
     Boolean resetPayPassword(ResetPayPwdReq req);
 

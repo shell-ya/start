@@ -466,11 +466,11 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     }
 
     @Override
-    public Boolean queryIsSettingPwd(Long id) {
+    public Boolean isSettingPayPassword(Long id) {
         Boolean isSetting = this.redisTemplate.opsForValue().getBit(RedisKey.REDIS_USER_IS_SETTING_PWD.getKey(), id);
         if (Boolean.FALSE.equals(isSetting)) {
             UserInfo userInfo = this.userRepository.queryUserInfoByUserId(id);
-            isSetting = Objects.isNull(userInfo.getPlyPassword());
+            isSetting = Objects.nonNull(userInfo.getPlyPassword());
             this.redisTemplate.opsForValue().setBit(RedisKey.REDIS_USER_IS_SETTING_PWD.getKey(), id, isSetting);
         }
         return isSetting;
