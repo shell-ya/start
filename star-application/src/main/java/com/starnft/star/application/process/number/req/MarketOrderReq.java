@@ -16,6 +16,6 @@ import java.io.Serializable;
 public class MarketOrderReq implements Serializable {
 
     @ApiModelProperty(value = "主题id")
-    private Long id;
+    private Long numberId;
     private Long userId;
 }
