@@ -1,6 +1,7 @@
 package com.starnft.star.infrastructure.repository;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.scope.model.res.ScopeConfigRes;
 import com.starnft.star.domain.scope.repository.IScopeConfigRepository;
 import com.starnft.star.infrastructure.entity.scope.StarNftScopeEventConfig;
@@ -22,6 +23,7 @@ public class ScopeConfigRepository implements IScopeConfigRepository {
                 .selectList(new QueryWrapper<StarNftScopeEventConfig>()
                         .eq(StarNftScopeEventConfig.COL_EVENT_CODE, code)
                         .eq(StarNftScopeEventConfig.COL_IS_DELETED, Boolean.FALSE)
+                        .eq(StarNftScopeEventConfig.COL_EVENT_STATUS, StarConstants.Event.EVENT_STATUS_OPEN)
                 );
         return starNftScopeEventConfig.stream().map(item -> {
             ScopeConfigRes scopeConfigRes = new ScopeConfigRes();

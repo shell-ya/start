@@ -91,7 +91,10 @@ public class StarConstants {
          * 余额
          */
         Balance,
-
+        /**
+         * 检测个人信息支付
+         */
+        CheckPay,
         /**
          * 其他
          */
@@ -316,6 +319,11 @@ public class StarConstants {
         public String getPrefix() {
             return prefix;
         }
+    }
+    public static class  Event {
+
+      public static   final Integer EVENT_STATUS_OPEN =1;
+      public  static final Integer EVENT_STATUS_CLOSE =0;
     }
 
 }

@@ -13,6 +13,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Map;
 
 @Data
 @AllArgsConstructor
@@ -29,6 +30,8 @@ public class PaymentRich implements Serializable {
      * 用户Id
      */
     private Long userId;
+
+     private Map<String,Object> payExtend;
     /**
      * 客户端ip
      */
