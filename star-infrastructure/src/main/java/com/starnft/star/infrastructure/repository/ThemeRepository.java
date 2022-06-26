@@ -1,5 +1,6 @@
 package com.starnft.star.infrastructure.repository;
 
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.pagehelper.PageHelper;
@@ -132,7 +133,7 @@ public class ThemeRepository implements IThemeRepository {
             throw new StarException(StarError.GOODS_NOT_FOUND);
         }
         goodsMap.put(goodsKey + themeId, goods);
-        return goods;
+        return JSONUtil.toBean(goods.toString(), SecKillGoods.class);
 
     }
 

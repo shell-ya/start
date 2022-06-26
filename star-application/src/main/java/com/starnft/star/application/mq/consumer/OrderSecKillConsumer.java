@@ -1,5 +1,6 @@
 package com.starnft.star.application.mq.consumer;
 
+import cn.hutool.json.JSONUtil;
 import com.starnft.star.application.mq.producer.order.OrderProducer;
 import com.starnft.star.application.process.order.model.dto.OrderMessageReq;
 import com.starnft.star.application.process.order.model.res.OrderGrabStatus;
@@ -64,7 +65,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
             redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.name(), userId);
             //抢单失败
             redisUtil.hset(String.format(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), themeId),
-                    String.valueOf(userId), new OrderGrabStatus(userId, -1, null, time));
+                    String.valueOf(userId), JSONUtil.toJsonStr(new OrderGrabStatus(userId, -1, null, time)));
             return;
         }
 
@@ -81,7 +82,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
                     //缓存写进订单状态
                     OrderGrabStatus orderGrabStatus = new OrderGrabStatus(userId, 1, orderSn, time);
                     String statusMap = String.format(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), themeId);
-                    redisUtil.hset(statusMap, String.valueOf(userId), orderGrabStatus);
+                    redisUtil.hset(statusMap, String.valueOf(userId), JSONUtil.toJsonStr(orderGrabStatus));
                     //发送延时mq 取消订单
                     orderProducer.secOrderRollback(orderGrabStatus);
                     return;
@@ -109,7 +110,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
             }
         } else {
             //刷新商品库存
-            redisUtil.hset(String.format(RedisKey.SECKILL_GOODS_INFO.getKey(), time), String.valueOf(themeId), goods);
+            redisUtil.hset(String.format(RedisKey.SECKILL_GOODS_INFO.getKey(), time), String.valueOf(themeId), JSONUtil.toJsonStr(goods));
         }
     }
 
@@ -148,7 +149,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
         boolean isSuccess = orderService.createOrder(orderVO);
         if (isSuccess) {
             String userOrderMapping = String.format(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), message.getGoods().getThemeId());
-            redisUtil.hset(userOrderMapping, String.valueOf(message.getUserId()), orderVO);
+            redisUtil.hset(userOrderMapping, String.valueOf(message.getUserId()), JSONUtil.toJsonStr(orderVO));
             return true;
         }
         return false;

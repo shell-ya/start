@@ -215,10 +215,10 @@ public class WalletServiceImpl implements WalletService {
         String withdrawTimesKey = String.format(RedisKey.REDIS_WITHDRAW_TIMES.getKey(),
                 new StringBuffer(String.valueOf(withDrawReq.getUid())).append(withDrawReq.getWalletId()));
         //是否超过当日提现次数
-        if (redisUtil.hasKey(withdrawTimesKey) &&
-                config.getWithdrawTimes() <= (Integer) redisUtil.get(withdrawTimesKey)) {
-            throw new StarException(StarError.OVER_WITHDRAW_TIMES);
-        }
+//        if (redisUtil.hasKey(withdrawTimesKey) &&
+//                config.getWithdrawTimes() <= (Integer) redisUtil.get(withdrawTimesKey)) {
+//            throw new StarException(StarError.OVER_WITHDRAW_TIMES);
+//        }
         //是否超过限额
         if (new BigDecimal(withDrawReq.getMoney()).compareTo(config.getWithdrawLimit()) > 0) {
             throw new StarException(StarError.OVER_WITHDRAW_MONEY);
