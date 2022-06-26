@@ -153,20 +153,20 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     }
 
     @Override
-    public Boolean verifyCode(UserVerifyCodeDTO req) {
+    public String verifyCode(UserVerifyCodeDTO req) {
         //录入redis
         RedisKey redisKeyEnum = RedisKey.getRedisKeyEnum(req.getVerificationScenes());
         if (Objects.isNull(redisKeyEnum)) {
             throw new StarException(StarError.PARAETER_UNSUPPORTED, "验证码场景不存在");
         }
         String redisKey = String.format(redisKeyEnum.getKey(), req.getPhone());
-        Object obj = this.redisTemplate.opsForValue().get(redisKey);
-        if (Objects.nonNull(obj)) {
-            if (obj.toString().equals(req.getCode())) {
-                return Boolean.TRUE;
-            }
-        }
-        return Boolean.FALSE;
+        Optional.ofNullable(this.redisUtil.get(redisKey))
+                .filter(realCode -> Objects.equals(realCode, req.getCode()))
+                .orElseThrow(() -> new StarException(StarError.CODE_NOT_FUND));
+        // 保存校验成功标识 供后续业务校验使用
+        String token = RandomUtil.randomString(16);
+        this.redisUtil.set(redisKey, token, redisKeyEnum.getTime(), redisKeyEnum.getTimeUnit());
+        return token;
     }
 
     @Override

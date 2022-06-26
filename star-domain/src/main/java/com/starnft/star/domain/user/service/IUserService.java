@@ -57,7 +57,7 @@ public interface IUserService {
      * @param req
      * @return
      */
-    Boolean verifyCode(UserVerifyCodeDTO req);
+    String verifyCode(UserVerifyCodeDTO req);
 
     /**
      * 初始化登录密码

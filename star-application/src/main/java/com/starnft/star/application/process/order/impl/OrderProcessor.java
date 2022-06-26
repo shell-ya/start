@@ -1,9 +1,9 @@
 package com.starnft.star.application.process.order.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.starnft.star.application.mq.producer.order.OrderProducer;
 import com.starnft.star.application.process.number.req.MarketOrderReq;
 import com.starnft.star.application.process.number.req.MarketOrderStatus;
-import com.starnft.star.application.process.number.res.MarketOrderRes;
 import com.starnft.star.application.process.order.IOrderProcessor;
 import com.starnft.star.application.process.order.model.dto.OrderMessageReq;
 import com.starnft.star.application.process.order.model.req.OrderCancelReq;
@@ -95,7 +95,7 @@ public class OrderProcessor implements IOrderProcessor {
         try {
             //排队中状态
             redisUtil.hset(String.format(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), orderGrabReq.getThemeId()),
-                    String.valueOf(orderGrabReq.getUserId()), new OrderGrabStatus(orderGrabReq.getUserId(), 0, null, orderGrabReq.getTime()));
+                    String.valueOf(orderGrabReq.getUserId()), JSONUtil.toJsonStr(new OrderGrabStatus(orderGrabReq.getUserId(), 0, null, orderGrabReq.getTime())));
             //mq 异步下单
             orderProducer.secKillOrder(new OrderMessageReq(orderGrabReq.getUserId(), orderGrabReq.getTime(), goods));
 
@@ -116,9 +116,10 @@ public class OrderProcessor implements IOrderProcessor {
     @Override
     public OrderGrabStatus obtainSecKIllStatus(OrderGrabReq orderGrabReq) {
 
-        Object status = redisUtil.hget(String.format(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), orderGrabReq.getThemeId()), String.valueOf(orderGrabReq.getUserId()));
+        Object status = redisUtil.hget(String.format(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(),
+                orderGrabReq.getThemeId()), String.valueOf(orderGrabReq.getUserId()));
         if (status != null) {
-            return (OrderGrabStatus) status;
+            return JSONUtil.toBean(status.toString(), OrderGrabStatus.class);
         }
         return null;
     }
@@ -171,7 +172,7 @@ public class OrderProcessor implements IOrderProcessor {
         handoverReq.setCategoryType(orderPayReq.getCategoryType());
         handoverReq.setSeriesId(orderPayReq.getSeriesId());
         handoverReq.setType(NumberCirculationTypeEnum.PURCHASE.getCode());
-        handoverReq.setOrderType(orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.PublishGoods.getPrefix(),2) ?
+        handoverReq.setOrderType(orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.PublishGoods.getPrefix(), 2) ?
                 StarConstants.OrderType.PUBLISH_GOODS : StarConstants.OrderType.MARKET_GOODS);
         return handoverReq;
     }
@@ -198,7 +199,8 @@ public class OrderProcessor implements IOrderProcessor {
 
         ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(marketOrderReq.getNumberId());
         //禁止购买挂失商品
-        if (marketOrderReq.getUserId().equals(numberDetail.getOwnerBy())) throw new StarException(StarError.GOODS_SELF_ERROR);
+        if (marketOrderReq.getUserId().equals(numberDetail.getOwnerBy()))
+            throw new StarException(StarError.GOODS_SELF_ERROR);
         //获取锁
         String isTransaction = String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), marketOrderReq.getNumberId());
         if (redisUtil.hasKey(isTransaction)) {
@@ -213,11 +215,11 @@ public class OrderProcessor implements IOrderProcessor {
                 String orderSn = StarConstants.OrderPrefix.TransactionSn.getPrefix()
                         .concat(String.valueOf(idsIIdGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId()));
                 long id = idsIIdGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId();
-                if (createPreOrder(numberDetail, marketOrderReq.getUserId(), orderSn,id)) {
+                if (createPreOrder(numberDetail, marketOrderReq.getUserId(), orderSn, id)) {
                     //发送延时队列
                     orderProducer.marketOrderRollback(new MarketOrderStatus(marketOrderReq.getUserId(), 0, orderSn));
 //                    return new OrderListRes(id,orderSn, 0, StarError.SUCCESS_000000.getErrorMessage(), lockTimes);
-                    return buildOrderResp(numberDetail,marketOrderReq.getUserId(),orderSn,id);
+                    return buildOrderResp(numberDetail, marketOrderReq.getUserId(), orderSn, id);
                 }
             } catch (Exception e) {
                 log.error("创建订单异常: userId: [{}] , themeNumberId: [{}] , context: [{}]", marketOrderReq.getUserId(), marketOrderReq.getNumberId(), numberDetail);
@@ -251,7 +253,7 @@ public class OrderProcessor implements IOrderProcessor {
     }
 
 
-    private boolean createPreOrder(ThemeNumberVo numberDetail, Long userId, String orderSn,Long id) {
+    private boolean createPreOrder(ThemeNumberVo numberDetail, Long userId, String orderSn, Long id) {
         OrderVO orderVO = OrderVO.builder()
                 .id(id)
                 .userId(userId)

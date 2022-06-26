@@ -1,11 +1,15 @@
 package com.starnft.star.application.process.task.activity;
 
+import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.utils.DateUtil;
 import com.starnft.star.domain.activity.IActivitiesService;
 import com.starnft.star.domain.activity.model.vo.ActivityVO;
 import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.publisher.model.req.PublisherReq;
+import com.starnft.star.domain.publisher.model.vo.PublisherVO;
+import com.starnft.star.domain.publisher.service.PublisherService;
 import com.starnft.star.domain.series.model.vo.SeriesVO;
 import com.starnft.star.domain.series.service.SeriesService;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
@@ -45,6 +49,9 @@ public class ActivitiesTask {
     @Resource
     private SeriesService seriesService;
 
+    @Resource
+    private PublisherService publisherService;
+
     /*****
      * 15秒执行一次
      * 0/15:表示从0秒开始执行，每过15秒再次执行
@@ -77,7 +84,7 @@ public class ActivitiesTask {
             return;
         }
         for (SecKillGoods secKillGood : secKillGoods) {
-            boolean isSuccess = redisUtil.hset(goodsKey, String.valueOf(secKillGood.getThemeId()), secKillGood);
+            boolean isSuccess = redisUtil.hset(goodsKey, String.valueOf(secKillGood.getThemeId()), JSONUtil.toJsonStr(secKillGood));
             if (isSuccess) {
                 //[themeId,themeId,themeId] 将商品剩余库存放到Redis，解决并发超卖问题
                 Long[] ids = pushIds(secKillGood.getStock(), secKillGood.getThemeId());
@@ -118,7 +125,16 @@ public class ActivitiesTask {
 
     private SecKillGoods copy(ActivityVO activity, ThemeDetailVO detailVO) {
 
+        PublisherVO publisherVO = publisherService.queryPublisher(new PublisherReq(detailVO.getPublisherId()));
+        if (publisherVO == null) {
+            log.error("themeInfo: [{}] publisherId : [{}]", detailVO, detailVO.getPublisherId());
+            throw new RuntimeException("未找到对应发行商");
+        }
         SeriesVO seriesVO = seriesService.querySeriesById(detailVO.getSeriesId());
+        if (publisherVO == null) {
+            log.error("themeInfo: [{}] seriesId : [{}]", detailVO, detailVO.getSeriesId());
+            throw new RuntimeException("未找到对应系列");
+        }
         SecKillGoods secKillGoods = new SecKillGoods();
         secKillGoods.setGoodsNum(activity.getGoodsNum());
         secKillGoods.setDescrption(detailVO.getDescrption());
@@ -133,6 +149,9 @@ public class ActivitiesTask {
         secKillGoods.setThemeName(detailVO.getThemeName());
         secKillGoods.setThemePic(detailVO.getThemePic());
         secKillGoods.setThemeType(detailVO.getThemeType());
+        secKillGoods.setPublisherId(publisherVO.getPublisherId());
+        secKillGoods.setPublisherPic(publisherVO.getPublisherPic());
+        secKillGoods.setPublisherName(publisherVO.getPublisherName());
         return secKillGoods;
     }
 

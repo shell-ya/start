@@ -1,5 +1,6 @@
 package com.starnft.star.infrastructure.repository;
 
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -138,7 +139,7 @@ public class OrderRepository implements IOrderRepository {
         if (order == null) {
             return null;
         }
-        return (OrderVO) order;
+        return JSONUtil.toBean(order.toString(), OrderVO.class);
     }
 
     private StarNftOrder queryOrder(Long uid, String orderSn) {

@@ -24,7 +24,7 @@ public class ResetPayPwdReq {
 
     @ApiModelProperty("支付密码")
     @NotBlank(message = "支付密码不能为空")
-    @Pattern(regexp = "[1-9]\\d*", message = "密码格式错误")
+    @Pattern(regexp = "[0-9]\\d*", message = "密码格式必须是数字")
     private String payPassword;
 
     @ApiModelProperty("手机号")

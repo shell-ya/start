@@ -82,7 +82,7 @@ public class UserCoreImpl implements UserCore {
     }
 
     @Override
-    public Boolean verifyCode(UserVerifyCodeReq req) {
+    public String verifyCode(UserVerifyCodeReq req) {
         UserVerifyCodeDTO userVerifyCodeDTO = BeanColverUtil.colver(req, UserVerifyCodeDTO.class);
         return this.userService.verifyCode(userVerifyCodeDTO);
     }
@@ -136,7 +136,7 @@ public class UserCoreImpl implements UserCore {
         //获取收款银行卡
         List<CardBindResult> cards = this.walletService.obtainCards(req.getUid());
         this.populateCardsInfo(userGatheringInfoRes, cards);
-       //获取用户积分信息
+        //获取用户积分信息
 //        UserScopeRes userScopeRes = this.userScopeService.getUserScopeByUserId(new UserScopeReq(req.getUid()));
 //        this.populateScopeInfo(userGatheringInfoRes, userScopeRes);
         return userGatheringInfoRes;

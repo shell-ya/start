@@ -56,4 +56,13 @@ public class SecKillGoods implements Serializable {
 
     @ApiModelProperty(name = "主题级别", notes = "")
     private Byte themeLevel;
+
+    @ApiModelProperty(name = "发行商名称", notes = "")
+    private String publisherName;
+
+    @ApiModelProperty(name = "发行商icon", notes = "")
+    private String publisherPic;
+
+    @ApiModelProperty(name = "发行商id", notes = "")
+    private Long  publisherId;
 }

@@ -47,7 +47,7 @@ public interface UserCore {
      * @param userVerifyCodeReq
      * @return
      */
-    Boolean verifyCode(UserVerifyCodeReq userVerifyCodeReq);
+    String verifyCode(UserVerifyCodeReq userVerifyCodeReq);
 
     /**
      * 设置密码

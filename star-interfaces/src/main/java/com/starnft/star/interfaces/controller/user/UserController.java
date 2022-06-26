@@ -57,7 +57,7 @@ public class UserController {
     @ApiOperation("校验验证码")
     @PostMapping("/userinfo/verifycode")
     @TokenIgnore
-    public RopResponse<Boolean> verifycode(@Validated @RequestBody UserVerifyCodeReq req) {
+    public RopResponse<String> verifycode(@Validated @RequestBody UserVerifyCodeReq req) {
         return RopResponse.success(this.userCore.verifyCode(req));
     }
 
