@@ -1,6 +1,8 @@
 package com.starnft.star.domain.order.model.res;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -14,16 +16,21 @@ import java.util.Date;
 public class OrderListRes implements Serializable {
 
     @ApiModelProperty(value = "订单id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     @ApiModelProperty(value = "订单号")
     private String orderSn;
     @ApiModelProperty(value = "主题信息id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long seriesThemeId;
     @ApiModelProperty(value = "主题编号信息id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long seriesThemeInfoId;
     @ApiModelProperty(value = "系列id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long seriesId;
     @ApiModelProperty(value = "藏品id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long numberId;
     @ApiModelProperty(value = "主题编号")
     private Integer themeNumber;

@@ -1,5 +1,7 @@
 package com.starnft.star.domain.order.model.vo;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -20,33 +22,40 @@ public class OrderVO implements Serializable {
      * 订单id
      */
     @ApiModelProperty(value = "订单id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     /**
      * 订单编号
      */
     @ApiModelProperty(value = "订单编号")
     private String orderSn;
+
     @ApiModelProperty(name = "发行商id", notes = "")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long publisherId;
     /**
      * 主题信息
      */
     @ApiModelProperty(value = "主题信息")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long seriesThemeId;
     /**
      * 主题编号信息id
      */
     @ApiModelProperty(value = "主题编号信息id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long seriesThemeInfoId;
     /**
      * 系列id
      */
     @ApiModelProperty(value = "系列id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long seriesId;
     /**
      * 藏品id
      */
     @ApiModelProperty(value = "藏品id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long numberId;
     /**
      * 主题编号

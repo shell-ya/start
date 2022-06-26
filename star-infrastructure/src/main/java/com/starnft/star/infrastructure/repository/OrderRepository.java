@@ -17,9 +17,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Repository
 public class OrderRepository implements IOrderRepository {
@@ -93,7 +95,7 @@ public class OrderRepository implements IOrderRepository {
 
         List<OrderVO> orderVOS = populateValues(orders.getList());
 
-        return new ResponsePageResult<OrderVO>(orderVOS, page, size, orders.getTotal());
+        return new ResponsePageResult<OrderVO>(orderVOS.stream().sorted(Comparator.comparing(OrderVO::getCreatedAt).reversed()).collect(Collectors.toList()), page, size, orders.getTotal());
     }
 
     private List<OrderVO> populateValues(List<StarNftOrder> list) {

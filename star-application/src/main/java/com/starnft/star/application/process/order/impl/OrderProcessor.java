@@ -172,7 +172,7 @@ public class OrderProcessor implements IOrderProcessor {
         handoverReq.setCategoryType(orderPayReq.getCategoryType());
         handoverReq.setSeriesId(orderPayReq.getSeriesId());
         handoverReq.setType(NumberCirculationTypeEnum.PURCHASE.getCode());
-        handoverReq.setOrderType(orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.PublishGoods.getPrefix(), 2) ?
+        handoverReq.setOrderType(orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.PublishGoods.getPrefix(), 0) ?
                 StarConstants.OrderType.PUBLISH_GOODS : StarConstants.OrderType.MARKET_GOODS);
         return handoverReq;
     }
