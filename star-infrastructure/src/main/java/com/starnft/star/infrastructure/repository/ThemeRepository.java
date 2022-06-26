@@ -128,11 +128,11 @@ public class ThemeRepository implements IThemeRepository {
             return secKillGoods;
         }
 
-        SecKillGoods goods = (SecKillGoods) this.redisUtil.hget(goodsKey, String.valueOf(themeId));
+        Object goods = this.redisUtil.hget(goodsKey, String.valueOf(themeId));
         if (goods == null) {
             throw new StarException(StarError.GOODS_NOT_FOUND);
         }
-        goodsMap.put(goodsKey + themeId, goods);
+        goodsMap.put(goodsKey + themeId, JSONUtil.toBean(goods.toString(), SecKillGoods.class));
         return JSONUtil.toBean(goods.toString(), SecKillGoods.class);
 
     }

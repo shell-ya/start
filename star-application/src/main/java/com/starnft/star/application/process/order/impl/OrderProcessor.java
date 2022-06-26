@@ -95,7 +95,7 @@ public class OrderProcessor implements IOrderProcessor {
         try {
             //排队中状态
             redisUtil.hset(String.format(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), orderGrabReq.getThemeId()),
-                    String.valueOf(orderGrabReq.getUserId()), new OrderGrabStatus(orderGrabReq.getUserId(), 0, null, orderGrabReq.getTime()));
+                    String.valueOf(orderGrabReq.getUserId()), JSONUtil.toJsonStr(new OrderGrabStatus(orderGrabReq.getUserId(), 0, null, orderGrabReq.getTime())));
             //mq 异步下单
             orderProducer.secKillOrder(new OrderMessageReq(orderGrabReq.getUserId(), orderGrabReq.getTime(), goods));
 
