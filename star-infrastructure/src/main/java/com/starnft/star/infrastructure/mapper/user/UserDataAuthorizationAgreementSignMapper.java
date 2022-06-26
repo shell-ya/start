@@ -23,5 +23,5 @@ public interface UserDataAuthorizationAgreementSignMapper {
 
     List<String> batchSelectUserAgreementId(@Param("userId") Long userId);
 
-    int batchInsertAgreementSign(@Param("agreementSign")List<AgreementSignDTO> agreementSigns);
+    int batchInsertAgreementSign(@Param("agreementSigns") List<AgreementSignDTO> agreementSigns);
 }

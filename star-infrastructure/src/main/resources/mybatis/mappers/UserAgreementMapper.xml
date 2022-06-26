@@ -45,14 +45,14 @@
         select
         agreement_type,
         agreement_scene,
-        MAX (agreement_version+0) AS agreement_version
+        MAX(agreement_version+0) AS agreement_version
         from
         user_agreement
         where
         submit_status = 2
         and agreement_scene = 1
         and effective_time &lt;= NOW()
-        and is_delete = 0
+        and is_deleted = 0
         and agreement_type = #{agreementType}
         group by agreement_type , agreement_scene
         )  as t
@@ -69,16 +69,17 @@
         ua.*
         from
         (
-         agreement_type,
-         agreement_scene,
-         MAX(agreement_version + 0) as agreement_version
-         from
+        select
+        agreement_type,
+        agreement_scene,
+        MAX(agreement_version+0) AS agreement_version
+        from
          user_agreement
          where
          submit_status = 2
          and agreement_scene = #{scene}
          and effective_time &lt;= NOW()
-         and is_delete = 0
+         and is_deleted = 0
          group by agreement_type , agreement_scene) as t
          left join
          user_agreement as ua on(
@@ -97,9 +98,9 @@
             <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
                 #{item}
             </foreach>
-            and submit_stauts=2
+            and submit_status=2
             and effective_time &lt;= NOW()
-            and record_status = 1
+            and is_deleted = 0
         </where>
     </select>
 

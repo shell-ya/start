@@ -388,8 +388,8 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
     @Override
     public AgreementVO queryAgreementContentByType(Integer agreementType) {
-
-        return null;
+        AgreementVO agreementVO = userRepository.queryAgreementInfoByType(agreementType);
+        return agreementVO;
     }
 
     @Override
