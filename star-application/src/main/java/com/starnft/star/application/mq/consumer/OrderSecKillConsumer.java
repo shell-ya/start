@@ -121,7 +121,6 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
             log.error("藏品可能未上架 themeId:[] , themeNumber:[{}]", message.getGoods().getThemeId(), stockQueueId);
             throw new RuntimeException("查询藏品失败！");
         }
-        //todo 填充藏品厂商机构信息
 
         OrderVO orderVO = OrderVO.builder()
                 .id(SnowflakeWorker.generateId())
@@ -139,6 +138,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
                 .themeType(message.getGoods().getThemeType())
                 .totalAmount(message.getGoods().getSecCost())
                 .themeNumber(stockQueueId)
+                .publisherId(message.getGoods().getPublisherId())
                 .status(0)
                 .createdAt(new Date())
                 .expire(180L)

@@ -6,6 +6,9 @@ import com.starnft.star.common.utils.DateUtil;
 import com.starnft.star.domain.activity.IActivitiesService;
 import com.starnft.star.domain.activity.model.vo.ActivityVO;
 import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.publisher.model.req.PublisherReq;
+import com.starnft.star.domain.publisher.model.vo.PublisherVO;
+import com.starnft.star.domain.publisher.service.PublisherService;
 import com.starnft.star.domain.series.model.vo.SeriesVO;
 import com.starnft.star.domain.series.service.SeriesService;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
@@ -44,6 +47,9 @@ public class ActivitiesTask {
 
     @Resource
     private SeriesService seriesService;
+
+    @Resource
+    private PublisherService publisherService;
 
     /*****
      * 15秒执行一次
@@ -118,7 +124,16 @@ public class ActivitiesTask {
 
     private SecKillGoods copy(ActivityVO activity, ThemeDetailVO detailVO) {
 
+        PublisherVO publisherVO = publisherService.queryPublisher(new PublisherReq(detailVO.getPublisherId()));
+        if (publisherVO == null) {
+            log.error("themeInfo: [{}] publisherId : [{}]", detailVO, detailVO.getPublisherId());
+            throw new RuntimeException("未找到对应发行商");
+        }
         SeriesVO seriesVO = seriesService.querySeriesById(detailVO.getSeriesId());
+        if (publisherVO == null) {
+            log.error("themeInfo: [{}] seriesId : [{}]", detailVO, detailVO.getSeriesId());
+            throw new RuntimeException("未找到对应系列");
+        }
         SecKillGoods secKillGoods = new SecKillGoods();
         secKillGoods.setGoodsNum(activity.getGoodsNum());
         secKillGoods.setDescrption(detailVO.getDescrption());
@@ -133,6 +148,9 @@ public class ActivitiesTask {
         secKillGoods.setThemeName(detailVO.getThemeName());
         secKillGoods.setThemePic(detailVO.getThemePic());
         secKillGoods.setThemeType(detailVO.getThemeType());
+        secKillGoods.setPublisherId(publisherVO.getPublisherId());
+        secKillGoods.setPublisherPic(publisherVO.getPublisherPic());
+        secKillGoods.setPublisherName(publisherVO.getPublisherName());
         return secKillGoods;
     }
 
