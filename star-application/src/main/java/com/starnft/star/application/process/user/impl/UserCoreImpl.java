@@ -275,7 +275,10 @@ public class UserCoreImpl implements UserCore {
     @Override
     public AgreementRes queryAgreementContent(String agreementId) {
         AgreementVO agreementVO = this.userService.queryAgreementContentById(agreementId);
-        return BeanColverUtil.colver(agreementVO, AgreementRes.class);
+        AgreementRes agreementRes = BeanColverUtil.colver(agreementVO, AgreementRes.class);
+        agreementRes.setAgreementScene(AgreementSceneEnum.getCode(agreementVO.getAgreementScene()).getDesc());
+        agreementRes.setAgreementType(AgreementTypeEnum.getCode(agreementVO.getAgreementType()).getDesc());
+        return agreementRes;
     }
 
     @Override

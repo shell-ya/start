@@ -5,6 +5,7 @@
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="agreement_id" jdbcType="VARCHAR" property="agreementId"/>
         <result column="agreement_name" jdbcType="VARCHAR" property="agreementName"/>
+        <result column="agreement_content" jdbcType="VARCHAR" property="agreementContent"/>
         <result column="agreement_scene" jdbcType="TINYINT" property="agreementScene"/>
         <result column="agreement_type" jdbcType="TINYINT" property="agreementType"/>
         <result column="agreement_version" jdbcType="VARCHAR" property="agreementVersion"/>
@@ -21,7 +22,7 @@
         <result column="agreement_content" jdbcType="LONGVARCHAR" property="agreementContent"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, agreement_id, agreement_name, agreement_scene, agreement_type, agreement_version, 
+    id, agreement_id, agreement_name, agreement_scene, agreement_type, agreement_version, agreement_content,
     effective_time, submit_status, is_deleted, created_at, created_by, modified_at, modified_by
   </sql>
     <sql id="Blob_Column_List">

@@ -18,6 +18,7 @@ import com.starnft.star.domain.user.repository.IUserRepository;
 import com.starnft.star.domain.user.service.IUserService;
 import com.starnft.star.domain.user.service.strategy.UserLoginStrategy;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -383,6 +384,10 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
     @Override
     public AgreementVO queryAgreementContentById(String agreementId) {
+        List<AgreementVO> agreementVOS = userRepository.queryAgreementByAgreementId(Arrays.asList(agreementId));
+        if (CollectionUtils.isNotEmpty(agreementVOS)){
+            return Optional.ofNullable(agreementVOS).get().stream().findFirst().get();
+        }
         return null;
     }
 
