@@ -111,7 +111,6 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
 
         if (!valid) throw new RuntimeException("签名校验出错");
 
-
         JSONObject resObj = JSONUtil.parseObj(respData);
 
         String resModel = super.processTemplate(channelConf.getResTempPath(), resObj, vendorConf);

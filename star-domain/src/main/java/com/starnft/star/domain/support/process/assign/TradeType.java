@@ -7,5 +7,6 @@ public enum TradeType {
     Union_SandPay,
     Bank_SandPay,
     Sand_Refund,
-    Quick_Card_SandPay
+    Quick_Card_SandPay,
+    Check_Bank_Card_SandPay
 }

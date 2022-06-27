@@ -1,18 +1,42 @@
 package com.star.nft.test;
 
+import cn.hutool.core.util.IdUtil;
+import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.domain.payment.core.IPaymentService;
+import com.starnft.star.domain.payment.model.req.PaymentRich;
+import com.starnft.star.domain.payment.model.res.PaymentRes;
 import com.starnft.star.interfaces.StarApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+
 @SpringBootTest(classes = {StarApplication.class})
 public class TestNewPay {
+    @Resource
+    IPaymentService paymentService;
+@Test
+    public  void testcheckPay(){
+        HashMap<String, Object> stringObjectHashMap = new HashMap<>();
+        stringObjectHashMap.put("userName","黄坤煌");
+        stringObjectHashMap.put("idCard","445122199510295218");
+        PaymentRich req = PaymentRich.builder()
+                .totalMoney(new BigDecimal("12.0")).payChannel(StarConstants.PayChannel.CheckPay.name())
+                .frontUrl("https://mp.lsnft.cn").clientIp("192.168.1.1")
+                .orderSn(IdUtil.getSnowflake(1, 1).nextIdStr())
+                .userId(1L)
+                .payExtend(stringObjectHashMap)
+                .orderType(StarConstants.OrderType.RECHARGE).build();
+//        System.out.println(req.composeCallback());
+
+        PaymentRes union_pay = paymentService.pay(req);
+        System.out.println(union_pay);
+    }
 @Test
 public void testNewPay(){
             SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMddHHmmss");
@@ -31,14 +55,15 @@ public void testNewPay(){
             String mer_order_no = uuid.toString().replaceAll("-","");
             //回调地址
             String notify_url = "https://www.baidu.com";
+            String return_url = "https://www.baidu.com";
             //金额
             String order_amt = "0.11";
             //商品名称
             String goods_name = "测试";
             //支付扩展域
             //云函数所需参数，resourceAppid：小程序AppID； resourceEnv：云开发环境 ID
-//            String pay_extra = "{\"userId\":\"1\",\"userName\":\"练金梅\",\"idCard\":\"445323199609181568\"}";
-            String pay_extra = "{\"userId\":\"1\"}";
+            String pay_extra = "{\"userId\":\"1\",\"userName\":\"黄坤煌\",\"idCard\":\"445122199510295218\"}";
+        //    String pay_extra = "{\"userId\":\"1\"}";
 
             //md5key
             String key = "Mvb16HX1dERkURx2049aMmD8iK1v5w68dEwwmoU0fCieS8g6pb381Okrr5TWHR9b/Vmmz6scR/043v2K3BB4ED8cBcNRUfk3HRJQIn57Zk4xpad2fR6DoCUvKgWklkNTtGHiO2ZDIudixuz+UKFTiw==";
@@ -49,16 +74,13 @@ public void testNewPay(){
             map.put("accsplit_flag","NO");
             map.put("create_ip","127_0_0_1");
             map.put("create_time",createTime);
-//            if(!(gh_static_url==null||"".equals(gh_static_url))){
-//                map.put("gh_static_url",gh_static_url);;
-//            }
             map.put("mer_key",mer_key);
             map.put("mer_no",mer_no);
             map.put("mer_order_no",mer_order_no);
             map.put("notify_url",notify_url);
             map.put("order_amt",order_amt);
-            map.put("pay_extra",pay_extra);       //H5云函数小程序不需要此参数
-            map.put("return_url",""); //支付宝h5支付完成显示页面
+            map.put("pay_extra",pay_extra);
+            map.put("return_url",return_url);
             map.put("sign_type","MD5");
             map.put("store_id","000000");
             map.put("version",version);
@@ -87,8 +109,8 @@ public void testNewPay(){
 
 
             //拼接url
-           // String url = "https://sandcash.mixienet.com.cn/pay/h5/quicktopup?" +
-            String url = "https://sandcash.mixienet.com.cn/pay/h5/fastpayment?" +
+            String url = "https://sandcash.mixienet.com.cn/pay/h5/quicktopup?" +
+                    //  String url = "https://sandcash.mixienet.com.cn/pay/h5/fastpayment?" +
 //     云函数h5： applet  ；支付宝H5：alipay  ； 微信公众号H5：wechatpay   ；
 // 一键快捷：fastpayment   ；H5快捷 ：unionpayh5    ；支付宝扫码：alipaycode ;快捷充值:quicktopup
 //电子钱包【云账户】：cloud
@@ -100,17 +122,17 @@ public void testNewPay(){
                     "&expire_time="+endTime+"" +  //endTime
                     "&order_amt=0.11" +
                     "&notify_url="+URLEncoder.encode(notify_url)+"" +
-                    "&return_url=" +
+                    "&return_url="+URLEncoder.encode(return_url)+"" +
                     "&create_ip=127_0_0_1" +
                     "&goods_name="+URLEncoder.encode(goods_name)+"" +
                     "&store_id=000000" +
 // 产品编码: 云函数h5：  02010006  ；支付宝H5：  02020002  ；微信公众号H5：02010002   ；
 //一键快捷：  05030001  ；H5快捷：  06030001   ；支付宝扫码：  02020005 ；快捷充值：  06030003
 //电子钱包【云账户】：开通账户并支付product_code应为：04010001；消费（C2C）product_code 为：04010003 ; 我的账户页面 product_code 为：00000001
-                    "&product_code=05030001" +   ""+
+                    "&product_code=06030003" +
                     "&clear_cycle=3" +
                     "&pay_extra="     +URLEncoder.encode(pay_extra)+""+
-                    "&meta_option=%5B%7B%22s%22%3A%22Android%22,%22n%22%3A%22wxDemo%22,%22id%22%3A%22com.pay.paytypetest%22,%22sc%22%3A%22com.pay.paytypetest%22%7D%5D" +
+                    "&meta_option="+URLEncoder.encode("[{\"s\":\"Android\",\"n\":\"CircleMeta\",\"id\":\"cn.CircleMeta.app\",\"sc\":\"/index\"},{\"s\":\"IOS\",\"n\":\"CircleMeta\",\"id\":\"cn.CircleMeta.app\",\"sc\":\"/index\"}]") +
                     "&accsplit_flag=NO" +
                     "&jump_scheme=" +
 //                    "&gh_static_url="+gh_static_url+""+

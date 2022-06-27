@@ -1,5 +1,6 @@
 package com.starnft.star.domain.payment.model.req;
 
+import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.core.io.JsonStringEncoder;
 import com.google.common.collect.Maps;
@@ -77,5 +78,9 @@ public class PaymentRich implements Serializable {
         char[] chars = new JsonStringEncoder().quoteAsString(JSON.toJSONString(extInfo));
         return String.valueOf(chars).replace("\\\\", "");
     }
-
+    public String getCheckBankPayExtend() {
+        Map<String, Object> payExtend = this.getPayExtend();
+        payExtend.put("userId",this.userId.toString());
+        return JSONUtil.toJsonStr(payExtend);
+    }
 }

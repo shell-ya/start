@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -64,7 +65,6 @@ public class TemplateHelper {
     /**
      * 判断json是否为数组类型
      *
-     * @param object
      * @return
      */
     public static cn.hutool.json.JSONObject parseObj(Object obj){
@@ -304,6 +304,7 @@ public class TemplateHelper {
     private static final String[] hex = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"};
 
     public static String encode(String password) {
+        System.out.println("加密的参数："+password);
         try {
             MessageDigest md5 = MessageDigest.getInstance("MD5");
             byte[] byteArray = md5.digest(password.getBytes("utf-8"));
@@ -326,7 +327,29 @@ public class TemplateHelper {
         }
         return password;
     }
+    private static String[] sort(Set<String> set) {
+        String temp = "";
+        String[] s = set.toArray(new String[set.size()]);
+        for (int i = 0; i < s.length; i++) {
+            for (int j = i; j < s.length; j++) {
+                if (s[i].compareTo(s[j]) > 0) {
+                    temp = s[i];
+                    s[i] = s[j];
+                    s[j] = temp;
+                }
+            }
+        }
+        return s;
+    }
 
+    public Map<String,String> sortMap(Map<String,String> map){
+        Map<String,String> resultMap=new HashMap<>();
+        String[] sort = sort(map.keySet());
+        for (String s : sort) {
+            resultMap.put(s,resultMap.get(s));
+        }
+        return resultMap;
+    }
     private static String byteArrayToHexString(byte[] byteArray) {
         StringBuffer sb = new StringBuffer();
         for (byte b : byteArray) {
@@ -344,7 +367,32 @@ public class TemplateHelper {
         int d2 = n % 16;
         return hex[d1] + hex[d2];
     }
+    public String  getStartTime(){
+        SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMddHHmmss");
+        Calendar calendar = Calendar.getInstance();
+        String createTime = sdf.format(calendar.getTime());
+        return  createTime;
+    }
+    public String  getEndTime(){
+        SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMddHHmmss");
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MINUTE,3);
+        String endTime = sdf.format(calendar.getTime());
+        return  endTime;
+    }
 
+
+    public String  manageSign(Map<String,String > map){
+        String signature="";
+        for (String s : map.keySet()){
+            if(!(map.get(s)==null||map.get(s).equals(""))){
+                signature+=s+"=";
+                signature+=map.get(s)+"&";
+            }
+        }
+        signature = signature.substring(0,signature.length()-1);
+        return signature;
+    }
     public String getCurrentTime() {
         return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
     }
@@ -353,6 +401,9 @@ public class TemplateHelper {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MINUTE, 5);
         return new SimpleDateFormat("yyyyMMddHHmmss").format(calendar.getTime());
+    }
+    public String urlEscape(String str) {
+       return URLEncoder.encode(str);
     }
 
 

@@ -38,6 +38,16 @@ channel-configs:
         apiUrl: https://cashier.sandpay.com.cn/fastPay/quickPay/index
         properties:
           reqHeader: POST
+    - trade: Check_Bank_Card_SandPay
+      signTempPath: sandpay/sand_check_bankcard_sign.ftl
+      reqTempPath: sandpay/sand_check_bankcard_req.ftl
+      httpConf:
+        processType: json
+        bastApi: https://cashier.sandpay.com.cn/gateway/api/order/
+        apiUrl: https://cashier.sandpay.com.cn/fastPay/quickPay/index
+        properties:
+          reqHeader: POST
+
     - trade: Sand_Refund
       signTempPath: sandpay/sand_refund_sign.ftl
       resTempPath: sandpay/sand_refund_res.ftl
