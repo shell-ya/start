@@ -1,6 +1,8 @@
 package com.starnft.star.application.process.wallet.res;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.starnft.star.common.annotations.Desensitized;
 import com.starnft.star.common.enums.SensitiveTypeEnum;
 import io.swagger.annotations.ApiModel;
@@ -18,6 +20,7 @@ import java.util.Date;
 public class TransactionRecord implements Serializable {
 
     @ApiModelProperty(value = "userid")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
     /**
      * 平台交易流水号

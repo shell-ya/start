@@ -1,5 +1,7 @@
 package com.starnft.star.domain.theme.model.res;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.starnft.star.domain.publisher.model.vo.PublisherVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,8 +16,10 @@ import java.math.BigDecimal;
 @Builder
 @Data
 public class ThemeRes implements Serializable {
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     private Integer themeType;
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long seriesId;
     private String themeName;
     private String themePic;

@@ -1,5 +1,7 @@
 package com.starnft.star.domain.theme.model.vo;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -17,10 +19,12 @@ import java.math.BigDecimal;
 @ApiModel
 public class ThemeVO implements Serializable {
     @ApiModelProperty("主题id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     @ApiModelProperty("主题类型")
     private Integer themeType;
     @ApiModelProperty("系列id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long seriesId;
     @ApiModelProperty("主题名称")
     private String themeName;
@@ -35,6 +39,7 @@ public class ThemeVO implements Serializable {
     @ApiModelProperty("标记")
     private String tags;
     @ApiModelProperty("发行商id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long publisherId;
     @ApiModelProperty("发行商名称")
     private String publisherName;

@@ -1,11 +1,10 @@
 package com.starnft.star.domain.theme.model.res;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.starnft.star.domain.publisher.model.vo.PublisherVO;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 @Builder
@@ -15,8 +14,10 @@ import java.math.BigDecimal;
 public class ThemeDetailRes {
 
     @ApiModelProperty(value = "主题id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     @ApiModelProperty(value = "系列id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long seriesId;
     @ApiModelProperty(value = "主题类别 1-藏品 2-盲盒")
     private Integer themeType;

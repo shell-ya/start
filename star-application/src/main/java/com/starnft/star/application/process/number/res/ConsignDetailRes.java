@@ -1,5 +1,7 @@
 package com.starnft.star.application.process.number.res;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -17,6 +19,7 @@ import java.math.BigDecimal;
 @ApiModel("寄售详情")
 public class ConsignDetailRes implements Serializable {
     @ApiModelProperty("商品id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     @ApiModelProperty("商品编号")
     private Long number;
