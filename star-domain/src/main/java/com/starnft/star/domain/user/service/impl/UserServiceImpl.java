@@ -524,7 +524,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         Boolean isSetting = this.redisTemplate.opsForValue().getBit(RedisKey.REDIS_USER_IS_CERTIFICATION.getKey(), userId);
         if (Boolean.FALSE.equals(isSetting)) {
             UserInfo userInfo = this.userRepository.queryUserInfoByUserId(userId);
-            isSetting = Objects.nonNull(userInfo.getRealPersonFlag())&&userInfo.getRealPersonFlag()==1;
+            isSetting = Objects.nonNull(userInfo.getRealPersonFlag())&&userInfo.getRealPersonFlag().equals(YesOrNoStatusEnum.YES.getCode());
             this.redisTemplate.opsForValue().setBit(RedisKey.REDIS_USER_IS_CERTIFICATION.getKey(), userId, isSetting);
         }
         return isSetting;
