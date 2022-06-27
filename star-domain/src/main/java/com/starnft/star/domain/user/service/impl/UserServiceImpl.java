@@ -11,6 +11,8 @@ import com.starnft.star.common.utils.Assert;
 import com.starnft.star.common.utils.RandomUtil;
 import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.identify.IdentifyTypeEnums;
+import com.starnft.star.domain.identify.adapter.IdentifyAdapter;
 import com.starnft.star.domain.sms.interfaces.MessageStrategyInterface;
 import com.starnft.star.domain.user.model.dto.*;
 import com.starnft.star.domain.user.model.vo.*;
@@ -55,6 +57,8 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     @Resource(name = "swMessageStrategy")
     private MessageStrategyInterface messageStrategyInterface;
 
+    @Resource
+    IdentifyAdapter identifyAdapter;
     @Value("${star.sms.enable: false}")
     private Boolean smsEnable;
 
@@ -337,7 +341,6 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
     @Override
     public Boolean realNameAuthentication(Long userId, AuthenticationNameDTO req) {
-
         //校验用户信息
         UserInfo userInfo = this.userRepository.queryUserInfoByUserId(userId);
         if (Objects.isNull(userInfo)) {
@@ -361,7 +364,11 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         //todo 校验当日是否超过限制次数
         //todo 调用xxx云完成实名认证,可能不需要，节约用钱
 
+        Boolean result= identifyAdapter.getDistributor(IdentifyTypeEnums.sw_identify).checkNameAndIdCard(req.getFullName(), req.getIdNumber());
 
+        if (Boolean.FALSE.equals(result)) {
+            throw new StarException(StarError.ERROR_AUTHENTICATION);
+        }
         //保存认证信息
         UserInfoUpdateDTO updateDTO = new UserInfoUpdateDTO();
         updateDTO.setAccount(userInfo.getAccount());

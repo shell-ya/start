@@ -29,6 +29,7 @@ public enum StarError {
     PWD_NOT_SETTING("100014", "您未设置密码，请使用短信验证码登录设置密码后重试"),
     IS_REAL_NAME_AUTHENTICATION("100015", "您已进行实名认证，请勿重复操作"),
     NOT_AUTHENTICATION("100016", "您还未进行实名认证操作"),
+    ERROR_AUTHENTICATION("100016", "实名认证信息错误"),
     AGREEMENT_NOT_FUND("100017", "协议不存在"),
     AGREEMENT_TYPE_UNKNOWN("100018", "未知协议类型"),
     AGREEMENT_ID_NULL("100019", "协议id为空"),
@@ -81,6 +82,9 @@ public enum StarError {
     ORDER_STATUS_ERROR("100046", "订单状态异常"),
     ORDER_CANCEL_ERROR("100047", "取消订单失败"),
     GOODS_SELF_ERROR("1000148","禁止购买自己挂售商品"),
+
+
+
     ;
 
     private String NS = "";
