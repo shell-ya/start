@@ -63,7 +63,7 @@
 <!--                            ON u.series_theme_id = a.id-->
         WHERE a.id = #{id}
           AND a.is_delete = 0
-          AND a.status in (0,2)
+          AND a.status = 2
 <!--          AND u.status = 1-->
     </select>
 
