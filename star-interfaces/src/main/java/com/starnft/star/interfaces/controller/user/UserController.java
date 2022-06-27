@@ -165,7 +165,12 @@ public class UserController {
         req.setUserId(userResolverInfo.getUserId());
         return RopResponse.success(this.userCore.resetPayPassword(req));
     }
-
+    @ApiOperation("校验用户是否实名认证")
+    @PostMapping("/userinfo/isCertification")
+    public RopResponse<Boolean> isReal() {
+        Long userId = UserContext.getUserId().getUserId();
+        return RopResponse.success(this.userCore.isCertification(userId));
+    }
     @ApiOperation("修改支付密码")
     @PostMapping("/paypass/setting")
     public RopResponse<Boolean> setPayPassword(UserResolverInfo userResolverInfo, @RequestBody @Validated UserPlyPasswordVO userPlyPasswordVO) {

@@ -518,4 +518,15 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         this.clearPayPwdCheckSuccessToken(req.getUserId());
         return this.modifyUserInfo(userInfoUpdateDTO);
     }
+
+    @Override
+    public Boolean isCertification(Long userId) {
+        Boolean isSetting = this.redisTemplate.opsForValue().getBit(RedisKey.REDIS_USER_IS_CERTIFICATION.getKey(), userId);
+        if (Boolean.FALSE.equals(isSetting)) {
+            UserInfo userInfo = this.userRepository.queryUserInfoByUserId(userId);
+            isSetting = Objects.nonNull(userInfo.getRealPersonFlag())&&userInfo.getRealPersonFlag()==1;
+            this.redisTemplate.opsForValue().setBit(RedisKey.REDIS_USER_IS_CERTIFICATION.getKey(), userId, isSetting);
+        }
+        return isSetting;
+    }
 }

@@ -59,7 +59,8 @@ public enum RedisKey {
     /**
      * 用户是否设置登录密码
      */
-    REDIS_USER_IS_SETTING_PWD(201, StarConstants.SERVICE_NAME.concat(".user:login:isPwd"), -1L, TimeUnit.HOURS),
+    REDIS_USER_IS_SETTING_PWD(201, StarConstants.SERVICE_NAME.concat(".user:info:isPwd"), -1L, TimeUnit.HOURS),
+    REDIS_USER_IS_CERTIFICATION(202, StarConstants.SERVICE_NAME.concat(".user:info:certification"), -1L, TimeUnit.HOURS),
 
     /**
      * 发送短信间隔限制时间

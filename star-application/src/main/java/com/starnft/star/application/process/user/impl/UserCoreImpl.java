@@ -368,6 +368,11 @@ public class UserCoreImpl implements UserCore {
         return this.userService.plyPasswordSetting(payPasswordDTO);
     }
 
+    @Override
+    public Boolean isCertification(Long userId) {
+        return this.userService.isCertification(userId);
+    }
+
     private void popupAgreement(PopupAgreementRes popupAgreementRes
             , List<AgreementVO> agreementVOS
             , Integer authorizationSceneId) {

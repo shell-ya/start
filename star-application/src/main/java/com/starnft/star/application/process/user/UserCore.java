@@ -142,4 +142,6 @@ public interface UserCore {
 
     //修改 支付密码
     Boolean plyPasswordSetting(UserPlyPasswordVO userPlyPasswordVO);
+
+    Boolean isCertification(Long userId);
 }

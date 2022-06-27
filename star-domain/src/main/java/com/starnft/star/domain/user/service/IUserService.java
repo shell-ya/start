@@ -191,4 +191,6 @@ public interface IUserService {
     //修改 支付密码
     Boolean plyPasswordSetting(PayPasswordDTO payPasswordDTO);
 
+    Boolean isCertification(Long userId);
+
 }
