@@ -93,7 +93,7 @@
             </if>
             AND a.is_delete = 0
             AND b.is_delete = 0
-            AND a.status IN (0,2)
+            AND a.status = 2
         </where>
         <if test="orderBy != null and orderBy != ''">
             ORDER BY a.${orderBy} ${sortType}
