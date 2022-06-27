@@ -1,5 +1,6 @@
 package com.starnft.star.application.process.task.activity;
 
+import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.utils.DateUtil;
@@ -83,7 +84,7 @@ public class ActivitiesTask {
             return;
         }
         for (SecKillGoods secKillGood : secKillGoods) {
-            boolean isSuccess = redisUtil.hset(goodsKey, String.valueOf(secKillGood.getThemeId()), secKillGood);
+            boolean isSuccess = redisUtil.hset(goodsKey, String.valueOf(secKillGood.getThemeId()), JSONUtil.toJsonStr(secKillGood));
             if (isSuccess) {
                 //[themeId,themeId,themeId] 将商品剩余库存放到Redis，解决并发超卖问题
                 Long[] ids = pushIds(secKillGood.getStock(), secKillGood.getThemeId());

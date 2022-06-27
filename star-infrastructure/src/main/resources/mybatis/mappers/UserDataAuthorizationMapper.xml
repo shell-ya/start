@@ -6,6 +6,7 @@
     <result column="authorization_end_time" jdbcType="TIMESTAMP" property="authorizationEndTime" />
     <result column="authorization_id" jdbcType="BIGINT" property="authorizationId" />
     <result column="authorization_start_time" jdbcType="TIMESTAMP" property="authorizationStartTime" />
+
   </resultMap>
   <sql id="Base_Column_List">
     id, authorization_end_time, authorization_id, authorization_start_time
@@ -21,9 +22,9 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.starnft.star.infrastructure.entity.user.UserDataAuthorizationEntity" useGeneratedKeys="true">
-    insert into user_data_authorization (authorization_end_time, authorization_id, 
+    insert into user_data_authorization (is_deleted , created_at , created_by , modified_at , modified_by , authorization_end_time, authorization_id,
       authorization_start_time)
-    values (#{authorizationEndTime,jdbcType=TIMESTAMP}, #{authorizationId,jdbcType=BIGINT}, 
+    values (#{isDeleted},#{createdAt},#{createdBy},#{modifiedAt},#{modifiedBy},#{authorizationEndTime,jdbcType=TIMESTAMP}, #{authorizationId,jdbcType=BIGINT},
       #{authorizationStartTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.starnft.star.infrastructure.entity.user.UserDataAuthorizationEntity" useGeneratedKeys="true">

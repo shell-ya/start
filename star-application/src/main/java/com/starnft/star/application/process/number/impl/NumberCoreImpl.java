@@ -15,6 +15,7 @@ import com.starnft.star.domain.article.model.vo.UserNumbersVO;
 import com.starnft.star.domain.article.service.UserThemeService;
 import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
 import com.starnft.star.domain.number.model.dto.NumberUpdateDTO;
+import com.starnft.star.domain.number.model.req.NumberConsignmentCancelRequest;
 import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
 import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
@@ -116,11 +117,10 @@ public class NumberCoreImpl implements INumberCore {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public Boolean consignmentCancel(Long uid, Long numberId) {
-        Assert.notNull(numberId, () -> new StarException(StarError.PARAETER_UNSUPPORTED, "商品ID不能为空"));
+    public Boolean consignmentCancel(Long uid, NumberConsignmentCancelRequest request) {
 
         // 校验是否拥有该藏品
-        UserNumbersVO userNumbers = this.checkNumberOwner(uid, numberId);
+        UserNumbersVO userNumbers = this.checkNumberOwner(uid, request.getNumberId());
 
         // 判断商品是否在寄售中
         if (!Objects.equals(UserNumberStatusEnum.ON_CONSIGNMENT.getCode(), userNumbers.getStatus())) {
@@ -131,7 +131,7 @@ public class NumberCoreImpl implements INumberCore {
         Boolean updBool = this.numberService.modifyNumberInfo(
                 NumberUpdateDTO.builder()
                         .uid(uid)
-                        .numberId(numberId)
+                        .numberId(request.getNumberId())
                         .status(NumberStatusEnum.SOLD)
                         .build());
 
@@ -139,12 +139,12 @@ public class NumberCoreImpl implements INumberCore {
         Boolean saveBool = this.numberService.saveNumberCirculationRecord(
                 NumberCirculationAddDTO.builder()
                         .uid(uid)
-                        .numberId(numberId)
+                        .numberId(request.getNumberId())
                         .type(NumberCirculationTypeEnum.CANCEL_CONSIGNMENT)
                         .build());
 
         // 还原用户藏品状态
-        Boolean updUserNumberBool = this.userThemeService.modifyUserNumberStatus(uid, numberId, UserNumberStatusEnum.PURCHASED);
+        Boolean updUserNumberBool = this.userThemeService.modifyUserNumberStatus(uid, request.getNumberId(), UserNumberStatusEnum.PURCHASED);
 
         if (updBool && saveBool && updUserNumberBool) {
             return Boolean.TRUE;

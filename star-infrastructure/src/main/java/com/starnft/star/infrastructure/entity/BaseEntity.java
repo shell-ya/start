@@ -13,17 +13,17 @@ import java.util.Date;
 @Data
 public class BaseEntity {
 
-    @TableField( "is_deleted")
+    @TableField("is_deleted")
     private Boolean isDeleted;
 
-    @TableField( "created_at")
+    @TableField("created_at")
     private Date createdAt;
 
-    @TableField( "created_by")
+    @TableField("created_by")
     private Long createdBy;
 
-    @TableField( "modified_at")
-    private Date  modifiedAt;
+    @TableField("modified_at")
+    private Date modifiedAt;
 
     @TableField("modified_by")
     private Long modifiedBy;

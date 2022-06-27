@@ -5,6 +5,7 @@
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="agreement_id" jdbcType="VARCHAR" property="agreementId"/>
         <result column="agreement_name" jdbcType="VARCHAR" property="agreementName"/>
+        <result column="agreement_content" jdbcType="VARCHAR" property="agreementContent"/>
         <result column="agreement_scene" jdbcType="TINYINT" property="agreementScene"/>
         <result column="agreement_type" jdbcType="TINYINT" property="agreementType"/>
         <result column="agreement_version" jdbcType="VARCHAR" property="agreementVersion"/>
@@ -21,7 +22,7 @@
         <result column="agreement_content" jdbcType="LONGVARCHAR" property="agreementContent"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, agreement_id, agreement_name, agreement_scene, agreement_type, agreement_version, 
+    id, agreement_id, agreement_name, agreement_scene, agreement_type, agreement_version, agreement_content,
     effective_time, submit_status, is_deleted, created_at, created_by, modified_at, modified_by
   </sql>
     <sql id="Blob_Column_List">
@@ -45,14 +46,14 @@
         select
         agreement_type,
         agreement_scene,
-        MAX (agreement_version+0) AS agreement_version
+        MAX(agreement_version+0) AS agreement_version
         from
         user_agreement
         where
         submit_status = 2
         and agreement_scene = 1
         and effective_time &lt;= NOW()
-        and is_delete = 0
+        and is_deleted = 0
         and agreement_type = #{agreementType}
         group by agreement_type , agreement_scene
         )  as t
@@ -69,16 +70,17 @@
         ua.*
         from
         (
-         agreement_type,
-         agreement_scene,
-         MAX(agreement_version + 0) as agreement_version
-         from
+        select
+        agreement_type,
+        agreement_scene,
+        MAX(agreement_version+0) AS agreement_version
+        from
          user_agreement
          where
          submit_status = 2
          and agreement_scene = #{scene}
          and effective_time &lt;= NOW()
-         and is_delete = 0
+         and is_deleted = 0
          group by agreement_type , agreement_scene) as t
          left join
          user_agreement as ua on(
@@ -97,9 +99,9 @@
             <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
                 #{item}
             </foreach>
-            and submit_stauts=2
+            and submit_status=2
             and effective_time &lt;= NOW()
-            and record_status = 1
+            and is_deleted = 0
         </where>
     </select>
 

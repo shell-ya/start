@@ -28,10 +28,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -257,6 +254,11 @@ public class UserCoreImpl implements UserCore {
                     agreementSignDTO.setAgreementId(agreementInfo.getAgreementId());
                     agreementSignDTO.setAuthorizationId(authorizationId);
                     agreementSignDTO.setUserId(userId);
+                    agreementSignDTO.setIsDeleted(Boolean.FALSE);
+                    agreementSignDTO.setCreatedAt(new Date());
+                    agreementSignDTO.setCreatedBy(userId);
+                    agreementSignDTO.setModifiedAt(new Date());
+                    agreementSignDTO.setModifiedBy(userId);
                     agreementSigns.add(agreementSignDTO);
                 }
                 this.userService.batchInsertAgreementSign(agreementSigns, userId, authorizationId);
@@ -273,7 +275,10 @@ public class UserCoreImpl implements UserCore {
     @Override
     public AgreementRes queryAgreementContent(String agreementId) {
         AgreementVO agreementVO = this.userService.queryAgreementContentById(agreementId);
-        return BeanColverUtil.colver(agreementVO, AgreementRes.class);
+        AgreementRes agreementRes = BeanColverUtil.colver(agreementVO, AgreementRes.class);
+        agreementRes.setAgreementScene(AgreementSceneEnum.getCode(agreementVO.getAgreementScene()).getDesc());
+        agreementRes.setAgreementType(AgreementTypeEnum.getCode(agreementVO.getAgreementType()).getDesc());
+        return agreementRes;
     }
 
     @Override
@@ -286,17 +291,23 @@ public class UserCoreImpl implements UserCore {
             //根据协议场景查询最新且已经生效的协议
             List<AgreementVO> agreementVOS = this.userRepository.queryNewAgreementByScene(agreementScene);
             for (AgreementVO agreementVO : agreementVOS) {
-                agreementDetailRes = BeanColverUtil.colver(agreementAndNoticeRes, AgreementDetailRes.class);
+                agreementDetailRes = BeanColverUtil.colver(agreementVO, AgreementDetailRes.class);
+                //先写死注册场景
+                agreementDetailRes.setAgreementScene(AgreementSceneEnum.getCode(agreementVO.getAgreementScene()).getDesc());
+                agreementDetailRes.setAgreementType(AgreementTypeEnum.getCode(agreementVO.getAgreementType()).getDesc());
                 agreementDetailResList.add(agreementDetailRes);
             }
 
             //根据协议场景查询弹窗信息
             AgreementPopupInfoVO agreementPopupInfoVO = this.userRepository.queryAgreementPopupByScene(agreementScene);
-            agreementNoticeInfoRes.setNoticeTitle(agreementPopupInfoVO.getAgreementPopupTitle());
-            agreementNoticeInfoRes.setNoticeContent(agreementPopupInfoVO.getAgreementPopupContent());
 
+            if (Objects.isNull(agreementPopupInfoVO)){
+                return agreementAndNoticeRes;
+            }
             agreementAndNoticeRes.setAgreementDetailResList(agreementDetailResList);
             agreementAndNoticeRes.setAgreementNoticeInfo(agreementNoticeInfoRes);
+            agreementNoticeInfoRes.setNoticeTitle(agreementPopupInfoVO.getAgreementPopupTitle());
+            agreementNoticeInfoRes.setNoticeContent(agreementPopupInfoVO.getAgreementPopupContent());
             return agreementAndNoticeRes;
         } else {
             log.error("user method queryAgreementAndNotice");

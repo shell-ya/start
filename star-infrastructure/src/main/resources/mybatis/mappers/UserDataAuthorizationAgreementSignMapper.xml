@@ -6,6 +6,11 @@
     <result column="agreement_id" jdbcType="VARCHAR" property="agreementId" />
     <result column="authorization_id" jdbcType="BIGINT" property="authorizationId" />
     <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result property="isDeleted" column="is_deleted" jdbcType="INTEGER"/>
+    <result property="createdAt" column="created_at" jdbcType="DATE"/>
+    <result property="createdBy" column="created_by" jdbcType="VARCHAR"/>
+    <result property="modifiedAt" column="modified_at" jdbcType="DATE"/>
+    <result property="modifiedBy" column="modified_by" jdbcType="VARCHAR"/>
   </resultMap>
   <sql id="Base_Column_List">
     id, agreement_id, authorization_id, user_id
@@ -19,26 +24,17 @@
 
     <select id="batchSelectUserAgreementId" resultType="java.lang.String">
         select agreement_id from user_data_authorization_agreement_sign
-        where user_id = #{userId} and is_delete = 0
+        where user_id = #{userId} and is_deleted = 0
     </select>
 
-    <select id="batchInsertAgreementSign" resultType="java.lang.Integer">
+    <insert id="batchInsertAgreementSign" >
         insert into user_data_authorization_agreement_sign
-        (agreement_id, authorization_id, user_id, is_deleted, created_at,created_by,modified_at,modified_by)
+        (agreement_id, authorization_id, user_id, is_deleted, created_at,created_by, modified_at,modified_by)
         values 
         <foreach collection="agreementSigns" item="item" separator=",">
-          (
-            #{item.agreementId},
-            #{item.authorizationId},
-            #{item.userId},
-            #{item.isDeleted},
-            #{item.createdAt},
-            #{item.createdBy},
-            #{item.modifiedAt},
-            #{item.modifiedBy}
-          )
+          (#{item.agreementId},#{item.authorizationId},#{item.userId},#{item.isDeleted},#{item.createdAt},#{item.createdBy},#{item.modifiedAt},#{item.modifiedBy})
         </foreach>
-    </select>
+    </insert>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from user_data_authorization_agreement_sign

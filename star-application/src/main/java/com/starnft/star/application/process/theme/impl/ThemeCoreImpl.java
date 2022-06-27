@@ -1,5 +1,6 @@
 package com.starnft.star.application.process.theme.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
 import com.starnft.star.application.process.theme.ThemeCore;
 import com.starnft.star.common.constant.RedisKey;
@@ -82,7 +83,7 @@ public class ThemeCoreImpl implements ThemeCore {
         for (String key : keys) {
             Map<Object, Object> goods = redisUtil.hmget(key);
             for (Object value : goods.values()) {
-                SecKillGoods secKillGoods = (SecKillGoods) value;
+                SecKillGoods secKillGoods = JSONUtil.toBean(value.toString(), SecKillGoods.class);
                 SecKillGoods good = verifyStock(secKillGoods);
                 goodsList.add(good);
             }

@@ -1,18 +1,16 @@
 package com.starnft.star.interfaces.controller.mall;
 
 import com.starnft.star.application.process.number.INumberCore;
-import com.starnft.star.application.process.number.req.MarketOrderReq;
 import com.starnft.star.application.process.number.res.ConsignDetailRes;
-import com.starnft.star.application.process.number.res.MarketOrderRes;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.domain.number.model.req.NumberConsignmentCancelRequest;
 import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
 import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
-import com.starnft.star.interfaces.interceptor.UserContext;
 import com.starnft.star.interfaces.interceptor.UserResolverInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -61,8 +59,9 @@ public class NumbersController {
 
     @PostMapping("/consignCancel")
     @ApiOperation("商品取消寄售")
-    public RopResponse<Boolean> cancelConsignment(UserResolverInfo userResolverInfo, @ApiParam("商品id") Long numberId) {
-        return RopResponse.success(this.numberCore.consignmentCancel(userResolverInfo.getUserId(), numberId));
+    public RopResponse<Boolean> cancelConsignment(UserResolverInfo userResolverInfo,
+                                                  @Validated @RequestBody NumberConsignmentCancelRequest request) {
+        return RopResponse.success(this.numberCore.consignmentCancel(userResolverInfo.getUserId(), request));
     }
 
 

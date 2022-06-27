@@ -125,7 +125,7 @@ public class UserController {
     }
 
     @ApiOperation("保存用户同意协议的版本信息")
-    @GetMapping("/userinfo/agreement/insertagreement")
+    @PostMapping("/userinfo/agreement/insertagreement")
     public RopResponse saveUserAgreementHistoryByUserId(UserResolverInfo userResolverInfo,
                                                         @RequestBody AgreementIdRequest request) {
         this.userCore.saveUserAgreementHistoryByUserId(request.getAgreementId(), userResolverInfo.getUserId());
@@ -133,12 +133,14 @@ public class UserController {
     }
 
     @ApiOperation("根据协议id查询协议的信息")
+    @TokenIgnore
     @GetMapping("/userinfo/agreement/querycontent")
     public RopResponse<AgreementRes> queryAgreementContent(@RequestParam("agreementId") String agreementId) {
         return RopResponse.success(this.userCore.queryAgreementContent(agreementId));
     }
 
     @ApiOperation("根据协议场景查询最新的协议和弹窗信息")
+    @TokenIgnore
     @GetMapping("/userinfo/agreement/queryagreementinfo")
     public RopResponse<AgreementAndNoticeRes> queryAgreementAndNotice(@RequestParam("agreementScene") Integer agreementScene) {
         return RopResponse.success(this.userCore.queryAgreementAndNotice(agreementScene));
