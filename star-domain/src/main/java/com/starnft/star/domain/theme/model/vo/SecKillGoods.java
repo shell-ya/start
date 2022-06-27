@@ -1,6 +1,8 @@
 package com.starnft.star.domain.theme.model.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -34,9 +36,11 @@ public class SecKillGoods implements Serializable {
     private String time;
 
     @ApiModelProperty(name = "主题id", notes = "")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long themeId;
 
     @ApiModelProperty(name = "系列id", notes = "")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long seriesId;
 
     @ApiModelProperty(name = "系列名称", notes = "")
@@ -64,5 +68,6 @@ public class SecKillGoods implements Serializable {
     private String publisherPic;
 
     @ApiModelProperty(name = "发行商id", notes = "")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long  publisherId;
 }

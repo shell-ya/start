@@ -198,7 +198,7 @@ public class OrderProcessor implements IOrderProcessor {
     public OrderListRes marketOrder(MarketOrderReq marketOrderReq) {
 
         ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(marketOrderReq.getNumberId());
-        //禁止购买挂失商品
+        //禁止购买自己售出商品
         if (marketOrderReq.getUserId().equals(numberDetail.getOwnerBy()))
             throw new StarException(StarError.GOODS_SELF_ERROR);
         //获取锁
