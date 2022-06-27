@@ -123,6 +123,7 @@ public class OrderRepository implements IOrderRepository {
                 .createdAt(starNftOrder.getCreatedAt())
                 .remark(starNftOrder.getRemark())
                 .seriesThemeId(starNftOrder.getSeriesThemeId())
+                .numberId(starNftOrder.getSeriesThemeId())
                 .status(starNftOrder.getStatus())
                 .expire(180L)
                 .orderType(starNftOrder.getOrderSn().startsWith("PG") ? StarConstants.OrderType.PUBLISH_GOODS.getName() : StarConstants.OrderType.MARKET_GOODS.getName())
