@@ -1,5 +1,7 @@
 package com.starnft.star.domain.number.model.vo;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -17,10 +19,13 @@ import java.math.BigDecimal;
 @ApiModel
 public class NumberVO implements Serializable {
     @ApiModelProperty("商品id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     @ApiModelProperty("商品编号")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long number;
     @ApiModelProperty("主题id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long themeId;
     @ApiModelProperty("发行数量")
     private Integer issuedQty;

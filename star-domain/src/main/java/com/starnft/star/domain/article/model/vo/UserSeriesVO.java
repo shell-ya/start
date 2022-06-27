@@ -1,5 +1,7 @@
 package com.starnft.star.domain.article.model.vo;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +14,7 @@ import java.io.Serializable;
 @Builder
 public class UserSeriesVO  implements Serializable {
     private String seriesName;
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long seriesId;
     private String seriesImages;
     private Integer nums;

@@ -1,5 +1,7 @@
 package com.starnft.star.application.process.user.res;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -12,6 +14,7 @@ import java.math.BigDecimal;
 public class UserGatheringInfoRes implements Serializable {
 
     @ApiModelProperty("用户id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long uid;
 
     @ApiModelProperty("手机号")
