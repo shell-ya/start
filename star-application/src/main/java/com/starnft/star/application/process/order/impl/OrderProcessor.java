@@ -63,7 +63,6 @@ public class OrderProcessor implements IOrderProcessor {
     private final INumberService numberService;
     private final OrderStateHandler orderStateHandler;
     private final Map<StarConstants.Ids, IIdGenerator> idsIIdGeneratorMap;
-
     private final TransactionTemplate template;
 
     @Override
@@ -126,31 +125,27 @@ public class OrderProcessor implements IOrderProcessor {
 
     @Override
     public OrderPayDetailRes orderPay(OrderPayReq orderPayReq) {
-        //验证订单
-
         //验证支付凭证
-//        userService.assertPayPwdCheckSuccess(orderPayReq.getUserId(), orderPayReq.getPayToken());
+        userService.assertPayPwdCheckSuccess(orderPayReq.getUserId(), orderPayReq.getPayToken());
         //规则验证
         walletService.balanceVerify(orderPayReq.getUserId(), new BigDecimal(orderPayReq.getPayAmount()));
         String lockKey = String.format(RedisKey.SECKILL_ORDER_TRANSACTION.getKey(), orderPayReq.getOrderSn());
         try {
             //锁住当前订单交易
             if (redisLockUtils.lock(lockKey, RedisKey.SECKILL_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.SECKILL_ORDER_TRANSACTION.getTime()))) {
-                //余额支付
-                WalletPayResult walletPayResult = walletService.doWalletPay(createWalletPayReq(orderPayReq));
-                if (ResultCode.SUCCESS.getCode().equals(walletPayResult.getStatus())) {
-                    Boolean isSuccess = template.execute(status -> {
-                        //商品发放 // TODO: 2022/6/23  市场 如果支付接口响应过慢 该操作可异步化 最终一致性即可
-                        boolean handover = numberService.handover(buildHandOverReq(orderPayReq));
-                        //订单状态更新
-                        Result result = orderStateHandler.payComplete(orderPayReq.getUserId(), orderPayReq.getOrderSn(), orderPayReq.getOrderSn(), StarConstants.ORDER_STATE.WAIT_PAY);
-                        return ResultCode.SUCCESS.getCode().equals(result.getCode()) && handover;
-                    });
-                    if (isSuccess) {
-                        return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn());
-                    }
-                    throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "订单处理异常！");
+                Boolean isSuccess = template.execute(status -> {
+                    //余额支付
+                    WalletPayResult walletPayResult = walletService.doWalletPay(createWalletPayReq(orderPayReq));
+                    //商品发放 // TODO: 2022/6/23  市场 如果支付接口响应过慢 该操作可异步化 最终一致性即可
+                    boolean handover = numberService.handover(buildHandOverReq(orderPayReq));
+                    //订单状态更新
+                    Result result = orderStateHandler.payComplete(orderPayReq.getUserId(), orderPayReq.getOrderSn(), orderPayReq.getOrderSn(), StarConstants.ORDER_STATE.WAIT_PAY);
+                    return ResultCode.SUCCESS.getCode().equals(walletPayResult.getStatus()) && ResultCode.SUCCESS.getCode().equals(result.getCode()) && handover;
+                });
+                if (isSuccess) {
+                    return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn());
                 }
+                throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "订单处理异常！");
             }
         } finally {
             walletService.threadClear();
@@ -190,9 +185,17 @@ public class OrderProcessor implements IOrderProcessor {
 
     @Override
     public OrderPlaceRes cancelSecOrder(OrderCancelReq orderGrabReq) {
-        return orderService.orderCancel(orderGrabReq.getUid(), orderGrabReq.getOrderSn(), StarConstants.OrderType.PUBLISH_GOODS);
+        String lockKey = String.format(RedisKey.SECKILL_ORDER_TRANSACTION.getKey(), orderGrabReq.getOrderSn());
+        try {
+            //锁住当前订单交易
+            if (redisLockUtils.lock(lockKey, RedisKey.SECKILL_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.SECKILL_ORDER_TRANSACTION.getTime()))) {
+                return orderService.orderCancel(orderGrabReq.getUid(), orderGrabReq.getOrderSn(), StarConstants.OrderType.PUBLISH_GOODS);
+            }
+        } finally {
+            redisLockUtils.unlock(lockKey);
+        }
+        return null;
     }
-
 
     @Override
     public OrderListRes marketOrder(MarketOrderReq marketOrderReq) {

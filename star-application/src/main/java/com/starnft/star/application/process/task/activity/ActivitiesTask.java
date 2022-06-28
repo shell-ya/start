@@ -116,6 +116,10 @@ public class ActivitiesTask {
         ArrayList<@Nullable SecKillGoods> goods = Lists.newArrayList();
         for (ActivityVO activity : activities) {
             ThemeDetailVO detailVO = themeService.queryThemeDetail(activity.getSpuId());
+            if (detailVO == null) {
+                log.error(" themeId : [{}]", detailVO.getId());
+                throw new RuntimeException("未找到对应主题");
+            }
             SecKillGoods good = copy(activity, detailVO);
             good.setTime(DateUtil.date2Str(startTime));
             goods.add(good);

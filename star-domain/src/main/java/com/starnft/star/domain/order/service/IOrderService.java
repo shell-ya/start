@@ -19,6 +19,7 @@ public interface IOrderService {
     //查询用户订单详情
     OrderListRes orderDetails(OrderListReq orderListReq);
 
+
     //秒杀订单缓存查询
     OrderListRes obtainSecKillOrder(Long uid, Long themeId);
 
