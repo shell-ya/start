@@ -16,7 +16,6 @@ public class RechargeFacadeReq implements Serializable {
 //    @NotNull(message = "userId 不能为空")
     private Long userId;
 
-    @NotBlank(message = "钱包id不能为空")
     @ApiModelProperty(value = "钱包id", required = true)
     private String walletId;
 
