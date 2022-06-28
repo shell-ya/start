@@ -43,7 +43,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -140,7 +142,7 @@ public class WalletCore implements IWalletCore {
         rechargeReqResult.setForward(payResult.getGatewayApi());
     }
 
-    private PaymentRich buildPaymentReq(WalletRecordReq walletRecordReq, RechargeFacadeReq rechargeFacadeReq, UserRealInfo userRealInfo) {
+    private PaymentRich buildPaymentReq(WalletRecordReq walletRecordReq, RechargeFacadeReq rechargeFacadeReq, UserRealInfo userRealInfo) throws UnsupportedEncodingException {
 
         //充值回调topic设置 用户拉起第三方支付支付后 结果回调后将状态及参数发送该topic下的消费者消费处理
         String rechargeCallbackProcessTopic = String.format(TopicConstants.WALLET_RECHARGE_DESTINATION.getFormat(),
@@ -162,7 +164,7 @@ public class WalletCore implements IWalletCore {
                 .orderSn(walletRecordReq.getRecordSn())
                 .bankNo(String.valueOf(rechargeFacadeReq.getCardNo()))
                 .clientIp("1.1.1.1")
-                .frontUrl(forward)
+                .frontUrl(URLEncoder.encode(forward, "UTF-8"))
                 .payExtend(extend)
                 .orderType(StarConstants.OrderType.RECHARGE)
                 .multicastTopic(rechargeCallbackProcessTopic)
