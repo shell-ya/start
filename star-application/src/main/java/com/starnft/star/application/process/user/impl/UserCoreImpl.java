@@ -378,7 +378,6 @@ public class UserCoreImpl implements UserCore {
     public String shareCodeInfo(Long userId) {
         return InvitationCodeUtil.gen(userId);
     }
-
     private void popupAgreement(PopupAgreementRes popupAgreementRes
             , List<AgreementVO> agreementVOS
             , Integer authorizationSceneId) {
