@@ -34,9 +34,12 @@
         SELECT s.series_name   AS series_name,
                u.series_id     AS series_id,
                s.series_images AS series_images,
-               COUNT(1)        AS nums
+               COUNT(1)        AS nums,
+               snp.publisher   AS publisher_name,
+               snp.pic         AS publisher_pic
         FROM star_nft_user_theme u
                  LEFT JOIN star_nft_series s ON u.series_id = s.id
+                 LEFT JOIN star_nft_publisher snp ON s.publisher_id = snp.id
         WHERE u.user_id = #{userId}
           AND u.`status` = #{status}
           AND u.source = #{themeType}
@@ -79,14 +82,15 @@
           AND u.is_delete = 0
     </select>
 
-    <update id="updateUserThemeMapping" >
-        update star_nft_user_theme set user_id = #{userId},status = #{status}
-        where
-            series_id = #{seriesId}
-        and series_theme_info_id = #{seriesThemeInfoId}
-        and series_theme_id = #{seriesThemeId}
-        and status = 1
-        and user_id = #{beforeUserId}
+    <update id="updateUserThemeMapping">
+        UPDATE star_nft_user_theme
+        SET user_id = #{userId},
+            status  = #{status}
+        WHERE series_id = #{seriesId}
+          AND series_theme_info_id = #{seriesThemeInfoId}
+          AND series_theme_id = #{seriesThemeId}
+          AND status = 1
+          AND user_id = #{beforeUserId}
     </update>
 
 </mapper>

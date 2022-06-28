@@ -84,6 +84,13 @@ public class StarNftSeries implements Serializable {
      */
     @TableField(value = "series_descrption")
     private String seriesDescrption;
+
+    /**
+     * 发行商ID
+     */
+    @TableField(value = "publisher_id")
+    private Long publisherId;
+
     private static final long serialVersionUID = 1L;
     public static final String COL_ID = "id";
     public static final String COL_SERIES_NAME = "series_name";
@@ -101,5 +108,5 @@ public class StarNftSeries implements Serializable {
 
     public static final String COL_SERIES_IMAGES = "series_images";
     public static final String COL_SERIES_MODELS = "series_models";
-    public static final String COL_SERIES_STATUS= "series_status";
+    public static final String COL_SERIES_STATUS = "series_status";
 }
