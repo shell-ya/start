@@ -53,18 +53,19 @@
                b.theme_pic    theme_pic,
                b.theme_type   theme_type,
                c.id           series_id,
-               c.series_name  series_name
+               c.series_name  series_name,
+               u.user_id      owner_by
         FROM star_nft_theme_number a
                  LEFT JOIN star_nft_theme_info b
                            ON a.series_theme_info_id = b.id
                  LEFT JOIN star_nft_series c
                            ON b.series_id = c.id
-<!--                LEFT JOIN star_nft_user_theme u-->
-<!--                            ON u.series_theme_id = a.id-->
+                LEFT JOIN star_nft_user_theme u
+                            ON u.series_theme_id = a.id
         WHERE a.id = #{id}
           AND a.is_delete = 0
           AND a.status = 2
-<!--          AND u.status = 1-->
+          AND u.status = 1
     </select>
 
     <select id="selectNumberList" resultType="com.starnft.star.domain.number.model.vo.NumberVO">
