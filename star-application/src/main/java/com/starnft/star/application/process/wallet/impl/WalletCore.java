@@ -2,6 +2,7 @@ package com.starnft.star.application.process.wallet.impl;
 
 import cn.hutool.core.date.DateUtil;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.starnft.star.application.mq.IMessageSender;
 import com.starnft.star.application.mq.constant.TopicConstants;
 import com.starnft.star.application.process.wallet.IWalletCore;
@@ -25,6 +26,7 @@ import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
 import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.user.model.vo.UserInfoVO;
+import com.starnft.star.domain.user.model.vo.UserRealInfo;
 import com.starnft.star.domain.user.service.IUserService;
 import com.starnft.star.domain.wallet.model.req.*;
 import com.starnft.star.domain.wallet.model.res.CardBindResult;
@@ -43,10 +45,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @Slf4j
@@ -82,9 +81,17 @@ public class WalletCore implements IWalletCore {
         //参数验证
         walletService.verifyParam(rechargeFacadeReq.getChannel());
 
+        if (rechargeFacadeReq.getChannel().equals(StarConstants.PayChannel.CheckPay.name())) {
+            //验证实名信息
+            if (!userService.isCertification(rechargeFacadeReq.getUserId())) {
+                throw new StarException(StarError.ERROR_AUTHENTICATION);
+            }
+        }
+        UserRealInfo userRealInfo = userService.getUserRealInfo(rechargeFacadeReq.getUserId());
+
         String isTransaction = String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(), rechargeFacadeReq.getUserId());
 
-        if (redisUtil.hasKey(isTransaction)) {
+        if (redisUtil.hasKey(RedisLockUtils.REDIS_LOCK_PREFIX + isTransaction)) {
             throw new StarException(StarError.IS_TRANSACTION);
         }
         //锁定当前钱包交易
@@ -98,7 +105,7 @@ public class WalletCore implements IWalletCore {
                 }
                 RechargeReqResult rechargeReqResult = new RechargeReqResult();
                 //调用支付领域服务 获取拉起支付参数
-                PaymentRes payResult = paymentService.pay(buildPaymentReq(walletRecordReq, rechargeFacadeReq));
+                PaymentRes payResult = paymentService.pay(buildPaymentReq(walletRecordReq, rechargeFacadeReq, userRealInfo));
                 if (payResult.getStatus().equals(ResultCode.SUCCESS.getCode())) {
                     rechargeReqResult.setOrderSn(payResult.getOrderSn());
                     //组装跳转url
@@ -133,7 +140,7 @@ public class WalletCore implements IWalletCore {
         rechargeReqResult.setForward(payResult.getGatewayApi());
     }
 
-    private PaymentRich buildPaymentReq(WalletRecordReq walletRecordReq, RechargeFacadeReq rechargeFacadeReq) {
+    private PaymentRich buildPaymentReq(WalletRecordReq walletRecordReq, RechargeFacadeReq rechargeFacadeReq, UserRealInfo userRealInfo) {
 
         //充值回调topic设置 用户拉起第三方支付支付后 结果回调后将状态及参数发送该topic下的消费者消费处理
         String rechargeCallbackProcessTopic = String.format(TopicConstants.WALLET_RECHARGE_DESTINATION.getFormat(),
@@ -142,6 +149,13 @@ public class WalletCore implements IWalletCore {
         String payTime = DateUtil.formatLocalDateTime(LocalDateTime.now());
         String forward = rechargeFacadeReq.getForward()
                 .concat("&transactionSn=" + walletRecordReq.getRecordSn() + "&payTime=" + payTime);
+
+        HashMap<String, Object> extend = Maps.newHashMap();
+        //sand快捷充值渠道参数
+        if (rechargeFacadeReq.getChannel().equals(StarConstants.PayChannel.CheckPay.name())) {
+            extend.put("userName", userRealInfo.getFullName());
+            extend.put("idCard", userRealInfo.getIdNumber());
+        }
         return PaymentRich.builder().payChannel(rechargeFacadeReq.getChannel())
                 .totalMoney(rechargeFacadeReq.getMoney())
                 .userId(rechargeFacadeReq.getUserId())
@@ -149,6 +163,7 @@ public class WalletCore implements IWalletCore {
                 .bankNo(String.valueOf(rechargeFacadeReq.getCardNo()))
                 .clientIp("1.1.1.1")
                 .frontUrl(forward)
+                .payExtend(extend)
                 .orderType(StarConstants.OrderType.RECHARGE)
                 .multicastTopic(rechargeCallbackProcessTopic)
                 .build();

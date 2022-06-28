@@ -73,7 +73,7 @@ public class RocketMQProducer implements IMessageSender {
     @Override
     public <T> void asyncSend(final String topic, final Optional<T> message,
                               Consumer<SendResult> operationIfSuccess, Runnable failOperation) {
-//        verifyFormat(topic);
+        verifyFormat(topic);
         message.ifPresent(msg -> {
             template.asyncSend(getCompleteTopic(topic), JSONObject.toJSONString(msg), new SendCallback() {
                 @Override

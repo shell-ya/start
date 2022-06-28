@@ -233,7 +233,7 @@ public class WalletServiceImpl implements WalletService {
             }
         }
         //判断当前是否有其他交易正在进行
-        if (redisUtil.hasKey(isTransactionKey)) {
+        if (redisUtil.hasKey(RedisLockUtils.REDIS_LOCK_PREFIX + isTransactionKey)) {
             throw new StarException(StarError.IS_TRANSACTION);
         }
         return isTransactionKey;

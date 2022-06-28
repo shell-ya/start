@@ -31,8 +31,10 @@ public class PaymentRich implements Serializable {
      * 用户Id
      */
     private Long userId;
-
-     private Map<String,Object> payExtend;
+    /**
+     * 用户Id
+     */
+    private Map<String, Object> payExtend;
     /**
      * 客户端ip
      */
@@ -78,9 +80,10 @@ public class PaymentRich implements Serializable {
         char[] chars = new JsonStringEncoder().quoteAsString(JSON.toJSONString(extInfo));
         return String.valueOf(chars).replace("\\\\", "");
     }
+
     public String getCheckBankPayExtend() {
         Map<String, Object> payExtend = this.getPayExtend();
-        payExtend.put("userId",this.userId.toString());
+        payExtend.put("userId", this.userId.toString());
         return JSONUtil.toJsonStr(payExtend);
     }
 }
