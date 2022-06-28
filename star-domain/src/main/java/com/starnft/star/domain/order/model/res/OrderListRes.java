@@ -47,7 +47,7 @@ public class OrderListRes implements Serializable {
     @ApiModelProperty(value = "状态(0-待支付 1-已完成 2-已取消)")
     private Integer status;
     @ApiModelProperty(value = "创建时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", locale = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private Date createdAt;
     @ApiModelProperty(value = "备注")
     private String remark;

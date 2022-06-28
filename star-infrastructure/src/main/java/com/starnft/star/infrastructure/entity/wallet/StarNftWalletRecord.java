@@ -12,50 +12,78 @@ import java.util.Date;
 
 @TableName("star_nft_wallet_record")
 public class StarNftWalletRecord extends BaseEntity implements Serializable {
-    /** id */
-    @ApiModelProperty(name = "id",notes = "")
+    /**
+     * id
+     */
+    @ApiModelProperty(name = "id", notes = "")
     @TableId
-    private Long id ;
-    /** 交易流水号 */
-    @ApiModelProperty(name = "交易流水号",notes = "")
-    private String recordSn ;
-    /** 订单号 */
-    @ApiModelProperty(name = "订单号",notes = "")
+    private Long id;
+    /**
+     * 交易流水号
+     */
+    @ApiModelProperty(name = "交易流水号", notes = "")
+    private String recordSn;
+    /**
+     * 订单号
+     */
+    @ApiModelProperty(name = "订单号", notes = "")
     private String orderSn;
-    /** 第三方交易流水号 */
-    @ApiModelProperty(name = "第三方交易流水号",notes = "")
+    /**
+     * 第三方交易流水号
+     */
+    @ApiModelProperty(name = "第三方交易流水号", notes = "")
     private String outTradeNo;
-    /** 支付方uid 0系统充值 -1 系统退款 */
-    @ApiModelProperty(name = "支付方uid 0系统充值 -1 系统退款",notes = "")
-    private Long fromUid ;
-    /** 接收方uid 0系统提现 */
-    @ApiModelProperty(name = "接收方uid 0系统提现",notes = "")
-    private Long toUid ;
-    /** 交易类型 1充值 2提现 3交易 4退款 */
-    @ApiModelProperty(name = "交易类型 1充值 2提现 3交易 4退款",notes = "")
-    private Integer tsType ;
-    /** 交易金额 */
-    @ApiModelProperty(name = "交易金额",notes = "")
-    private BigDecimal tsMoney ;
-    /** 交易金额 */
-    @ApiModelProperty(name = "实际金额",notes = "")
-    private BigDecimal tsCost ;
-    /** 手续费 */
-    @ApiModelProperty(name = "手续费",notes = "")
-    private BigDecimal tsFee ;
-    /** 支付渠道 0未知 1支付宝 2微信 3银行卡 4余额 */
-    @ApiModelProperty(name = "支付渠道 0未知 1支付宝 2微信 3银行卡 4余额",notes = "")
-    private String payChannel ;
-    /** 备注 */
-    @ApiModelProperty(name = "备注",notes = "")
-    private String remark ;
-    /** 支付状态 待支付 失败 成功 支付中 支付关闭 */
-    @ApiModelProperty(name = "支付状态 待支付 失败 成功 支付中 支付关闭",notes = "")
-    private String payStatus ;
-    /** 交易时间 */
-    @ApiModelProperty(name = "交易时间",notes = "")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-    private Date payTime ;
+    /**
+     * 支付方uid 0系统充值 -1 系统退款
+     */
+    @ApiModelProperty(name = "支付方uid 0系统充值 -1 系统退款", notes = "")
+    private Long fromUid;
+    /**
+     * 接收方uid 0系统提现
+     */
+    @ApiModelProperty(name = "接收方uid 0系统提现", notes = "")
+    private Long toUid;
+    /**
+     * 交易类型 1充值 2提现 3交易 4退款
+     */
+    @ApiModelProperty(name = "交易类型 1充值 2提现 3交易 4退款", notes = "")
+    private Integer tsType;
+    /**
+     * 交易金额
+     */
+    @ApiModelProperty(name = "交易金额", notes = "")
+    private BigDecimal tsMoney;
+    /**
+     * 交易金额
+     */
+    @ApiModelProperty(name = "实际金额", notes = "")
+    private BigDecimal tsCost;
+    /**
+     * 手续费
+     */
+    @ApiModelProperty(name = "手续费", notes = "")
+    private BigDecimal tsFee;
+    /**
+     * 支付渠道 0未知 1支付宝 2微信 3银行卡 4余额
+     */
+    @ApiModelProperty(name = "支付渠道 0未知 1支付宝 2微信 3银行卡 4余额", notes = "")
+    private String payChannel;
+    /**
+     * 备注
+     */
+    @ApiModelProperty(name = "备注", notes = "")
+    private String remark;
+    /**
+     * 支付状态 待支付 失败 成功 支付中 支付关闭
+     */
+    @ApiModelProperty(name = "支付状态 待支付 失败 成功 支付中 支付关闭", notes = "")
+    private String payStatus;
+    /**
+     * 交易时间
+     */
+    @ApiModelProperty(name = "交易时间", notes = "")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
+    private Date payTime;
 
     public Long getId() {
         return id;

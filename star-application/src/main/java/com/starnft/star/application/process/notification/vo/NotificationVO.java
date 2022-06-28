@@ -26,7 +26,7 @@ public class NotificationVO {
     /**
      * 通知时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private Date sendTime;
     /**
      * 通知缩略图地址

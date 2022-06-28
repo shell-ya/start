@@ -51,7 +51,7 @@ public class TransactionRecord implements Serializable {
      * 支付时间
      */
     @ApiModelProperty(value = "支付时间")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private Date payTime;
     /**
      * 支付状态
