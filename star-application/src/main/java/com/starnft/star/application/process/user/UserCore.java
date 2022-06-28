@@ -144,4 +144,6 @@ public interface UserCore {
     Boolean plyPasswordSetting(UserPlyPasswordVO userPlyPasswordVO);
 
     Boolean isCertification(Long userId);
+
+    String shareCodeInfo(Long userId);
 }

@@ -178,4 +178,11 @@ public class UserController {
         return RopResponse.success(this.userCore.plyPasswordSetting(userPlyPasswordVO));
     }
 
+    @ApiOperation("获取邀请码")
+    @PostMapping("/shareCode")
+    public RopResponse<String> shareCode() {
+        Long userId = UserContext.getUserId().getUserId();
+        return RopResponse.success(this.userCore.shareCodeInfo(userId));
+    }
+
 }

@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserScopeController {
     private final IScopeRecordService iScopeRecordService;
     private final IUserScopeService iUserScopeService;
-    @ApiOperation("积分记录获取")
+    @ApiOperation("积分记录")
     @PostMapping("/record")
     public RopResponse<ResponsePageResult<ScoreRecordRes>> record(@RequestBody RequestConditionPage<Integer> request){
         QueryScoreRecordReq queryScoreRecordReq = getQueryScoreRecordReq(request);

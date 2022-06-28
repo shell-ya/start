@@ -9,6 +9,7 @@ import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.utils.Assert;
 import com.starnft.star.common.utils.BeanColverUtil;
+import com.starnft.star.common.utils.InvitationCodeUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
 import com.starnft.star.domain.scope.model.res.UserScopeRes;
 import com.starnft.star.domain.scope.service.IUserScopeService;
@@ -371,6 +372,11 @@ public class UserCoreImpl implements UserCore {
     @Override
     public Boolean isCertification(Long userId) {
         return this.userService.isCertification(userId);
+    }
+
+    @Override
+    public String shareCodeInfo(Long userId) {
+        return InvitationCodeUtil.gen(userId);
     }
 
     private void popupAgreement(PopupAgreementRes popupAgreementRes
