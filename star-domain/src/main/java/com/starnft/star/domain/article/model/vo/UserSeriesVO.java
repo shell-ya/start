@@ -8,14 +8,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserSeriesVO  implements Serializable {
+public class UserSeriesVO implements Serializable {
     private String seriesName;
     @JsonSerialize(using = ToStringSerializer.class)
     private Long seriesId;
     private String seriesImages;
     private Integer nums;
+    private String publisherName;
+    private String publisherPic;
 }
