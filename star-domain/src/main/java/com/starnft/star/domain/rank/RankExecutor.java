@@ -11,7 +11,6 @@ public class RankExecutor<T extends Comparable> implements Serializable {
     public RankExecutor(List<T> ranker) {
         this.ranker = ranker;
     }
-
     public List<T> sort() {
         return this.ranker.stream().sorted().collect(Collectors.toList());
     }
