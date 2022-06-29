@@ -26,7 +26,7 @@ public class TestNewPay {
         stringObjectHashMap.put("userName","黄坤煌");
         stringObjectHashMap.put("idCard","445122199510295218");
         PaymentRich req = PaymentRich.builder()
-                .totalMoney(new BigDecimal("12.0")).payChannel(StarConstants.PayChannel.CheckPay.name())
+                .totalMoney(new BigDecimal("0.15")).payChannel(StarConstants.PayChannel.CheckPay.name())
                 .frontUrl("http://localhost:1025/#/pages/wallet/recordDetail?isOutside=1&channel=CheckPay&cardNo=6214832011850109&money=1&userId=344108251&payType=Recharge&status=PAY_ING").clientIp("192.168.1.1")
                 .orderSn(IdUtil.getSnowflake(1, 1).nextIdStr())
                 .userId(1L)

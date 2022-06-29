@@ -1,8 +1,6 @@
 package com.starnft.star.domain.payment.model.req;
 
 import cn.hutool.json.JSONUtil;
-import com.alibaba.fastjson.JSON;
-import com.fasterxml.jackson.core.io.JsonStringEncoder;
 import com.google.common.collect.Maps;
 import com.starnft.star.common.constant.StarConstants;
 import lombok.AllArgsConstructor;
@@ -77,8 +75,7 @@ public class PaymentRich implements Serializable {
 //        extInfo.put("orderType", getOrderTypeName());
         extInfo.put("payChannel", getPayChannel());
         extInfo.put("multicastTopic", multicastTopic);
-        char[] chars = new JsonStringEncoder().quoteAsString(JSON.toJSONString(extInfo));
-        return String.valueOf(chars).replace("\\\\", "");
+        return  JSONUtil.toJsonStr(extInfo);
     }
 
     public String getCheckBankPayExtend() {

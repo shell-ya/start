@@ -38,6 +38,19 @@ public class TemplateHelper {
     }
 
 
+     public static  String extendReplace(String str){
+
+         char[] chars = new JsonStringEncoder().quoteAsString(str);
+         String s = String.valueOf(chars);
+         return s;
+//        return ;
+     }
+
+//    public static void main(String[] args) {
+//        TemplateHelper instance = TemplateHelper.getInstance();
+////
+////        String s = instance.extendReplace("");
+//    }
     /**
      * 将数据模型中的属性值转换为字符串
      *

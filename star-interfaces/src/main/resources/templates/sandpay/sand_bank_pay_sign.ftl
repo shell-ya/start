@@ -12,7 +12,7 @@
 "payExtra":{
   cardNo:"${param1.getBankNo()}"
 },
-"extend": "${param1.composeCallback()}"
+"extend": "${helper.extendReplace(param1.composeCallback())}"
 },
 "head":{
 "method":"sandpay.trade.pay",

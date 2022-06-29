@@ -1,6 +1,6 @@
 {"body":{"oriOrderCode":"${param1.orderSn}",
 "refundReason":"${param1.reason}",
-"extend":"${param1.composeCallback}",
+"extend":"${helper.extendReplace(param1.composeCallback())}",
 "notifyUrl":"http://jacqueshuang.natapp1.cc/kfc/refund/notify",
 "orderCode":"${param1.refundOrderSn}",
 "refundAmount":"${helper.yuanToFen(param1.totalMoney)}"},

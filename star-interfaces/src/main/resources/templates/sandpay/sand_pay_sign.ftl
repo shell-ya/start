@@ -19,6 +19,6 @@
         "clientIp": "${param1.clientIp}",
         "notifyUrl": "${param2.notify}",
         "orderCode": "${param1.orderSn}",
-        "extend": "${param1.composeCallback()}"
+"extend": "${helper.extendReplace(param1.composeCallback())}"
     }
 }

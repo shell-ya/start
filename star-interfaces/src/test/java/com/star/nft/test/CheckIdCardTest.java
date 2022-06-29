@@ -36,7 +36,7 @@ public class CheckIdCardTest {
     public void testPay() {
         //2022-05-21 17:04:10.372 +0800 [[TID: N/A] [main] INFO  c.s.s.d.i.s.SwIdentifyStrategy- 身份验证回调「{"tradeNo":"977617813713715200","chargeStatus":1,"message":"true","data":{"birthday":"xxxx","country":"饶平县","orderNo":"011653123850766333","handleTime":"2022-05-21 17:04:10","gender":"1","city":"潮州市","remark":"一致","result":"01","province":"广东省","age":"27"},"code":"200000"}
         PaymentRich req = PaymentRich.builder()
-                .totalMoney(new BigDecimal("12.0")).payChannel(StarConstants.PayChannel.BankCard.name())
+                .totalMoney(new BigDecimal("0.21")).payChannel(StarConstants.PayChannel.BankCard.name())
                 .frontUrl("https://mp.lsnft.cn").clientIp("192.168.1.1")
                 .orderSn(IdUtil.getSnowflake(1, 1).nextIdStr()).userId(1L)
                 .bankNo("6226220647732790")
