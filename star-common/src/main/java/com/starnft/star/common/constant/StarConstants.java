@@ -95,6 +95,7 @@ public class StarConstants {
          * 检测个人信息支付
          */
         CheckPay,
+        CloudAccount,
         /**
          * 其他
          */

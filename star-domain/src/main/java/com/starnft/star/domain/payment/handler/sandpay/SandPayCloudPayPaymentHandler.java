@@ -19,12 +19,13 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+
 @Component
 @Slf4j
-public class SandPayCheckBankCardPaymentHandler extends AbstractSandPayHandler {
+public class SandPayCloudPayPaymentHandler extends AbstractSandPayHandler {
     @Override
     public StarConstants.PayChannel getPayChannel() {
-        return StarConstants.PayChannel.CheckPay;
+        return StarConstants.PayChannel.CloudAccount;
     }
 
     @Override
@@ -40,17 +41,20 @@ public class SandPayCheckBankCardPaymentHandler extends AbstractSandPayHandler {
     @Override
     protected void verifyLegality(PaymentRich req) {
         Map<String, Object> payExtend = req.getPayExtend();
-        Assert.notNull(payExtend, () -> new StarException("在PayExtend中加入userName为用户的姓名，加入idCard为用户的身份证号"));
-        Assert.notNull(payExtend.get("userName"), () -> new StarException("在PayExtend中加入userName为用户的姓名"));
-        Assert.notNull(payExtend.get("idCard"), () -> new StarException("在PayExtend中加入idCard为用户的身份证号"));
+        Assert.notNull(payExtend, () -> new StarException("在PayExtend中加入userName为用户的昵称"));
+//        payExtend.put("accountType","1");
+        Assert.notNull(payExtend.get("userName"), () -> new StarException("在PayExtend中加入userName为用户的昵称"));
         Assert.notNull(req.getUserId(), () -> new StarException("用户ID不能为空"));
     }
 
     @Override
     protected PaymentRes doPay(PaymentRich paymentRich, Map<String, String> vendorConf) {
-        TempConf channelConf = getChannelConf(TradeType.Check_Bank_Card_SandPay);
-        return super.getRes(paymentRich,vendorConf,channelConf);
+        TempConf channelConf = getChannelConf(TradeType.Cloud_Account_SandPay);
+        PaymentRes paymentRes = super.getRes(paymentRich, vendorConf, channelConf);
+        return paymentRes;
     }
+
+
 
     @Override
     protected PayCheckRes doOrderCheck(PayCheckReq payCheckReq, Map<String, String> vendorConf) {
