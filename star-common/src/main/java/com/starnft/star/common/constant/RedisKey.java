@@ -146,7 +146,15 @@ public enum RedisKey {
      * 市场交易锁
      */
     MARKET_ORDER_TRANSACTION(508, StarConstants.SERVICE_NAME.concat(".market:transaction:%s"), 3L, TimeUnit.MINUTES),
-
+    /**
+     * 排行榜列表
+     */
+    RANK_LIST(601,StarConstants.SERVICE_NAME.concat(".rank:list"),3L, TimeUnit.HOURS),
+    /**
+     * 排行榜
+     */
+    RANK_STORE(602,StarConstants.SERVICE_NAME.concat(".rank:store:%s"),3L, TimeUnit.HOURS),
+    RANK_EXTEND(603,StarConstants.SERVICE_NAME.concat(".rank:extend:%s"),3L, TimeUnit.HOURS)
     ;
     private Integer code;
 
