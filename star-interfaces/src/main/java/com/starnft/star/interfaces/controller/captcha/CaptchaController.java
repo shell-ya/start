@@ -5,6 +5,7 @@ import com.starnft.star.domain.captcha.model.req.ImageCaptchaCheckReq;
 import com.starnft.star.domain.captcha.model.req.ImageCaptchaGenReq;
 import com.starnft.star.domain.captcha.model.vo.StarImageCaptchaVO;
 import com.starnft.star.domain.captcha.service.ICaptchaService;
+import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -25,12 +26,14 @@ public class CaptchaController {
 
     @ApiOperation("生成验证码")
     @GetMapping("/generate")
+    @TokenIgnore
     public RopResponse<StarImageCaptchaVO> generateCaptcha(ImageCaptchaGenReq req) {
         return RopResponse.success(this.captchaService.generateCaptcha(req));
     }
 
     @ApiOperation("校验验证码")
     @PostMapping("/check")
+    @TokenIgnore
     public RopResponse<Boolean> checkCaptcha(@Validated @RequestBody ImageCaptchaCheckReq req) {
         return RopResponse.success(this.captchaService.matching(req));
     }
