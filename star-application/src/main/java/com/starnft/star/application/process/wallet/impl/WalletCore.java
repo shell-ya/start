@@ -192,6 +192,13 @@ public class WalletCore implements IWalletCore {
                 transactionRecord.setApplyMsg(withdrawRecordVO.getApplyMsg());
                 transactionRecord.setCardNo(String.valueOf(withdrawRecordVO.getBankNo()));
             }
+            if (transactionRecord.getPayType().equals("3")) {
+                if (walletRecordVO.getToUid() == recordReq.getUserId()) {
+                    transactionRecord.setPayType(StarConstants.Transaction_Type.Sell.getFont());
+                } else {
+                    transactionRecord.setPayType(StarConstants.Transaction_Type.Buy.getFont());
+                }
+            }
             res.add(transactionRecord);
         }
         return ResponsePageResult.listReplace(walletRecordResult, res);
