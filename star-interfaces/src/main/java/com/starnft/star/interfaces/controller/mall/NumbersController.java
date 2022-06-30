@@ -44,7 +44,7 @@ public class NumbersController {
         return RopResponse.success(this.numberCore.obtainThemeNumberDetail(id));
     }
 
-    @GetMapping("/consignDetail/{id}")
+    @GetMapping("/consign/detail/{id}")
     @ApiOperation("加载商品寄售界面数据")
     public RopResponse<ConsignDetailRes> obtainConsignDetail(@PathVariable @ApiParam("商品id") Long id) {
         return RopResponse.success(this.numberCore.obtainConsignDetail(id));
@@ -57,7 +57,7 @@ public class NumbersController {
         return RopResponse.success(this.numberCore.consignment(userResolverInfo.getUserId(), request));
     }
 
-    @PostMapping("/consignCancel")
+    @PostMapping("/consign/cancel")
     @ApiOperation("商品取消寄售")
     public RopResponse<Boolean> cancelConsignment(UserResolverInfo userResolverInfo,
                                                   @Validated @RequestBody NumberConsignmentCancelRequest request) {
