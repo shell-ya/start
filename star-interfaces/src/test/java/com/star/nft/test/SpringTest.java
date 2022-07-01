@@ -58,20 +58,21 @@ public class SpringTest {
     @Test
     void orderPay() {
         OrderPayReq orderPayReq = new OrderPayReq();
-        orderPayReq.setUserId(985174743233269760L);
-        orderPayReq.setOrderSn("PG989506609413750784");
-        orderPayReq.setPayAmount("10.00");
+        orderPayReq.setUserId(248906830L);
+        orderPayReq.setOrderSn("TS992560592751558656");
+        orderPayReq.setPayAmount("33.00");
         orderPayReq.setChannel(StarConstants.PayChannel.Balance.name());
         orderPayReq.setFee("0.00");
-        orderPayReq.setFromUid(0L);
-        orderPayReq.setToUid(985174743233269760L);
-        orderPayReq.setTotalPayAmount("10.00");
-        orderPayReq.setNumberId(39L);
-        orderPayReq.setThemeId(6L);
-        orderPayReq.setSeriesId(2L);
+        orderPayReq.setFromUid(409412742L);
+        orderPayReq.setToUid(248906830L);
+        orderPayReq.setTotalPayAmount("33.00");
+        orderPayReq.setNumberId(991131539320320000L);
+        orderPayReq.setThemeId(991131478355697664L);
+        orderPayReq.setSeriesId(4L);
         orderPayReq.setType(3);
         orderPayReq.setCategoryType(1);
         OrderPayDetailRes orderPayDetailRes = orderProcessor.orderPay(orderPayReq);
+
         System.out.println(JSON.toJSONString(orderPayDetailRes));
     }
 

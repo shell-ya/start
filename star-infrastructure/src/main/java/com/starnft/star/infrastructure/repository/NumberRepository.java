@@ -142,6 +142,7 @@ public class NumberRepository implements INumberRepository {
 
         StarNftThemeNumber starNftThemeNumber = new StarNftThemeNumber();
         starNftThemeNumber.setStatus(status);
+        starNftThemeNumber.setOwnerBy(String.valueOf(uid));
 
         return this.starNftThemeNumberMapper.update(starNftThemeNumber, wrapper) == 1;
     }

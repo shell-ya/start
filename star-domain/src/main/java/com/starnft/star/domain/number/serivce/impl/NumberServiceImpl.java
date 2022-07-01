@@ -94,20 +94,21 @@ public class NumberServiceImpl implements INumberService {
             Boolean logged = this.numberRepository.saveNumberCirculationRecord(this.createLog(handoverReq));
             //修改藏品售卖状态
             boolean modified = this.numberRepository.modifyNumberStatus(handoverReq.getNumberId(), handoverReq.getUid(), handoverReq.getItemStatus());
-            //创建用户藏品所属关系
-            boolean created =  StarConstants.OrderType.PUBLISH_GOODS.equals(handoverReq.getOrderType()) ?
-                    this.numberRepository.createUserNumberMapping(this.createMapping(handoverReq)) :
-                    this.numberRepository.updateUserNumberMapping(this.updateMapping(handoverReq));
-            return logged && modified && created;
+            //创建用户藏品所属关系 市场订单 售卖方更新商品售卖状态 购买方添加一条藏品记录
+            boolean updated = true;
+            if (StarConstants.OrderType.MARKET_GOODS.equals(handoverReq.getOrderType())) {
+                updated = this.numberRepository.updateUserNumberMapping(this.updateMapping(handoverReq));
+            }
+            boolean created = this.numberRepository.createUserNumberMapping(this.createMapping(handoverReq));
+            return logged && modified && created && updated;
         }));
 
     }
 
     private UserThemeMappingVO updateMapping(HandoverReq handoverReq) {
         UserThemeMappingVO userThemeMappingVO = new UserThemeMappingVO();
-        userThemeMappingVO.setUserId(String.valueOf(handoverReq.getUid()));
         userThemeMappingVO.setBeforeUserId(String.valueOf(handoverReq.getFromUid()));
-        userThemeMappingVO.setStatus(UserNumberStatusEnum.PURCHASED.getCode());
+        userThemeMappingVO.setStatus(UserNumberStatusEnum.SOLD.getCode());
         userThemeMappingVO.setSeriesId(handoverReq.getSeriesId());
         userThemeMappingVO.setSeriesThemeInfoId(handoverReq.getThemeId());
         userThemeMappingVO.setSeriesThemeId(handoverReq.getNumberId());

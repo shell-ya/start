@@ -84,13 +84,14 @@
 
     <update id="updateUserThemeMapping">
         UPDATE star_nft_user_theme
-        SET user_id = #{userId},
-            status  = #{status}
+        SET status  = #{status}
         WHERE series_id = #{seriesId}
           AND series_theme_info_id = #{seriesThemeInfoId}
           AND series_theme_id = #{seriesThemeId}
           AND status = 1
           AND user_id = #{beforeUserId}
     </update>
+
+
 
 </mapper>
