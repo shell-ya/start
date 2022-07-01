@@ -140,6 +140,15 @@ public enum RedisKey {
 
     SECKILL_ORDER_TRANSACTION(507, StarConstants.SERVICE_NAME.concat(".seckill:ordered:transaction:%s"), 3L, TimeUnit.MINUTES),
 
+    /**
+     *  自动取消订单次数
+     */
+    ORDER_BREAK_COUNT(508, StarConstants.SERVICE_NAME.concat(".seckill:ordered:break:%s"), 1800L, TimeUnit.SECONDS),
+    /**
+     *  自动取消订单记录
+     */
+    ORDER_BREAK_RECORD(509, StarConstants.SERVICE_NAME.concat(".seckill:ordered:record:%s"), 3600L, TimeUnit.SECONDS),
+
     //======================================= sec kill goods end   =======================================
 
     /**

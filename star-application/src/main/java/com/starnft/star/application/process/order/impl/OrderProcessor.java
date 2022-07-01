@@ -47,6 +47,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -67,6 +68,16 @@ public class OrderProcessor implements IOrderProcessor {
 
     @Override
     public OrderGrabRes orderGrab(OrderGrabReq orderGrabReq) {
+        // 恶意下单校验
+        Long record = (Long) redisUtil.get(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), orderGrabReq.getUserId()));
+        if (record != null) {
+            throw new StarException(StarError.ORDER_CANCEL_TIMES_OVERFLOW);
+        }
+        Integer breakTimes = (Integer) redisUtil.get(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), orderGrabReq.getUserId()));
+        if (Objects.nonNull(breakTimes) && breakTimes > 3) {
+            redisUtil.set(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), orderGrabReq.getUserId()), orderGrabReq.getUserId(), RedisKey.ORDER_BREAK_RECORD.getTime());
+            throw new StarException(StarError.ORDER_CANCEL_TIMES_OVERFLOW);
+        }
 
         //查询抢购商品信息
         SecKillGoods goods = themeService.obtainGoodsCache(orderGrabReq.getThemeId(), orderGrabReq.getTime());

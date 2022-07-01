@@ -724,4 +724,9 @@ public class RedisUtil {
         this.redisTemplate.opsForValue().set(key, value, timeout, timeUnit);
     }
 
+
+    public Long getTtl(String key, TimeUnit timeUnit) {
+        return this.redisTemplate.getExpire(key, timeUnit);
+    }
+
 }
