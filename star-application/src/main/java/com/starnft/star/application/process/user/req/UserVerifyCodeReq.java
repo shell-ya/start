@@ -1,5 +1,6 @@
 package com.starnft.star.application.process.user.req;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -9,6 +10,7 @@ import javax.validation.constraints.NotBlank;
  * @author WeiChunLAI
  */
 @Data
+@ApiModel
 public class UserVerifyCodeReq {
 
     @ApiModelProperty("手机号")
@@ -20,4 +22,7 @@ public class UserVerifyCodeReq {
 
     @ApiModelProperty("验证码")
     private String code;
+
+    @ApiModelProperty("图形验证码id")
+    private String imageCaptchaId;
 }

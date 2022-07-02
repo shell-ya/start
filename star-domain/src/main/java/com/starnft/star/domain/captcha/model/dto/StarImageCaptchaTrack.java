@@ -1,4 +1,4 @@
-package com.starnft.star.domain.captcha.model.req;
+package com.starnft.star.domain.captcha.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
@@ -40,17 +40,6 @@ public class StarImageCaptchaTrack implements Serializable {
 
     @ApiModelProperty(value = "验证码滑动轨迹")
     @NotNull(message = "验证码轨迹不能为空")
-    private List<Track> trackList;
+    private List<StarTrack> trackList;
 
-    @Data
-    public static class Track {
-        @ApiModelProperty(value = "event.pageX")
-        private Integer x;
-        @ApiModelProperty(value = "event.pageY")
-        private Integer y;
-        @ApiModelProperty(value = "时间")
-        private Integer t;
-        @ApiModelProperty(value = "类型 move/up")
-        private String type;
-    }
 }

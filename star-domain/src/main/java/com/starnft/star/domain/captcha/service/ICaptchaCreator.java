@@ -1,7 +1,7 @@
 package com.starnft.star.domain.captcha.service;
 
 import com.starnft.star.common.enums.CaptchaTypeEnum;
-import com.starnft.star.domain.captcha.model.req.StarImageCaptchaTrack;
+import com.starnft.star.domain.captcha.model.dto.StarImageCaptchaTrack;
 import com.starnft.star.domain.captcha.model.vo.StarImageCaptchaVO;
 
 /**

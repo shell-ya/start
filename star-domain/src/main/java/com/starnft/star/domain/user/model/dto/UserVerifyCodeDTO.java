@@ -1,9 +1,6 @@
 package com.starnft.star.domain.user.model.dto;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import javax.validation.constraints.NotBlank;
 
 /**
  * @author WeiChunLAI
@@ -25,4 +22,9 @@ public class UserVerifyCodeDTO {
      * 验证码
      */
     private String code;
+
+    /**
+     * 图形验证码id
+     */
+    private String imageCaptchaId;
 }
