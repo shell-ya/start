@@ -2,6 +2,7 @@ package com.starnft.star.domain.captcha.model.req;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -26,10 +27,12 @@ public class StarImageCaptchaTrack implements Serializable {
     @ApiModelProperty("滑块图片高")
     private Integer sliderImageHeight;
 
-    @ApiModelProperty("开始滑动时间")
+    @ApiModelProperty("开始滑动时间 格式：yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date startSlidingTime;
 
-    @ApiModelProperty("结束滑动时间")
+    @ApiModelProperty("结束滑动时间 格式：yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endSlidingTime;
 
     @ApiModelProperty(value = "验证码滑动轨迹")
