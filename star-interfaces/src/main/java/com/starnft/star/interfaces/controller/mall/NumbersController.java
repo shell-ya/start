@@ -40,6 +40,7 @@ public class NumbersController {
 
     @GetMapping("/{id}")
     @ApiOperation("获取商品详情")
+    @TokenIgnore
     public RopResponse<NumberDetailVO> getNumber(@PathVariable @ApiParam("商品id") Long id) {
         return RopResponse.success(this.numberCore.obtainThemeNumberDetail(id));
     }
