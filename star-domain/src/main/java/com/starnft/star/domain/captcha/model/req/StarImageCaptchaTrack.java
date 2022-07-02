@@ -1,5 +1,6 @@
 package com.starnft.star.domain.captcha.model.req;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -29,10 +30,12 @@ public class StarImageCaptchaTrack implements Serializable {
 
     @ApiModelProperty("开始滑动时间 格式：yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date startSlidingTime;
 
     @ApiModelProperty("结束滑动时间 格式：yyyy-MM-dd HH:mm:ss")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endSlidingTime;
 
     @ApiModelProperty(value = "验证码滑动轨迹")
