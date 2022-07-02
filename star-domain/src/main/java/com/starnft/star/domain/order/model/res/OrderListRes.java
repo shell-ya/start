@@ -55,5 +55,7 @@ public class OrderListRes implements Serializable {
     private Long expire;
     @ApiModelProperty(value = "订单类型 PUBLISH_GOODS 发行 、MARKET_GOODS 市场订单")
     private String orderType;
+    @ApiModelProperty("拥有者")
+    private String ownerBy;
 
 }

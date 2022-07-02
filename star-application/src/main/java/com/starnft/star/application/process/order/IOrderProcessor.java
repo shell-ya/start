@@ -8,6 +8,7 @@ import com.starnft.star.application.process.order.model.req.OrderPayReq;
 import com.starnft.star.application.process.order.model.res.OrderGrabRes;
 import com.starnft.star.application.process.order.model.res.OrderGrabStatus;
 import com.starnft.star.application.process.order.model.res.OrderPayDetailRes;
+import com.starnft.star.domain.order.model.req.OrderListReq;
 import com.starnft.star.domain.order.model.res.OrderListRes;
 import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
 
@@ -30,4 +31,6 @@ public interface IOrderProcessor {
 
     //市场下单
     OrderListRes marketOrder(MarketOrderReq marketOrderReq);
+
+    OrderListRes orderDetails(OrderListReq req);
 }

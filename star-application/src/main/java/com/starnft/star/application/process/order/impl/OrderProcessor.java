@@ -24,8 +24,10 @@ import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.number.model.req.HandoverReq;
+import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
 import com.starnft.star.domain.number.serivce.INumberService;
+import com.starnft.star.domain.order.model.req.OrderListReq;
 import com.starnft.star.domain.order.model.res.OrderListRes;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.service.IOrderService;
@@ -243,6 +245,14 @@ public class OrderProcessor implements IOrderProcessor {
             }
         }
         throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
+    }
+
+    @Override
+    public OrderListRes orderDetails(OrderListReq req) {
+        OrderListRes orderListRes = this.orderService.orderDetails(req);
+        NumberDetailVO numberDetail = this.numberService.getNumberDetail(orderListRes.getSeriesThemeId());
+        orderListRes.setOwnerBy(numberDetail.getOwnerBy());
+        return orderListRes;
     }
 
     private OrderListRes buildOrderResp(ThemeNumberVo numberDetail, Long userId, String orderSn, Long id) {
