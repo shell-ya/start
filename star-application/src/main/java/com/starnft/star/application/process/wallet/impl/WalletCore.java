@@ -45,7 +45,6 @@ import org.springframework.validation.annotation.Validated;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -149,8 +148,8 @@ public class WalletCore implements IWalletCore {
                 TopicConstants.WALLET_RECHARGE_DESTINATION.getTag());
 
         String payTime = DateUtil.formatLocalDateTime(LocalDateTime.now());
-        String forward = rechargeFacadeReq.getForward()
-                .concat("&transactionSn=" + walletRecordReq.getRecordSn() + "&payTime=" + payTime);
+//        String forward = rechargeFacadeReq.getForward()
+//                .concat("&transactionSn=" + walletRecordReq.getRecordSn() + "&payTime=" + payTime);
 
         HashMap<String, Object> extend = Maps.newHashMap();
         //sand快捷充值渠道参数
@@ -164,7 +163,7 @@ public class WalletCore implements IWalletCore {
                 .orderSn(walletRecordReq.getRecordSn())
                 .bankNo(String.valueOf(rechargeFacadeReq.getCardNo()))
                 .clientIp("1.1.1.1")
-                .frontUrl(URLEncoder.encode(forward, "UTF-8"))
+                .frontUrl(rechargeFacadeReq.getForward())
                 .payExtend(extend)
                 .orderType(StarConstants.OrderType.RECHARGE)
                 .multicastTopic(rechargeCallbackProcessTopic)

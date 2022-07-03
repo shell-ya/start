@@ -38,6 +38,7 @@ public class RechargeConsumer implements RocketMQListener<PayCheckRes> {
         if (messageIdempotentVerify(payCheckRes.getOrderSn(), payCheckRes.getTransSn())) {
             return;
         }
+        log.info("充值中 单号:[{}] 流水号:[{}] mq重复消费，幂等校验", payCheckRes.getOrderSn(), payCheckRes.getTransSn());
         if (payCheckRes.getStatus().equals(ResultCode.SUCCESS.getCode())) {
             RechargeVO rechargeVO = BeanColverUtil.colver(payCheckRes, RechargeVO.class);
             boolean isSuccess = walletService.rechargeProcess(rechargeVO);
