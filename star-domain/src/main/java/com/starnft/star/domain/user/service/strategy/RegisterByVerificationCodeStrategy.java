@@ -3,13 +3,13 @@ package com.starnft.star.domain.user.service.strategy;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
-import com.starnft.star.common.utils.RandomUtil;
-import com.starnft.star.common.utils.SnowflakeWorker;
+import com.starnft.star.common.utils.InvitationCodeUtil;
 import com.starnft.star.domain.user.model.dto.UserInfoAddDTO;
 import com.starnft.star.domain.user.model.dto.UserLoginDTO;
 import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.domain.user.repository.IUserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -51,8 +51,18 @@ public class RegisterByVerificationCodeStrategy extends UserRegisterStrategy{
         UserInfoAddDTO userInfoAddDTO = new UserInfoAddDTO();
         userInfoAddDTO.setNickName("耿直的NFT玩家");
         userInfoAddDTO.setPhone(registerInfo.getPhone());
+        //上级
+        activityParent(registerInfo, userInfoAddDTO);
+
         return userRepository.addUserInfo(userInfoAddDTO);
 
+    }
+    //上级参数封装
+    private void activityParent(UserLoginDTO registerInfo, UserInfoAddDTO userInfoAddDTO) {
+        if (StringUtils.isNotBlank(registerInfo.getCode())){
+            Long parent = InvitationCodeUtil.decode(registerInfo.getCode());
+            userInfoAddDTO.setParent(parent);
+        }
     }
 
 }

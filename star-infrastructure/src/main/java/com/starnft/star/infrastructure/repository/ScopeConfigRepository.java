@@ -9,8 +9,6 @@ import com.starnft.star.infrastructure.mapper.scope.StarNftScopeEventConfigMappe
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 public class ScopeConfigRepository implements IScopeConfigRepository {
@@ -18,21 +16,21 @@ public class ScopeConfigRepository implements IScopeConfigRepository {
     StarNftScopeEventConfigMapper starNftScopeEventConfigMapper;
 
     @Override
-    public List<ScopeConfigRes> queryScopeConfigByCode(Integer code) {
-        List<StarNftScopeEventConfig> starNftScopeEventConfig = starNftScopeEventConfigMapper
-                .selectList(new QueryWrapper<StarNftScopeEventConfig>()
-                        .eq(StarNftScopeEventConfig.COL_EVENT_CODE, code)
+    public ScopeConfigRes queryScopeConfigByScopeType(Integer scopeType) {
+         StarNftScopeEventConfig starNftScopeEventConfig = starNftScopeEventConfigMapper
+                .selectOne(new QueryWrapper<StarNftScopeEventConfig>()
+                        .eq(StarNftScopeEventConfig.COL_SCOPE_TYPE, scopeType)
                         .eq(StarNftScopeEventConfig.COL_IS_DELETED, Boolean.FALSE)
                         .eq(StarNftScopeEventConfig.COL_EVENT_STATUS, StarConstants.Event.EVENT_STATUS_OPEN)
                 );
-        return starNftScopeEventConfig.stream().map(item -> {
-            ScopeConfigRes scopeConfigRes = new ScopeConfigRes();
-            scopeConfigRes.setEventCode(item.getEventCode());
-            scopeConfigRes.setEventDesc(item.getEventDesc());
-            scopeConfigRes.setScopeType(item.getScopeType());
-            scopeConfigRes.setEventStatus(item.getEventStatus());
-            scopeConfigRes.setEventName(item.getEventName());
-            return scopeConfigRes;
-        }).collect(Collectors.toList());
+
+        ScopeConfigRes scopeConfigRes = new ScopeConfigRes();
+        scopeConfigRes.setEventCode(starNftScopeEventConfig.getEventCode());
+        scopeConfigRes.setEventDesc(starNftScopeEventConfig.getEventDesc());
+        scopeConfigRes.setScopeType(starNftScopeEventConfig.getScopeType());
+        scopeConfigRes.setEventStatus(starNftScopeEventConfig.getEventStatus());
+        scopeConfigRes.setEventName(starNftScopeEventConfig.getEventName());
+        return scopeConfigRes;
+
     }
 }

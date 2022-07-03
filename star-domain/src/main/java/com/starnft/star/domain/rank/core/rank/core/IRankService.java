@@ -1,7 +1,7 @@
 package com.starnft.star.domain.rank.core.rank.core;
 
-import com.starnft.star.domain.rank.core.rank.model.RankData;
 import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
+import com.starnft.star.domain.rank.core.rank.model.RankItemMetaData;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ public interface IRankService {
      * @param value 数据
      * @return 如果存在之前的值，返回之前的值，否则，返回-1
      */
-    public Boolean put(String rankName,String  key,double value,RankData rankData);
+    public Double put(String rankName, String  key, double value, RankItemMetaData rankItemMetaData);
     /**
      * 设置一个数据，如果该id存在，替换为当前数据
      * @param rankName 排行的名字
@@ -102,7 +102,7 @@ public interface IRankService {
      * @param id 数据提供者的id
      * @return {@code RankData}
      */
-    public RankData getRankDataById(String rankName, int id);
+    public RankItemMetaData getRankDataById(String rankName, int id);
     /**
      * 查询某排行的玩家id
      * @param rankName 排行的名字
@@ -116,7 +116,7 @@ public interface IRankService {
      * @param rankNum 排行的名词
      * @return {@code RankData}
      */
-    public RankData getRankDataByRankNum(String rankName, int rankNum);
+    public RankItemMetaData getRankDataByRankNum(String rankName, int rankNum);
     /**
      * 分页查询排行数据
      * @param rankName 排行的名字
@@ -124,7 +124,7 @@ public interface IRankService {
      * @param pageSize 每一页的大小
      * @return {@code RankData}
      */
-    public List<RankData> getRankDatasByPage(String rankName, int page, int pageSize);
+    public List<RankItemMetaData> getRankDatasByPage(String rankName, int page, int pageSize);
     /**
      * 获取用户及其前后几个用户的排行数据
      * @param rankName 排行的名字
@@ -133,5 +133,5 @@ public interface IRankService {
      * @param afterNum	获取的后面用户个数
      * @return {@code RankData}
      */
-    public List<RankData> getRankDatasAroundId(String rankName, int id, int beforeNum, int afterNum);
+    public List<RankItemMetaData> getRankDatasAroundId(String rankName, int id, int beforeNum, int afterNum);
 }

@@ -54,5 +54,7 @@ public class UserInfoEntity extends BaseEntity {
 
     @TableField("brief_introduction")
     private String briefIntroduction;
+    @TableField("parent")
+    private Long parent;
 
 }

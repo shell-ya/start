@@ -153,8 +153,8 @@ public enum RedisKey {
     /**
      * 排行榜
      */
-    RANK_STORE(602,StarConstants.SERVICE_NAME.concat(".rank:store:%s"),3L, TimeUnit.HOURS),
-    RANK_EXTEND(603,StarConstants.SERVICE_NAME.concat(".rank:extend:%s"),3L, TimeUnit.HOURS)
+    RANK_STORE(602,StarConstants.SERVICE_NAME.concat(".rank:%s:store"),3L, TimeUnit.HOURS),
+    RANK_EXTEND(603,StarConstants.SERVICE_NAME.concat(".rank:%s:extend"),3L, TimeUnit.HOURS)
     ;
     private Integer code;
 

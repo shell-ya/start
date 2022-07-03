@@ -1,61 +1,63 @@
 package com.starnft.star.application.process.scope.impl;
 
 import com.starnft.star.application.process.scope.IScopeCore;
-import com.starnft.star.application.process.scope.model.ScopeMessage;
+import com.starnft.star.application.process.scope.model.AddScoreDTO;
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.scope.model.req.AddScoreRecordReq;
 import com.starnft.star.domain.scope.model.req.UpdateUserScopeReq;
-import com.starnft.star.domain.scope.model.res.ScopeConfigRes;
-import com.starnft.star.domain.scope.service.IScopeConfigService;
 import com.starnft.star.domain.scope.service.IScopeRecordService;
 import com.starnft.star.domain.scope.service.IUserScopeService;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.List;
+import java.util.Date;
 
 @Component
 public class ScopeCopeImpl implements IScopeCore {
     @Resource
     IUserScopeService iUserScopeService;
     @Resource
-    IScopeConfigService iScopeConfigService;
-    @Resource
     IScopeRecordService iScopeRecordService;
 
     @Override
     @Transactional
-    public void calculateUserScope(ScopeMessage userScopeMessageVO) {
-        //获取是事件
-        Integer event = userScopeMessageVO.getEvent();
-        //查询不到积分配置直接返回不进行积分操作
-        List<ScopeConfigRes> scopeConfigRes = iScopeConfigService.queryScoreConfigByCode(event);
-        for (ScopeConfigRes scopeConfig : scopeConfigRes) {
-            UpdateUserScopeReq updateUserScopeReq = getUpdateUserScopeReq(userScopeMessageVO, scopeConfig);
-            iUserScopeService.updateUserScopeByUserId(updateUserScopeReq);
-            AddScoreRecordReq addScoreRecordReq = getAddScoreRecordReq(userScopeMessageVO, scopeConfig);
-            iScopeRecordService.insertScopeRecord(addScoreRecordReq);
-        }
-
+    public void userScopeManageAdd(AddScoreDTO addScoreDTO) {
+          // 添加积分&积分记录
+          UpdateUserScopeReq updateUserScopeReq = getUpdateUserScopeReq(addScoreDTO);
+          iUserScopeService.updateUserScopeByUserId(updateUserScopeReq);
+          AddScoreRecordReq addScoreRecordReq = getAddScoreRecordReq(addScoreDTO);
+          iScopeRecordService.insertScopeRecord(addScoreRecordReq);
     }
-    private UpdateUserScopeReq getUpdateUserScopeReq(ScopeMessage userScopeMessageVO, ScopeConfigRes scopeConfig) {
+
+
+
+
+
+
+
+
+
+
+
+
+    private UpdateUserScopeReq getUpdateUserScopeReq(AddScoreDTO addScoreDTO) {
         UpdateUserScopeReq updateUserScopeReq = new UpdateUserScopeReq();
-        updateUserScopeReq.setUserId(userScopeMessageVO.getUserId());
-        updateUserScopeReq.setScopeType(scopeConfig.getScopeType());
-//        updateUserScopeReq.setScope(userScopeMessageVO.getScope());
+        updateUserScopeReq.setUserId(addScoreDTO.getUserId());
+        updateUserScopeReq.setScopeType(addScoreDTO.getScopeType());
+        updateUserScopeReq.setScope(addScoreDTO.getScope());
         return updateUserScopeReq;
     }
 
-
-    private AddScoreRecordReq getAddScoreRecordReq(ScopeMessage userScopeMessageVO, ScopeConfigRes scopeConfig) {
-//        AddScoreRecordReq addScoreRecordReq = new AddScoreRecordReq();
-//        addScoreRecordReq.setScope(userScopeMessageVO.getScope());
-//        addScoreRecordReq.setUserId(userScopeMessageVO.getUserId());
-//        addScoreRecordReq.setRemarks(String.format(scopeConfig.getEventDesc(), userScopeMessageVO.getScope().toString()));
-//        addScoreRecordReq.setCreatedAt(new Date());
-//        addScoreRecordReq.setScopeType(scopeConfig.getScopeType());
-//        addScoreRecordReq.setMold(userScopeMessageVO.getScope().compareTo(BigDecimal.ZERO)<=0?0:1);
-     //   return addScoreRecordReq;
-        return null;
+    private AddScoreRecordReq getAddScoreRecordReq(AddScoreDTO addScoreDTO) {
+        AddScoreRecordReq addScoreRecordReq = new AddScoreRecordReq();
+        addScoreRecordReq.setScope(addScoreDTO.getScope());
+        addScoreRecordReq.setUserId(addScoreDTO.getUserId());
+        addScoreRecordReq.setMold(StarConstants.ScopeMold.UP);
+        addScoreRecordReq.setRemarks(String.format(addScoreDTO.getTemplate(), addScoreDTO.getScope()));
+        addScoreRecordReq.setScopeType(addScoreDTO.getScopeType());
+        addScoreRecordReq.setCreatedAt(new Date());
+        return addScoreRecordReq;
     }
+
 }

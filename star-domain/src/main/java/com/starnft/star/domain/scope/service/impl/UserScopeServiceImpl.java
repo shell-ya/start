@@ -27,12 +27,31 @@ public class UserScopeServiceImpl  implements IUserScopeService {
            UpdateUserScopeReq insertScope = new UpdateUserScopeReq();
            extractedUpdateUserScope(updateUserScopeReq, userScopeReq, resultUserScopeRes, insertScope);
            userScopeRepository.updateUserScopeByUserId(insertScope);
+           resultUpdateExtracted(updateUserScopeReq, resultUserScopeRes);
+
        }else{
            AddUserScopeReq addUserScopeReq = new AddUserScopeReq();
            extractedInsertUserScope(updateUserScopeReq, addUserScopeReq);
            userScopeRepository.insertUserScopeByUserId(addUserScopeReq);
+           resultUserScopeRes=new UserScopeRes();
+           resultInsertExtracted(updateUserScopeReq, resultUserScopeRes);
        }
         return resultUserScopeRes;
+    }
+
+    private void resultInsertExtracted(UpdateUserScopeReq updateUserScopeReq, UserScopeRes resultUserScopeRes) {
+
+        resultUserScopeRes.setScope(updateUserScopeReq.getScope());
+        resultUserScopeRes.setScopeType(updateUserScopeReq.getScopeType());
+        resultUserScopeRes.setUserId(updateUserScopeReq.getUserId());
+        resultUserScopeRes.setVersion(0);
+    }
+
+    private void resultUpdateExtracted(UpdateUserScopeReq updateUserScopeReq, UserScopeRes resultUserScopeRes) {
+        resultUserScopeRes.setScope(resultUserScopeRes.getScope().add(updateUserScopeReq.getScope()));
+        resultUserScopeRes.setScopeType(resultUserScopeRes.getScopeType());
+        resultUserScopeRes.setUserId(resultUserScopeRes.getUserId());
+        resultUserScopeRes.setVersion(resultUserScopeRes.getVersion()+1);
     }
 
     @Override
@@ -44,8 +63,6 @@ public class UserScopeServiceImpl  implements IUserScopeService {
                         .userId(userScopeReq.getUserId())
                         .build());
     }
-
-
 
     private UserScopeReq getUserScopeReq(UpdateUserScopeReq updateUserScopeReq) {
         UserScopeReq userScopeReq = new UserScopeReq();

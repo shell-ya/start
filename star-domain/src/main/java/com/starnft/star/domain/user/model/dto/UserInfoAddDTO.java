@@ -20,4 +20,5 @@ public class UserInfoAddDTO {
     private Long createBy;
 
     private String phone;
+    private Long parent;
 }
