@@ -1,4 +1,4 @@
-package com.starnft.star.application.process.strategy;
+package com.starnft.star.application.process.event.strategy;
 
 import com.starnft.star.application.process.scope.IScopeCore;
 import com.starnft.star.application.process.scope.model.AddScoreDTO;
@@ -10,7 +10,7 @@ import javax.annotation.Resource;
 public  class ScopeStrategy {
     @Resource
      private IScopeCore iScopeCore;
-     protected void addScope(AddScoreDTO addScoreDTO){
+     public void addScope(AddScoreDTO addScoreDTO){
          iScopeCore.userScopeManageAdd(addScoreDTO);
      }
 }
