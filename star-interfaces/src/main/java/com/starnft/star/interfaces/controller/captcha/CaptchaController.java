@@ -34,7 +34,7 @@ public class CaptchaController {
     @ApiOperation("校验验证码")
     @PostMapping("/check")
     @TokenIgnore
-    public RopResponse<Boolean> checkCaptcha(@Validated @RequestBody ImageCaptchaCheckReq req) {
+    public RopResponse<String> checkCaptcha(@Validated @RequestBody ImageCaptchaCheckReq req) {
         return RopResponse.success(this.captchaService.matching(req));
     }
 

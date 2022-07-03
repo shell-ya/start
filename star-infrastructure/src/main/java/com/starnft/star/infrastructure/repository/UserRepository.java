@@ -99,7 +99,6 @@ public class UserRepository implements IUserRepository {
         return this.userInfoMapper.selectOne(new QueryWrapper<UserInfoEntity>().setEntity(queryUser));
     }
 
-
     @Override
     @Transactional
     public Long addUserInfo(UserInfoAddDTO req) {
@@ -124,6 +123,7 @@ public class UserRepository implements IUserRepository {
             addUserInfo.setAccount(userId);
             addUserInfo.setNickName(req.getNickName());
             addUserInfo.setPhone(req.getPhone());
+            addUserInfo.setParent(req.getParent());
 //            addUserInfo.s
             return addUserInfo;
         }
@@ -167,7 +167,6 @@ public class UserRepository implements IUserRepository {
     @Override
     public UserPwdChangeLogsVO queryPwdLog(Long userId) {
         List<UserPwdHistoryLogEntity> userPwdHistoryLogEntities = this.userPwdHistoryLogMapper.selectByParamAndLimiTen(userId);
-
         List<String> passwords = Optional.ofNullable(userPwdHistoryLogEntities)
                 .orElse(new ArrayList<>())
                 .stream()

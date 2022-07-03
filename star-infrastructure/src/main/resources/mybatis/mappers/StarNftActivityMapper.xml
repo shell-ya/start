@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.activityEvent.StarNftActivityMapper">
+  <resultMap id="BaseResultMap" type="com.starnft.star.infrastructure.entity.activityEvent.StarNftActivity">
+    <!--@mbg.generated-->
+    <!--@Table star_nft_activity-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <id column="activity_ sign" jdbcType="VARCHAR" property="activitySign" />
+    <result column="activity_name" jdbcType="VARCHAR" property="activityName" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="is_times" jdbcType="BOOLEAN" property="isTimes" />
+    <result column="activity_status" jdbcType="INTEGER" property="activityStatus" />
+    <result column="activity_content" jdbcType="VARCHAR" property="activityContent" />
+    <result column="extend" jdbcType="LONGVARCHAR" property="extend" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="modified_at" jdbcType="TIMESTAMP" property="modifiedAt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, `activity_ sign`, activity_name, start_time, end_time, is_times, activity_status, 
+    activity_content, extend, created_at, modified_at
+  </sql>
+</mapper>

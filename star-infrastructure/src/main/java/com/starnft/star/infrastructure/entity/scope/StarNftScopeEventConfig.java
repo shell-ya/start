@@ -90,6 +90,7 @@ public class StarNftScopeEventConfig implements Serializable {
     public static final String COL_EVENT_DESC = "event_desc";
 
     public static final String COL_EVENT_STATUS = "event_status";
+    public static final String COL_SCOPE_TYPE = "scope_type";
 
     public static final String COL_IS_DELETED = "is_deleted";
 

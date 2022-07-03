@@ -324,7 +324,12 @@ public class StarConstants {
     public static class  Event {
 
       public static   final Integer EVENT_STATUS_OPEN =1;
-      public  static final Integer EVENT_STATUS_CLOSE =0;
+      public static  final  Integer EVENT_STATUS_CLOSE =0;
+    }
+    public static class  ScopeMold {
+
+        public static   final Integer UP =1;
+        public static  final  Integer DOWN =0;
     }
 
 }

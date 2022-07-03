@@ -1,10 +1,6 @@
 package com.starnft.star.domain.user.model.dto;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-
-import javax.validation.constraints.NotBlank;
 
 /**
  * @author WeiChunLAI
@@ -31,4 +27,13 @@ public class UserLoginDTO {
      * 手机验证码
      */
     private String code;
+    /**
+     * 邀请码
+     */
+
+    private String shareCode;
+     /**
+     * 活动类型
+     */
+    private String activityType;
 }

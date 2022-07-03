@@ -6,15 +6,14 @@ import com.starnft.star.domain.scope.service.IScopeConfigService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 @Service
 public class ScopeConfigServiceImpl implements IScopeConfigService {
     @Resource
     IScopeConfigRepository scopeConfigRepository;
     @Override
-    public List<ScopeConfigRes> queryScoreConfigByCode(Integer code) {
-        List<ScopeConfigRes> scopeConfigRes = scopeConfigRepository.queryScopeConfigByCode(code);
+    public ScopeConfigRes queryScoreConfigByScopeType(Integer scopeType) {
+        ScopeConfigRes scopeConfigRes = scopeConfigRepository.queryScopeConfigByScopeType(scopeType);
         return scopeConfigRes;
     }
 }

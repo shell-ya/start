@@ -18,6 +18,6 @@ public class ScopeConsumer implements RocketMQListener<ScopeMessage> {
     IScopeCore iScopeCore;
     @Override
     public void onMessage(ScopeMessage userScopeMessageVO) {
-        iScopeCore.calculateUserScope(userScopeMessageVO);
+//        iScopeCore.calculateUserScope(userScopeMessageVO);
     }
 }

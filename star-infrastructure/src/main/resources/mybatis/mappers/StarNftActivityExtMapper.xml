@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.activityEvent.StarNftActivityExtMapper">
+  <resultMap id="BaseResultMap" type="com.starnft.star.infrastructure.entity.activityEvent.StarNftActivityExt">
+    <!--@mbg.generated-->
+    <!--@Table star_nft_activity_ext-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="ext_type" jdbcType="INTEGER" property="extType" />
+    <result column="activity_sign" jdbcType="VARCHAR" property="activitySign" />
+    <result column="activity_id" jdbcType="BIGINT" property="activityId" />
+    <result column="params" jdbcType="LONGVARCHAR" property="params" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, ext_type, activity_sign, activity_id, params
+  </sql>
+</mapper>

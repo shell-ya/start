@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @Component("userRegisterStrategy")
-public abstract class UserRegisterStrategy {
+public abstract class UserRegisterStrategy  {
 
     @Autowired
     private RedisLockUtils redisLockUtils;

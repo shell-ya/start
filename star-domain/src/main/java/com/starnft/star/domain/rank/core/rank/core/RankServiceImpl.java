@@ -2,8 +2,9 @@ package com.starnft.star.domain.rank.core.rank.core;
 
 import cn.hutool.json.JSONUtil;
 import com.starnft.star.common.constant.RedisKey;
-import com.starnft.star.domain.rank.core.rank.model.RankData;
+
 import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
+import com.starnft.star.domain.rank.core.rank.model.RankItemMetaData;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -31,14 +32,15 @@ public class RankServiceImpl implements IRankService {
         if (!hasRankList) return false;
         return  redisTemplate.opsForHash().hasKey(RedisKey.RANK_LIST.getKey(),rankName);
     }
+
     @Override
-    public Boolean put(String rankName,String  key,double value,RankData rankData) {
+    public Double put(String rankName, String  key, double value, RankItemMetaData rankItemMetaData) {
         boolean hasRank = hasRank(rankName);
         if (!hasRank)  throw new RuntimeException("请先创建排行榜");
         //todo 依据rankDefinition 进行不同的配置信息
          RankDefinition rankDefinition = JSONUtil.toBean(redisTemplate.opsForHash().get(RedisKey.RANK_LIST.getKey(), rankName).toString(), RankDefinition.class);
-         redisTemplate.opsForHash().putIfAbsent(String.format(RedisKey.RANK_STORE.getKey()),key,JSONUtil.toJsonStr(rankData));
-        return  redisTemplate.opsForZSet().add(String.format(RedisKey.RANK_STORE.getKey(), rankName), key, value);
+         redisTemplate.opsForHash().putIfAbsent(String.format(RedisKey.RANK_EXTEND.getKey(),rankName),key,JSONUtil.toJsonStr(rankItemMetaData));
+        return  redisTemplate.opsForZSet().incrementScore(String.format(RedisKey.RANK_STORE.getKey(), rankName), key, value);
     }
 
     @Override
@@ -77,7 +79,7 @@ public class RankServiceImpl implements IRankService {
     }
 
     @Override
-    public RankData getRankDataById(String rankName, int id) {
+    public RankItemMetaData getRankDataById(String rankName, int id) {
         return null;
     }
 
@@ -87,17 +89,17 @@ public class RankServiceImpl implements IRankService {
     }
 
     @Override
-    public RankData getRankDataByRankNum(String rankName, int rankNum) {
+    public RankItemMetaData getRankDataByRankNum(String rankName, int rankNum) {
         return null;
     }
 
     @Override
-    public List<RankData> getRankDatasByPage(String rankName, int page, int pageSize) {
+    public List<RankItemMetaData> getRankDatasByPage(String rankName, int page, int pageSize) {
         return null;
     }
 
     @Override
-    public List<RankData> getRankDatasAroundId(String rankName, int id, int beforeNum, int afterNum) {
+    public List<RankItemMetaData> getRankDatasAroundId(String rankName, int id, int beforeNum, int afterNum) {
         return null;
     }
 }
