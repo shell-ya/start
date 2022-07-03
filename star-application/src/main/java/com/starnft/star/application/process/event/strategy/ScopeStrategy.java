@@ -8,7 +8,7 @@ import javax.annotation.Resource;
 
 @Component("scopeStrategy")
 public  class ScopeStrategy {
-    @Resource
+     @Resource
      private IScopeCore iScopeCore;
      public void addScope(AddScoreDTO addScoreDTO){
          iScopeCore.userScopeManageAdd(addScoreDTO);
