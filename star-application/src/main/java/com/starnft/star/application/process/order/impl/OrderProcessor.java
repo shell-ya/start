@@ -24,8 +24,10 @@ import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.number.model.req.HandoverReq;
+import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
 import com.starnft.star.domain.number.serivce.INumberService;
+import com.starnft.star.domain.order.model.req.OrderListReq;
 import com.starnft.star.domain.order.model.res.OrderListRes;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.service.IOrderService;
@@ -47,6 +49,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -67,6 +70,16 @@ public class OrderProcessor implements IOrderProcessor {
 
     @Override
     public OrderGrabRes orderGrab(OrderGrabReq orderGrabReq) {
+        // 恶意下单校验
+        Long record = (Long) redisUtil.get(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), orderGrabReq.getUserId()));
+        if (record != null) {
+            throw new StarException(StarError.ORDER_CANCEL_TIMES_OVERFLOW);
+        }
+        Integer breakTimes = (Integer) redisUtil.get(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), orderGrabReq.getUserId()));
+        if (Objects.nonNull(breakTimes) && breakTimes > 3) {
+            redisUtil.set(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), orderGrabReq.getUserId()), orderGrabReq.getUserId(), RedisKey.ORDER_BREAK_RECORD.getTime());
+            throw new StarException(StarError.ORDER_CANCEL_TIMES_OVERFLOW);
+        }
 
         //查询抢购商品信息
         SecKillGoods goods = themeService.obtainGoodsCache(orderGrabReq.getThemeId(), orderGrabReq.getTime());
@@ -232,6 +245,14 @@ public class OrderProcessor implements IOrderProcessor {
             }
         }
         throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
+    }
+
+    @Override
+    public OrderListRes orderDetails(OrderListReq req) {
+        OrderListRes orderListRes = this.orderService.orderDetails(req);
+        NumberDetailVO numberDetail = this.numberService.getNumberDetail(orderListRes.getSeriesThemeId());
+        orderListRes.setOwnerBy(numberDetail.getOwnerBy());
+        return orderListRes;
     }
 
     private OrderListRes buildOrderResp(ThemeNumberVo numberDetail, Long userId, String orderSn, Long id) {

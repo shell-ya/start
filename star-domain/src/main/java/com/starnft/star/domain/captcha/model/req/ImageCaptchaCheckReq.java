@@ -1,5 +1,6 @@
 package com.starnft.star.domain.captcha.model.req;
 
+import com.starnft.star.domain.captcha.model.dto.StarImageCaptchaTrack;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

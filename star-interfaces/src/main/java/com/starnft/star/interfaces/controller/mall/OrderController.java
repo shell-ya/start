@@ -65,7 +65,7 @@ public class OrderController {
     @PostMapping("/details")
     public RopResponse<OrderListRes> detail(@RequestBody OrderListReq req) {
         req.setUserId(UserContext.getUserId().getUserId());
-        return RopResponse.success(this.orderService.orderDetails(req));
+        return RopResponse.success(this.orderProcessor.orderDetails(req));
     }
 
     @ApiOperation("查询下单状态")

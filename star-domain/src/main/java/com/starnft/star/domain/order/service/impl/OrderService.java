@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -84,7 +85,7 @@ public class OrderService implements IOrderService {
             return null;
         }
         if (!orderVO.getStatus().equals(StarConstants.ORDER_STATE.WAIT_PAY.getCode())) {
-            throw new StarException(StarError.ORDER_STATUS_ERROR, "该订单无法取消");
+            return null;
         }
         //库存编号是否异常
         Integer themeNumber = orderVO.getThemeNumber();
@@ -94,6 +95,8 @@ public class OrderService implements IOrderService {
         //更新订单状态
         Result result = orderStateHandler.payCancel(uid, orderSn, StarConstants.ORDER_STATE.WAIT_PAY);
         if (result.getCode().equals(ResultCode.SUCCESS.getCode())) {
+            //记录取消订单次数
+            logTimes(uid);
             if (orderType.equals(StarConstants.OrderType.PUBLISH_GOODS)) {
                 //库存重新加到队列
                 redisUtil.addToListLeft(String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), orderVO.getSeriesThemeInfoId()),
@@ -109,6 +112,18 @@ public class OrderService implements IOrderService {
         }
 
         throw new StarException(StarError.ORDER_CANCEL_ERROR);
+    }
+
+    private void logTimes(Long uid) {
+        //记录取消订单次数 达到上限禁止下单12小时
+        redisUtil.incr(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), uid), 1);
+        if (redisUtil.hasKey(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), uid))) {
+            Long ttl = redisUtil.getTtl(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), uid), TimeUnit.SECONDS);
+            redisUtil.expire(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), uid), ttl);
+            return;
+        }
+        //过期时间30min
+        redisUtil.expire(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), uid), RedisKey.ORDER_BREAK_COUNT.getTime());
     }
 
     public boolean cancelOrder(MarketCancelOrderVo cancelOrderVo) {

@@ -124,6 +124,11 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
     @Override
     public UserVerifyCode getVerifyCode(UserVerifyCodeDTO req) {
+        //校验图像验证码是否通过
+        String imageCaptchaKey = String.format(RedisKey.REDIS_IMAGE_CAPTCHA_CHECK_SUCCESS_TOKEN.getKey(), req.getImageCaptchaId());
+        Assert.isTrue(this.redisUtil.hasKey(imageCaptchaKey), () -> new StarException(StarError.IMAGE_CAPTCHA_CHECK_ERROR));
+        redisUtil.del(imageCaptchaKey);
+        
         //发送验证码
         String code = StarUtils.getVerifyCode();
 
@@ -364,7 +369,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         //todo 校验当日是否超过限制次数
         //todo 调用xxx云完成实名认证,可能不需要，节约用钱
 
-        Boolean result= identifyAdapter.getDistributor(IdentifyTypeEnums.sw_identify).checkNameAndIdCard(req.getFullName(), req.getIdNumber());
+        Boolean result = this.identifyAdapter.getDistributor(IdentifyTypeEnums.sw_identify).checkNameAndIdCard(req.getFullName(), req.getIdNumber());
 
         if (Boolean.FALSE.equals(result)) {
             throw new StarException(StarError.ERROR_AUTHENTICATION);
@@ -391,8 +396,8 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
     @Override
     public AgreementVO queryAgreementContentById(String agreementId) {
-        List<AgreementVO> agreementVOS = userRepository.queryAgreementByAgreementId(Arrays.asList(agreementId));
-        if (CollectionUtils.isNotEmpty(agreementVOS)){
+        List<AgreementVO> agreementVOS = this.userRepository.queryAgreementByAgreementId(Arrays.asList(agreementId));
+        if (CollectionUtils.isNotEmpty(agreementVOS)) {
             return Optional.ofNullable(agreementVOS).get().stream().findFirst().get();
         }
         return null;
@@ -400,7 +405,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
     @Override
     public AgreementVO queryAgreementContentByType(Integer agreementType) {
-        AgreementVO agreementVO = userRepository.queryAgreementInfoByType(agreementType);
+        AgreementVO agreementVO = this.userRepository.queryAgreementInfoByType(agreementType);
         return agreementVO;
     }
 
@@ -531,7 +536,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         Boolean isSetting = this.redisTemplate.opsForValue().getBit(RedisKey.REDIS_USER_IS_CERTIFICATION.getKey(), userId);
         if (Boolean.FALSE.equals(isSetting)) {
             UserInfo userInfo = this.userRepository.queryUserInfoByUserId(userId);
-            isSetting = Objects.nonNull(userInfo.getRealPersonFlag())&&userInfo.getRealPersonFlag().equals(YesOrNoStatusEnum.YES.getCode());
+            isSetting = Objects.nonNull(userInfo.getRealPersonFlag()) && userInfo.getRealPersonFlag().equals(YesOrNoStatusEnum.YES.getCode());
             this.redisTemplate.opsForValue().setBit(RedisKey.REDIS_USER_IS_CERTIFICATION.getKey(), userId, isSetting);
         }
         return isSetting;

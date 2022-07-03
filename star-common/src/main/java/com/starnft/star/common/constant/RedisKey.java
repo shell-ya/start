@@ -83,9 +83,15 @@ public enum RedisKey {
     REDIS_PRE_PAY_PWD_CHECK_TOKEN(104, StarConstants.SERVICE_NAME.concat(".paypwd.check.pre.%s"), 30L, TimeUnit.SECONDS),
 
     /**
+     * 图像验证码校验成功凭证
+     */
+    REDIS_IMAGE_CAPTCHA_CHECK_SUCCESS_TOKEN(105, StarConstants.SERVICE_NAME.concat(".image.captcha.check.%s"), 30L, TimeUnit.SECONDS),
+
+    /**
      * 支付密码错误次数
      */
     REDIS_PAYPWD_CHECK_ERROR_TIMES(106, StarConstants.SERVICE_NAME.concat(".paypwd.check.error.times.%s"), 6L, TimeUnit.HOURS),
+
 
     /**
      * 钱包交易状态锁
@@ -140,6 +146,15 @@ public enum RedisKey {
 
     SECKILL_ORDER_TRANSACTION(507, StarConstants.SERVICE_NAME.concat(".seckill:ordered:transaction:%s"), 3L, TimeUnit.MINUTES),
 
+    /**
+     * 自动取消订单次数
+     */
+    ORDER_BREAK_COUNT(508, StarConstants.SERVICE_NAME.concat(".seckill:ordered:break:%s"), 1800L, TimeUnit.SECONDS),
+    /**
+     * 自动取消订单记录
+     */
+    ORDER_BREAK_RECORD(509, StarConstants.SERVICE_NAME.concat(".seckill:ordered:record:%s"), 3600L, TimeUnit.SECONDS),
+
     //======================================= sec kill goods end   =======================================
 
     /**
@@ -149,13 +164,12 @@ public enum RedisKey {
     /**
      * 排行榜列表
      */
-    RANK_LIST(601,StarConstants.SERVICE_NAME.concat(".rank:list"),3L, TimeUnit.HOURS),
+    RANK_LIST(601, StarConstants.SERVICE_NAME.concat(".rank:list"), 3L, TimeUnit.HOURS),
     /**
      * 排行榜
      */
-    RANK_STORE(602,StarConstants.SERVICE_NAME.concat(".rank:%s:store"),3L, TimeUnit.HOURS),
-    RANK_EXTEND(603,StarConstants.SERVICE_NAME.concat(".rank:%s:extend"),3L, TimeUnit.HOURS)
-    ;
+    RANK_STORE(602, StarConstants.SERVICE_NAME.concat(".rank:store:%s"), 3L, TimeUnit.HOURS),
+    RANK_EXTEND(603, StarConstants.SERVICE_NAME.concat(".rank:extend:%s"), 3L, TimeUnit.HOURS);
     private Integer code;
 
     private String key;
