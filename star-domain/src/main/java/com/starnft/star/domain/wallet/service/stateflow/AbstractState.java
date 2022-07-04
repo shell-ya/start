@@ -5,6 +5,7 @@ import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.wallet.repository.IWalletRepository;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 
 public abstract class AbstractState {
 
@@ -15,7 +16,7 @@ public abstract class AbstractState {
 
     public abstract Result paying(String orderNo, Enum<StarConstants.Pay_Status> payStatus);
 
-    public abstract Result paySuccess(String orderNo, String outTradeNo, Enum<StarConstants.Pay_Status> payStatus);
+    public abstract Result paySuccess(String orderNo, String outTradeNo, BigDecimal currMoney, Enum<StarConstants.Pay_Status> payStatus);
 
     public abstract Result payFailure(String orderNo, Enum<StarConstants.Pay_Status> payStatus);
 

@@ -390,7 +390,7 @@ public class WalletServiceImpl implements WalletService {
             }
 
             Result result = stateHandler.paySuccess(rechargeVO.getOrderSn(),
-                    rechargeVO.getTransSn(), StarConstants.Pay_Status.valueOf(walletRecordVO.getPayStatus()));
+                    rechargeVO.getTransSn(), curr, StarConstants.Pay_Status.valueOf(walletRecordVO.getPayStatus()));
 
             //记录余额变动记录
             boolean logWrite = walletRepository.createWalletLog(WalletLogReq.builder().walletId(walletVO.getWalletId())

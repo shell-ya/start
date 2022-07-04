@@ -21,13 +21,14 @@
         <result property="remark" column="remark" jdbcType="VARCHAR"/>
         <result property="payStatus" column="pay_status" jdbcType="INTEGER"/>
         <result property="payTime" column="pay_time" jdbcType="DATE"/>
+        <result property="currMoney" column="curr_money" jdbcType="DECIMAL"/>
     </resultMap>
 
     <select id="selectByLimit" resultMap="StarNftWalletRecordMap"
             parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord">
         select
         id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,order_sn,out_trade_no,from_uid,to_uid,ts_type,ts_money,
-        ts_cost,ts_fee,pay_channel,remark,pay_status,pay_time
+        ts_cost,ts_fee,pay_channel,remark,pay_status,pay_time,curr_money
         from star_nft_wallet_record
         <where>
             <if test="id != null and id != ''">
@@ -94,7 +95,7 @@
             resultType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletRecord">
         select
         id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,order_sn,out_trade_no,from_uid,to_uid,ts_type,ts_money,
-        ts_cost,ts_fee,pay_channel,remark,pay_status,pay_time
+        ts_cost,ts_fee,pay_channel,remark,pay_status,pay_time,curr_money
         from star_nft_wallet_record
         <where>
             <if test="userId != null and userId != ''">
@@ -123,7 +124,7 @@
 
         select
         id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,order_sn,out_trade_no,from_uid,to_uid,ts_type,ts_money,
-        ts_cost,ts_fee,pay_channel,remark,pay_status,pay_time
+        ts_cost,ts_fee,pay_channel,remark,pay_status,pay_time,curr_money
         from star_nft_wallet_record
         <where>
             <if test="userId != null and userId != ''">
@@ -158,11 +159,11 @@
                                            order_sn, out_trade_no,
                                            from_uid, to_uid, ts_type, ts_money, ts_cost, ts_fee, pay_channel, remark,
                                            pay_status,
-                                           pay_time)
+                                           pay_time,curr_money)
         values (#{isDeleted}, #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{recordSn}, #{orderSn},
                 #{outTradeNo}, #{fromUid},
                 #{toUid}, #{tsType}, #{tsMoney}, #{tsCost}, #{tsFee}, #{payChannel}, #{remark}, #{payStatus},
-                #{payTime})
+                #{payTime}, #{currMoney})
     </insert>
 
     <!-- 更新数据 -->
@@ -222,6 +223,9 @@
             </if>
             <if test="payTime != null and payTime != ''">
                 pay_time = #{payTime},
+            </if>
+            <if test="currMoney != null">
+                curr_money = #{currMoney},
             </if>
         </set>
         where 1=1

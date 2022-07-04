@@ -4,6 +4,7 @@ import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.wallet.model.req.*;
 import com.starnft.star.domain.wallet.model.vo.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface IWalletRepository {
@@ -88,6 +89,7 @@ public interface IWalletRepository {
      */
 
     WithdrawRecordVO queryWithDrawRecordTradeNo(String tradeNo);
+
     /**
      * 更新交易记录状态
      *
@@ -106,7 +108,7 @@ public interface IWalletRepository {
      * @param outTradeNo 第三方交易流水号
      * @return 执行结果
      */
-    boolean updateWalletRecordSuccess(String serialNo, String outTradeNo, String payStatus);
+    boolean updateWalletRecordSuccess(String serialNo, String outTradeNo, String payStatus, BigDecimal currMoney);
 
     /**
      * @param queryReq

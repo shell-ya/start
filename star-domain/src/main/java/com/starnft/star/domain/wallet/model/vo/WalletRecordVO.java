@@ -56,6 +56,12 @@ public class WalletRecordVO implements Serializable {
     @ApiModelProperty(name = "交易时间", notes = "")
     private Date payTime;
 
+    /**
+     * 当前余额
+     */
+    @ApiModelProperty(name = "当前余额", notes = "")
+    private BigDecimal currMoney;
+
     public String getRecordSn() {
         return recordSn;
     }
@@ -136,4 +142,11 @@ public class WalletRecordVO implements Serializable {
         this.payTime = payTime;
     }
 
+    public BigDecimal getCurrMoney() {
+        return currMoney;
+    }
+
+    public void setCurrMoney(BigDecimal currMoney) {
+        this.currMoney = currMoney;
+    }
 }

@@ -6,6 +6,8 @@ import com.starnft.star.domain.wallet.service.stateflow.IStateHandler;
 import com.starnft.star.domain.wallet.service.stateflow.StateConfig;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 public class StateHandlerImpl extends StateConfig implements IStateHandler {
 
@@ -20,8 +22,8 @@ public class StateHandlerImpl extends StateConfig implements IStateHandler {
     }
 
     @Override
-    public Result paySuccess(String orderNo, String outTradeNo, Enum<StarConstants.Pay_Status> payStatus) {
-        return stateMap.get(payStatus).paySuccess(orderNo,outTradeNo, payStatus);
+    public Result paySuccess(String orderNo, String outTradeNo, BigDecimal currMoney, Enum<StarConstants.Pay_Status> payStatus) {
+        return stateMap.get(payStatus).paySuccess(orderNo, outTradeNo, currMoney, payStatus);
     }
 
     @Override

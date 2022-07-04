@@ -6,6 +6,8 @@ import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
 import com.starnft.star.domain.wallet.service.stateflow.AbstractState;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
+
 @Component
 public class WaitPayState extends AbstractState {
 
@@ -25,7 +27,7 @@ public class WaitPayState extends AbstractState {
     }
 
     @Override
-    public Result paySuccess(String orderNo, String outTradeNo, Enum<StarConstants.Pay_Status> payStatus) {
+    public Result paySuccess(String orderNo, String outTradeNo, BigDecimal currMoney, Enum<StarConstants.Pay_Status> payStatus) {
         return Result.buildErrorResult("该状态不可修改为支付成功");
     }
 
