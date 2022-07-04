@@ -5,5 +5,6 @@ import lombok.Data;
 @Data
 public class EventActivityExtRes {
     private Integer extType;
+    private  String eventSign;
     private String params;
 }

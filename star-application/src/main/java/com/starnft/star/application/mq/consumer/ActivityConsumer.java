@@ -1,7 +1,7 @@
 package com.starnft.star.application.mq.consumer;
 
-import com.starnft.star.application.process.scope.IScopeCore;
-import com.starnft.star.application.process.scope.model.ScopeMessage;
+import com.starnft.star.application.process.event.ActivityEventAdapter;
+import com.starnft.star.application.process.event.model.ActivityEventReq;
 import lombok.RequiredArgsConstructor;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
@@ -13,11 +13,11 @@ import javax.annotation.Resource;
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @RocketMQMessageListener(topic = "${consumer.topic.credits}", consumerGroup = "${consumer.group.credits}", selectorExpression = "modify")
-public class ScopeConsumer implements RocketMQListener<ScopeMessage> {
+public class ActivityConsumer implements RocketMQListener<ActivityEventReq> {
     @Resource
-    IScopeCore iScopeCore;
+    ActivityEventAdapter activityEventAdapter;
     @Override
-    public void onMessage(ScopeMessage userScopeMessageVO) {
-//        iScopeCore.calculateUserScope(userScopeMessageVO);
+    public void onMessage(ActivityEventReq activityEventReq) {
+       activityEventAdapter.handler(activityEventReq);
     }
 }

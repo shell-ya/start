@@ -13,12 +13,13 @@ import java.util.List;
 public class ActivityEventAdapter {
     @Resource
     IEventActivityService eventActivityService;
+    @Resource
+    EventProcessor processor;
     public void handler(ActivityEventReq activityEventReq) {
         EventActivityExtReq eventActivityExtReq = new EventActivityExtReq();
         eventActivityExtReq.setActivitySign(activityEventReq.getActivitySign());
         eventActivityExtReq.setEventSign(activityEventReq.getEventSign());
         List<EventActivityExtRes> extResList = eventActivityService.queryEventActivityParams(eventActivityExtReq);
-
-
+        processor.processor(extResList,activityEventReq);
     }
 }

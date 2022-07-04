@@ -254,7 +254,7 @@ public class WalletRepository implements IWalletRepository {
     }
 
     @Override
-    public boolean updateWalletRecordSuccess(String serialNo, String outTradeNo, String payStatus) {
+    public boolean updateWalletRecordSuccess(String serialNo, String outTradeNo, String payStatus,BigDecimal currMoney) {
         StarNftWalletRecord record = queryWalletRecordPO(serialNo, null);
         if (null == record) {
             throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "记录不存在");
@@ -265,6 +265,7 @@ public class WalletRepository implements IWalletRepository {
         StarNftWalletRecord change = new StarNftWalletRecord();
         change.setOutTradeNo(outTradeNo);
         change.setPayStatus(payStatus);
+        change.setCurrMoney(currMoney);
         return starNftWalletRecordMapper.update(change, wrapper) == 1;
     }
 
