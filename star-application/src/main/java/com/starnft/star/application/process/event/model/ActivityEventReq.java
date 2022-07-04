@@ -11,7 +11,9 @@ public class ActivityEventReq implements Serializable {
     private String eventSign;
     //活动标记
     private String activitySign;
-   // 所需参数
+    //用户ID
+    private Long userId;
+    //所需参数
     private Map<String,Object> params;
 
 }

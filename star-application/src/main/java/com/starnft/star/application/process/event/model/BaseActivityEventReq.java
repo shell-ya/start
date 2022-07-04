@@ -8,4 +8,6 @@ public abstract class BaseActivityEventReq {
     private String eventSign;
     //活动标记
     private String activitySign;
+    //用户id
+    private Long userId;
 }
