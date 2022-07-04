@@ -2,6 +2,7 @@ package com.starnft.star.application.process.order.impl;
 
 import cn.hutool.json.JSONUtil;
 import com.starnft.star.application.mq.producer.order.OrderProducer;
+import com.starnft.star.application.mq.producer.wallet.WalletProducer;
 import com.starnft.star.application.process.number.req.MarketOrderReq;
 import com.starnft.star.application.process.number.req.MarketOrderStatus;
 import com.starnft.star.application.process.order.IOrderProcessor;
@@ -37,6 +38,7 @@ import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.domain.theme.service.ThemeService;
 import com.starnft.star.domain.user.service.IUserService;
+import com.starnft.star.domain.wallet.model.req.TransReq;
 import com.starnft.star.domain.wallet.model.req.WalletPayRequest;
 import com.starnft.star.domain.wallet.model.res.WalletPayResult;
 import com.starnft.star.domain.wallet.service.WalletService;
@@ -67,6 +69,7 @@ public class OrderProcessor implements IOrderProcessor {
     private final OrderStateHandler orderStateHandler;
     private final Map<StarConstants.Ids, IIdGenerator> idsIIdGeneratorMap;
     private final TransactionTemplate template;
+    private final WalletProducer walletProducer;
 
     @Override
     public OrderGrabRes orderGrab(OrderGrabReq orderGrabReq) {
@@ -156,6 +159,10 @@ public class OrderProcessor implements IOrderProcessor {
                     return ResultCode.SUCCESS.getCode().equals(walletPayResult.getStatus()) && ResultCode.SUCCESS.getCode().equals(result.getCode()) && handover;
                 });
                 if (isSuccess) {
+                    //市场订单交易成功 更新卖家余额
+                    if (orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())){
+                        walletProducer.receivablesCallback(createTranReq(orderPayReq));
+                    }
                     return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn());
                 }
                 throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "订单处理异常！");
@@ -165,6 +172,20 @@ public class OrderProcessor implements IOrderProcessor {
             redisLockUtils.unlock(lockKey);
         }
         throw new StarException(StarError.PAY_PROCESS_ERROR);
+    }
+
+    private TransReq createTranReq(OrderPayReq orderPayReq) {
+        //收款方是寄售用户
+        TransReq transReq = new TransReq();
+        transReq.setUid(orderPayReq.getFromUid());
+        transReq.setTsType(orderPayReq.getType());
+        transReq.setPayChannel(orderPayReq.getChannel());
+        transReq.setOrderSn(orderPayReq.getOrderSn());
+        transReq.setTotalAmount(new BigDecimal(orderPayReq.getTotalPayAmount()));
+        BigDecimal payAmount = new BigDecimal(orderPayReq.getPayAmount());
+        transReq.setPayAmount(payAmount.signum() == -1 ? payAmount : payAmount.negate());
+        //实际收款金额是挂失金额减去手续费
+        return transReq;
     }
 
     private HandoverReq buildHandOverReq(OrderPayReq orderPayReq) {

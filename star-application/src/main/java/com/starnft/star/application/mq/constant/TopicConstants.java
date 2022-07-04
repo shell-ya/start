@@ -18,6 +18,8 @@ public enum TopicConstants {
     MARKET_ORDER_ROLLBACK_DESTINATION("STAR-MARKET-ROLLBACK:%s", "rollback"),
 
     CREDITS_PROCESS_DESTINATION("STAR-CREDIT:%s", "modify"),
+    //订单金额收款
+    WALLER_RECEIVABLES_DESTINATION("STAR-RECEIVABLES:%s","callback"),
     ;
 
     private String format;
