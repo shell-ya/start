@@ -537,5 +537,24 @@ public class WalletServiceImpl implements WalletService {
         return isSuccess;
     }
 
+    @Override
+    public ReceivablesCalculateResult ReceivablesMoneyCalculate(CalculateReq calculate) {
+
+        verifyParam(calculate.getChannel());
+        WalletConfigVO config = WalletConfig.getConfig(StarConstants.PayChannel.valueOf(calculate.getChannel()));
+        //交易手续费
+        BigDecimal transRate = calculate.getMoney().multiply(config.getServiceRate());
+        //版权费
+        BigDecimal copyrightRate = calculate.getMoney().multiply(config.getCopyrightRate());
+        BigDecimal calculated = calculate.getMoney().subtract(transRate).subtract(copyrightRate);
+        NumberFormat percent = NumberFormat.getPercentInstance();
+        NumberFormat number = NumberFormat.getNumberInstance();
+        number.setMaximumFractionDigits(3);
+        percent.setMaximumFractionDigits(4);
+        return new ReceivablesCalculateResult(number.format(calculated.setScale(2, BigDecimal.ROUND_HALF_DOWN)), percent.format(config.getServiceRate()),
+                percent.format(config.getCopyrightRate()),transRate.toPlainString(),copyrightRate.toPlainString());
+
+    }
+
 
 }

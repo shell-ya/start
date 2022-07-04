@@ -3,6 +3,8 @@ package com.starnft.star.infrastructure.repository;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.enums.UserNumberStatusEnum;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.article.model.req.UserHaveNumbersReq;
@@ -51,10 +53,11 @@ public class UserThemeRepository implements IUserThemeRepository, PageHelperInte
     }
 
     @Override
-    public UserNumbersVO queryUserNumberInfo(Long uid, Long numberId) {
+    public UserNumbersVO queryUserNumberInfo(Long uid, Long numberId,UserNumberStatusEnum statusEnum) {
         StarNftUserTheme starNftUserTheme = this.starNftUserThemeMapper.selectOne(Wrappers.lambdaQuery(StarNftUserTheme.class)
                 .eq(StarNftUserTheme::getUserId, uid)
-                .eq(StarNftUserTheme::getSeriesThemeId, numberId));
+                .eq(StarNftUserTheme::getSeriesThemeId, numberId)
+                .eq(Objects.nonNull(statusEnum),StarNftUserTheme::getStatus, statusEnum.getCode()));
         if (Objects.isNull(starNftUserTheme)) {
             return null;
         }
@@ -67,7 +70,7 @@ public class UserThemeRepository implements IUserThemeRepository, PageHelperInte
     }
 
     @Override
-    public Boolean modifyUserNumberStatus(Long uid, Long numberId, UserNumberStatusEnum statusEnum) {
+    public Boolean modifyUserNumberStatus(Long uid, Long numberId, UserNumberStatusEnum beforeStatusEnum,UserNumberStatusEnum statusEnum) {
         return this.starNftUserThemeMapper.update(StarNftUserTheme.builder()
                         .status(statusEnum.getCode())
                         .updateAt(new Date())
@@ -75,7 +78,8 @@ public class UserThemeRepository implements IUserThemeRepository, PageHelperInte
                         .build(),
                 Wrappers.lambdaUpdate(StarNftUserTheme.class)
                         .eq(StarNftUserTheme::getSeriesThemeId, numberId)
-                        .eq(StarNftUserTheme::getUserId, uid)) == 1;
+                        .eq(StarNftUserTheme::getUserId, uid)
+                        .eq(StarNftUserTheme::getStatus,beforeStatusEnum.getCode())) == 1;
     }
 
 
