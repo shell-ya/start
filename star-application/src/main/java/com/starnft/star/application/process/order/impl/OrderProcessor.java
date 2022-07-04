@@ -256,7 +256,7 @@ public class OrderProcessor implements IOrderProcessor {
                 long id = idsIIdGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId();
                 if (createPreOrder(numberDetail, marketOrderReq.getUserId(), orderSn, id)) {
                     //发送延时队列
-//                    orderProducer.marketOrderRollback(new MarketOrderStatus(marketOrderReq.getUserId(), 0, orderSn));
+                    orderProducer.marketOrderRollback(new MarketOrderStatus(marketOrderReq.getUserId(), 0, orderSn));
 //                    return new OrderListRes(id,orderSn, 0, StarError.SUCCESS_000000.getErrorMessage(), lockTimes);
                     return buildOrderResp(numberDetail, marketOrderReq.getUserId(), orderSn, id);
                 }
