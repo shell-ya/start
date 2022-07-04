@@ -24,10 +24,10 @@ public class TestNewPay {
     public  void testcheckPay(){
         HashMap<String, Object> stringObjectHashMap = new HashMap<>();
         stringObjectHashMap.put("userName","黄坤煌");
-//        stringObjectHashMap.put("idCard","445122199510295218");
+     stringObjectHashMap.put("idCard","445122199510295218");
         PaymentRich req = PaymentRich.builder()
-                .totalMoney(new BigDecimal("0.15")).payChannel(StarConstants.PayChannel.CloudAccount.name())
-                .frontUrl("http://localhost:1025").clientIp("192.168.1.1")
+                .totalMoney(new BigDecimal("0.15")).payChannel(StarConstants.PayChannel.BankCard.name())
+                .frontUrl("https://www.baidu.com?q=1").clientIp("192.168.1.1")
                 .orderSn(IdUtil.getSnowflake(1, 1).nextIdStr())
                 .userId(1L)
                 .payExtend(stringObjectHashMap)

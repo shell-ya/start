@@ -326,6 +326,19 @@ public class StarConstants {
       public static   final Integer EVENT_STATUS_OPEN =1;
       public static  final  Integer EVENT_STATUS_CLOSE =0;
     }
+    public enum   EventType {
+        Scope(1),
+        Rank(2);
+        private final Integer value;
+
+        EventType(int value) {
+            this.value = value;
+        }
+
+        public Integer getValue() {
+            return value;
+        }
+    }
     public static class  ScopeMold {
 
         public static   final Integer UP =1;
