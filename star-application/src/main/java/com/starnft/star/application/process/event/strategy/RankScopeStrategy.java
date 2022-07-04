@@ -8,13 +8,10 @@ import org.springframework.stereotype.Component;
 @Component("rankScopeStrategy")
 public class RankScopeStrategy implements EventStrategy
 {
-
-
     @Override
     public StarConstants.EventType getEventType() {
         return StarConstants.EventType.Rank;
     }
-
     @Override
     public void handler(EventActivityExtRes ext, ActivityEventReq activityEventReq) {
 

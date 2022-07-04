@@ -327,15 +327,15 @@ public class StarConstants {
       public static  final  Integer EVENT_STATUS_CLOSE =0;
     }
     public enum   EventType {
-        Scope(1),
-        Rank(2);
-        private final Integer value;
+        Scope("scope"),
+        Rank("rank");
+        private final String  value;
 
-        EventType(int value) {
+        EventType(String value) {
             this.value = value;
         }
 
-        public Integer getValue() {
+        public String getValue() {
             return value;
         }
     }

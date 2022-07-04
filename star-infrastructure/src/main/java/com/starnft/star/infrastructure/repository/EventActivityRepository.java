@@ -33,6 +33,7 @@ public class EventActivityRepository implements IEventActivityRepository {
         return starNftActivityArrays.stream().map(item -> {
             EventActivityExtRes eventActivityExtRes = new EventActivityExtRes();
             eventActivityExtRes.setExtType(item.getExtType());
+            eventActivityExtRes.setEventSign(item.getEventSign());
             eventActivityExtRes.setParams(item.getParams());
             return eventActivityExtRes;
         }).collect(Collectors.toList());
