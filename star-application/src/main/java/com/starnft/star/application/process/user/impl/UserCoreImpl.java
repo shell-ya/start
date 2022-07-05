@@ -75,7 +75,7 @@ public class UserCoreImpl implements UserCore {
     public UserInfoRes loginByPhoneAndRegister(UserLoginReq req) {
         UserLoginDTO userLoginDTO = BeanColverUtil.colver(req, UserLoginDTO.class);
         UserRegisterInfoVO userInfo = this.userService.loginByPhone(userLoginDTO);
-        activitySync(req, userInfo);
+        activitySync(req, userInfo);  //判断是否邀请码进入
         return BeanColverUtil.colver(userInfo, UserInfoRes.class);
     }
 
@@ -87,11 +87,12 @@ public class UserCoreImpl implements UserCore {
         if (isRegister){
             RankEventReq rankEventReq = new RankEventReq();
             rankEventReq.setUserId(userInfo.getUserId());
-            rankEventReq.setParent(InvitationCodeUtil.decode(req.getShareCode()));
+            rankEventReq.setParent(InvitationCodeUtil.decode(req.getShareCode())); //邀请码转化为id //直接获取到了上级
             rankEventReq.setReqTime(new Date());
             rankEventReq.setEventSign("register");
             rankEventReq.setActivitySign(req.getActivityType());
             activityEventProducer.sendScopeMessage( EventReqAssembly.assembly(rankEventReq));
+            redisTemplate.delete(String.format(RedisKey.REDIS_USER_REG_NEW.getKey(), userInfo.getUserId()));
         }
     }
 

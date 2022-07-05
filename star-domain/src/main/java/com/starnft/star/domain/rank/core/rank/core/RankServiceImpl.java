@@ -41,7 +41,9 @@ public class RankServiceImpl implements IRankService {
         if (!hasRank)  throw new RuntimeException("请先创建排行榜");
         //个人拉新总人数
         if (Objects.nonNull(rankItemMetaData)){
-            redisTemplate.opsForHash().putIfAbsent(String.format(RedisKey.RANK_TOTAL_USER.getKey(),rankName),key,JSONUtil.toJsonStr(rankItemMetaData));
+
+            //uid=3 的拉新总人数
+            redisTemplate.opsForHash().putIfAbsent(String.format(RedisKey.RANK_TOTAL_USER.getKey(),rankName,key),rankItemMetaData.getChildrenId(),JSONUtil.toJsonStr(rankItemMetaData));
         }
          //  redisTemplate.opsForHash().putIfAbsent(String.format(RedisKey.RANK_VALID_USER.getKey(),rankName,key),rankItemMetaData.getChildrenId(),JSONUtil.toJsonStr(rankItemMetaData));
 //

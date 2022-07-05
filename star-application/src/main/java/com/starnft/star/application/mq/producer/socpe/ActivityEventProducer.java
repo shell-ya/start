@@ -7,7 +7,6 @@ import com.starnft.star.application.process.event.model.ActivityEventReq;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 @Service
 public class ActivityEventProducer extends BaseProducer {
@@ -21,16 +20,22 @@ public class ActivityEventProducer extends BaseProducer {
 
 
     public static void main(String[] args) {
+//        @Data
+//        class Params{
+//            private String template;
+//            private BigDecimal scale;
+//            private Integer scopeType;
+//        }
         @Data
         class Params{
-            private String template;
-            private BigDecimal scale;
-            private Integer scopeType;
+            private String rankName;
+//            private BigDecimal scale;
+//            private Integer scopeType;
         }
         Params params = new Params();
-        params.setScale(new BigDecimal(1));
-        params.setTemplate("参加拉新活动获得%s积分");
-        params.setScopeType(0);
+        params.setRankName("test_tank");
+//        params.setTemplate("参加拉新活动获得%s积分");
+//        params.setScopeType(0);
         System.out.println(JSONUtil.toJsonStr(params));
     }
 }

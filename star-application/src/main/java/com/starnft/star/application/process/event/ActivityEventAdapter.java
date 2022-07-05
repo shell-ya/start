@@ -27,15 +27,15 @@ public class ActivityEventAdapter {
     public void handler(ActivityEventReq activityEventReq) {
         EventActivityReq eventActivityReq = new EventActivityReq();
         eventActivityReq.setActivitySign(activityEventReq.getActivitySign());
-        EventActivityRes eventActivityRes = eventActivityService.queryEventActivity(eventActivityReq);
+        EventActivityRes eventActivityRes = eventActivityService.queryEventActivity(eventActivityReq); //获取什么活动
         log.info("获取到的活动参数为{}", JSONUtil.toJsonStr(eventActivityRes));
-        if (judgeActivity(eventActivityRes,activityEventReq)){
+        if (judgeActivity(eventActivityRes,activityEventReq)){ //判断活动是否有效
             //符合活动条件进入
             log.info("符合活动条件进入");
             EventActivityExtReq eventActivityExtReq = new EventActivityExtReq();
             eventActivityExtReq.setActivitySign(activityEventReq.getActivitySign());
             eventActivityExtReq.setEventSign(activityEventReq.getEventSign());
-            List<EventActivityExtRes> extResList = eventActivityService.queryEventActivityParams(eventActivityExtReq);
+            List<EventActivityExtRes> extResList = eventActivityService.queryEventActivityParams(eventActivityExtReq);  //获取活动ext
             log.info("找到关于活动标记:{},动作标记:{}的活动内容{}条",activityEventReq.getActivitySign(),activityEventReq.getEventSign(),extResList.size());
             processor.processor(extResList,activityEventReq);
         }

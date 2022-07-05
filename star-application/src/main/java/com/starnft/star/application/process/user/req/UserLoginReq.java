@@ -20,6 +20,6 @@ public class UserLoginReq {
     private String code;
     @ApiModelProperty("邀请码")
     private String shareCode;
-    @ApiModelProperty("活动类型")
+    @ApiModelProperty("活动标记")
     private String activityType;
 }
