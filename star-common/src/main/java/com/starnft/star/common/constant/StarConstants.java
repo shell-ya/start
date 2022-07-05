@@ -48,9 +48,8 @@ public class StarConstants {
     public static final String THEME_DETAIL_CACHE_NAME = ".theme.detail.cache";
 
     public enum RankTypes {
-        Consumption(1L),
-        Acquisition(2L)
-        ;
+        Consumption(2L),
+        Acquisition(1L);
         private final  Long value;
 
         RankTypes(Long value) {
@@ -338,16 +337,22 @@ public class StarConstants {
       public static  final  Integer EVENT_STATUS_CLOSE =0;
     }
     public enum   ActivityType {
-        Scope(2),
-        Rank(1);
+        Scope(2, "积分活动"),
+        Rank(1, "排行版活动");
         private final Integer  value;
+        private final String   desc;
 
-        ActivityType(Integer value) {
+        ActivityType(Integer value, String desc) {
             this.value = value;
+            this.desc = desc;
         }
 
         public Integer getValue() {
             return value;
+        }
+
+        public String getDesc() {
+            return desc;
         }
     }
     public static class  ScopeMold {

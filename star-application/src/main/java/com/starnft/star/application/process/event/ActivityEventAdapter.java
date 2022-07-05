@@ -15,6 +15,7 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Component("activityEventAdapter")
 @Slf4j
@@ -28,25 +29,26 @@ public class ActivityEventAdapter {
         eventActivityReq.setActivitySign(activityEventReq.getActivitySign());
         EventActivityRes eventActivityRes = eventActivityService.queryEventActivity(eventActivityReq);
         log.info("获取到的活动参数为{}", JSONUtil.toJsonStr(eventActivityRes));
-        if (judgeActivity(eventActivityRes)){
+        if (judgeActivity(eventActivityRes,activityEventReq)){
             //符合活动条件进入
             log.info("符合活动条件进入");
             EventActivityExtReq eventActivityExtReq = new EventActivityExtReq();
             eventActivityExtReq.setActivitySign(activityEventReq.getActivitySign());
             eventActivityExtReq.setEventSign(activityEventReq.getEventSign());
             List<EventActivityExtRes> extResList = eventActivityService.queryEventActivityParams(eventActivityExtReq);
+            log.info("找到关于活动标记:{},动作标记:{}的活动内容{}条",activityEventReq.getActivitySign(),activityEventReq.getEventSign(),extResList.size());
             processor.processor(extResList,activityEventReq);
         }
     }
-    private Boolean judgeActivity(EventActivityRes eventActivityRes){
+    private Boolean judgeActivity(EventActivityRes eventActivityRes,ActivityEventReq activityEventReq){
         if (Objects.isNull(eventActivityRes)){
             return false;
         }
         if (eventActivityRes.getActivityStatus().equals(StarConstants.EventStatus.EVENT_STATUS_CLOSE)){
             return false;
         }
-        Date now = new Date();
-        if (!(eventActivityRes.getStartTime().after(now)&&eventActivityRes.getEndTime().before(now))){
+        Date reqTime = Optional.ofNullable(activityEventReq.getReqTime()).orElse(new Date());
+        if (reqTime.before(eventActivityRes.getStartTime())||reqTime.after(eventActivityRes.getEndTime())){
             return false;
         }
       return true;

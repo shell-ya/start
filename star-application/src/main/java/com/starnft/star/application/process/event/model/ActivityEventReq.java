@@ -3,6 +3,7 @@ package com.starnft.star.application.process.event.model;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Map;
 
 @Data
@@ -13,6 +14,8 @@ public class ActivityEventReq implements Serializable {
     private String activitySign;
     //用户ID
     private Long userId;
+
+    private Date reqTime;
     //所需参数
     private Map<String,Object> params;
 

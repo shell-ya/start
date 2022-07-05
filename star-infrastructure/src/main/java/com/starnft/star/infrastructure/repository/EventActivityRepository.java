@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Repository
@@ -49,12 +50,14 @@ public class EventActivityRepository implements IEventActivityRepository {
             wrapper.eq(StarNftActivity.COL_ACTIVITY_SIGN,eventActivityExtReq.getActivitySign());
         }
         StarNftActivity starNftActivities = starNftActivityMapper.selectOne(wrapper);
+        if (Objects.isNull(starNftActivities))return  null;
             EventActivityRes eventActivityRes = new EventActivityRes();
             eventActivityRes.setActivityName(starNftActivities.getActivityName());
             eventActivityRes.setActivitySign(starNftActivities.getActivitySign());
             eventActivityRes.setActivityStatus(starNftActivities.getActivityStatus());
             eventActivityRes.setExtend(starNftActivities.getExtend());
             eventActivityRes.setEndTime(starNftActivities.getEndTime());
+            eventActivityRes.setStartTime(starNftActivities.getStartTime());
             eventActivityRes.setIsTimes(starNftActivities.getIsTimes());
             eventActivityRes.setId(starNftActivities.getId());
             return  eventActivityRes;

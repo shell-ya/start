@@ -8,6 +8,7 @@ public class EventReqAssembly {
        activityEventReq.setActivitySign(req.getActivitySign());
        activityEventReq.setEventSign(req.getEventSign());
        activityEventReq.setUserId(req.getUserId());
+       activityEventReq.setReqTime(req.getReqTime());
        activityEventReq.setParams(BeanUtil.beanToMap(req));
        return activityEventReq;
    }
@@ -16,6 +17,7 @@ public class EventReqAssembly {
         activityEventReq.setActivitySign(req.getActivitySign());
         activityEventReq.setEventSign(req.getEventSign());
         activityEventReq.setUserId(req.getUserId());
+        activityEventReq.setReqTime(req.getReqTime());
         activityEventReq.setParams(BeanUtil.beanToMap(req));
         return activityEventReq;
     }

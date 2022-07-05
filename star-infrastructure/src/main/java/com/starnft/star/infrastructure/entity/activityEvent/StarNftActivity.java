@@ -99,7 +99,7 @@ public class StarNftActivity implements Serializable {
 
     public static final String COL_ID = "id";
 
-    public static final String COL_ACTIVITY_SIGN = "activity_ sign";
+    public static final String COL_ACTIVITY_SIGN = "activity_sign";
 
     public static final String COL_ACTIVITY_NAME = "activity_name";
 
