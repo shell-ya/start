@@ -2,6 +2,7 @@ package com.starnft.star.application.process.number.impl;
 
 import com.starnft.star.application.process.number.INumberCore;
 import com.starnft.star.application.process.number.res.ConsignDetailRes;
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.enums.NumberCirculationTypeEnum;
 import com.starnft.star.common.enums.NumberStatusEnum;
@@ -13,6 +14,8 @@ import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.Assert;
 import com.starnft.star.domain.article.model.vo.UserNumbersVO;
 import com.starnft.star.domain.article.service.UserThemeService;
+import com.starnft.star.domain.component.RedisLockUtils;
+import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
 import com.starnft.star.domain.number.model.dto.NumberUpdateDTO;
 import com.starnft.star.domain.number.model.req.NumberConsignmentCancelRequest;
@@ -49,6 +52,7 @@ public class NumberCoreImpl implements INumberCore {
     private final ThemeService themeService;
     private final UserThemeService userThemeService;
     private final TransactionTemplate transactionTemplate;
+    private final RedisUtil redisUtil;
 
     @Override
     public NumberDetailVO obtainThemeNumberDetail(Long id) {
@@ -61,13 +65,19 @@ public class NumberCoreImpl implements INumberCore {
     public ResponsePageResult<NumberVO> obtainThemeNumberList(RequestConditionPage<NumberQueryRequest> request) {
         ResponsePageResult<NumberVO> numberList = this.numberService.listNumber(request);
         Map<Long, Integer> issuedQtyCache = new HashMap<>();
-        numberList.getList().forEach(numberVO -> numberVO.setIssuedQty(
+        numberList.getList().forEach(numberVO -> {
+            numberVO.setIssuedQty(
                 Optional.ofNullable(issuedQtyCache.get(numberVO.getThemeId())).orElseGet(() -> {
                     Integer qty = this.themeService.obtainThemeIssuedQty(numberVO.getThemeId());
                     issuedQtyCache.put(numberVO.getThemeId(), qty);
                     return qty;
-                })
-        ));
+                }));
+            //设置交易状态
+            String isTransaction = String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), numberVO.getId());
+            if (redisUtil.hasKey(RedisLockUtils.REDIS_LOCK_PREFIX + isTransaction)) {
+               numberVO.setIsTransaction(1);
+            }
+        });
         return numberList;
     }
 

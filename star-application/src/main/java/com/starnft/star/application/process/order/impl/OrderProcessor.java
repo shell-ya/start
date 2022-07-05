@@ -242,7 +242,7 @@ public class OrderProcessor implements IOrderProcessor {
             throw new StarException(StarError.GOODS_SELF_ERROR);
         //获取锁
         String isTransaction = String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), marketOrderReq.getNumberId());
-        if (redisUtil.hasKey(isTransaction)) {
+        if (redisUtil.hasKey(RedisLockUtils.REDIS_LOCK_PREFIX + isTransaction)) {
             throw new StarException(StarError.GOODS_NOT_FOUND);
         }
         //钱包余额充足
@@ -256,7 +256,7 @@ public class OrderProcessor implements IOrderProcessor {
                 long id = idsIIdGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId();
                 if (createPreOrder(numberDetail, marketOrderReq.getUserId(), orderSn, id)) {
                     //发送延时队列
-//                    orderProducer.marketOrderRollback(new MarketOrderStatus(marketOrderReq.getUserId(), 0, orderSn));
+                    orderProducer.marketOrderRollback(new MarketOrderStatus(marketOrderReq.getUserId(), 0, orderSn));
 //                    return new OrderListRes(id,orderSn, 0, StarError.SUCCESS_000000.getErrorMessage(), lockTimes);
                     return buildOrderResp(numberDetail, marketOrderReq.getUserId(), orderSn, id);
                 }
