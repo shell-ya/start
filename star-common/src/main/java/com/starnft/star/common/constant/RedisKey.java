@@ -27,6 +27,9 @@ public enum RedisKey {
      */
     REDIS_CODE_REGISIER(1, StarConstants.SERVICE_NAME.concat(".register.phone.code.%s"), 5L, TimeUnit.MINUTES),
 
+
+     REDIS_USER_REG_NEW(111113, StarConstants.SERVICE_NAME.concat(".register.user.new.%s"), 60L, TimeUnit.SECONDS),
+
     /**
      * 未登录修改密码验证码
      */

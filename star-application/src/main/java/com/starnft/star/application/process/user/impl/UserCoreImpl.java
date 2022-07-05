@@ -1,8 +1,12 @@
 package com.starnft.star.application.process.user.impl;
 
+import com.starnft.star.application.mq.producer.socpe.ActivityEventProducer;
+import com.starnft.star.application.process.event.model.EventReqAssembly;
+import com.starnft.star.application.process.event.model.RankEventReq;
 import com.starnft.star.application.process.user.UserCore;
 import com.starnft.star.application.process.user.req.*;
 import com.starnft.star.application.process.user.res.*;
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.enums.AgreementSceneEnum;
 import com.starnft.star.common.enums.AgreementTypeEnum;
 import com.starnft.star.common.exception.StarError;
@@ -25,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -48,7 +53,10 @@ public class UserCoreImpl implements UserCore {
     private IUserScopeService userScopeService;
     @Autowired
     IUserRepository userRepository;
-
+    @Autowired
+    RedisTemplate redisTemplate;
+    @Resource
+    ActivityEventProducer activityEventProducer;
     @Override
     public UserInfoRes loginByPassword(@Valid UserLoginReq req) {
         Optional.ofNullable(req.getPhone())
@@ -67,7 +75,24 @@ public class UserCoreImpl implements UserCore {
     public UserInfoRes loginByPhoneAndRegister(UserLoginReq req) {
         UserLoginDTO userLoginDTO = BeanColverUtil.colver(req, UserLoginDTO.class);
         UserRegisterInfoVO userInfo = this.userService.loginByPhone(userLoginDTO);
+        activitySync(req, userInfo);
         return BeanColverUtil.colver(userInfo, UserInfoRes.class);
+    }
+
+    private void activitySync(UserLoginReq req, UserRegisterInfoVO userInfo) {
+        if (StringUtils.isBlank(req.getShareCode())||StringUtils.isBlank(req.getActivityType())){
+            return;
+        }
+        Boolean isRegister = redisTemplate.hasKey(String.format(RedisKey.REDIS_USER_REG_NEW.getKey(), userInfo.getUserId()));
+        if (isRegister){
+            RankEventReq rankEventReq = new RankEventReq();
+            rankEventReq.setUserId(userInfo.getUserId());
+            rankEventReq.setParent(InvitationCodeUtil.decode(req.getShareCode()));
+            rankEventReq.setReqTime(new Date());
+            rankEventReq.setEventSign("register");
+            rankEventReq.setActivitySign(req.getActivityType());
+            activityEventProducer.sendScopeMessage( EventReqAssembly.assembly(rankEventReq));
+        }
     }
 
     @Override

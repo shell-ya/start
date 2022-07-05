@@ -28,7 +28,6 @@ public class RegisterByVerificationCodeStrategy extends UserRegisterStrategy{
 
     @Autowired
     private IUserRepository userRepository;
-
     @Override
     public Long startSaveRegisterInfo(UserLoginDTO registerInfo) {
         //todo 必填参数校验
@@ -62,6 +61,7 @@ public class RegisterByVerificationCodeStrategy extends UserRegisterStrategy{
         if (StringUtils.isNotBlank(registerInfo.getCode())){
             Long parent = InvitationCodeUtil.decode(registerInfo.getCode());
             userInfoAddDTO.setParent(parent);
+
         }
     }
 

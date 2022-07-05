@@ -42,7 +42,7 @@ public  class ScopeStrategy  implements  EventStrategy{
      }
 
     @Override
-    public StarConstants.EventType getEventType() {
-        return StarConstants.EventType.Scope;
+    public StarConstants.ActivityType getEventType() {
+        return StarConstants.ActivityType.Scope;
     }
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Optional;
 @Service
-public class ScopeProducer extends BaseProducer {
+public class ActivityEventProducer extends BaseProducer {
     public void sendScopeMessage(ActivityEventReq activityEventReq){
         String topic = String.format(TopicConstants.CREDITS_PROCESS_DESTINATION.getFormat(),TopicConstants.CREDITS_PROCESS_DESTINATION.getTag());
         messageSender.send(topic, Optional.of(activityEventReq));

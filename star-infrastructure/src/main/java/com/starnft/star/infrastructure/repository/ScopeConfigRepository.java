@@ -21,7 +21,7 @@ public class ScopeConfigRepository implements IScopeConfigRepository {
                 .selectOne(new QueryWrapper<StarNftScopeEventConfig>()
                         .eq(StarNftScopeEventConfig.COL_SCOPE_TYPE, scopeType)
                         .eq(StarNftScopeEventConfig.COL_IS_DELETED, Boolean.FALSE)
-                        .eq(StarNftScopeEventConfig.COL_EVENT_STATUS, StarConstants.Event.EVENT_STATUS_OPEN)
+                        .eq(StarNftScopeEventConfig.COL_EVENT_STATUS, StarConstants.EventStatus.EVENT_STATUS_OPEN)
                 );
 
         ScopeConfigRes scopeConfigRes = new ScopeConfigRes();

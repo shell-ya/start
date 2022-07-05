@@ -7,6 +7,7 @@ import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.user.model.dto.UserLoginDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,7 +16,8 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component("userRegisterStrategy")
 public abstract class UserRegisterStrategy  {
-
+    @Autowired
+    private RedisTemplate redisTemplate;
     @Autowired
     private RedisLockUtils redisLockUtils;
 
@@ -44,7 +46,8 @@ public abstract class UserRegisterStrategy  {
     private Long registerInnit(UserLoginDTO registerInfo){
 
         Long userId = startSaveRegisterInfo(registerInfo);
-
+        //注册加入拉新锁
+        redisTemplate.opsForValue().setIfAbsent(String.format(RedisKey.REDIS_USER_REG_NEW.getKey(),userId),null,RedisKey.REDIS_USER_REG_NEW.getTime(),RedisKey.REDIS_USER_REG_NEW.getTimeUnit());
         //todo 触发注册逻辑
         return userId;
     }

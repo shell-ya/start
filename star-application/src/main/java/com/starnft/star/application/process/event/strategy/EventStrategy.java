@@ -5,6 +5,6 @@ import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.event.model.res.EventActivityExtRes;
 
 public interface EventStrategy {
-    public StarConstants.EventType getEventType();
+    public StarConstants.ActivityType getEventType();
     public void handler(EventActivityExtRes ext, ActivityEventReq activityEventReq);
 }
