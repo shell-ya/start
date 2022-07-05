@@ -109,7 +109,7 @@ public interface IRankService {
      * @param rankNum 排行的名次，从0开始
      * @return 对应名次玩家的id，没有或失败则返回-1
      */
-    public RankItemMetaData  getRank(String rankName);
+    public RankDefinition  getRank(String rankName);
     /**
      * 根据排行名次获取玩家排行数据
      * @param rankName 排行的名字

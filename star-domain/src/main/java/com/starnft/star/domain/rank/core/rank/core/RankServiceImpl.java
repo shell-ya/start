@@ -89,12 +89,12 @@ public class RankServiceImpl implements IRankService {
     }
 
     @Override
-    public RankItemMetaData getRank(String rankName) {
+    public RankDefinition getRank(String rankName) {
         boolean hasRank = hasRank(rankName);
         if (!hasRank) return null;
         Object result = redisTemplate.opsForHash().get(RedisKey.RANK_LIST.getKey(), rankName);
         if (Objects.isNull(result)) return  null;
-        return  JSONUtil.toBean(result.toString(),RankItemMetaData.class);
+        return  JSONUtil.toBean(result.toString(),RankDefinition.class);
     }
 
     @Override

@@ -30,7 +30,7 @@ public class GenerateUrl {
         UUID uuid = UUID.randomUUID();
         String mer_order_no = uuid.toString().replaceAll("-","");
         //回调地址
-        String notify_url = "https://www.baidu.com";
+        String notify_url = "http://jacqueshuang.natapp1.cc/api/v1/trans/notify/cloud";
         String return_url = "https://www.baidu.com";
         //金额
         String order_amt = "0.11";
@@ -49,6 +49,9 @@ public class GenerateUrl {
         map.put("accsplit_flag","NO");
         map.put("create_ip","1_14_255_134");
         map.put("create_time",createTime);
+//        if(!(gh_static_url==null||"".equals(gh_static_url))){
+//            map.put("gh_static_url",gh_static_url);;
+//        }
         map.put("mer_key",mer_key);
         map.put("mer_no",mer_no);
         map.put("mer_order_no",mer_order_no);
@@ -61,6 +64,12 @@ public class GenerateUrl {
         map.put("version",version);
         map.put("key",key);
 
+
+//        map.put("expire_time",endTime);
+//        map.put("goods_name",goods_name);
+//        map.put("product_code","02010006");
+//        map.put("clear_cycle","0");
+
         String signature = "";
 
         for (String s : map.keySet()){
@@ -70,29 +79,44 @@ public class GenerateUrl {
             }
         }
         signature = signature.substring(0,signature.length()-1);
+        System.out.println("参与签名字符串：\n"+signature);
+
         String sign = MD5Util.encode(signature).toUpperCase();
+
+        System.out.println("签名串：\n"+sign);
+
+
+        //拼接url
         String url = "https://sandcash.mixienet.com.cn/pay/h5/cloud?" +
+//     云函数h5： applet  ；支付宝H5：alipay  ； 微信公众号H5：wechatpay   ；
+// 一键快捷：fastpayment   ；H5快捷 ：unionpayh5    ；支付宝扫码：alipaycode ;快捷充值:quicktopup
+//电子钱包【云账户】：cloud
                 "version="+version+"" +
                 "&mer_no="+mer_no+"" +
                 "&mer_key="+URLEncoder.encode(mer_key)+"" +
                 "&mer_order_no="+mer_order_no+"" +
                 "&create_time="+createTime+"" +
                 "&expire_time="+endTime+"" +  //endTime
-                "&order_amt=0.11" +
+                "&order_amt=" +order_amt+
                 "&notify_url="+URLEncoder.encode(notify_url)+"" +
                 "&return_url=" +URLEncoder.encode(return_url)+
                 "&create_ip=1_14_255_134" +
                 "&goods_name="+URLEncoder.encode(goods_name)+"" +
                 "&store_id=000000" +
+// 产品编码: 云函数h5：  02010006  ；支付宝H5：  02020002  ；微信公众号H5：02010002   ；
+//一键快捷：  05030001  ；H5快捷：  06030001   ；支付宝扫码：  02020005 ；快捷充值：  06030003
+//电子钱包【云账户】：开通账户并支付product_code应为：04010001；消费（C2C）product_code 为：04010003 ; 我的账户页面 product_code 为：00000001
                 "&product_code=04010001" +   ""+
                 "&clear_cycle=3" +
                 "&pay_extra="     +URLEncoder.encode(pay_extra)+""+
                 "&meta_option=%5B%7B%22s%22%3A%22Android%22,%22n%22%3A%22wxDemo%22,%22id%22%3A%22com.pay.paytypetest%22,%22sc%22%3A%22com.pay.paytypetest%22%7D%5D" +
                 "&accsplit_flag=NO" +
                 "&jump_scheme=" +
+//                "&gh_static_url="+gh_static_url+""+
                 "&sign_type=MD5" +
                 "&sign="+sign+"" ;
 
+        System.out.println("最终链接：\n\n"+url);
 
     }
 
