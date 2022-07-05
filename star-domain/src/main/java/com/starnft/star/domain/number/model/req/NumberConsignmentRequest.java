@@ -16,6 +16,8 @@ import java.math.BigDecimal;
 @ApiModel("商品寄售请求")
 public class NumberConsignmentRequest implements Serializable {
 
+    private Long uid;
+
     @ApiModelProperty(value = "商品ID", required = true)
     @NotNull(message = "商品ID不能为空")
     private Long numberId;

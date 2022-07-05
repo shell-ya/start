@@ -21,7 +21,6 @@ import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
 import com.starnft.star.domain.number.serivce.INumberService;
-import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.theme.service.ThemeService;
 import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
 import com.starnft.star.domain.wallet.service.WalletConfig;
@@ -29,9 +28,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -50,13 +48,7 @@ public class NumberCoreImpl implements INumberCore {
     private final INumberService numberService;
     private final ThemeService themeService;
     private final UserThemeService userThemeService;
-    //    private final WalletService walletService;
-//    private final IOrderService orderService;
-//    private final RedisUtil redisUtil;
-//    private final RedisLockUtils redisLockUtils;
-//    private final OrderProducer orderProducer;
-    @Resource
-    private Map<StarConstants.Ids, IIdGenerator> map;
+    private final TransactionTemplate transactionTemplate;
 
     @Override
     public NumberDetailVO obtainThemeNumberDetail(Long id) {
@@ -79,77 +71,80 @@ public class NumberCoreImpl implements INumberCore {
         return numberList;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
-    public Boolean consignment(Long uid, NumberConsignmentRequest request) {
+    public Boolean consignment(NumberConsignmentRequest request) {
+        Long uid = request.getUid();
+
         // 校验是否拥有该藏品
-        UserNumbersVO userNumbers = this.checkNumberOwner(uid, request.getNumberId(),UserNumberStatusEnum.PURCHASED);
+        UserNumbersVO userNumbers = this.checkNumberOwner(uid, request.getNumberId(), UserNumberStatusEnum.PURCHASED);
 
         if (!Objects.equals(userNumbers.getStatus(), UserNumberStatusEnum.PURCHASED.getCode())) {
             throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "只有已购买状态的藏品才能进行转售");
         }
-        // 修改商品价格和状态
-        Boolean updBool = this.numberService.modifyNumberInfo(
-                NumberUpdateDTO.builder()
-                        .uid(uid)
-                        .numberId(request.getNumberId())
-                        .price(request.getPrice())
-                        .status(NumberStatusEnum.ON_CONSIGNMENT)
-                        .build());
-        // 保存寄售记录
-        Boolean saveBool = this.numberService.saveNumberCirculationRecord(
-                NumberCirculationAddDTO.builder()
-                        .uid(uid)
-                        .numberId(request.getNumberId())
-                        .type(NumberCirculationTypeEnum.CONSIGNMENT)
-                        .beforePrice(userNumbers.getPrice())
-                        .afterPrice(request.getPrice())
-                        .build());
 
-        // 修改用户藏品状态
-        Boolean updUserNumberBool = this.userThemeService.modifyUserNumberStatus(uid, request.getNumberId(), UserNumberStatusEnum.PURCHASED,UserNumberStatusEnum.ON_CONSIGNMENT);
+        Boolean status = this.transactionTemplate.execute(transactionStatus -> {
+            // 修改商品价格和状态
+            Boolean updBool = numberService.modifyNumberInfo(
+                    NumberUpdateDTO.builder()
+                            .uid(uid)
+                            .numberId(request.getNumberId())
+                            .price(request.getPrice())
+                            .status(NumberStatusEnum.ON_CONSIGNMENT)
+                            .build());
+            // 保存寄售记录
+            Boolean saveBool = numberService.saveNumberCirculationRecord(
+                    NumberCirculationAddDTO.builder()
+                            .uid(uid)
+                            .numberId(request.getNumberId())
+                            .type(NumberCirculationTypeEnum.CONSIGNMENT)
+                            .beforePrice(userNumbers.getPrice())
+                            .afterPrice(request.getPrice())
+                            .build());
+            // 修改用户藏品状态
+            Boolean updUserNumberBool = userThemeService.modifyUserNumberStatus(uid, request.getNumberId(), UserNumberStatusEnum.PURCHASED, UserNumberStatusEnum.ON_CONSIGNMENT);
 
-        if (updBool && saveBool && Boolean.TRUE.equals(updUserNumberBool)) {
-            return Boolean.TRUE;
-        }
-        throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "寄售失败");
+            return updBool && saveBool && updUserNumberBool;
+        });
+        Assert.isTrue(Boolean.TRUE.equals(status), () -> new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "寄售失败"));
+        return Boolean.TRUE;
     }
 
-    @Transactional(rollbackFor = Exception.class)
     @Override
-    public Boolean consignmentCancel(Long uid, NumberConsignmentCancelRequest request) {
+    public Boolean consignmentCancel(NumberConsignmentCancelRequest request) {
+        Long uid = request.getUid();
 
         // 校验是否拥有该藏品
-        UserNumbersVO userNumbers = this.checkNumberOwner(uid, request.getNumberId(),UserNumberStatusEnum.ON_CONSIGNMENT);
+        UserNumbersVO userNumbers = this.checkNumberOwner(uid, request.getNumberId(), UserNumberStatusEnum.ON_CONSIGNMENT);
 
         // 判断商品是否在寄售中
         if (!Objects.equals(UserNumberStatusEnum.ON_CONSIGNMENT.getCode(), userNumbers.getStatus())) {
             throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "该藏品不是是寄售状态 无法取消");
         }
 
-        // 还原商品状态
-        Boolean updBool = this.numberService.modifyNumberInfo(
-                NumberUpdateDTO.builder()
-                        .uid(uid)
-                        .numberId(request.getNumberId())
-                        .status(NumberStatusEnum.SOLD)
-                        .build());
+        Boolean status = this.transactionTemplate.execute(transactionStatus -> {
+            // 还原商品状态
+            Boolean updBool = this.numberService.modifyNumberInfo(
+                    NumberUpdateDTO.builder()
+                            .uid(uid)
+                            .numberId(request.getNumberId())
+                            .status(NumberStatusEnum.SOLD)
+                            .build());
 
-        // 保存取消寄售记录
-        Boolean saveBool = this.numberService.saveNumberCirculationRecord(
-                NumberCirculationAddDTO.builder()
-                        .uid(uid)
-                        .numberId(request.getNumberId())
-                        .type(NumberCirculationTypeEnum.CANCEL_CONSIGNMENT)
-                        .build());
+            // 保存取消寄售记录
+            Boolean saveBool = this.numberService.saveNumberCirculationRecord(
+                    NumberCirculationAddDTO.builder()
+                            .uid(uid)
+                            .numberId(request.getNumberId())
+                            .type(NumberCirculationTypeEnum.CANCEL_CONSIGNMENT)
+                            .build());
 
-        // 还原用户藏品状态
-        Boolean updUserNumberBool = this.userThemeService.modifyUserNumberStatus(uid, request.getNumberId(),UserNumberStatusEnum.ON_CONSIGNMENT, UserNumberStatusEnum.PURCHASED);
+            // 还原用户藏品状态
+            Boolean updUserNumberBool = this.userThemeService.modifyUserNumberStatus(uid, request.getNumberId(), UserNumberStatusEnum.ON_CONSIGNMENT, UserNumberStatusEnum.PURCHASED);
 
-        if (updBool && saveBool && updUserNumberBool) {
-            return Boolean.TRUE;
-        }
-        throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "取消寄售失败");
+            return updBool && saveBool && updUserNumberBool;
+        });
+        Assert.isTrue(Boolean.TRUE.equals(status), () -> new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "取消寄售失败"));
+        return Boolean.TRUE;
     }
 
     @Override
@@ -171,8 +166,8 @@ public class NumberCoreImpl implements INumberCore {
                 .build();
     }
 
-    private UserNumbersVO checkNumberOwner(Long uid, Long numberId,UserNumberStatusEnum statusEnum) {
-        UserNumbersVO userNumberInfo = this.userThemeService.queryUserNumberInfo(uid, numberId,statusEnum);
+    private UserNumbersVO checkNumberOwner(Long uid, Long numberId, UserNumberStatusEnum statusEnum) {
+        UserNumbersVO userNumberInfo = this.userThemeService.queryUserNumberInfo(uid, numberId, statusEnum);
         Assert.notNull(userNumberInfo, () -> new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "你不是该藏品的拥有者 无法进行相关操作"));
         return userNumberInfo;
     }

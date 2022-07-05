@@ -55,15 +55,16 @@ public class NumbersController {
     @ApiOperation("商品寄售")
     public RopResponse<Boolean> consignment(UserResolverInfo userResolverInfo,
                                             @Validated @RequestBody NumberConsignmentRequest request) {
-        return RopResponse.success(this.numberCore.consignment(userResolverInfo.getUserId(), request));
+        request.setUid(userResolverInfo.getUserId());
+        return RopResponse.success(this.numberCore.consignment(request));
     }
 
     @PostMapping("/consign/cancel")
     @ApiOperation("商品取消寄售")
     public RopResponse<Boolean> cancelConsignment(UserResolverInfo userResolverInfo,
                                                   @Validated @RequestBody NumberConsignmentCancelRequest request) {
-        return RopResponse.success(this.numberCore.consignmentCancel(userResolverInfo.getUserId(), request));
+        request.setUid(userResolverInfo.getUserId());
+        return RopResponse.success(this.numberCore.consignmentCancel(request));
     }
-
 
 }

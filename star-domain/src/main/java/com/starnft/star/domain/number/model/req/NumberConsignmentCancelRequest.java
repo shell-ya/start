@@ -14,6 +14,9 @@ import java.io.Serializable;
 @Data
 @ApiModel("商品取消寄售请求")
 public class NumberConsignmentCancelRequest implements Serializable {
+    
+    private Long uid;
+
     @ApiModelProperty(value = "商品ID", required = true)
     @NotNull(message = "商品ID不能为空")
     private Long numberId;

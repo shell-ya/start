@@ -19,9 +19,9 @@ public interface INumberCore {
 
     ResponsePageResult<NumberVO> obtainThemeNumberList(RequestConditionPage<NumberQueryRequest> request);
 
-    Boolean consignment(Long uid, NumberConsignmentRequest request);
+    Boolean consignment(NumberConsignmentRequest request);
 
-    Boolean consignmentCancel(Long uid, NumberConsignmentCancelRequest request);
+    Boolean consignmentCancel(NumberConsignmentCancelRequest request);
 
     ConsignDetailRes obtainConsignDetail(Long id);
 
