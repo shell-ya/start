@@ -242,7 +242,7 @@ public class OrderProcessor implements IOrderProcessor {
             throw new StarException(StarError.GOODS_SELF_ERROR);
         //获取锁
         String isTransaction = String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), marketOrderReq.getNumberId());
-        if (redisUtil.hasKey(isTransaction)) {
+        if (redisUtil.hasKey(RedisLockUtils.REDIS_LOCK_PREFIX + isTransaction)) {
             throw new StarException(StarError.GOODS_NOT_FOUND);
         }
         //钱包余额充足
