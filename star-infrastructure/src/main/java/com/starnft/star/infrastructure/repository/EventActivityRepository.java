@@ -49,7 +49,6 @@ public class EventActivityRepository implements IEventActivityRepository {
             wrapper.eq(StarNftActivity.COL_ACTIVITY_SIGN,eventActivityExtReq.getActivitySign());
         }
         StarNftActivity starNftActivities = starNftActivityMapper.selectOne(wrapper);
-
             EventActivityRes eventActivityRes = new EventActivityRes();
             eventActivityRes.setActivityName(starNftActivities.getActivityName());
             eventActivityRes.setActivitySign(starNftActivities.getActivitySign());

@@ -171,8 +171,11 @@ public enum RedisKey {
     /**
      * 排行榜
      */
-    RANK_STORE(602, StarConstants.SERVICE_NAME.concat(".rank:store:%s"), 3L, TimeUnit.HOURS),
-    RANK_EXTEND(603, StarConstants.SERVICE_NAME.concat(".rank:extend:%s"), 3L, TimeUnit.HOURS);
+    RANK_ITEM(602, StarConstants.SERVICE_NAME.concat(".rank:%s"), 3L, TimeUnit.HOURS),
+    //个人总邀请
+    RANK_TOTAL_USER(603, StarConstants.SERVICE_NAME.concat(".rank:total:user:%s:%s"), 3L, TimeUnit.HOURS),
+    //个人有效邀请
+    RANK_VALID_USER(604, StarConstants.SERVICE_NAME.concat(".rank:valid:user:%s"), 3L, TimeUnit.HOURS);
     private Integer code;
 
     private String key;

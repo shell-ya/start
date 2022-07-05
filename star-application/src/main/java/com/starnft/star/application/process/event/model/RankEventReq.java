@@ -8,4 +8,5 @@ import java.util.Date;
 public class RankEventReq  extends  BaseActivityEventReq{
     private Long parent;
     private Date reqTime;
+
 }
