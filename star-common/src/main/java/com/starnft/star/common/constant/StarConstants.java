@@ -48,16 +48,22 @@ public class StarConstants {
     public static final String THEME_DETAIL_CACHE_NAME = ".theme.detail.cache";
 
     public enum RankTypes {
-        Consumption(2L),
-        Acquisition(1L);
+        Consumption(2L, "积分"),
+        Acquisition(1L, "拉新");
         private final  Long value;
 
-        RankTypes(Long value) {
+        private final  String desc;
+
+        RankTypes(Long value, String desc) {
             this.value = value;
+            this.desc = desc;
         }
 
         public Long getValue() {
             return value;
+        }
+        public String  getDesc() {
+            return desc;
         }
     }
 

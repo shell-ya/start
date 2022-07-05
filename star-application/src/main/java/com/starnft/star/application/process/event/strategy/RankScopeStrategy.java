@@ -5,6 +5,7 @@ import cn.hutool.json.JSONUtil;
 import com.starnft.star.application.process.event.model.ActivityEventReq;
 import com.starnft.star.application.process.rank.strategy.IRankStrategy;
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.common.exception.StarException;
 import com.starnft.star.domain.event.model.res.EventActivityExtRes;
 import com.starnft.star.domain.rank.core.rank.core.IRankService;
 import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
@@ -34,11 +35,16 @@ public class RankScopeStrategy implements EventStrategy {
         JSONObject configs = JSONUtil.parseObj(ext.getParams());
         String rankName = configs.getStr("rankName");
         if (Objects.isNull(rankName)) {
-            log.info("排行版不存在,请先配置排行版");
+            log.error("排行版不存在,请先配置排行版");
+            throw new StarException("排行版不存在,请先配置排行版");
+
         }
         RankDefinition rankDefinition = rankService.getRank(rankName);
         if (Objects.isNull(rankDefinition)) {
-            log.info("{}排行版配置不存在,请先配置排行版", rankName);
+
+            log.error("{}排行版配置不存在,请先配置排行版", rankName);
+            throw new StarException("排行版不存在,请先配置排行版");
+
         }
         if (rankDefinition.getIsTime().equals(StarConstants.EventStatus.EVENT_STATUS_OPEN)) {
             log.info("排行版开启时间限制");
@@ -49,7 +55,9 @@ public class RankScopeStrategy implements EventStrategy {
             //依据不同的排行版进行相关的处理
             Map<String, IRankStrategy> rankStrategyMap = context.getBeansOfType(IRankStrategy.class);
             for (IRankStrategy rankStrategy : rankStrategyMap.values()) {
+
                 if (rankStrategy.getRankType().equals(rankDefinition.getRankType())){
+                    log.info("找到关于");
                     rankStrategy.handler(rankDefinition,ext,activityEventReq);
                 }
             }
