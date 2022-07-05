@@ -138,6 +138,10 @@ public class StarNftThemeInfo implements Serializable {
     @TableField(value = "contract_address")
     private String contractAddress;
 
+    /** 市场开放时间     */
+    @TableField(value = "market_open_time")
+    private Date marketOpenTime;
+
     private static final long serialVersionUID = 1L;
 
     public static final String COL_ID = "id";
@@ -177,4 +181,6 @@ public class StarNftThemeInfo implements Serializable {
     public static final String COL_TAGS = "tags";
 
     public static final String COL_CONTRACT_ADDRESS = "contract_address";
+
+    public static final String COL_MARKET_OPEN_TIME = "market_open_time";
 }

@@ -5,9 +5,13 @@ import com.starnft.star.application.process.number.req.MarketOrderReq;
 import com.starnft.star.application.process.order.impl.OrderProcessor;
 import com.starnft.star.application.process.order.model.req.OrderCancelReq;
 import com.starnft.star.application.process.order.model.req.OrderPayReq;
+import com.starnft.star.application.process.task.activity.ActivitiesTask;
+import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
 import com.starnft.star.domain.order.model.res.OrderListRes;
 import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
+import com.starnft.star.domain.user.model.dto.UserLoginDTO;
+import com.starnft.star.domain.user.service.IUserService;
 import com.starnft.star.interfaces.StarApplication;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,12 +34,15 @@ public class MarketTest {
 
     final INumberCore numberCore;
 
+    final ActivitiesTask activitiesTask;
+
+    final IUserService userService;
 
     @Test
     public void consigment() {
         NumberConsignmentRequest numberConsignmentRequest = new NumberConsignmentRequest();
         numberConsignmentRequest.setUid(409412742L);
-        numberConsignmentRequest.setNumberId(991131541462552576L);
+        numberConsignmentRequest.setNumberId(991131543080087552L);
         numberConsignmentRequest.setPrice(BigDecimal.valueOf(55.8));
         Boolean consignment = numberCore.consignment(numberConsignmentRequest);
         assert consignment;
@@ -45,7 +52,7 @@ public class MarketTest {
     public void marketOrder() {
         MarketOrderReq marketOrderReq = new MarketOrderReq();
         marketOrderReq.setUserId(409412742L);
-        marketOrderReq.setNumberId(991131543080087552L);
+        marketOrderReq.setNumberId(991131540524027904L);
         OrderListRes orderListRes = orderProcessor.marketOrder(marketOrderReq);
         log.info("orderList:{}", orderListRes.toString());
     }
@@ -78,5 +85,20 @@ public class MarketTest {
 //        orderPayReq.setPayToken();
 //        orderPayReq.setOutTradeNo();
         orderProcessor.orderPay(orderPayReq);
+    }
+
+    @Test
+    public void task(){
+        activitiesTask.loadActivities();
+    }
+
+    @Test
+    public void userlogin(){
+        UserLoginDTO userLoginDTO = new UserLoginDTO();
+        userLoginDTO.setLoginScenes(1);
+
+        userLoginDTO.setPassword(   StarUtils.getSHA256Str("Zz1208084818"));
+        userLoginDTO.setPhone("18332204521");
+        userService.login(userLoginDTO);
     }
 }
