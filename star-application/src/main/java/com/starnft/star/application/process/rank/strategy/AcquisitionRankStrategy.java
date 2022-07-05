@@ -3,17 +3,58 @@ package com.starnft.star.application.process.rank.strategy;
 import com.starnft.star.application.process.event.model.ActivityEventReq;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.event.model.res.EventActivityExtRes;
+import com.starnft.star.domain.rank.core.rank.core.IRankService;
 import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
+import com.starnft.star.domain.rank.core.rank.model.RankItemMetaData;
+import com.starnft.star.domain.user.model.vo.UserInfo;
+import com.starnft.star.domain.user.repository.IUserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+
 @Component
+@Slf4j
 public class AcquisitionRankStrategy implements IRankStrategy {
+    @Resource
+    IRankService iRankService;
+    @Resource
+    IUserRepository iUserRepository;
     @Override
     public StarConstants.RankTypes getRankType() {
         return StarConstants.RankTypes.Acquisition;
     }
     @Override
-    public void handler(RankDefinition rankDefinition, EventActivityExtRes ext, ActivityEventReq activityEventReq) {
+    public void handler(RankDefinition rankDefinition, EventActivityExtRes extRes, ActivityEventReq activityEventReq) {
+        Map<String, Object> params = activityEventReq.getParams();
+        if (Objects.isNull(params)){
+            return;
+        }
+        String rankName = rankDefinition.getRankName();
+        Long parent = (Long) params.get("parent");
+        Long number = (Long) Optional.ofNullable(params.get("number")).orElse(1);
+        if (Objects.isNull(parent)){
+            return;
+        }
+        //处理附加数据
+        RankItemMetaData  rankItemMetaData= extractedRankMetaData(rankDefinition, activityEventReq);
+        iRankService.put(rankName, parent.toString(),number.doubleValue(),rankItemMetaData);
+    }
 
+    private RankItemMetaData extractedRankMetaData(RankDefinition rankDefinition, ActivityEventReq activityEventReq) {
+
+        if (rankDefinition.getIsExtend().equals(StarConstants.EventStatus.EVENT_STATUS_OPEN)){
+            RankItemMetaData rankItemMetaData= new RankItemMetaData();
+            log.info("排行版拥有附加数据");
+            UserInfo userInfo = iUserRepository.queryUserInfoByUserId(activityEventReq.getUserId());
+            rankItemMetaData.setChildrenId(userInfo.getId());
+            rankItemMetaData.setMobile(userInfo.getPhone());
+            rankItemMetaData.setAvatar(userInfo.getAvatar());
+            return rankItemMetaData;
+        }
+        return null;
     }
 }

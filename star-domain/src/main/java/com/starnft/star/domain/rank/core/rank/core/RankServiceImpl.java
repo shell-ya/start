@@ -39,11 +39,12 @@ public class RankServiceImpl implements IRankService {
     public Double put(String rankName, String key, double value, RankItemMetaData rankItemMetaData) {
         boolean hasRank = hasRank(rankName);
         if (!hasRank)  throw new RuntimeException("请先创建排行榜");
-        //todo 依据rankDefinition 进行不同的配置信息
-         RankDefinition rankDefinition = JSONUtil.toBean(redisTemplate.opsForHash().get(RedisKey.RANK_LIST.getKey(), rankName).toString(), RankDefinition.class);
-
-        //个人总榜单
-         redisTemplate.opsForHash().putIfAbsent(String.format(RedisKey.RANK_TOTAL_USER.getKey(),rankName,key),key,JSONUtil.toJsonStr(rankItemMetaData));
+        //个人拉新总人数
+        if (Objects.nonNull(rankItemMetaData)){
+            redisTemplate.opsForHash().putIfAbsent(String.format(RedisKey.RANK_TOTAL_USER.getKey(),rankName),key,JSONUtil.toJsonStr(rankItemMetaData));
+        }
+         //  redisTemplate.opsForHash().putIfAbsent(String.format(RedisKey.RANK_VALID_USER.getKey(),rankName,key),rankItemMetaData.getChildrenId(),JSONUtil.toJsonStr(rankItemMetaData));
+//
         //总榜单
         return   redisTemplate.opsForZSet().incrementScore(String.format(RedisKey.RANK_ITEM.getKey(), rankName), key, value);
     }

@@ -4,7 +4,8 @@ import lombok.Data;
 
 @Data
 public class RankItemMetaData {
-    private Long  childrenId;
-    private String nickName;
-    private String mobile;
+     private Long  childrenId;
+     private String nickName;
+     private String mobile;
+     private String avatar;
 }
