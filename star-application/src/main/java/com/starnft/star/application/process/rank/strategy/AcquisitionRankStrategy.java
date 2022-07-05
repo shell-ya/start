@@ -40,7 +40,7 @@ public class AcquisitionRankStrategy implements IRankStrategy {
             return;
         }
         //处理附加数据
-        RankItemMetaData  rankItemMetaData= extractedRankMetaData(rankDefinition, activityEventReq);
+        RankItemMetaData rankItemMetaData= extractedRankMetaData(rankDefinition, activityEventReq);
         iRankService.put(rankName, parent.toString(),number.doubleValue(),rankItemMetaData);
     }
 
