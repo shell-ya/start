@@ -16,7 +16,7 @@ public interface UserThemeService {
 
     ResponsePageResult<UserNumbersVO> queryUserArticleNumberInfo(UserHaveNumbersReq userHaveNumbersReq);
 
-    UserNumbersVO queryUserNumberInfo(Long uid, Long numberId);
+    UserNumbersVO queryUserNumberInfo(Long uid, Long numberId,UserNumberStatusEnum statusEnum);
 
-    Boolean modifyUserNumberStatus(Long uid, Long numberId, UserNumberStatusEnum statusEnum);
+    Boolean modifyUserNumberStatus(Long uid, Long numberId,  UserNumberStatusEnum beforeStatusEnum,UserNumberStatusEnum statusEnum);
 }

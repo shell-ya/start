@@ -45,6 +45,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -280,6 +281,8 @@ public class WalletCore implements IWalletCore {
                 payType = value.getFont();
             }
         }
+        NumberFormat number = NumberFormat.getNumberInstance();
+        number.setMaximumFractionDigits(2);
         return TransactionRecord.builder()
                 .userId(userId)
                 .channel(walletRecordVO.getPayChannel())
@@ -288,6 +291,7 @@ public class WalletCore implements IWalletCore {
                 .status(walletRecordVO.getPayStatus())
                 .payTime(walletRecordVO.getPayTime())
                 .payType(payType)
+                .currMoney(number.format(walletRecordVO.getCurrMoney().setScale(2)))
                 .transactionSn(walletRecordVO.getRecordSn()).build();
     }
 

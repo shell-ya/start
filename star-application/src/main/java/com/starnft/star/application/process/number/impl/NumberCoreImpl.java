@@ -83,7 +83,7 @@ public class NumberCoreImpl implements INumberCore {
     @Override
     public Boolean consignment(Long uid, NumberConsignmentRequest request) {
         // 校验是否拥有该藏品
-        UserNumbersVO userNumbers = this.checkNumberOwner(uid, request.getNumberId());
+        UserNumbersVO userNumbers = this.checkNumberOwner(uid, request.getNumberId(),UserNumberStatusEnum.PURCHASED);
 
         if (!Objects.equals(userNumbers.getStatus(), UserNumberStatusEnum.PURCHASED.getCode())) {
             throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "只有已购买状态的藏品才能进行转售");
@@ -107,7 +107,7 @@ public class NumberCoreImpl implements INumberCore {
                         .build());
 
         // 修改用户藏品状态
-        Boolean updUserNumberBool = this.userThemeService.modifyUserNumberStatus(uid, request.getNumberId(), UserNumberStatusEnum.ON_CONSIGNMENT);
+        Boolean updUserNumberBool = this.userThemeService.modifyUserNumberStatus(uid, request.getNumberId(), UserNumberStatusEnum.PURCHASED,UserNumberStatusEnum.ON_CONSIGNMENT);
 
         if (updBool && saveBool && Boolean.TRUE.equals(updUserNumberBool)) {
             return Boolean.TRUE;
@@ -120,7 +120,7 @@ public class NumberCoreImpl implements INumberCore {
     public Boolean consignmentCancel(Long uid, NumberConsignmentCancelRequest request) {
 
         // 校验是否拥有该藏品
-        UserNumbersVO userNumbers = this.checkNumberOwner(uid, request.getNumberId());
+        UserNumbersVO userNumbers = this.checkNumberOwner(uid, request.getNumberId(),UserNumberStatusEnum.ON_CONSIGNMENT);
 
         // 判断商品是否在寄售中
         if (!Objects.equals(UserNumberStatusEnum.ON_CONSIGNMENT.getCode(), userNumbers.getStatus())) {
@@ -144,7 +144,7 @@ public class NumberCoreImpl implements INumberCore {
                         .build());
 
         // 还原用户藏品状态
-        Boolean updUserNumberBool = this.userThemeService.modifyUserNumberStatus(uid, request.getNumberId(), UserNumberStatusEnum.PURCHASED);
+        Boolean updUserNumberBool = this.userThemeService.modifyUserNumberStatus(uid, request.getNumberId(),UserNumberStatusEnum.ON_CONSIGNMENT, UserNumberStatusEnum.PURCHASED);
 
         if (updBool && saveBool && updUserNumberBool) {
             return Boolean.TRUE;
@@ -171,8 +171,8 @@ public class NumberCoreImpl implements INumberCore {
                 .build();
     }
 
-    private UserNumbersVO checkNumberOwner(Long uid, Long numberId) {
-        UserNumbersVO userNumberInfo = this.userThemeService.queryUserNumberInfo(uid, numberId);
+    private UserNumbersVO checkNumberOwner(Long uid, Long numberId,UserNumberStatusEnum statusEnum) {
+        UserNumbersVO userNumberInfo = this.userThemeService.queryUserNumberInfo(uid, numberId,statusEnum);
         Assert.notNull(userNumberInfo, () -> new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "你不是该藏品的拥有者 无法进行相关操作"));
         return userNumberInfo;
     }

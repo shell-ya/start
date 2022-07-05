@@ -35,12 +35,12 @@ public class UserThemeServiceImpl implements UserThemeService {
     }
 
     @Override
-    public UserNumbersVO queryUserNumberInfo(Long uid, Long numberId) {
-        return this.userThemeRepository.queryUserNumberInfo(uid, numberId);
+    public UserNumbersVO queryUserNumberInfo(Long uid, Long numberId,UserNumberStatusEnum statusEnum) {
+        return this.userThemeRepository.queryUserNumberInfo(uid, numberId,statusEnum);
     }
 
     @Override
-    public Boolean modifyUserNumberStatus(Long uid, Long numberId, UserNumberStatusEnum statusEnum) {
-        return this.userThemeRepository.modifyUserNumberStatus(uid, numberId, statusEnum);
+    public Boolean modifyUserNumberStatus(Long uid, Long numberId, UserNumberStatusEnum beforeStatusEnum, UserNumberStatusEnum statusEnum) {
+        return this.userThemeRepository.modifyUserNumberStatus(uid, numberId, beforeStatusEnum,statusEnum);
     }
 }

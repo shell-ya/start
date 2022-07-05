@@ -70,4 +70,10 @@ public class TransactionRecord implements Serializable {
     @ApiModelProperty(value = "驳回原因")
     private String applyMsg;
 
+    /**
+     * 余额
+     */
+    @ApiModelProperty(value = "余额")
+    private String currMoney;
+
 }

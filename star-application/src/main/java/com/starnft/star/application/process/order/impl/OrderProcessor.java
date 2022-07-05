@@ -142,7 +142,7 @@ public class OrderProcessor implements IOrderProcessor {
     @Override
     public OrderPayDetailRes orderPay(OrderPayReq orderPayReq) {
         //验证支付凭证
-        userService.assertPayPwdCheckSuccess(orderPayReq.getUserId(), orderPayReq.getPayToken());
+//        userService.assertPayPwdCheckSuccess(orderPayReq.getUserId(), orderPayReq.getPayToken());
         //规则验证
         walletService.balanceVerify(orderPayReq.getUserId(), new BigDecimal(orderPayReq.getPayAmount()));
         String lockKey = String.format(RedisKey.SECKILL_ORDER_TRANSACTION.getKey(), orderPayReq.getOrderSn());
@@ -178,12 +178,12 @@ public class OrderProcessor implements IOrderProcessor {
         //收款方是寄售用户
         TransReq transReq = new TransReq();
         transReq.setUid(orderPayReq.getFromUid());
-        transReq.setTsType(orderPayReq.getType());
+        transReq.setTsType(StarConstants.Transaction_Type.Sell.getCode());
         transReq.setPayChannel(orderPayReq.getChannel());
         transReq.setOrderSn(orderPayReq.getOrderSn());
         transReq.setTotalAmount(new BigDecimal(orderPayReq.getTotalPayAmount()));
         BigDecimal payAmount = new BigDecimal(orderPayReq.getPayAmount());
-        transReq.setPayAmount(payAmount.signum() == -1 ? payAmount : payAmount.negate());
+        transReq.setPayAmount(payAmount.signum() >= 0 ? payAmount : payAmount.negate());
         //实际收款金额是挂失金额减去手续费
         return transReq;
     }
@@ -223,7 +223,9 @@ public class OrderProcessor implements IOrderProcessor {
         try {
             //锁住当前订单交易
             if (redisLockUtils.lock(lockKey, RedisKey.SECKILL_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.SECKILL_ORDER_TRANSACTION.getTime()))) {
-                return orderService.orderCancel(orderGrabReq.getUid(), orderGrabReq.getOrderSn(), StarConstants.OrderType.PUBLISH_GOODS);
+                return orderService.orderCancel(orderGrabReq.getUid(), orderGrabReq.getOrderSn(),
+                        orderGrabReq.getOrderSn().startsWith(StarConstants.OrderPrefix.PublishGoods.getPrefix()) ?
+                        StarConstants.OrderType.PUBLISH_GOODS : StarConstants.OrderType.MARKET_GOODS);
             }
         } finally {
             redisLockUtils.unlock(lockKey);
@@ -254,7 +256,7 @@ public class OrderProcessor implements IOrderProcessor {
                 long id = idsIIdGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId();
                 if (createPreOrder(numberDetail, marketOrderReq.getUserId(), orderSn, id)) {
                     //发送延时队列
-                    orderProducer.marketOrderRollback(new MarketOrderStatus(marketOrderReq.getUserId(), 0, orderSn));
+//                    orderProducer.marketOrderRollback(new MarketOrderStatus(marketOrderReq.getUserId(), 0, orderSn));
 //                    return new OrderListRes(id,orderSn, 0, StarError.SUCCESS_000000.getErrorMessage(), lockTimes);
                     return buildOrderResp(numberDetail, marketOrderReq.getUserId(), orderSn, id);
                 }

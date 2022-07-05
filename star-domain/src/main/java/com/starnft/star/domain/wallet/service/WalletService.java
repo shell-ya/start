@@ -73,4 +73,6 @@ public interface WalletService {
     //交易操作
     boolean doTransaction(TransReq transReq);
 
+    //到账金额计算
+    ReceivablesCalculateResult ReceivablesMoneyCalculate(CalculateReq calculate);
 }

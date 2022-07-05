@@ -34,11 +34,7 @@ public class RechargeConsumer implements RocketMQListener<PayCheckRes> {
 
     @Override
     public void onMessage(PayCheckRes payCheckRes) {
-        //消息幂等校验
-        if (messageIdempotentVerify(payCheckRes.getOrderSn(), payCheckRes.getTransSn())) {
-            return;
-        }
-        log.info("充值中 单号:[{}] 流水号:[{}] mq重复消费，幂等校验", payCheckRes.getOrderSn(), payCheckRes.getTransSn());
+        log.info("充值中 单号:[{}] 流水号:[{}]", payCheckRes.getOrderSn(), payCheckRes.getTransSn());
         if (payCheckRes.getStatus().equals(ResultCode.SUCCESS.getCode())) {
             RechargeVO rechargeVO = BeanColverUtil.colver(payCheckRes, RechargeVO.class);
             boolean isSuccess = walletService.rechargeProcess(rechargeVO);
@@ -57,16 +53,5 @@ public class RechargeConsumer implements RocketMQListener<PayCheckRes> {
             log.error("修改失败状态有误：{}", payCheckRes);
             throw new RuntimeException(result.getInfo());
         }
-    }
-
-    private boolean messageIdempotentVerify(String orderSn, String transSn) {
-        String idempotent = String.format(RedisKey.REDIS_IDEMPOTENT_MARK.getKey(), orderSn + transSn);
-        if (redisUtil.hasKey(idempotent)) {
-            log.error("单号:[{}] 流水号:[{}] mq重复消费，幂等校验", orderSn, transSn);
-            return true;
-        }
-        redisUtil.incr(idempotent, 1);
-        redisUtil.expire(idempotent, RedisKey.REDIS_IDEMPOTENT_MARK.getTime(), RedisKey.REDIS_IDEMPOTENT_MARK.getTimeUnit());
-        return false;
     }
 }
