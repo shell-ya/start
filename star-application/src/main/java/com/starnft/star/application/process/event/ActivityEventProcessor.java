@@ -11,8 +11,8 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
-@Component("eventProcessor")
-public class EventProcessor {
+@Component("activityEventProcessor")
+public class ActivityEventProcessor {
     @Resource
     ApplicationContext applicationContext;
     @Transactional
@@ -20,7 +20,7 @@ public class EventProcessor {
         for (EventActivityExtRes activityExtRes : extResList) {
             Map<String, EventStrategy> beansOfType = applicationContext.getBeansOfType(EventStrategy.class);
             for (EventStrategy value : beansOfType.values()) {
-                if (value.getEventType().getValue().equals(activityExtRes.getEventSign())) {
+                if (value.getEventType().getValue().equals(activityExtRes.getExtType())) {
                     value.handler(activityExtRes,activityEventReq);
                 }
             }

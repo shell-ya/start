@@ -38,11 +38,11 @@ public  class ScopeStrategy  implements  EventStrategy{
          addScoreDTO.setScopeType(scopeType);
          addScoreDTO.setUserId(activityEventReq.getUserId());
          addScoreDTO.setScope(totalScope);
-      iScopeCore.userScopeManageAdd(addScoreDTO);
+         iScopeCore.userScopeManageAdd(addScoreDTO);
      }
 
     @Override
-    public StarConstants.EventType getEventType() {
-        return StarConstants.EventType.Scope;
+    public StarConstants.ActivityType getEventType() {
+        return StarConstants.ActivityType.Scope;
     }
 }

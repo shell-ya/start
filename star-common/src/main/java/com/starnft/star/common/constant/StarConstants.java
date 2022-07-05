@@ -321,21 +321,21 @@ public class StarConstants {
             return prefix;
         }
     }
-    public static class  Event {
+    public static class  EventStatus {
 
       public static   final Integer EVENT_STATUS_OPEN =1;
       public static  final  Integer EVENT_STATUS_CLOSE =0;
     }
-    public enum   EventType {
-        Scope("scope"),
-        Rank("rank");
-        private final String  value;
+    public enum   ActivityType {
+        Scope(2),
+        Rank(1);
+        private final Integer  value;
 
-        EventType(String value) {
+        ActivityType(Integer value) {
             this.value = value;
         }
 
-        public String getValue() {
+        public Integer getValue() {
             return value;
         }
     }

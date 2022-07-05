@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
+
 @Component
 public class RankServiceImpl implements IRankService {
     @Resource
@@ -34,13 +36,16 @@ public class RankServiceImpl implements IRankService {
     }
 
     @Override
-    public Double put(String rankName, String  key, double value, RankItemMetaData rankItemMetaData) {
+    public Double put(String rankName, String key, double value, RankItemMetaData rankItemMetaData) {
         boolean hasRank = hasRank(rankName);
         if (!hasRank)  throw new RuntimeException("请先创建排行榜");
         //todo 依据rankDefinition 进行不同的配置信息
          RankDefinition rankDefinition = JSONUtil.toBean(redisTemplate.opsForHash().get(RedisKey.RANK_LIST.getKey(), rankName).toString(), RankDefinition.class);
-         redisTemplate.opsForHash().putIfAbsent(String.format(RedisKey.RANK_EXTEND.getKey(),rankName),key,JSONUtil.toJsonStr(rankItemMetaData));
-        return  redisTemplate.opsForZSet().incrementScore(String.format(RedisKey.RANK_STORE.getKey(), rankName), key, value);
+
+        //个人总榜单
+         redisTemplate.opsForHash().putIfAbsent(String.format(RedisKey.RANK_TOTAL_USER.getKey(),rankName,key),key,JSONUtil.toJsonStr(rankItemMetaData));
+        //总榜单
+        return   redisTemplate.opsForZSet().incrementScore(String.format(RedisKey.RANK_ITEM.getKey(), rankName), key, value);
     }
 
     @Override
@@ -84,8 +89,12 @@ public class RankServiceImpl implements IRankService {
     }
 
     @Override
-    public int getRankId(String rankName, int rankNum) {
-        return 0;
+    public RankItemMetaData getRank(String rankName) {
+        boolean hasRank = hasRank(rankName);
+        if (!hasRank) return null;
+        Object result = redisTemplate.opsForHash().get(RedisKey.RANK_LIST.getKey(), rankName);
+        if (Objects.isNull(result)) return  null;
+        return  JSONUtil.toBean(result.toString(),RankItemMetaData.class);
     }
 
     @Override

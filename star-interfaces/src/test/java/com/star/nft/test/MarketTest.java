@@ -32,25 +32,26 @@ public class MarketTest {
 
 
     @Test
-    public void consigment(){
+    public void consigment() {
         NumberConsignmentRequest numberConsignmentRequest = new NumberConsignmentRequest();
+        numberConsignmentRequest.setUid(409412742L);
         numberConsignmentRequest.setNumberId(991131541462552576L);
         numberConsignmentRequest.setPrice(BigDecimal.valueOf(55.8));
-        Boolean consignment = numberCore.consignment(409412742L, numberConsignmentRequest);
+        Boolean consignment = numberCore.consignment(numberConsignmentRequest);
         assert consignment;
     }
 
     @Test
-    public void marketOrder(){
+    public void marketOrder() {
         MarketOrderReq marketOrderReq = new MarketOrderReq();
         marketOrderReq.setUserId(409412742L);
         marketOrderReq.setNumberId(991131543080087552L);
         OrderListRes orderListRes = orderProcessor.marketOrder(marketOrderReq);
-        log.info("orderList:{}",orderListRes.toString());
+        log.info("orderList:{}", orderListRes.toString());
     }
 
     @Test
-    public void cancelOrder(){
+    public void cancelOrder() {
         OrderCancelReq orderCancelReq = new OrderCancelReq();
         orderCancelReq.setUid(248906830L);
         orderCancelReq.setOrderSn("TS993518961750605824");
@@ -59,7 +60,7 @@ public class MarketTest {
     }
 
     @Test
-    public void pay(){
+    public void pay() {
         OrderPayReq orderPayReq = new OrderPayReq();
         orderPayReq.setOrderSn("TS993651079927463936");
         orderPayReq.setPayAmount("22.00");
