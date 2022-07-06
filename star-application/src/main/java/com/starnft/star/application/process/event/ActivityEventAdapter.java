@@ -1,6 +1,7 @@
 package com.starnft.star.application.process.event;
 
 import cn.hutool.json.JSONUtil;
+import com.google.common.collect.Lists;
 import com.starnft.star.application.process.event.model.ActivityEventReq;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.event.model.req.EventActivityExtReq;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component("activityEventAdapter")
@@ -47,8 +49,22 @@ public class ActivityEventAdapter {
             List<EventActivityExtRes> extArrays = eventActivityService.queryEventActivityParams(eventActivityExtReq);
             log.info("找到关于动作标记:{}的活动内容{}条",activityEventReq.getEventSign(),extArrays.size());
             Set<Long> activityIds = extArrays.stream().map(item -> item.getActivityId()).collect(Collectors.toSet());
+            Map<Long, EventActivityRes> collect = eventActivityService.queryEventActivityByIds(activityIds).stream().collect(Collectors.toMap(EventActivityRes::getId, Function.identity()));
+            List<EventActivityExtRes> isTrueExtArrays= Lists.newArrayList();
+            for (EventActivityExtRes extArray : extArrays) {
+                EventActivityRes eventActivityRes = collect.get(extArray.getActivityId());
+                if(Objects.nonNull(eventActivityRes)){
+                    if (eventActivityRes.getActivityStatus().equals(StarConstants.EventStatus.EVENT_STATUS_OPEN)){
+                        Date reqTime = Optional.ofNullable(activityEventReq.getReqTime()).orElse(new Date());
+                        if (!(reqTime.before(eventActivityRes.getStartTime())||reqTime.after(eventActivityRes.getEndTime()))){
+                            isTrueExtArrays.add(extArray);
+                        }
+                    }
+                }
+            }
 
-            eventActivityService.queryEventActivityByIds(activityIds);
+            log.info("找到可用的动作标记:{}的活动内容{}条",activityEventReq.getEventSign(),extArrays.size());
+            processor.processor(isTrueExtArrays,activityEventReq);
         }
 
     }
