@@ -59,13 +59,32 @@ public class RedisConfig extends CachingConfigurerSupport {
 
         //设置 value 的转化格式和 key 的转化格式
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
 
+        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        redisTemplate.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
         //关联 redisConnectionFactory
         redisTemplate.setConnectionFactory(factory);
 
         return redisTemplate;
 
+    }
+
+    @Bean("RankRedisTemplate")
+    @SuppressWarnings(value = { "unchecked", "rawtypes" })
+    public RedisTemplate redisTemplates(RedisConnectionFactory connectionFactory)
+    {
+        RedisTemplate<String , Object > template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new StringRedisSerializer());
+
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setHashValueSerializer(new StringRedisSerializer());
+
+        template.afterPropertiesSet();
+        return template;
     }
 
     /**

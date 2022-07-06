@@ -32,6 +32,7 @@ public class RankScopeStrategy implements EventStrategy {
 
     @Override
     public void handler(EventActivityExtRes ext, ActivityEventReq activityEventReq) {
+        log.info("params参数为「{}」",ext.getParams());
         JSONObject configs = JSONUtil.parseObj(ext.getParams());
         String rankName = configs.getStr("rankName");
         if (Objects.isNull(rankName)) {
@@ -56,8 +57,8 @@ public class RankScopeStrategy implements EventStrategy {
             Map<String, IRankStrategy> rankStrategyMap = context.getBeansOfType(IRankStrategy.class);
             for (IRankStrategy rankStrategy : rankStrategyMap.values()) {
 
-                if (rankStrategy.getRankType().equals(rankDefinition.getRankType())){
-                    log.info("找到关于");
+                if (rankStrategy.getRankType().getValue().equals(rankDefinition.getRankType())){
+                    log.info("找到关于「{}」的排行榜",rankStrategy.getRankType().getDesc());
                     rankStrategy.handler(rankDefinition,ext,activityEventReq);
                 }
             }

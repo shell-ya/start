@@ -2,19 +2,20 @@ package com.starnft.star.domain.rank.core.rank.core;
 
 import cn.hutool.json.JSONUtil;
 import com.starnft.star.common.constant.RedisKey;
-
 import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
 import com.starnft.star.domain.rank.core.rank.model.RankItemMetaData;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
 
 @Component
 public class RankServiceImpl implements IRankService {
-    @Resource
+    @Autowired
+    @Qualifier("RankRedisTemplate")
     private RedisTemplate redisTemplate;
     @Override
     public boolean createRank(String rankName, RankDefinition rankDefinition) {

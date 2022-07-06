@@ -33,14 +33,19 @@ public class AcquisitionRankStrategy implements IRankStrategy {
         if (Objects.isNull(params)){
             return;
         }
-        String rankName = rankDefinition.getRankName();
-        Long parent = (Long) params.get("parent");
-        Long number = (Long) Optional.ofNullable(params.get("number")).orElse(1);
-        if (Objects.isNull(parent)){
+        Object parentObject = params.get("parent");
+        if (Objects.isNull(parentObject)){
             return;
         }
+        String rankName = rankDefinition.getRankName();
+        Long parent = Long.parseLong(parentObject.toString());
+        Long number = Long.parseLong(Optional.ofNullable(params.get("number")).orElse(1).toString()) ;
         //处理附加数据
         RankItemMetaData rankItemMetaData= extractedRankMetaData(rankDefinition, activityEventReq);
+        if (Objects.isNull(rankItemMetaData)){
+            log.info("查询不到信息");
+            return;
+        }
         iRankService.put(rankName, parent.toString(),number.doubleValue(),rankItemMetaData);
     }
 
@@ -50,6 +55,9 @@ public class AcquisitionRankStrategy implements IRankStrategy {
             RankItemMetaData rankItemMetaData= new RankItemMetaData();
             log.info("排行版拥有附加数据");
             UserInfo userInfo = iUserRepository.queryUserInfoByUserId(activityEventReq.getUserId());
+            if (Objects.isNull(userInfo)){
+                return null;
+            }
             rankItemMetaData.setChildrenId(userInfo.getId());
             rankItemMetaData.setMobile(userInfo.getPhone());
             rankItemMetaData.setAvatar(userInfo.getAvatar());
