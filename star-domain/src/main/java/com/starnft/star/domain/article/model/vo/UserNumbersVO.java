@@ -26,6 +26,8 @@ public class UserNumbersVO {
     @ApiModelProperty("主题商品编号")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long themeNumber;
+    @ApiModelProperty("发行数量")
+    private Integer issuedQty;
     @ApiModelProperty("主题名称")
     private String themeName;
     @ApiModelProperty("主题图片")
