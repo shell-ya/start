@@ -2,11 +2,12 @@ package com.starnft.star.application.process.user.impl;
 
 import com.starnft.star.application.mq.producer.socpe.ActivityEventProducer;
 import com.starnft.star.application.process.event.model.EventReqAssembly;
-import com.starnft.star.application.process.event.model.RankEventReq;
+import com.starnft.star.application.process.event.model.RegisterEventReq;
 import com.starnft.star.application.process.user.UserCore;
 import com.starnft.star.application.process.user.req.*;
 import com.starnft.star.application.process.user.res.*;
 import com.starnft.star.common.constant.RedisKey;
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.enums.AgreementSceneEnum;
 import com.starnft.star.common.enums.AgreementTypeEnum;
 import com.starnft.star.common.exception.StarError;
@@ -85,14 +86,20 @@ public class UserCoreImpl implements UserCore {
         }
         Boolean isRegister = redisTemplate.hasKey(String.format(RedisKey.REDIS_USER_REG_NEW.getKey(), userInfo.getUserId()));
         if (isRegister){
-            RankEventReq rankEventReq = new RankEventReq();
-            rankEventReq.setUserId(userInfo.getUserId());
-            rankEventReq.setParent(InvitationCodeUtil.decode(req.getShareCode())); //邀请码转化为id //直接获取到了上级
-            rankEventReq.setReqTime(new Date());
-            rankEventReq.setEventSign("register");
-            rankEventReq.setActivitySign(req.getActivityType());
-            activityEventProducer.sendScopeMessage( EventReqAssembly.assembly(rankEventReq));
-            redisTemplate.delete(String.format(RedisKey.REDIS_USER_REG_NEW.getKey(), userInfo.getUserId()));
+            try {
+                RegisterEventReq rankEventReq = new RegisterEventReq();
+                rankEventReq.setUserId(userInfo.getUserId());
+                rankEventReq.setParent(InvitationCodeUtil.decode(req.getShareCode())); //邀请码转化为id //直接获取到了上级
+                rankEventReq.setReqTime(new Date());
+                rankEventReq.setEventSign(StarConstants.EventSign.Register.getDesc());
+                rankEventReq.setActivitySign(req.getActivityType());
+                activityEventProducer.sendScopeMessage(EventReqAssembly.assembly(rankEventReq));
+
+            }catch (Exception e){
+
+            }finally {
+                redisTemplate.delete(String.format(RedisKey.REDIS_USER_REG_NEW.getKey(), userInfo.getUserId()));
+            }
         }
     }
 

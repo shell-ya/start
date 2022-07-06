@@ -342,6 +342,19 @@ public class StarConstants {
       public static   final Integer EVENT_STATUS_OPEN =1;
       public static  final  Integer EVENT_STATUS_CLOSE =0;
     }
+
+    public  enum   EventSign {
+        Register("register");
+        private final String desc;
+
+        EventSign(String desc) {
+            this.desc=desc;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+    }
     public enum   ActivityType {
         Scope(2, "积分活动"),
         Rank(1, "排行版活动");

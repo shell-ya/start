@@ -58,7 +58,8 @@ public class AcquisitionRankStrategy implements IRankStrategy {
             if (Objects.isNull(userInfo)){
                 return null;
             }
-            rankItemMetaData.setChildrenId(userInfo.getId());
+            rankItemMetaData.setChildrenId(userInfo.getAccount());
+            rankItemMetaData.setNickName(userInfo.getNickName());
             rankItemMetaData.setMobile(userInfo.getPhone());
             rankItemMetaData.setAvatar(userInfo.getAvatar());
             return rankItemMetaData;

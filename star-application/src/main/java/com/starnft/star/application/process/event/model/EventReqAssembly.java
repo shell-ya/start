@@ -3,7 +3,7 @@ package com.starnft.star.application.process.event.model;
 import cn.hutool.core.bean.BeanUtil;
 
 public class EventReqAssembly {
-   public static ActivityEventReq assembly(RankEventReq req){
+   public static ActivityEventReq assembly(RegisterEventReq req){
        ActivityEventReq activityEventReq = new ActivityEventReq();
        activityEventReq.setActivitySign(req.getActivitySign());
        activityEventReq.setEventSign(req.getEventSign());
