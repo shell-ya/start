@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Repository
@@ -38,6 +39,7 @@ public class EventActivityRepository implements IEventActivityRepository {
             EventActivityExtRes eventActivityExtRes = new EventActivityExtRes();
             eventActivityExtRes.setExtType(item.getExtType());
             eventActivityExtRes.setEventSign(item.getEventSign());
+            eventActivityExtRes.setActivityId(item.getActivityId());
             eventActivityExtRes.setParams(item.getParams());
             return eventActivityExtRes;
         }).collect(Collectors.toList());
@@ -51,17 +53,30 @@ public class EventActivityRepository implements IEventActivityRepository {
         }
         StarNftActivity starNftActivities = starNftActivityMapper.selectOne(wrapper);
         if (Objects.isNull(starNftActivities))return  null;
-            EventActivityRes eventActivityRes = new EventActivityRes();
-            eventActivityRes.setActivityName(starNftActivities.getActivityName());
-            eventActivityRes.setActivitySign(starNftActivities.getActivitySign());
-            eventActivityRes.setActivityStatus(starNftActivities.getActivityStatus());
-            eventActivityRes.setExtend(starNftActivities.getExtend());
-            eventActivityRes.setEndTime(starNftActivities.getEndTime());
-            eventActivityRes.setStartTime(starNftActivities.getStartTime());
-            eventActivityRes.setIsTimes(starNftActivities.getIsTimes());
-            eventActivityRes.setId(starNftActivities.getId());
-            return  eventActivityRes;
+        EventActivityRes eventActivityRes = getEventActivityRes(starNftActivities);
+        return  eventActivityRes;
 
+    }
+
+    @Override
+    public List<EventActivityRes> queryEventActivityByIds(Set<Long> activityIds) {
+        return  starNftActivityMapper.selectBatchIds(activityIds).stream().map(starNftActivities->{
+            EventActivityRes eventActivityRes = getEventActivityRes(starNftActivities);
+            return eventActivityRes;
+        }).collect(Collectors.toList());
+    }
+
+    private EventActivityRes getEventActivityRes(StarNftActivity starNftActivities) {
+        EventActivityRes eventActivityRes = new EventActivityRes();
+        eventActivityRes.setActivityName(starNftActivities.getActivityName());
+        eventActivityRes.setActivitySign(starNftActivities.getActivitySign());
+        eventActivityRes.setActivityStatus(starNftActivities.getActivityStatus());
+        eventActivityRes.setExtend(starNftActivities.getExtend());
+        eventActivityRes.setEndTime(starNftActivities.getEndTime());
+        eventActivityRes.setStartTime(starNftActivities.getStartTime());
+        eventActivityRes.setIsTimes(starNftActivities.getIsTimes());
+        eventActivityRes.setId(starNftActivities.getId());
+        return eventActivityRes;
     }
 
 

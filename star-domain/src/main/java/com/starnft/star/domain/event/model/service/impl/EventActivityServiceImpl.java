@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class EventActivityServiceImpl implements IEventActivityService {
@@ -23,5 +24,10 @@ public class EventActivityServiceImpl implements IEventActivityService {
     @Override
     public EventActivityRes queryEventActivity(EventActivityReq eventActivityReq) {
         return iEventActivityRepository.queryEventActivity(eventActivityReq);
+    }
+
+    @Override
+    public List<EventActivityRes> queryEventActivityByIds(Set<Long> activityIds) {
+        return iEventActivityRepository.queryEventActivityByIds(activityIds);
     }
 }
