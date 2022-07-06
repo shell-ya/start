@@ -344,15 +344,26 @@ public class StarConstants {
     }
 
     public  enum   EventSign {
-        Register("register");
-        private final String desc;
 
-        EventSign(String desc) {
-            this.desc=desc;
+        Register("register"),
+        Buy("buy");
+        private final String sign;
+
+        EventSign(String sign) {
+            this.sign=sign;
         }
 
-        public String getDesc() {
-            return desc;
+        public String getSign() {
+            return sign;
+        }
+
+        public static EventSign getEventSign(String sign) {
+            for (EventSign value : values()) {
+                if (value.getSign().equals(sign)){
+                    return value;
+                }
+            }
+            return  null;
         }
     }
     public enum   ActivityType {

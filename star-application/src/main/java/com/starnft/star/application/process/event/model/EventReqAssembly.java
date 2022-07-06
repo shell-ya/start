@@ -20,5 +20,13 @@ public class EventReqAssembly {
         activityEventReq.setReqTime(req.getReqTime());
         activityEventReq.setParams(BeanUtil.beanToMap(req));
         return activityEventReq;
+    }    public static ActivityEventReq assembly(BuyActivityEventReq req){
+        ActivityEventReq activityEventReq = new ActivityEventReq();
+        activityEventReq.setActivitySign(req.getActivitySign());
+        activityEventReq.setEventSign(req.getEventSign());
+        activityEventReq.setUserId(req.getUserId());
+        activityEventReq.setReqTime(req.getReqTime());
+        activityEventReq.setParams(BeanUtil.beanToMap(req));
+        return activityEventReq;
     }
 }

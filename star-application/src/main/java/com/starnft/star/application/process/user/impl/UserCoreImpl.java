@@ -1,6 +1,6 @@
 package com.starnft.star.application.process.user.impl;
 
-import com.starnft.star.application.mq.producer.socpe.ActivityEventProducer;
+import com.starnft.star.application.mq.producer.activity.ActivityEventProducer;
 import com.starnft.star.application.process.event.model.EventReqAssembly;
 import com.starnft.star.application.process.event.model.RegisterEventReq;
 import com.starnft.star.application.process.user.UserCore;
@@ -91,7 +91,7 @@ public class UserCoreImpl implements UserCore {
                 rankEventReq.setUserId(userInfo.getUserId());
                 rankEventReq.setParent(InvitationCodeUtil.decode(req.getShareCode())); //邀请码转化为id //直接获取到了上级
                 rankEventReq.setReqTime(new Date());
-                rankEventReq.setEventSign(StarConstants.EventSign.Register.getDesc());
+                rankEventReq.setEventSign(StarConstants.EventSign.Register.getSign());
                 rankEventReq.setActivitySign(req.getActivityType());
                 activityEventProducer.sendScopeMessage(EventReqAssembly.assembly(rankEventReq));
 

@@ -48,7 +48,11 @@ public class ActivityEventAdapter {
             eventActivityExtReq.setEventSign(eventSign);
             List<EventActivityExtRes> extArrays = eventActivityService.queryEventActivityParams(eventActivityExtReq);
             log.info("找到关于动作标记:{}的活动内容{}条",activityEventReq.getEventSign(),extArrays.size());
+            if (extArrays.isEmpty()){
+                return;
+            }
             Set<Long> activityIds = extArrays.stream().map(item -> item.getActivityId()).collect(Collectors.toSet());
+
             Map<Long, EventActivityRes> collect = eventActivityService.queryEventActivityByIds(activityIds).stream().collect(Collectors.toMap(EventActivityRes::getId, Function.identity()));
             List<EventActivityExtRes> isTrueExtArrays= Lists.newArrayList();
             for (EventActivityExtRes extArray : extArrays) {

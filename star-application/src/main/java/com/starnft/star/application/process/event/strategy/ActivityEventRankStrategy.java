@@ -9,6 +9,7 @@ import com.starnft.star.common.exception.StarException;
 import com.starnft.star.domain.event.model.res.EventActivityExtRes;
 import com.starnft.star.domain.rank.core.rank.core.IRankService;
 import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -18,9 +19,9 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
-@Component("rankScopeStrategy")
+@Component("activityEventRankStrategy")
 @Slf4j
-public class RankScopeStrategy implements EventStrategy {
+public class ActivityEventRankStrategy implements ActivityEventStrategy {
     @Resource
     IRankService rankService;
     @Resource
@@ -38,14 +39,11 @@ public class RankScopeStrategy implements EventStrategy {
         if (Objects.isNull(rankName)) {
             log.error("排行版不存在,请先配置排行版");
             throw new StarException("排行版不存在,请先配置排行版");
-
         }
         RankDefinition rankDefinition = rankService.getRank(rankName);
         if (Objects.isNull(rankDefinition)) {
-
             log.error("{}排行版配置不存在,请先配置排行版", rankName);
             throw new StarException("排行版不存在,请先配置排行版");
-
         }
         if (rankDefinition.getIsTime().equals(StarConstants.EventStatus.EVENT_STATUS_OPEN)) {
             log.info("排行版开启时间限制");
@@ -56,14 +54,35 @@ public class RankScopeStrategy implements EventStrategy {
             //依据不同的排行版进行相关的处理
             Map<String, IRankStrategy> rankStrategyMap = context.getBeansOfType(IRankStrategy.class);
             for (IRankStrategy rankStrategy : rankStrategyMap.values()) {
-
                 if (rankStrategy.getRankType().getValue().equals(rankDefinition.getRankType())){
                     log.info("找到关于「{}」的排行榜",rankStrategy.getRankType().getDesc());
                     rankStrategy.handler(rankDefinition,ext,activityEventReq);
                 }
             }
-
         }
 
+    }
+
+
+    public static void main(String[] args) {
+//        @Data
+//        class Params{
+//            private String template;
+//            private BigDecimal scale;
+//            private Integer scopeType;
+//        }
+        @Data
+        class Params{
+            private String rankName;
+          private String  rankEvent;
+//            private Integer scopeType;
+        }
+        Params params = new Params();
+        params.setRankName("test_tank");
+        params.setRankEvent("total");
+
+//        params.setTemplate("参加拉新活动获得%s积分");
+//        params.setScopeType(0);
+        System.out.println(JSONUtil.toJsonStr(params));
     }
 }

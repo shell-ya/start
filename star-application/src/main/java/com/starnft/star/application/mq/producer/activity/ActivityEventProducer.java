@@ -1,4 +1,4 @@
-package com.starnft.star.application.mq.producer.socpe;
+package com.starnft.star.application.mq.producer.activity;
 
 import com.starnft.star.application.mq.constant.TopicConstants;
 import com.starnft.star.application.mq.producer.BaseProducer;

@@ -2,6 +2,7 @@ package com.star.nft.test;
 
 import com.starnft.star.application.mq.IMessageSender;
 import com.starnft.star.application.mq.constant.TopicConstants;
+import com.starnft.star.application.process.event.model.BuyActivityEventReq;
 import com.starnft.star.application.process.event.model.EventReqAssembly;
 import com.starnft.star.application.process.event.model.RegisterEventReq;
 import com.starnft.star.common.constant.RedisKey;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
@@ -29,7 +31,7 @@ public class TestActivity {
     public void pullScopeTest(){
         RegisterEventReq scopeEventReq = new RegisterEventReq();
         scopeEventReq.setActivitySign("first_launch_acquisition");
-        scopeEventReq.setEventSign(StarConstants.EventSign.Register.getDesc());
+        scopeEventReq.setEventSign(StarConstants.EventSign.Register.getSign());
         scopeEventReq.setUserId(310196862L);
         scopeEventReq.setNumber(1L);
         scopeEventReq.setReqTime(new Date());
@@ -41,15 +43,15 @@ public class TestActivity {
     @Test
     //活动购买流程向MQ发送
     public void BuyPullMqTest(){
-//        RankEventReq scopeEventReq = new RankEventReq();
-////        scopeEventReq.setActivitySign("first_launch_acquisition");
-//        scopeEventReq.setEventSign("buy");
-//        scopeEventReq.setUserId(310196862L);
-//        scopeEventReq.setNumber(1L);
-//        scopeEventReq.setReqTime(new Date());
-//        scopeEventReq.setParent(409412742L);
-//        String scopeTopic = String.format(TopicConstants.CREDITS_PROCESS_DESTINATION.getFormat(),TopicConstants.CREDITS_PROCESS_DESTINATION.getTag());
-//        messageSender.send(scopeTopic, Optional.of( EventReqAssembly.assembly(scopeEventReq)));
+        BuyActivityEventReq buyActivityEventReq = new BuyActivityEventReq();
+        buyActivityEventReq.setEventSign(StarConstants.EventSign.Buy.getSign());
+        buyActivityEventReq.setUserId(310196862L);
+        buyActivityEventReq.setReqTime(new Date());
+        buyActivityEventReq.setSeriesId(4L);
+        buyActivityEventReq.setThemeId(991131478355697664L);
+        buyActivityEventReq.setMoney(new BigDecimal(22));
+       String scopeTopic = String.format(TopicConstants.CREDITS_PROCESS_DESTINATION.getFormat(),TopicConstants.CREDITS_PROCESS_DESTINATION.getTag());
+       messageSender.send(scopeTopic, Optional.of( EventReqAssembly.assembly(buyActivityEventReq)));
     }
 
 

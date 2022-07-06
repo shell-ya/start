@@ -1,7 +1,7 @@
 package com.starnft.star.application.process.event;
 
 import com.starnft.star.application.process.event.model.ActivityEventReq;
-import com.starnft.star.application.process.event.strategy.EventStrategy;
+import com.starnft.star.application.process.event.strategy.ActivityEventStrategy;
 import com.starnft.star.domain.event.model.res.EventActivityExtRes;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
@@ -20,8 +20,8 @@ public class ActivityEventProcessor {
     @Transactional
     public void processor(List<EventActivityExtRes> extResList, ActivityEventReq activityEventReq) {
         for (EventActivityExtRes activityExtRes : extResList) {
-            Map<String, EventStrategy> beansOfType = applicationContext.getBeansOfType(EventStrategy.class);
-            for (EventStrategy eventStrategy : beansOfType.values()) {
+            Map<String, ActivityEventStrategy> beansOfType = applicationContext.getBeansOfType(ActivityEventStrategy.class);
+            for (ActivityEventStrategy eventStrategy : beansOfType.values()) {
                 if (eventStrategy.getEventType().getValue().equals(activityExtRes.getExtType())) {
                     log.info("实现活动为「{}」",eventStrategy.getEventType().getDesc());
                     eventStrategy.handler(activityExtRes,activityEventReq);

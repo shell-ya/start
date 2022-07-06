@@ -16,9 +16,9 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-@Component("scopeStrategy")
+@Component("activityEventScopeStrategy")
 @Slf4j
-public  class ScopeStrategy  implements  EventStrategy{
+public  class ActivityEventScopeStrategy  implements  ActivityEventStrategy{
      @Resource
      private IScopeCore iScopeCore;
      @Transactional

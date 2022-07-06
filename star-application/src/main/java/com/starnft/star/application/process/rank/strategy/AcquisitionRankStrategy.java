@@ -1,69 +1,38 @@
 package com.starnft.star.application.process.rank.strategy;
 
 import com.starnft.star.application.process.event.model.ActivityEventReq;
+import com.starnft.star.application.process.rank.strategy.action.IRankActionState;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.event.model.res.EventActivityExtRes;
-import com.starnft.star.domain.rank.core.rank.core.IRankService;
 import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
-import com.starnft.star.domain.rank.core.rank.model.RankItemMetaData;
-import com.starnft.star.domain.user.model.vo.UserInfo;
-import com.starnft.star.domain.user.repository.IUserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class AcquisitionRankStrategy implements IRankStrategy {
+
     @Resource
-    IRankService iRankService;
-    @Resource
-    IUserRepository iUserRepository;
+    ApplicationContext applicationContext;
     @Override
     public StarConstants.RankTypes getRankType() {
         return StarConstants.RankTypes.Acquisition;
     }
     @Override
     public void handler(RankDefinition rankDefinition, EventActivityExtRes extRes, ActivityEventReq activityEventReq) {
-        Map<String, Object> params = activityEventReq.getParams();
-        if (Objects.isNull(params)){
+        Map<String, IRankActionState> beans = applicationContext.getBeansOfType(IRankActionState.class);
+        Map<StarConstants.EventSign, IRankActionState> rankActionStateArrays = beans.values().stream().collect(Collectors.toMap(IRankActionState::getState, Function.identity()));
+        IRankActionState iRankActionState = rankActionStateArrays.get(StarConstants.EventSign.getEventSign(activityEventReq.getEventSign()));
+        if (Objects.isNull(iRankActionState)){
+            log.error("找不到关于动作「{}」的拉新动作策略器",activityEventReq.getEventSign());
             return;
         }
-        Object parentObject = params.get("parent");
-        if (Objects.isNull(parentObject)){
-            return;
-        }
-        String rankName = rankDefinition.getRankName();
-        Long parent = Long.parseLong(parentObject.toString());
-        Long number = Long.parseLong(Optional.ofNullable(params.get("number")).orElse(1).toString()) ;
-        //处理附加数据
-        RankItemMetaData rankItemMetaData= extractedRankMetaData(rankDefinition, activityEventReq);
-        if (Objects.isNull(rankItemMetaData)){
-            log.info("查询不到信息");
-            return;
-        }
-        iRankService.put(rankName, parent.toString(),number.doubleValue(),rankItemMetaData);
-    }
-
-    private RankItemMetaData extractedRankMetaData(RankDefinition rankDefinition, ActivityEventReq activityEventReq) {
-
-        if (rankDefinition.getIsExtend().equals(StarConstants.EventStatus.EVENT_STATUS_OPEN)){
-            RankItemMetaData rankItemMetaData= new RankItemMetaData();
-            log.info("排行版拥有附加数据");
-            UserInfo userInfo = iUserRepository.queryUserInfoByUserId(activityEventReq.getUserId());
-            if (Objects.isNull(userInfo)){
-                return null;
-            }
-            rankItemMetaData.setChildrenId(userInfo.getAccount());
-            rankItemMetaData.setNickName(userInfo.getNickName());
-            rankItemMetaData.setMobile(userInfo.getPhone());
-            rankItemMetaData.setAvatar(userInfo.getAvatar());
-            return rankItemMetaData;
-        }
-        return null;
-    }
-}
+      iRankActionState.manage(activityEventReq,rankDefinition);
+}}
