@@ -30,4 +30,5 @@ public class UserInfo {
     private String blockchainAddress;
 
     private String briefIntroduction;
+    private Long parent;
 }

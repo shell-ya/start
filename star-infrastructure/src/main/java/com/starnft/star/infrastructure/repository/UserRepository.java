@@ -87,6 +87,7 @@ public class UserRepository implements IUserRepository {
             userInfo.setRealPersonFlag(userInfoEntity.getRealPersonFlag());
             userInfo.setBlockchainAddress(userInfoEntity.getBlockchainAddress());
             userInfo.setBriefIntroduction(userInfoEntity.getBriefIntroduction());
+            userInfo.setParent(userInfoEntity.getParent());
             return userInfo;
         }
         return null;

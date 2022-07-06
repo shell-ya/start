@@ -26,7 +26,7 @@ public class AcquisitionRankStrategy implements IRankStrategy {
         return StarConstants.RankTypes.Acquisition;
     }
     @Override
-    public void handler(RankDefinition rankDefinition, EventActivityExtRes extRes, ActivityEventReq activityEventReq) {
+    public void handler(RankDefinition rankDefinition, EventActivityExtRes extArrays, ActivityEventReq activityEventReq) {
         Map<String, IRankActionState> beans = applicationContext.getBeansOfType(IRankActionState.class);
         Map<StarConstants.EventSign, IRankActionState> rankActionStateArrays = beans.values().stream().collect(Collectors.toMap(IRankActionState::getState, Function.identity()));
         IRankActionState iRankActionState = rankActionStateArrays.get(StarConstants.EventSign.getEventSign(activityEventReq.getEventSign()));
@@ -34,5 +34,5 @@ public class AcquisitionRankStrategy implements IRankStrategy {
             log.error("找不到关于动作「{}」的拉新动作策略器",activityEventReq.getEventSign());
             return;
         }
-      iRankActionState.manage(activityEventReq,rankDefinition);
+      iRankActionState.manage(activityEventReq,rankDefinition,extArrays);
 }}
