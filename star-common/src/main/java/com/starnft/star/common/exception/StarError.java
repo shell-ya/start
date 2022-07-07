@@ -83,6 +83,8 @@ public enum StarError {
     ORDER_CANCEL_ERROR("100047", "取消订单失败"),
     GOODS_SELF_ERROR("1000148", "禁止购买自己挂售商品"),
 
+    GOODS_DO_NOT_START_ERROR("1000049", "未到商品出售时间！"),
+
     ORDER_CANCEL_TIMES_OVERFLOW("100049", "取消订单过于频繁,操作限制1小时,请稍后再试"),
 
 

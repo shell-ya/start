@@ -1,5 +1,6 @@
 package com.starnft.star.application.process.order.impl;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONUtil;
 import com.starnft.star.application.mq.producer.order.OrderProducer;
 import com.starnft.star.application.mq.producer.wallet.WalletProducer;
@@ -89,12 +90,16 @@ public class OrderProcessor implements IOrderProcessor {
         if (goods == null) {
             throw new StarException(StarError.GOODS_NOT_FOUND);
         }
+        // 商品售卖时间验证
+        if (goods.getStartTime().before(DateUtil.date())) {
+            throw new StarException(StarError.GOODS_DO_NOT_START_ERROR);
+        }
 
         //用户下单次数验证 防重复下单
-//        Long userOrderedCount = redisUtil.hincr(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUserId()), 1L);
-//        if (userOrderedCount > 1) {
-//            throw new StarException(StarError.ORDER_REPETITION);
-//        }
+        Long userOrderedCount = redisUtil.hincr(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUserId()), 1L);
+        if (userOrderedCount > 1) {
+            throw new StarException(StarError.ORDER_REPETITION);
+        }
 
         //库存验证
         String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), orderGrabReq.getThemeId());
@@ -160,7 +165,7 @@ public class OrderProcessor implements IOrderProcessor {
                 });
                 if (isSuccess) {
                     //市场订单交易成功 更新卖家余额
-                    if (orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())){
+                    if (orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
                         walletProducer.receivablesCallback(createTranReq(orderPayReq));
                     }
                     return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn());
@@ -225,7 +230,7 @@ public class OrderProcessor implements IOrderProcessor {
             if (redisLockUtils.lock(lockKey, RedisKey.SECKILL_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.SECKILL_ORDER_TRANSACTION.getTime()))) {
                 return orderService.orderCancel(orderGrabReq.getUid(), orderGrabReq.getOrderSn(),
                         orderGrabReq.getOrderSn().startsWith(StarConstants.OrderPrefix.PublishGoods.getPrefix()) ?
-                        StarConstants.OrderType.PUBLISH_GOODS : StarConstants.OrderType.MARKET_GOODS);
+                                StarConstants.OrderType.PUBLISH_GOODS : StarConstants.OrderType.MARKET_GOODS);
             }
         } finally {
             redisLockUtils.unlock(lockKey);
