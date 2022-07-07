@@ -3,7 +3,7 @@
 <mapper namespace="com.starnft.star.infrastructure.mapper.banner.BannerMapper">
 
     <select id="queryBanner" resultType="com.starnft.star.infrastructure.entity.banner.BannerEntity">
-        SELECT id, title, img_url, `position` AS position, url
+        SELECT id, title, img_url, `position` AS position, url,jump_type
         FROM star_banner
         WHERE is_deleted = 0
           AND `position` = #{type}
