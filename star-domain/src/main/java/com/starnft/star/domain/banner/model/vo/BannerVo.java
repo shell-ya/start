@@ -18,6 +18,8 @@ public class BannerVo {
     private String imgUrl;
     @ApiModelProperty("展示位置")
     private Integer position;
-    @ApiModelProperty("外链地址")
+    @ApiModelProperty("链接地址")
     private String url;
+    @ApiModelProperty(" 跳转类型 0 不跳转 1 外链接 2 内链接")
+    private Integer jumpType;
 }

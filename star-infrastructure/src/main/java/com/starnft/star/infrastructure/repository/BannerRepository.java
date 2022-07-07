@@ -28,6 +28,7 @@ public class BannerRepository implements IBannerRepository {
                 .title(item.getTitle())
                 .imgUrl(item.getImgUrl())
                 .position(item.getPosition())
+                .jumpType(item.getJumpType())
                 .url(item.getUrl()).build()
         ).collect(Collectors.toList());
     }
