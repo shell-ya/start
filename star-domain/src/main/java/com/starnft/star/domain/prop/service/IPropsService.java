@@ -1,5 +1,6 @@
 package com.starnft.star.domain.prop.service;
 
+import com.starnft.star.domain.prop.model.req.PropsConsumptionReq;
 import com.starnft.star.domain.prop.model.req.PropsListReq;
 import com.starnft.star.domain.prop.model.res.PropsListRes;
 import com.starnft.star.domain.prop.model.vo.PropsVO;
@@ -11,4 +12,8 @@ public interface IPropsService {
     List<PropsListRes> obtainProps(PropsListReq req);
 
     PropsVO queryPropsDetails(Long propsId);
+
+    List<PropsVO> propsList();
+
+    Integer propsConsumption(PropsConsumptionReq req);
 }

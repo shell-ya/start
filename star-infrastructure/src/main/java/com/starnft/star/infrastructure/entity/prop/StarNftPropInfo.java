@@ -54,6 +54,12 @@ public class StarNftPropInfo extends BaseEntity implements Serializable {
     @ApiModelProperty(name = "道具描述", notes = "")
     private String propDesc;
 
+    /**
+     * 道具描述
+     */
+    @ApiModelProperty(name = "道具执行器", notes = "")
+    private String execution;
+
     public Long getId() {
         return id;
     }
@@ -116,5 +122,13 @@ public class StarNftPropInfo extends BaseEntity implements Serializable {
 
     public void setPropDesc(String propDesc) {
         this.propDesc = propDesc;
+    }
+
+    public String getExecution() {
+        return execution;
+    }
+
+    public void setExecution(String execution) {
+        this.execution = execution;
     }
 }

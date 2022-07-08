@@ -1,5 +1,6 @@
 package com.starnft.star.domain.prop.model.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -53,4 +54,11 @@ public class PropsVO implements Serializable {
      */
     @ApiModelProperty(name = "道具描述", notes = "")
     private String propDesc;
+
+    /**
+     * 道具执行器
+     */
+    @ApiModelProperty(name = "道具执行器", notes = "")
+    @JsonIgnore
+    private String execution;
 }

@@ -12,4 +12,6 @@ public interface IPropsRepository {
     List<PropsListRes> obtainProps(PropsListReq req);
 
     PropsVO queryPropsDetails(Long propsId);
+
+    List<PropsVO> propsList();
 }

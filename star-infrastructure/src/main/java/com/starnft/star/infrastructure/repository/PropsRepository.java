@@ -37,4 +37,9 @@ public class PropsRepository implements IPropsRepository {
         StarNftPropInfo starNftPropInfo = starNftPropInfoMapper.selectById(propsId);
         return BeanColverUtil.colver(starNftPropInfo, PropsVO.class);
     }
+
+    @Override
+    public List<PropsVO> propsList() {
+        return BeanColverUtil.colverList(starNftPropInfoMapper.queryAll(), PropsVO.class);
+    }
 }
