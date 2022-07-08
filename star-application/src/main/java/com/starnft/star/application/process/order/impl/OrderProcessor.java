@@ -91,15 +91,15 @@ public class OrderProcessor implements IOrderProcessor {
             throw new StarException(StarError.GOODS_NOT_FOUND);
         }
         // 商品售卖时间验证
-        if (goods.getStartTime().before(DateUtil.date())) {
+        if (DateUtil.date().before(goods.getStartTime())) {
             throw new StarException(StarError.GOODS_DO_NOT_START_ERROR);
         }
 
         //用户下单次数验证 防重复下单
-        Long userOrderedCount = redisUtil.hincr(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUserId()), 1L);
-        if (userOrderedCount > 1) {
-            throw new StarException(StarError.ORDER_REPETITION);
-        }
+//        Long userOrderedCount = redisUtil.hincr(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUserId()), 1L);
+//        if (userOrderedCount > 1) {
+//            throw new StarException(StarError.ORDER_REPETITION);
+//        }
 
         //库存验证
         String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), orderGrabReq.getThemeId());
@@ -228,9 +228,14 @@ public class OrderProcessor implements IOrderProcessor {
         try {
             //锁住当前订单交易
             if (redisLockUtils.lock(lockKey, RedisKey.SECKILL_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.SECKILL_ORDER_TRANSACTION.getTime()))) {
-                return orderService.orderCancel(orderGrabReq.getUid(), orderGrabReq.getOrderSn(),
+                OrderPlaceRes orderPlaceRes = orderService.orderCancel(orderGrabReq.getUid(), orderGrabReq.getOrderSn(),
                         orderGrabReq.getOrderSn().startsWith(StarConstants.OrderPrefix.PublishGoods.getPrefix()) ?
                                 StarConstants.OrderType.PUBLISH_GOODS : StarConstants.OrderType.MARKET_GOODS);
+                Object times = redisUtil.hget(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUid()));
+                if (times != null) {
+                    redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUid()));
+                }
+                return orderPlaceRes;
             }
         } finally {
             redisLockUtils.unlock(lockKey);
