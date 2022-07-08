@@ -116,13 +116,14 @@ public class OrderService implements IOrderService {
 
     private void logTimes(Long uid) {
         //记录取消订单次数 达到上限禁止下单12小时
-        redisUtil.incr(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), uid), 1);
         if (redisUtil.hasKey(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), uid))) {
             Long ttl = redisUtil.getTtl(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), uid), TimeUnit.SECONDS);
+            redisUtil.incr(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), uid), 1);
             redisUtil.expire(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), uid), ttl);
             return;
         }
         //过期时间30min
+        redisUtil.incr(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), uid), 1);
         redisUtil.expire(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), uid), RedisKey.ORDER_BREAK_COUNT.getTime());
     }
 
