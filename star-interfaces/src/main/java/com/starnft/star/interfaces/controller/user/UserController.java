@@ -185,4 +185,10 @@ public class UserController {
         return RopResponse.success(this.userCore.shareCodeInfo(userId));
     }
 
+    @ApiOperation("校验用户是否已经注册")
+    @PostMapping("/userinfo/isRegister")
+    public RopResponse<Boolean> isRegister(String phone) {
+        return RopResponse.success(this.userCore.isRegister(phone));
+    }
+
 }

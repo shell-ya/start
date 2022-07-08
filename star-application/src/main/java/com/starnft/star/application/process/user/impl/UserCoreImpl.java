@@ -58,6 +58,7 @@ public class UserCoreImpl implements UserCore {
     RedisTemplate redisTemplate;
     @Resource
     ActivityEventProducer activityEventProducer;
+
     @Override
     public UserInfoRes loginByPassword(@Valid UserLoginReq req) {
         Optional.ofNullable(req.getPhone())
@@ -81,11 +82,11 @@ public class UserCoreImpl implements UserCore {
     }
 
     private void activitySync(UserLoginReq req, UserRegisterInfoVO userInfo) {
-        if (StringUtils.isBlank(req.getShareCode())||StringUtils.isBlank(req.getActivityType())){
+        if (StringUtils.isBlank(req.getShareCode()) || StringUtils.isBlank(req.getActivityType())) {
             return;
         }
         Boolean isRegister = redisTemplate.hasKey(String.format(RedisKey.REDIS_USER_REG_NEW.getKey(), userInfo.getUserId()));
-        if (isRegister){
+        if (isRegister) {
             try {
                 RegisterEventReq rankEventReq = new RegisterEventReq();
                 rankEventReq.setUserId(userInfo.getUserId());
@@ -95,9 +96,9 @@ public class UserCoreImpl implements UserCore {
                 rankEventReq.setActivitySign(req.getActivityType());
                 activityEventProducer.sendScopeMessage(EventReqAssembly.assembly(rankEventReq));
 
-            }catch (Exception e){
+            } catch (Exception e) {
 
-            }finally {
+            } finally {
                 redisTemplate.delete(String.format(RedisKey.REDIS_USER_REG_NEW.getKey(), userInfo.getUserId()));
             }
         }
@@ -335,7 +336,7 @@ public class UserCoreImpl implements UserCore {
             //根据协议场景查询弹窗信息
             AgreementPopupInfoVO agreementPopupInfoVO = this.userRepository.queryAgreementPopupByScene(agreementScene);
 
-            if (Objects.isNull(agreementPopupInfoVO)){
+            if (Objects.isNull(agreementPopupInfoVO)) {
                 return agreementAndNoticeRes;
             }
             agreementAndNoticeRes.setAgreementDetailResList(agreementDetailResList);
@@ -411,6 +412,12 @@ public class UserCoreImpl implements UserCore {
     public String shareCodeInfo(Long userId) {
         return InvitationCodeUtil.gen(userId);
     }
+
+    @Override
+    public Boolean isRegister(String phone) {
+        return this.redisTemplate.opsForValue().getBit(RedisKey.REDIS_USER_IS_REGISTERED.getKey(), Long.parseLong(phone));
+    }
+
     private void popupAgreement(PopupAgreementRes popupAgreementRes
             , List<AgreementVO> agreementVOS
             , Integer authorizationSceneId) {

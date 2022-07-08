@@ -146,4 +146,6 @@ public interface UserCore {
     Boolean isCertification(Long userId);
 
     String shareCodeInfo(Long userId);
+
+    Boolean isRegister(String phone);
 }
