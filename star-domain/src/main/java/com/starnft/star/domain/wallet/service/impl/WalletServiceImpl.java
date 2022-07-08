@@ -33,10 +33,8 @@ import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -281,6 +279,13 @@ public class WalletServiceImpl implements WalletService {
                     String withdrawTimesKey = String.format(RedisKey.REDIS_WITHDRAW_TIMES.getKey(),
                             new StringBuffer(String.valueOf(withDrawReq.getUid())).append(withDrawReq.getWalletId()));
                     redisUtil.incr(withdrawTimesKey, 1);
+                    Calendar instance = Calendar.getInstance();
+                    instance.add(Calendar.DATE,1);
+                    instance.set(Calendar.HOUR_OF_DAY, 0);
+                    instance.set(Calendar.SECOND, 0);
+                    instance.set(Calendar.MINUTE, 0);
+                    instance.set(Calendar.MILLISECOND, 0);
+                    redisUtil.expire(withdrawTimesKey, (instance.getTimeInMillis() - System.currentTimeMillis()) / 1000, TimeUnit.SECONDS);
                 }
             }
         } catch (Exception e) {
@@ -552,7 +557,7 @@ public class WalletServiceImpl implements WalletService {
         number.setMaximumFractionDigits(3);
         percent.setMaximumFractionDigits(4);
         return new ReceivablesCalculateResult(number.format(calculated.setScale(2, BigDecimal.ROUND_HALF_DOWN)), percent.format(config.getServiceRate()),
-                percent.format(config.getCopyrightRate()),transRate.toPlainString(),copyrightRate.toPlainString());
+                percent.format(config.getCopyrightRate()), transRate.toPlainString(), copyrightRate.toPlainString());
 
     }
 
