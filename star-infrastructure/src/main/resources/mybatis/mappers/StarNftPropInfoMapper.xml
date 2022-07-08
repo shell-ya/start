@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.prop.StarNftPropInfoMapper">
+    <resultMap type="com.starnft.star.infrastructure.entity.prop.StarNftPropInfo" id="StarNftPropInfoMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="isDeleted" column="is_deleted" jdbcType="BIGINT"/>
+        <result property="createdAt" column="created_at" jdbcType="DATE"/>
+        <result property="createdBy" column="created_by" jdbcType="VARCHAR"/>
+        <result property="modifiedAt" column="modified_at" jdbcType="DATE"/>
+        <result property="modifiedBy" column="modified_by" jdbcType="VARCHAR"/>
+        <result property="propType" column="prop_type" jdbcType="INTEGER"/>
+        <result property="propName" column="prop_name" jdbcType="VARCHAR"/>
+        <result property="propLevel" column="prop_level" jdbcType="INTEGER"/>
+        <result property="expire" column="expire" jdbcType="DATE"/>
+        <result property="propIcon" column="prop_icon" jdbcType="VARCHAR"/>
+        <result property="propTime" column="prop_time" jdbcType="DATE"/>
+        <result property="propDesc" column="prop_desc" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 通过ID查询单条数据 -->
+    <select id="queryById" resultMap="StarNftPropInfoMap">
+        select
+            id,is_deleted,created_at,created_by,modified_at,modified_by,prop_type,prop_name,prop_level,expire,prop_icon,prop_time,prop_desc
+        from star_nft_prop_info
+        where id = #{id}
+    </select>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from star_nft_prop_info where id = #{id}
+    </delete>
+</mapper>

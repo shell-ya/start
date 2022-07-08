@@ -75,10 +75,11 @@ public class OrderProcessor implements IOrderProcessor {
     @Override
     public OrderGrabRes orderGrab(OrderGrabReq orderGrabReq) {
         // 恶意下单校验
-        Long record = (Long) redisUtil.get(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), orderGrabReq.getUserId()));
+        Object record = redisUtil.get(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), orderGrabReq.getUserId()));
         if (record != null) {
             throw new StarException(StarError.ORDER_CANCEL_TIMES_OVERFLOW);
         }
+
         Integer breakTimes = (Integer) redisUtil.get(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), orderGrabReq.getUserId()));
         if (Objects.nonNull(breakTimes) && breakTimes > 3) {
             redisUtil.set(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), orderGrabReq.getUserId()), orderGrabReq.getUserId(), RedisKey.ORDER_BREAK_RECORD.getTime());
