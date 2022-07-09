@@ -50,9 +50,9 @@ public class StarConstants {
     public enum RankTypes {
         Consumption(2L, "积分"),
         Acquisition(1L, "拉新");
-        private final  Long value;
+        private final Long value;
 
-        private final  String desc;
+        private final String desc;
 
         RankTypes(Long value, String desc) {
             this.value = value;
@@ -62,7 +62,8 @@ public class StarConstants {
         public Long getValue() {
             return value;
         }
-        public String  getDesc() {
+
+        public String getDesc() {
             return desc;
         }
     }
@@ -337,20 +338,21 @@ public class StarConstants {
             return prefix;
         }
     }
-    public static class  EventStatus {
 
-      public static   final Integer EVENT_STATUS_OPEN =1;
-      public static  final  Integer EVENT_STATUS_CLOSE =0;
+    public static class EventStatus {
+
+        public static final Integer EVENT_STATUS_OPEN = 1;
+        public static final Integer EVENT_STATUS_CLOSE = 0;
     }
 
-    public  enum   EventSign {
+    public enum EventSign {
 
         Register("register"),
         Buy("buy");
         private final String sign;
 
         EventSign(String sign) {
-            this.sign=sign;
+            this.sign = sign;
         }
 
         public String getSign() {
@@ -359,18 +361,19 @@ public class StarConstants {
 
         public static EventSign getEventSign(String sign) {
             for (EventSign value : values()) {
-                if (value.getSign().equals(sign)){
+                if (value.getSign().equals(sign)) {
                     return value;
                 }
             }
-            return  null;
+            return null;
         }
     }
-    public enum   ActivityType {
+
+    public enum ActivityType {
         Scope(2, "积分活动"),
         Rank(1, "排行版活动");
-        private final Integer  value;
-        private final String   desc;
+        private final Integer value;
+        private final String desc;
 
         ActivityType(Integer value, String desc) {
             this.value = value;
@@ -385,18 +388,18 @@ public class StarConstants {
             return desc;
         }
     }
-    public static class  ScopeMold {
 
-        public static   final Integer UP =1;
-        public static  final  Integer DOWN =0;
+    public static class ScopeMold {
+
+        public static final Integer UP = 1;
+        public static final Integer DOWN = 0;
     }
 
-    public enum userThemeStatus{
+    public enum userThemeStatus {
 
-        PURCHASED(0,"已购买"),
-        PENDING(1,"挂售中"),
-        SOLD(2,"已售出")
-        ;
+        PURCHASED(0, "已购买"),
+        PENDING(1, "挂售中"),
+        SOLD(2, "已售出");
         private Integer code;
         private String desc;
 
@@ -422,16 +425,48 @@ public class StarConstants {
         }
     }
 
-    public enum PropsLevel{
+    public enum PropsLevel {
 
         NORMAL_WHITE(1),
         BLUE(2),
-
+        PURPLE(3),
+        GOLD(4),
+        LEGEND(5),
         ;
         private Integer code;
 
         PropsLevel(Integer code) {
             this.code = code;
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public void setCode(Integer code) {
+            this.code = code;
+        }
+    }
+
+    public enum PropsType {
+
+        CONSUMPTION(1, "消耗品"),
+        PERMANENT(2, "长期存在的"),
+        ;
+        private Integer code;
+        private String desc;
+
+        PropsType(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
         }
 
         public Integer getCode() {

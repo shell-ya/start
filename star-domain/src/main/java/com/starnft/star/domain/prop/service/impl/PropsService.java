@@ -1,8 +1,10 @@
 package com.starnft.star.domain.prop.service.impl;
 
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.prop.model.req.PropsConsumptionReq;
 import com.starnft.star.domain.prop.model.req.PropsListReq;
 import com.starnft.star.domain.prop.model.res.PropsListRes;
+import com.starnft.star.domain.prop.model.vo.PropsRelationVO;
 import com.starnft.star.domain.prop.model.vo.PropsVO;
 import com.starnft.star.domain.prop.repository.IPropsRepository;
 import com.starnft.star.domain.prop.service.IPropsService;
@@ -23,6 +25,11 @@ public class PropsService implements IPropsService {
     }
 
     @Override
+    public PropsRelationVO specificProp(Long uid, Long propId) {
+        return propsRepository.specificProps(uid, propId);
+    }
+
+    @Override
     public PropsVO queryPropsDetails(Long propsId) {
         return propsRepository.queryPropsDetails(propsId);
     }
@@ -33,8 +40,15 @@ public class PropsService implements IPropsService {
     }
 
     @Override
-    public Integer propsConsumption(PropsConsumptionReq req) {
+    public Boolean propsConsumption(PropsConsumptionReq req) {
 
-        return null;
+        //执行道具使用逻辑
+        req.getInvoker().run();
+        Boolean isSuccess = false;
+        if (req.getPropsRelationVO().getPropType().equals(StarConstants.PropsType.CONSUMPTION.getCode())) {
+            isSuccess = propsRepository.modifyPropsNums(req.getPropsRelationVO().getId(), req.getUserId(), req.getPropId(), req.getPropsRelationVO().getPropCounts() - 1);
+        }
+
+        return isSuccess;
     }
 }

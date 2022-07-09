@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class InvokersLoader {
 
-    public  Map<Long, String> executionsMapping = new ConcurrentHashMap<>();
+    public Map<Long, String> executionsMapping = new ConcurrentHashMap<>();
 
     @Resource
     private IPropsService propsService;
@@ -29,8 +29,9 @@ public class InvokersLoader {
         }
     }
 
-//    @Scheduled(cron = "0/15 * * * * ?")
+    //    @Scheduled(cron = "0/15 * * * * ?")
     private void refresh() {
+        executionsMapping.clear();
         initExec();
     }
 }

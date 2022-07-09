@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.prop.model.req.PropsListReq;
 import com.starnft.star.domain.prop.model.res.PropsListRes;
+import com.starnft.star.domain.prop.model.vo.PropsRelationVO;
 import com.starnft.star.domain.prop.model.vo.PropsVO;
 import com.starnft.star.domain.prop.repository.IPropsRepository;
 import com.starnft.star.infrastructure.entity.prop.StarNftPropInfo;
@@ -36,6 +37,17 @@ public class PropsRepository implements IPropsRepository {
     public PropsVO queryPropsDetails(Long propsId) {
         StarNftPropInfo starNftPropInfo = starNftPropInfoMapper.selectById(propsId);
         return BeanColverUtil.colver(starNftPropInfo, PropsVO.class);
+    }
+
+    @Override
+    public PropsRelationVO specificProps(Long uid, Long propId) {
+        StarNftPropRelation starNftPropRelation = starNftPropRelationMapper.selectSpecific(uid, propId);
+        return BeanColverUtil.colver(starNftPropRelation, PropsRelationVO.class);
+    }
+
+    @Override
+    public Boolean modifyPropsNums(Long id, Long uid, Long propId, Integer counts) {
+        return starNftPropRelationMapper.modifyPropsCounts(id, uid, propId, counts) == 1;
     }
 
     @Override

@@ -63,114 +63,39 @@
         </if>
     </sql>
 
-    <sql id="update">
-        <if test="id != null and id != ''">
-            id = #{id},
-        </if>
-        <if test="isDeleted != null ">
-            is_deleted = #{isDeleted},
-        </if>
-        <if test="createdAt != null and createdAt != ''">
-            created_at = #{createdAt},
-        </if>
-        <if test="createdBy != null ">
-            created_by = #{createdBy},
-        </if>
-        <if test="modifiedAt != null and modifiedAt != ''">
-            modified_at = #{modifiedAt},
-        </if>
-        <if test="modifiedBy != null and modifiedBy != ''">
-            modified_by = #{modifiedBy},
-        </if>
-        <if test="uid != null ">
-            uid = #{uid},
-        </if>
-        <if test="propId != null ">
-            prop_id = #{propId},
-        </if>
-        <if test="propCounts != null ">
-            prop_counts = #{propCounts},
-        </if>
-        <if test="expire != null and expire != ''">
-            expire = #{expire},
-        </if>
-        <if test="propIcon != null and propIcon != ''">
-            prop_icon = #{propIcon},
-        </if>
-        <if test="propLevel != null ">
-            prop_level = #{propLevel},
-        </if>
-        <if test="propType != null ">
-            prop_type = #{propType},
-        </if>
-    </sql>
 
-    <!-- 通过ID查询单条数据 -->
-    <select id="queryById" resultMap="StarNftPropRelationMap">
-        select id,
-               is_deleted,
-               created_at,
-               created_by,
-               modified_at,
-               modified_by,
-               uid,
-               prop_id,
-               prop_counts,
-               expire,
-               prop_icon,
-               prop_level,
-               prop_type
-        from star_nft_prop_relation
-        where id = #{id}
-    </select>
-
-    <!--分页查询指定行数据-->
-    <select id="queryAllByLimit" resultMap="StarNftPropRelationMap">
-        select
-        id,is_deleted,created_at,created_by,modified_at,modified_by,uid,prop_id,prop_counts,expire,prop_icon,prop_level,prop_type
-        from star_nft_prop_relation
+    <select id="selectSpecific" resultMap="StarNftPropRelationMap">
+        <include refid="items"/>
+        from
+        star_nft_prop_relation
         <where>
-            <if test="id != null and id != ''">
-                and id = #{id}
-            </if>
-            <if test="isDeleted != null and isDeleted != ''">
-                and is_deleted = #{isDeleted}
-            </if>
-            <if test="createdAt != null and createdAt != ''">
-                and created_at = #{createdAt}
-            </if>
-            <if test="createdBy != null and createdBy != ''">
-                and created_by = #{createdBy}
-            </if>
-            <if test="modifiedAt != null and modifiedAt != ''">
-                and modified_at = #{modifiedAt}
-            </if>
-            <if test="modifiedBy != null and modifiedBy != ''">
-                and modified_by = #{modifiedBy}
-            </if>
-            <if test="uid != null and uid != ''">
+            <if test="uid != null ">
                 and uid = #{uid}
             </if>
-            <if test="propId != null and propId != ''">
+            <if test="propId != null ">
                 and prop_id = #{propId}
             </if>
-            <if test="propCounts != null and propCounts != ''">
-                and prop_counts = #{propCounts}
+        </where>
+    </select>
+
+    <update id="modifyPropsCounts">
+        update star_nft_prop_relation
+        <set>
+            <if test="propCounts != null and propCounts > 0">
+                prop_counts = #{counts}
             </if>
-            <if test="expire != null and expire != ''">
-                and expire = #{expire}
+        </set>
+        <where>
+            <if test="id != null ">
+                and id = #{id}
             </if>
-            <if test="propIcon != null and propIcon != ''">
-                and prop_icon = #{propIcon}
+            <if test="uid != null ">
+                and uid = #{uid}
             </if>
-            <if test="propLevel != null and propLevel != ''">
-                and prop_level = #{propLevel}
-            </if>
-            <if test="propType != null and propType != ''">
-                and prop_type = #{propType}
+            <if test="propId != null ">
+                and prop_id = #{propId}
             </if>
         </where>
-        limit #{pageable.offset}, #{pageable.pageSize}
-    </select>
+    </update>
 
 </mapper>
