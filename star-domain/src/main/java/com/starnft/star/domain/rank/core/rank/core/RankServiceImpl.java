@@ -153,9 +153,10 @@ public class RankServiceImpl implements IRankService {
         for (Object userId :
                 set) {
             RankingsItem rankingsItem = new RankingsItem();
-            rankingsItem.setAccount(Long.valueOf((String) userId));
+//            rankingsItem.setAccount(Long.valueOf((String) userId));
             rankingsItem.setTotal(redisTemplate.opsForHash().size(String.format(RedisKey.RANK_TOTAL_USER.getKey(),rankName,userId)));
             rankingsItem.setValid(redisTemplate.opsForHash().size(String.format(RedisKey.RANK_VALID_USER.getKey(),rankName,userId)));
+            rankingsItem.setPhone((String) redisTemplate.opsForHash().get(String.format(RedisKey.RANK_USER_MAPPING.getKey(), rankName), userId));
             items.add(rankingsItem);
         }
 
@@ -203,5 +204,10 @@ public class RankServiceImpl implements IRankService {
                 .collect(Collectors.toList());
 
         return rankDefinitions;
+    }
+
+    @Override
+    public boolean setUserPhoneMapping(String rankName, String userId, String phone) {
+       return redisTemplate.opsForHash().putIfAbsent(String.format(RedisKey.RANK_USER_MAPPING.getKey(),rankName),userId,phone);
     }
 }

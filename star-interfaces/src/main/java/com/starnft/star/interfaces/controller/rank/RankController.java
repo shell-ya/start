@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 public class RankController {
 
     final IRankProcessor rankProcessor;
-    @ApiOperation("获取排行棒数据")
+    @ApiOperation("获取排行榜数据")
     @GetMapping("/rankings")
     @TokenIgnore
     public RopResponse<Rankings> rankings(@RequestBody RequestConditionPage<RankReq> request) {

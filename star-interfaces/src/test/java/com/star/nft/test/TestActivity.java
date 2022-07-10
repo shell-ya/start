@@ -104,7 +104,7 @@ public class TestActivity {
         userLoginReq.setCode("1563531");
 //        userLoginReq.setPassword();
         userLoginReq.setShareCode(code.getShardCode());
-        userLoginReq.setPhone("15830887966");
+        userLoginReq.setPhone("15830887988");
         UserInfoRes userInfoRes = userCore.loginByPhoneAndRegister(userLoginReq);
 
     }

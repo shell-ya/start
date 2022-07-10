@@ -1,5 +1,7 @@
 package com.starnft.star.domain.rank.core.rank.model.res;
 
+import com.starnft.star.common.annotations.Desensitized;
+import com.starnft.star.common.enums.SensitiveTypeEnum;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -14,6 +16,7 @@ public class RankingsItem {
 //    @ApiModelProperty(value = "排名")
 //    private Integer rank;
     @ApiModelProperty(value = "手机号")
+    @Desensitized(type = SensitiveTypeEnum.MOBILE_PHONE)
     private String phone;
     @ApiModelProperty(value = "账号")
     private Long account;

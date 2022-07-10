@@ -44,6 +44,8 @@ public class RankRegisterActionState implements IRankActionState {
             log.info("查询不到信息");
             return;
         }
+        UserInfo parentUser = iUserRepository.queryUserInfoByUserId(parent);
+        iRankService.setUserPhoneMapping(rankName,parent.toString(),parentUser.getPhone());
         iRankService.put(rankName, parent.toString(),number.doubleValue(),rankItemMetaData);
     }
 

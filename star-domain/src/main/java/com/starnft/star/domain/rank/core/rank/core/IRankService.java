@@ -142,4 +142,6 @@ public interface IRankService {
     public List<InvitationHistoryItem> getRankInvitation(String rankName, Long userId, int page, int pastSize);
 
     public List<RankDefinition> getAllRank();
+
+    public boolean setUserPhoneMapping(String rankName,String userId,String phone);
 }
