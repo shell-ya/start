@@ -51,12 +51,12 @@ public class LoginByVerificationCodeStrategy extends UserLoginStrategy{
         if (Objects.isNull(userInfo)) {
 
             //校验code
-//            String key = String.format(RedisKey.REDIS_CODE_REGISIER.getKey(), userLoginDTO.getPhone());
-//            String smsCode =  String.valueOf(redisTemplate.opsForValue().get(key));
-//
-//            if (!smsCode.equals(userLoginDTO.getCode())){
-//                throw new StarException(StarError.CODE_NOT_FUND);
-//            }
+            String key = String.format(RedisKey.REDIS_CODE_REGISIER.getKey(), userLoginDTO.getPhone());
+            String smsCode =  String.valueOf(redisTemplate.opsForValue().get(key));
+
+            if (!smsCode.equals(userLoginDTO.getCode())){
+                throw new StarException(StarError.CODE_NOT_FUND);
+            }
 
             //注册账号
             UserRegisterStrategy userRegisterStrategy = applicationContext.getBean(RegisterTypeEnum.SMS_CODE_REGISTER.getStrategy(), UserRegisterStrategy.class);
