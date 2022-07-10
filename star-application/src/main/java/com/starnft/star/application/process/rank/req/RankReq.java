@@ -13,8 +13,8 @@ import lombok.Data;
 @ApiModel(value = "排行榜请求类")
 public class RankReq {
 
-    @ApiModelProperty("排行榜名称")
-    private String rankName;
+//    @ApiModelProperty("排行榜名称")
+//    private String rankName;
 
     @ApiModelProperty(value = "用户id")
     private Long userId;

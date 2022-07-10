@@ -11,6 +11,7 @@ import com.starnft.star.domain.rank.core.rank.model.res.InvitationHistoryItem;
 import com.starnft.star.domain.rank.core.rank.model.res.InvitationItem;
 import com.starnft.star.domain.rank.core.rank.model.res.RankingsItem;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.ListUtils;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -192,5 +193,15 @@ public class RankServiceImpl implements IRankService {
             throw new StarException(StarError.SYSTEM_ERROR);
         }
         return items;
+    }
+
+    @Override
+    public List<RankDefinition> getAllRank() {
+        List<Object> values = redisTemplate.opsForHash().values(RedisKey.RANK_LIST.getKey());
+        if (Objects.isNull(values)) return null;
+        List<RankDefinition> rankDefinitions = values.stream().map(item -> JSONUtil.toBean(item.toString(), RankDefinition.class))
+                .collect(Collectors.toList());
+
+        return rankDefinitions;
     }
 }

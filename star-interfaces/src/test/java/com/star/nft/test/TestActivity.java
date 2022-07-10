@@ -17,6 +17,7 @@ import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.utils.SnowflakeWorker;
+import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
 import com.starnft.star.domain.rank.core.rank.model.res.InvitationHistoryItem;
 import com.starnft.star.domain.rank.core.rank.model.res.Rankings;
 import com.starnft.star.interfaces.StarApplication;
@@ -134,33 +135,40 @@ public class TestActivity {
         rankReqRequestConditionPage.setPage(1);
         rankReqRequestConditionPage.setSize(10);
         RankReq rankReq = new RankReq();
-        rankReq.setRankName("test_rank");
+//        rankReq.setRankName("test_rank");
         rankReqRequestConditionPage.setCondition(rankReq);
         Rankings rankings = rankProcessor.rankings(rankReqRequestConditionPage);
 
         log.info(rankings.toString());
     }
 
-    @Test
-    public void rankHistory(){
-        RequestConditionPage<RankReq> rankReqRequestConditionPage = new RequestConditionPage<>();
-        rankReqRequestConditionPage.setPage(1);
-        rankReqRequestConditionPage.setSize(10);
-        RankReq rankReq = new RankReq();
-        rankReq.setRankName("test_rank");
-        rankReq.setUserId(409412742L);
-        rankReqRequestConditionPage.setCondition(rankReq);
-        List<InvitationHistoryItem> invitationHistoryItems = rankProcessor.invitationHistory(rankReqRequestConditionPage);
-        log.info(invitationHistoryItems.toString());
-    }
+//    @Test
+//    public void rankHistory(){
+//        RequestConditionPage<RankReq> rankReqRequestConditionPage = new RequestConditionPage<>();
+//        rankReqRequestConditionPage.setPage(1);
+//        rankReqRequestConditionPage.setSize(10);
+//        RankReq rankReq = new RankReq();
+//        rankReq.setRankName("test_rank");
+//        rankReq.setUserId(409412742L);
+//        rankReqRequestConditionPage.setCondition(rankReq);
+//        List<InvitationHistoryItem> invitationHistoryItems = rankProcessor.invitationHistory(rankReqRequestConditionPage);
+//        log.info(invitationHistoryItems.toString());
+//    }
+//
+//    @Test
+//    public void rankNum(){
+//        RankReq rankReq = new RankReq();
+//        rankReq.setRankName("test_rank");
+//        rankReq.setUserId(409412742L);
+//        Long aLong = rankProcessor.personNum(rankReq);
+//        log.info(aLong.toString());
+//    }
 
     @Test
-    public void rankNum(){
-        RankReq rankReq = new RankReq();
-        rankReq.setRankName("test_rank");
-        rankReq.setUserId(409412742L);
-        Long aLong = rankProcessor.personNum(rankReq);
-        log.info(aLong.toString());
+
+    public void name(){
+        RankDefinition nowRank = rankProcessor.getNowRank();
+        log.info(nowRank.toString());
     }
 
 }

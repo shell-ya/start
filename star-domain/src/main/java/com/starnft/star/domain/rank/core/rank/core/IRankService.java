@@ -140,4 +140,6 @@ public interface IRankService {
     public List<RankItemMetaData> getRankDatasAroundId(String rankName, int id, int beforeNum, int afterNum);
 
     public List<InvitationHistoryItem> getRankInvitation(String rankName, Long userId, int page, int pastSize);
+
+    public List<RankDefinition> getAllRank();
 }
