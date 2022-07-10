@@ -88,7 +88,7 @@ public class ThemeCoreImpl implements ThemeCore {
                 goodsList.add(good);
             }
         }
-        return goodsList;
+        return goodsList.stream().sorted(Comparator.comparing(secKillGoods -> secKillGoods != null ? secKillGoods.getStartTime() : new Date())).collect(Collectors.toList());
     }
 
     //更新展示库存量

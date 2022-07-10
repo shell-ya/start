@@ -291,7 +291,7 @@ public class WalletCore implements IWalletCore {
                 .status(walletRecordVO.getPayStatus())
                 .payTime(walletRecordVO.getPayTime())
                 .payType(payType)
-                .currMoney(walletRecordVO == null ? null : number.format(walletRecordVO.getCurrMoney().setScale(2)))
+                .currMoney(walletRecordVO.getCurrMoney() == null ? null : number.format(walletRecordVO.getCurrMoney().setScale(2)))
                 .transactionSn(walletRecordVO.getRecordSn()).build();
     }
 
