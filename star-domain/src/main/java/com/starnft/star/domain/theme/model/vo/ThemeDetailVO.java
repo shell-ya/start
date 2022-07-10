@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Builder
 @AllArgsConstructor
@@ -36,4 +37,8 @@ public class ThemeDetailVO implements Serializable {
 
     private String tags;
     private String contractAddress;
+
+    private Date marketOpenDate;
+
+    private Integer isResale;
 }

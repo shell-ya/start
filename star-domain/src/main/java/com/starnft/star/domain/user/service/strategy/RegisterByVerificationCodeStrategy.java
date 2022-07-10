@@ -59,7 +59,7 @@ public class RegisterByVerificationCodeStrategy extends UserRegisterStrategy{
     //上级参数封装
     private void activityParent(UserLoginDTO registerInfo, UserInfoAddDTO userInfoAddDTO) {
         if (StringUtils.isNotBlank(registerInfo.getCode())){
-            Long parent = InvitationCodeUtil.decode(registerInfo.getCode());
+            Long parent = InvitationCodeUtil.decode(registerInfo.getShareCode());
             userInfoAddDTO.setParent(parent);
 
         }

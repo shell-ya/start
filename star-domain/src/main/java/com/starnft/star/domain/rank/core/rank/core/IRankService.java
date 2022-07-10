@@ -2,6 +2,9 @@ package com.starnft.star.domain.rank.core.rank.core;
 
 import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
 import com.starnft.star.domain.rank.core.rank.model.RankItemMetaData;
+import com.starnft.star.domain.rank.core.rank.model.res.InvitationHistoryItem;
+import com.starnft.star.domain.rank.core.rank.model.res.InvitationItem;
+import com.starnft.star.domain.rank.core.rank.model.res.RankingsItem;
 
 import java.util.List;
 
@@ -42,6 +45,7 @@ public interface IRankService {
      * @return 如果存在之前的值，返回之前的值，否则，返回-1
      */
     public Double put(String rankName, String  key, double value, RankItemMetaData rankItemMetaData);
+    public Double validPut(String rankName, String  key, double value, RankItemMetaData rankItemMetaData);
     /**
      * 设置一个数据，如果该id存在，替换为当前数据
      * @param rankName 排行的名字
@@ -95,7 +99,7 @@ public interface IRankService {
      * @param id 数据提供者的id
      * @return 对应id玩家的排行名次，没有或查询失败返回-1
      */
-    public int getRankNum(String rankName,int id);
+    public Long getRankNum(String rankName,Long id);
     /**
      * 根据id查询一个玩家的排行数据
      * @param rankName 排行的名字
@@ -124,7 +128,7 @@ public interface IRankService {
      * @param pageSize 每一页的大小
      * @return {@code RankData}
      */
-    public List<RankItemMetaData> getRankDatasByPage(String rankName, int page, int pageSize);
+    public List<RankingsItem> getRankDatasByPage(String rankName, int page, int pageSize);
     /**
      * 获取用户及其前后几个用户的排行数据
      * @param rankName 排行的名字
@@ -134,4 +138,6 @@ public interface IRankService {
      * @return {@code RankData}
      */
     public List<RankItemMetaData> getRankDatasAroundId(String rankName, int id, int beforeNum, int afterNum);
+
+    public List<InvitationHistoryItem> getRankInvitation(String rankName, Long userId, int page, int pastSize);
 }

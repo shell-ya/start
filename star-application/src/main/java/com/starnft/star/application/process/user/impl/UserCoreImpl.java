@@ -16,8 +16,12 @@ import com.starnft.star.common.utils.Assert;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.common.utils.InvitationCodeUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
+import com.starnft.star.domain.event.model.res.EventActivityRes;
+import com.starnft.star.domain.event.model.service.IEventActivityService;
 import com.starnft.star.domain.scope.model.res.UserScopeRes;
 import com.starnft.star.domain.scope.service.IUserScopeService;
+import com.starnft.star.domain.support.key.model.DictionaryVO;
+import com.starnft.star.domain.support.key.repo.IDictionaryRepository;
 import com.starnft.star.domain.user.model.dto.*;
 import com.starnft.star.domain.user.model.vo.*;
 import com.starnft.star.domain.user.repository.IUserRepository;
@@ -58,7 +62,10 @@ public class UserCoreImpl implements UserCore {
     RedisTemplate redisTemplate;
     @Resource
     ActivityEventProducer activityEventProducer;
-
+    @Resource
+    IEventActivityService eventActivityService;
+    @Resource
+    IDictionaryRepository dictionaryRepository;
     @Override
     public UserInfoRes loginByPassword(@Valid UserLoginReq req) {
         Optional.ofNullable(req.getPhone())
@@ -409,8 +416,16 @@ public class UserCoreImpl implements UserCore {
     }
 
     @Override
-    public String shareCodeInfo(Long userId) {
-        return InvitationCodeUtil.gen(userId);
+    public ShardCodeRes shareCodeInfo(Long userId) {
+        EventActivityRes activityRes = eventActivityService.queryEnabledActivity();
+        String shardCode = InvitationCodeUtil.gen(userId);
+        List<DictionaryVO> url = dictionaryRepository.obtainDictionary("URL");
+
+        return ShardCodeRes.builder()
+                .shardCode(shardCode)
+                .activityType(activityRes.getActivitySign())
+                .url(url.get(0).getDictCode())
+                .build();
     }
 
     @Override

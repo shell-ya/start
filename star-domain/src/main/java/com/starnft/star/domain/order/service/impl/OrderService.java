@@ -9,6 +9,7 @@ import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.Assert;
 import com.starnft.star.common.utils.BeanColverUtil;
+import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.order.model.req.OrderListReq;
 import com.starnft.star.domain.order.model.res.OrderListRes;
@@ -37,6 +38,9 @@ public class OrderService implements IOrderService {
 
     @Resource
     IOrderStateHandler orderStateHandler;
+
+    @Resource
+    RedisLockUtils redisLockUtils;
 
     @Override
     public boolean createOrder(OrderVO orderVO) {
@@ -107,6 +111,8 @@ public class OrderService implements IOrderService {
                 redisUtil.hdel(String.format(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), orderVO.getSeriesThemeInfoId()), String.valueOf(uid));
                 //清理排队信息
                 redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.name(), String.valueOf(uid));
+            }else if (orderType.equals(StarConstants.OrderType.MARKET_GOODS)){
+                redisLockUtils.unlock(String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(),orderVO.getSeriesThemeId()));
             }
             return new OrderPlaceRes(StarConstants.ORDER_STATE.PAY_CANCEL.getCode(), orderSn);
         }

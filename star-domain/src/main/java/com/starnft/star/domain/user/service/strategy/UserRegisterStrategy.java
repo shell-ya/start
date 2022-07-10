@@ -47,7 +47,7 @@ public abstract class UserRegisterStrategy {
 
         Long userId = startSaveRegisterInfo(registerInfo);
 
-        this.redisTemplate.opsForValue().setBit(RedisKey.REDIS_USER_IS_REGISTERED.getKey(), Long.parseLong(registerInfo.getPhone()), Boolean.TRUE);
+//        this.redisTemplate.opsForValue().setBit(RedisKey.REDIS_USER_IS_REGISTERED.getKey(), Long.parseLong(registerInfo.getPhone()), Boolean.TRUE);
         //注册加入拉新锁
         redisTemplate.opsForValue().setIfAbsent(String.format(RedisKey.REDIS_USER_REG_NEW.getKey(), userId), null, RedisKey.REDIS_USER_REG_NEW.getTime(), RedisKey.REDIS_USER_REG_NEW.getTimeUnit());
         //todo 触发注册逻辑

@@ -1,5 +1,6 @@
 package com.starnft.star.application.process.number.impl;
 
+import cn.hutool.core.date.DateUtil;
 import com.starnft.star.application.process.number.INumberCore;
 import com.starnft.star.application.process.number.res.ConsignDetailRes;
 import com.starnft.star.common.constant.RedisKey;
@@ -24,6 +25,7 @@ import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
 import com.starnft.star.domain.number.serivce.INumberService;
+import com.starnft.star.domain.theme.model.vo.ThemeDetailVO;
 import com.starnft.star.domain.theme.service.ThemeService;
 import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
 import com.starnft.star.domain.wallet.service.WalletConfig;
@@ -87,6 +89,16 @@ public class NumberCoreImpl implements INumberCore {
 
         // 校验是否拥有该藏品
         UserNumbersVO userNumbers = this.checkNumberOwner(uid, request.getNumberId(), UserNumberStatusEnum.PURCHASED);
+
+        //  校验是否到藏品市场开放时间
+        ThemeDetailVO themeDetailVO = themeService.queryThemeDetail(userNumbers.getThemeId());
+        if (DateUtil.date().before(themeDetailVO.getMarketOpenDate())) {
+            throw new StarException(StarError.MARKET_DO_NOT_START_ERROR);
+        }
+        //  校验藏品可交易
+        if (StarConstants.themeResaleEnum.NOT_RESALE.getCode().equals(themeDetailVO.getIsResale())){
+            throw new StarException(StarError.GOOD_NOT_RESALE_ERROR);
+        }
 
         if (!Objects.equals(userNumbers.getStatus(), UserNumberStatusEnum.PURCHASED.getCode())) {
             throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "只有已购买状态的藏品才能进行转售");

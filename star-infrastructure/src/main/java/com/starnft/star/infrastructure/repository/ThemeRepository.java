@@ -117,6 +117,8 @@ public class ThemeRepository implements IThemeRepository {
                 .themeLevel(repository.getThemeLevel())
                 .lssuePrice(repository.getLssuePrice())
                 .publishNumber(repository.getPublishNumber())
+                .marketOpenDate(repository.getMarketOpenTime())
+                .isResale(repository.getIsResale())
                 .build();
     }
 

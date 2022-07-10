@@ -18,7 +18,7 @@ public class RankingsItem {
     @ApiModelProperty(value = "账号")
     private Long account;
     @ApiModelProperty(value = "总人数")
-    private Integer total;
+    private Long total;
     @ApiModelProperty(value = "有效人数")
-    private Integer valid;
+    private Long valid;
 }

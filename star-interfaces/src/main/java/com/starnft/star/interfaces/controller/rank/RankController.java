@@ -1,6 +1,9 @@
 package com.starnft.star.interfaces.controller.rank;
 
+import com.starnft.star.application.process.rank.IRankProcessor;
+import com.starnft.star.application.process.rank.req.RankReq;
 import com.starnft.star.common.RopResponse;
+import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.utils.RandomUtil;
 import com.starnft.star.domain.rank.core.rank.model.res.InvitationHistory;
 import com.starnft.star.domain.rank.core.rank.model.res.InvitationHistoryItem;
@@ -9,15 +12,13 @@ import com.starnft.star.domain.rank.core.rank.model.res.RankingsItem;
 import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
 import com.starnft.star.domain.wallet.model.res.WalletResult;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
+import com.starnft.star.interfaces.interceptor.UserContext;
 import com.starnft.star.interfaces.interceptor.UserResolverInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -35,45 +36,56 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class RankController {
 
+    final IRankProcessor rankProcessor;
     @ApiOperation("获取排行棒数据")
     @GetMapping("/rankings")
     @TokenIgnore
-    public RopResponse<Rankings> getBalance(@RequestParam(name = "rankName") String rankName) {
-        Rankings rankings = new Rankings();
-        rankings.setRankName("邀请");
+    public RopResponse<Rankings> rankings(@RequestBody RequestConditionPage<RankReq> request) {
 
-        List<RankingsItem> rankingsItems = new ArrayList<>();
-        for (int i = 0; i < 300; i++) {
-            RankingsItem rankingsItem = new RankingsItem();
-            rankingsItem.setAccount( RandomUtil.randomLong(9));
-            rankingsItem.setPhone(RandomUtil.randomPhone());
-            rankingsItem.setTotal(RandomUtil.randomInt(10,1000));
-            rankingsItem.setValid(RandomUtil.randomInt(5,rankingsItem.getTotal()));
-            rankingsItems.add(rankingsItem);
-        }
-        rankingsItems = rankingsItems.stream().sorted(Comparator.comparing(RankingsItem::getValid,Comparator.reverseOrder())
-//                .thenComparing(RankingsItem::getValid,Comparator.reverseOrder())
-        ).collect(Collectors.toList());
-        rankings.setRankItem(rankingsItems);
-        return RopResponse.success(rankings);
+//
+//        Rankings rankings = new Rankings();
+//        rankings.setRankName("邀请");
+//
+//        List<RankingsItem> rankingsItems = new ArrayList<>();
+//        for (int i = 0; i < 300; i++) {
+//            RankingsItem rankingsItem = new RankingsItem();
+//            rankingsItem.setAccount( RandomUtil.randomLong(9));
+//            rankingsItem.setPhone(RandomUtil.randomPhone());
+//            rankingsItem.setTotal(RandomUtil.randomInt(10,1000));
+//            rankingsItem.setValid(RandomUtil.randomInt(5,rankingsItem.getTotal()));
+//            rankingsItems.add(rankingsItem);
+//        }
+//        rankingsItems = rankingsItems.stream().sorted(Comparator.comparing(RankingsItem::getValid,Comparator.reverseOrder())
+////                .thenComparing(RankingsItem::getValid,Comparator.reverseOrder())
+//        ).collect(Collectors.toList());
+//        rankings.setRankItem(rankingsItems);
+        return RopResponse.success(rankProcessor.rankings(request));
     }
 
 
     @ApiOperation("邀请记录")
     @GetMapping("/history")
     @TokenIgnore
-    public RopResponse<InvitationHistory> history(){
-        InvitationHistory invitationHistory = new InvitationHistory();
-        List<InvitationHistoryItem> items = new ArrayList<>();
+    public RopResponse< List<InvitationHistoryItem>> history(@RequestBody RequestConditionPage<RankReq> request){
+//        InvitationHistory invitationHistory = new InvitationHistory();
+//        List<InvitationHistoryItem> items = new ArrayList<>();
+//
+//        for (int i = 0; i < 40; i++) {
+//            InvitationHistoryItem item = new InvitationHistoryItem();
+//            item.setPhone(RandomUtil.randomPhone());
+//            item.setValid((int) (Long.parseLong(item.getPhone()) % 2));
+//            items.add(item);
+//        }
+//        invitationHistory.setItems(items);
+        request.getCondition().setUserId(UserContext.getUserId().getUserId());
+        return RopResponse.success(rankProcessor.invitationHistory(request));
+    }
 
-        for (int i = 0; i < 40; i++) {
-            InvitationHistoryItem item = new InvitationHistoryItem();
-            item.setPhone(RandomUtil.randomPhone());
-            item.setValid((int) (Long.parseLong(item.getPhone()) % 2));
-            items.add(item);
-        }
-        invitationHistory.setItems(items);
-        return RopResponse.success(invitationHistory);
+    @ApiOperation("个人排名")
+    @PostMapping("/person")
+    public RopResponse<Long> getPersonNum(@RequestBody RankReq rankReq){
+        rankReq.setUserId(UserContext.getUserId().getUserId());
+        return RopResponse.success(rankProcessor.personNum(rankReq));
     }
 
 }

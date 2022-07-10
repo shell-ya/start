@@ -87,6 +87,9 @@ public enum StarError {
 
     ORDER_CANCEL_TIMES_OVERFLOW("100049", "取消订单过于频繁,操作限制1小时,请稍后再试"),
 
+    MARKET_DO_NOT_START_ERROR("1000051", "未到市场开放时间！"),
+    GOOD_NOT_RESALE_ERROR("1000052","该藏品不可转售"),
+    NOT_ENABLED_ACTIVITY("1000053","未到活动开启时间"),
 
     ;
 

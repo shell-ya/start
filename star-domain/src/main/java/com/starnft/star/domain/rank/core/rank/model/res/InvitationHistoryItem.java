@@ -14,8 +14,12 @@ import java.util.Date;
 @ApiModel
 public class InvitationHistoryItem {
 
+    @ApiModelProperty(value = "用户名")
+    private String nickName;
     @ApiModelProperty(value = "手机号")
-    private String phone ;
+    private String mobile ;
+    @ApiModelProperty(value = "账户")
+    private String account;
     @ApiModelProperty(value = "是否有效")
     private Integer valid;
 //    @ApiModelProperty(value = "邀请时间")

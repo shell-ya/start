@@ -1,6 +1,9 @@
 package com.starnft.star.infrastructure.repository;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.starnft.star.common.exception.StarError;
+import com.starnft.star.common.exception.StarException;
 import com.starnft.star.domain.event.model.req.EventActivityExtReq;
 import com.starnft.star.domain.event.model.req.EventActivityReq;
 import com.starnft.star.domain.event.model.res.EventActivityExtRes;
@@ -14,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -64,6 +68,16 @@ public class EventActivityRepository implements IEventActivityRepository {
             EventActivityRes eventActivityRes = getEventActivityRes(starNftActivities);
             return eventActivityRes;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public EventActivityRes queryEnabledActivity() {
+        QueryWrapper<StarNftActivity> wrapper = new QueryWrapper<>();
+        wrapper.ne(StarNftActivity.COL_START_TIME,new Date());
+        wrapper.ge(StarNftActivity.COL_END_TIME,new Date());
+        StarNftActivity starNftActivity = starNftActivityMapper.selectOne(wrapper);
+        if (Objects.isNull(starNftActivity)) throw new StarException(StarError.NOT_ENABLED_ACTIVITY);
+        return getEventActivityRes(starNftActivity);
     }
 
     private EventActivityRes getEventActivityRes(StarNftActivity starNftActivities) {

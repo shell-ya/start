@@ -14,4 +14,6 @@ public interface IEventActivityRepository {
 
     List<EventActivityRes> queryEventActivityByIds(Set<Long> activityIds);
 
+  EventActivityRes queryEnabledActivity();
+
 }

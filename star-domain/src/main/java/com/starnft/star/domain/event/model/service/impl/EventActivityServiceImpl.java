@@ -30,4 +30,9 @@ public class EventActivityServiceImpl implements IEventActivityService {
     public List<EventActivityRes> queryEventActivityByIds(Set<Long> activityIds) {
         return iEventActivityRepository.queryEventActivityByIds(activityIds);
     }
+
+    @Override
+    public EventActivityRes queryEnabledActivity() {
+        return iEventActivityRepository.queryEnabledActivity();
+    }
 }
