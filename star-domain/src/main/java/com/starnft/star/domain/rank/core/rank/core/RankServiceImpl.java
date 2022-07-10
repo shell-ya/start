@@ -152,9 +152,9 @@ public class RankServiceImpl implements IRankService {
         for (Object userId :
                 set) {
             RankingsItem rankingsItem = new RankingsItem();
-            rankingsItem.setAccount((Long) userId);
-            rankingsItem.setTotal(redisTemplate.opsForHash().size(String.format(RedisKey.RANK_TOTAL_USER.getKey(),userId)));
-            rankingsItem.setValid(redisTemplate.opsForHash().size(String.format(RedisKey.RANK_VALID_USER.getKey(),userId)));
+            rankingsItem.setAccount(Long.valueOf((String) userId));
+            rankingsItem.setTotal(redisTemplate.opsForHash().size(String.format(RedisKey.RANK_TOTAL_USER.getKey(),rankName,userId)));
+            rankingsItem.setValid(redisTemplate.opsForHash().size(String.format(RedisKey.RANK_VALID_USER.getKey(),rankName,userId)));
             items.add(rankingsItem);
         }
 

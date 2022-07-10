@@ -137,6 +137,8 @@ public class TestActivity {
         rankReq.setRankName("test_rank");
         rankReqRequestConditionPage.setCondition(rankReq);
         Rankings rankings = rankProcessor.rankings(rankReqRequestConditionPage);
+
+        log.info(rankings.toString());
     }
 
     @Test
