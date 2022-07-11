@@ -86,7 +86,7 @@ public class OrderProcessor implements IOrderProcessor {
         }
 
         Integer breakTimes = (Integer) redisUtil.get(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), orderGrabReq.getUserId()));
-        if (Objects.nonNull(breakTimes) && breakTimes > 3) {
+        if (Objects.nonNull(breakTimes) && breakTimes >= 3) {
             redisUtil.set(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), orderGrabReq.getUserId()), orderGrabReq.getUserId(), RedisKey.ORDER_BREAK_RECORD.getTime());
             throw new StarException(StarError.ORDER_CANCEL_TIMES_OVERFLOW);
         }
@@ -102,10 +102,10 @@ public class OrderProcessor implements IOrderProcessor {
         }
 
         //用户下单次数验证 防重复下单
-        Long userOrderedCount = redisUtil.hincr(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUserId()), 1L);
-        if (userOrderedCount > 1) {
-            throw new StarException(StarError.ORDER_REPETITION);
-        }
+//        Long userOrderedCount = redisUtil.hincr(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUserId()), 1L);
+//        if (userOrderedCount > 1) {
+//            throw new StarException(StarError.ORDER_REPETITION);
+//        }
 
         //库存验证
         String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), orderGrabReq.getThemeId());
