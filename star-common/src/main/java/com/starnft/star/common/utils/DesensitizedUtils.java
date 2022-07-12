@@ -24,4 +24,7 @@ public class DesensitizedUtils{
     }
 
 
+    public static String phone(String origin) {
+        return replaceValue(origin,3,4);
+    }
 }

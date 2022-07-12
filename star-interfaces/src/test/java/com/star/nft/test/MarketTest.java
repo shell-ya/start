@@ -46,9 +46,9 @@ public class MarketTest {
     @Test
     public void consigment() {
         NumberConsignmentRequest numberConsignmentRequest = new NumberConsignmentRequest();
-        numberConsignmentRequest.setUid(409412742L);
-        numberConsignmentRequest.setNumberId(991119651685904384L);
-        numberConsignmentRequest.setPrice(BigDecimal.valueOf(55.8));
+        numberConsignmentRequest.setUid(305730346L);
+        numberConsignmentRequest.setNumberId(996194503701676032L);
+        numberConsignmentRequest.setPrice(BigDecimal.valueOf(333L));
         Boolean consignment = numberCore.consignment(numberConsignmentRequest);
         assert consignment;
     }

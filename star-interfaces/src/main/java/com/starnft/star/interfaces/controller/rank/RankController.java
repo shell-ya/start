@@ -38,7 +38,7 @@ public class RankController {
 
     final IRankProcessor rankProcessor;
     @ApiOperation("获取排行榜数据")
-    @GetMapping("/rankings")
+    @PostMapping("/rankings")
     @TokenIgnore
     public RopResponse<Rankings> rankings(@RequestBody RequestConditionPage<RankReq> request) {
 
@@ -64,7 +64,7 @@ public class RankController {
 
 
     @ApiOperation("邀请记录")
-    @GetMapping("/history")
+    @PostMapping("/history")
     @TokenIgnore
     public RopResponse< List<InvitationHistoryItem>> history(@RequestBody RequestConditionPage<RankReq> request){
 //        InvitationHistory invitationHistory = new InvitationHistory();
