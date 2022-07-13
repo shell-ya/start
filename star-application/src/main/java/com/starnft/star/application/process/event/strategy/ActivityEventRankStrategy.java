@@ -74,12 +74,14 @@ public class ActivityEventRankStrategy implements ActivityEventStrategy {
         @Data
         class Params{
             private String rankName;
-          private String  rankEvent;
+          private Boolean  isCheckThemeId;
+          private Long themeId;
 //            private Integer scopeType;
         }
         Params params = new Params();
         params.setRankName("test_tank");
-        params.setRankEvent("total");
+        params.setIsCheckThemeId(true);
+        params.setThemeId(991131478355697664L);
 
 //        params.setTemplate("参加拉新活动获得%s积分");
 //        params.setScopeType(0);
