@@ -280,7 +280,7 @@ public class WalletServiceImpl implements WalletService {
                             new StringBuffer(String.valueOf(withDrawReq.getUid())).append(withDrawReq.getWalletId()));
                     redisUtil.incr(withdrawTimesKey, 1);
                     Calendar instance = Calendar.getInstance();
-                    instance.add(Calendar.DATE,1);
+                    instance.add(Calendar.DATE, 1);
                     instance.set(Calendar.HOUR_OF_DAY, 0);
                     instance.set(Calendar.SECOND, 0);
                     instance.set(Calendar.MINUTE, 0);
@@ -343,7 +343,7 @@ public class WalletServiceImpl implements WalletService {
                 .payChannel(withDrawReq.getChannel()).payStatus(StarConstants.Pay_Status.PAY_ING.name())
                 .payTime(new Date())
                 .tsMoney(money)
-                .tsCost(cost)
+                .tsCost(cost.multiply(new BigDecimal(1).subtract(config.getChargeRate())))
                 .tsFee(money.multiply(config.getChargeRate()))
                 .tsType(StarConstants.Transaction_Type.Withdraw.getCode())
                 .build();

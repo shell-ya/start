@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @ApiModel(value = "道具信息表", description = "")
@@ -59,6 +60,18 @@ public class StarNftPropInfo extends BaseEntity implements Serializable {
      */
     @ApiModelProperty(name = "道具执行器", notes = "")
     private String execution;
+
+    /**
+     * 是否上架
+     */
+    @ApiModelProperty(name = "是否上架 0未上架 1上架", notes = "")
+    private Integer onSell;
+
+    /**
+     * 出售价格
+     */
+    @ApiModelProperty(name = "出售价格", notes = "")
+    private BigDecimal price;
 
     public Long getId() {
         return id;
@@ -130,5 +143,21 @@ public class StarNftPropInfo extends BaseEntity implements Serializable {
 
     public void setExecution(String execution) {
         this.execution = execution;
+    }
+
+    public Integer getOnSell() {
+        return onSell;
+    }
+
+    public void setOnSell(Integer onSell) {
+        this.onSell = onSell;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 }

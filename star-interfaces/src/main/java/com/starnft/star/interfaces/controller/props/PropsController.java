@@ -35,7 +35,7 @@ public class PropsController {
     }
 
 
-    @ApiOperation("用户道具列表")
+    @ApiOperation("用户道具详情")
     @PostMapping("/details")
     @TokenIgnore
     public RopResponse<PropsVO> details(@RequestParam("propsId") String propsId) {

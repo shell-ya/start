@@ -11,6 +11,7 @@
         <module>star-common</module>
         <module>star-rpc</module>
         <module>star-management</module>
+        <module>star-notification</module>
     </modules>
 
     <parent>

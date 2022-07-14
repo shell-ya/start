@@ -32,8 +32,10 @@ import com.starnft.star.domain.wallet.model.req.*;
 import com.starnft.star.domain.wallet.model.res.CardBindResult;
 import com.starnft.star.domain.wallet.model.res.TxResultRes;
 import com.starnft.star.domain.wallet.model.res.WithdrawResult;
+import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
 import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
 import com.starnft.star.domain.wallet.model.vo.WithdrawRecordVO;
+import com.starnft.star.domain.wallet.service.WalletConfig;
 import com.starnft.star.domain.wallet.service.WalletService;
 import com.starnft.star.domain.wallet.service.stateflow.IStateHandler;
 import lombok.SneakyThrows;
@@ -82,6 +84,13 @@ public class WalletCore implements IWalletCore {
     public RechargeReqResult recharge(@Validated RechargeFacadeReq rechargeFacadeReq) {
         //参数验证
         walletService.verifyParam(rechargeFacadeReq.getChannel());
+
+        WalletConfigVO config = WalletConfig.getConfig(StarConstants.PayChannel.valueOf(rechargeFacadeReq.getChannel()));
+
+        BigDecimal rechargeLimit = config.getRechargeLimit();
+
+        // todo 充值限额校验
+
 
         if (rechargeFacadeReq.getChannel().equals(StarConstants.PayChannel.CheckPay.name())) {
             //验证实名信息

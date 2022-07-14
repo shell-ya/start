@@ -13,11 +13,8 @@ public class OrderPayReq implements Serializable {
     @ApiModelProperty(value = "uid", required = false)
     private Long userId;
 
-    @ApiModelProperty(value = "from uid 若该商品为发行商品 无拥有者或拥有者为品牌方 则传对应厂商id 否则传拥有者uid")
-    private Long fromUid;
-
-    @ApiModelProperty(value = "to uid 购买方uid")
-    private Long toUid;
+    @ApiModelProperty(value = "商品拥有者id 发行产品有厂商ID 该字段传厂商id")
+    private Long ownerId;
 
     @ApiModelProperty(value = "系列id")
     private Long seriesId;

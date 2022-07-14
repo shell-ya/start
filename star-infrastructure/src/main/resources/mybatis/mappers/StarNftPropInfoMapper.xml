@@ -16,19 +16,21 @@
         <result property="propTime" column="prop_time" jdbcType="DATE"/>
         <result property="propDesc" column="prop_desc" jdbcType="VARCHAR"/>
         <result property="execution" column="execution" jdbcType="VARCHAR"/>
+        <result property="onSell" column="on_sell" jdbcType="INTEGER"/>
+        <result property="price" column="price" jdbcType="DECIMAL"/>
     </resultMap>
 
     <!-- 通过ID查询单条数据 -->
     <select id="queryById" resultMap="StarNftPropInfoMap">
         select
-            id,is_deleted,created_at,created_by,modified_at,modified_by,prop_type,prop_name,prop_level,expire,prop_icon,prop_time,prop_desc,execution
+            id,is_deleted,created_at,created_by,modified_at,modified_by,prop_type,prop_name,prop_level,expire,prop_icon,prop_time,prop_desc,execution,on_sell,price
         from star_nft_prop_info
         where id = #{id}
     </select>
 
     <select id="queryAll" resultMap="StarNftPropInfoMap">
         select
-            id,is_deleted,created_at,created_by,modified_at,modified_by,prop_type,prop_name,prop_level,expire,prop_icon,prop_time,prop_desc,execution
+            id,is_deleted,created_at,created_by,modified_at,modified_by,prop_type,prop_name,prop_level,expire,prop_icon,prop_time,prop_desc,execution,on_sell,price
         from star_nft_prop_info
     </select>
 
