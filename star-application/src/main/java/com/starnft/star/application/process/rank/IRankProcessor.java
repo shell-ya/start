@@ -2,9 +2,11 @@ package com.starnft.star.application.process.rank;
 
 import com.starnft.star.application.process.rank.req.RankReq;
 import com.starnft.star.common.page.RequestConditionPage;
+import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.rank.core.rank.model.res.InvitationHistory;
 import com.starnft.star.domain.rank.core.rank.model.res.InvitationHistoryItem;
 import com.starnft.star.domain.rank.core.rank.model.res.Rankings;
+import com.starnft.star.domain.rank.core.rank.model.res.RankingsItem;
 
 import java.util.List;
 
@@ -18,7 +20,7 @@ public interface IRankProcessor {
      * @param rankName
      * @return
      */
-    Rankings rankings(RequestConditionPage<RankReq> rankName);
+    ResponsePageResult<RankingsItem> rankings(RequestConditionPage<RankReq> rankName);
 
     /**
      * 个人邀请记录

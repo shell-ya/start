@@ -16,9 +16,15 @@ import com.starnft.star.application.process.user.res.UserInfoRes;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.page.RequestConditionPage;
+import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.common.utils.RandomUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
+import com.starnft.star.domain.rank.core.rank.core.IRankService;
 import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
+import com.starnft.star.domain.rank.core.rank.model.RankItemMetaData;
 import com.starnft.star.domain.rank.core.rank.model.res.Rankings;
+import com.starnft.star.domain.rank.core.rank.model.res.RankingsItem;
+import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.interfaces.StarApplication;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -29,6 +35,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @SpringBootTest(classes = {StarApplication.class})
@@ -44,6 +51,9 @@ public class TestActivity {
 
     @Resource
     RankProcessor rankProcessor;
+
+    @Resource
+    IRankService rankService;
 
     @Resource
     ActivityEventProducer activityEventProducer;
@@ -130,12 +140,12 @@ public class TestActivity {
     @Test
     public void rank(){
         RequestConditionPage<RankReq> rankReqRequestConditionPage = new RequestConditionPage<>();
-        rankReqRequestConditionPage.setPage(1);
+        rankReqRequestConditionPage.setPage(0);
         rankReqRequestConditionPage.setSize(10);
         RankReq rankReq = new RankReq();
 //        rankReq.setRankName("test_rank");
         rankReqRequestConditionPage.setCondition(rankReq);
-        Rankings rankings = rankProcessor.rankings(rankReqRequestConditionPage);
+        ResponsePageResult<RankingsItem> rankings = rankProcessor.rankings(rankReqRequestConditionPage);
 
         log.info(rankings.toString());
     }
@@ -167,6 +177,22 @@ public class TestActivity {
     public void name(){
         RankDefinition nowRank = rankProcessor.getNowRank();
         log.info(nowRank.toString());
+    }
+
+    @Test
+    public void add(){
+        for (int i = 0; i < 100L; i++) {
+            Long aLong = SnowflakeWorker.generateId();
+            RankItemMetaData rankItemMetaData= new RankItemMetaData();
+
+            rankItemMetaData.setChildrenId(SnowflakeWorker.generateId());
+            rankItemMetaData.setNickName(RandomUtil.randomName());
+            rankItemMetaData.setMobile(RandomUtil.randomName());
+            rankItemMetaData.setAvatar("");
+            rankService.setUserPhoneMapping("test_rank",aLong.toString(), RandomUtil.randomPhone());
+            rankService.put("test_rank", aLong.toString(),RandomUtil.randomDouble(100),rankItemMetaData);
+        }
+
     }
 
 }

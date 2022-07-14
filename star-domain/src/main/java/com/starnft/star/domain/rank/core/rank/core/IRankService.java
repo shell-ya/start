@@ -1,9 +1,11 @@
 package com.starnft.star.domain.rank.core.rank.core;
 
+import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
 import com.starnft.star.domain.rank.core.rank.model.RankItemMetaData;
 import com.starnft.star.domain.rank.core.rank.model.res.InvitationHistoryItem;
 import com.starnft.star.domain.rank.core.rank.model.res.InvitationItem;
+import com.starnft.star.domain.rank.core.rank.model.res.Rankings;
 import com.starnft.star.domain.rank.core.rank.model.res.RankingsItem;
 
 import java.util.List;
@@ -144,4 +146,6 @@ public interface IRankService {
     public List<RankDefinition> getAllRank();
 
     public boolean setUserPhoneMapping(String rankName,String userId,String phone);
+
+    public Long getRankSize(String rankName);
 }

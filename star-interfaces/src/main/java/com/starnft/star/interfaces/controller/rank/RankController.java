@@ -5,8 +5,11 @@ import com.starnft.star.application.process.rank.req.RankReq;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.page.RequestConditionPage;
 
+import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.domain.number.model.vo.NumberVO;
 import com.starnft.star.domain.rank.core.rank.model.res.InvitationHistoryItem;
 import com.starnft.star.domain.rank.core.rank.model.res.Rankings;
+import com.starnft.star.domain.rank.core.rank.model.res.RankingsItem;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import com.starnft.star.interfaces.interceptor.UserContext;
 import io.swagger.annotations.Api;
@@ -30,7 +33,7 @@ public class RankController {
     @ApiOperation("获取排行榜数据")
     @PostMapping("/rankings")
     @TokenIgnore
-    public RopResponse<Rankings> rankings(@RequestBody RequestConditionPage<RankReq> request) {
+    public RopResponse<ResponsePageResult<RankingsItem>> rankings(@RequestBody RequestConditionPage<RankReq> request) {
 
 //
 //        Rankings rankings = new Rankings();
