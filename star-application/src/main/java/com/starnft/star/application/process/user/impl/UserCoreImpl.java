@@ -124,7 +124,7 @@ public class UserCoreImpl implements UserCore {
         if (req.getVerificationScenes().equals(1)) {
             Boolean register = isRegister(req.getPhone());
             if (register) {
-                throw new StarException("账号已注册，请不要重复注册");
+                throw new StarException(StarError.USER_EXISTS);
             }
         }
         UserVerifyCode verifyCode = this.userService.getVerifyCode(userVerifyCodeDTO);
