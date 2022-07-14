@@ -1,28 +1,50 @@
 spring:
   application:
-    name: star-manager
-  datasource:
-    username: root
-    password: wqd1234.
-    type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql://sh-cynosdbmysql-grp-ibkpxd68.sql.tencentcdb.com:23543/star?serverTimezone=GMT%2B8&characterEncoding=utf8
-    driver-class-name: com.mysql.jdbc.Driver
-    druid:
-      max-active: 20
-      initial-size: 5
-      min-idle: 5
-      max-wait: 60000
-  redis:
-    host: 124.221.181.84
-    database: 0
-    port: 16379
-    jedis:
-      pool:
-        max-active: 100
-        max-idle: 10
-        max-wait: 100000
-    timeout: 5000
-    password: wqd123456.
+    name: star-notice
+    profiles:
+      active: dev
+  shardingsphere:
+    datasource:
+      #数据库分库名
+      names: ds0
+      ds0:
+        #type为数据源，如果是Druid数据库连接池，可以去改
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://sh-cynosdbmysql-grp-ibkpxd68.sql.tencentcdb.com:23543/star_dev?serverTimezone=GMT%2B8&characterEncoding=utf8
+        username: root
+        password: wqd1234.
+
+    sharding:
+      tables:
+        account_user:
+          actual-data-nodes: ds0.account_user_$->{0..9}
+          table-strategy:
+            inline:
+              sharding-column: account
+              algorithm-expression: account_user_$->{account%10}
+      # 设置绑定关系
+      binding-tables: account_user
+    # 在日志中SQL语句
+    props:
+      sql:
+        show: true
+    redis:
+      host: 124.221.181.84
+      database: 1
+      port: 16379
+      jedis:
+        pool:
+          max-active: 100
+          max-idle: 10
+          max-wait: 100000
+      timeout: 20000
+      password: wqd123456.
+
+# grpc 请求端口
+grpc:
+  server:
+    port: 50516
 
 server:
   port: 9011
@@ -42,9 +64,26 @@ mybatis-plus:
     cache-enabled: true
     log-impl: com.starnft.star.notice.config.StdOutImpl
 swagger:
-  packages: com.starnft.star.management.controller
+  packages: com.starnft.star.api
 
-
+#rocketmq配置信息
+rocketmq:
+  # tdmq-rocketmq服务接入地址
+  name-server: rocketmq-8geezgooejbg.rocketmq.ap-gz.public.tencenttdmq.com:9876
+  # 生产者配置
+  producer:
+    # 生产者组名
+    group: star-producer-group
+    # 角色密钥
+    access-key: eyJrZXlJZCI6InJvY2tldG1xLThnZWV6Z29vZWpiZyIsImFsZyI6IkhTMjU2In0.eyJzdWIiOiJyb2NrZXRtcS04Z2Vlemdvb2VqYmdfc3VwZXIifQ.r2CfEbotMkzf8JSc50xX650LkBfXpPAuZiqcZ0F9ijU
+    # 已授权的角色名称
+    secret-key: super
+  # 消费者公共配置
+  consumer:
+    # 角色密钥
+    access-key: eyJrZXlJZCI6InJvY2tldG1xLThnZWV6Z29vZWpiZyIsImFsZyI6IkhTMjU2In0.eyJzdWIiOiJyb2NrZXRtcS04Z2Vlemdvb2VqYmdfc3VwZXIifQ.r2CfEbotMkzf8JSc50xX650LkBfXpPAuZiqcZ0F9ijU
+    # 已授权的角色名称
+    secret-key: super
 #自定义
 cos:
   config:

@@ -343,7 +343,7 @@ public class WalletServiceImpl implements WalletService {
                 .payChannel(withDrawReq.getChannel()).payStatus(StarConstants.Pay_Status.PAY_ING.name())
                 .payTime(new Date())
                 .tsMoney(money)
-                .tsCost(cost.multiply(new BigDecimal(1).subtract(config.getChargeRate())))
+                .tsCost(money.multiply(new BigDecimal(1).subtract(config.getChargeRate())))
                 .tsFee(money.multiply(config.getChargeRate()))
                 .tsType(StarConstants.Transaction_Type.Withdraw.getCode())
                 .build();

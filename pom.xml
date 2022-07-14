@@ -39,6 +39,7 @@
         <leaf.version>1.0.1</leaf.version>
         <jackson.version>2.13.3</jackson.version>
         <gson.version>2.8.6</gson.version>
+        <nacos.version>2.1.2.RELEASE</nacos.version>
     </properties>
 
     <dependencyManagement>
@@ -70,6 +71,12 @@
             <dependency>
                 <groupId>com.starnft.star</groupId>
                 <artifactId>star-common</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.starnft.star</groupId>
+                <artifactId>star-rpc</artifactId>
                 <version>1.0-SNAPSHOT</version>
             </dependency>
 
@@ -193,13 +200,31 @@
                 <version>${jackson.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+                <version>${nacos.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.alibaba.nacos</groupId>
+                        <artifactId>nacos-client</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+                <version>${nacos.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
     <repositories>
         <repository>
             <id>maven-ali</id>
-            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
+            <url>https://maven.aliyun.com/repository/public/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -224,6 +249,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
                 <configuration>
                     <source>8</source>
                     <target>8</target>
