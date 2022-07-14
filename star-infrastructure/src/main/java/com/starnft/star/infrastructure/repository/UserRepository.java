@@ -312,6 +312,11 @@ public class UserRepository implements IUserRepository {
     }
 
     @Override
+    public UserInfo queryUserInfoByMobile(String mobile) {
+        return null;
+    }
+
+    @Override
     public Boolean doesUserExist(Long userId) {
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("account", userId);

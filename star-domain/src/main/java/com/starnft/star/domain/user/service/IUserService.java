@@ -26,6 +26,7 @@ public interface IUserService {
      * @return
      */
     UserInfoVO queryUserInfo(Long userId);
+    UserInfo queryUserByMobile(String mobile);
 
     /**
      * 手机验证码登录/注册
