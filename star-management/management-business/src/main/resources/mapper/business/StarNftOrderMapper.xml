@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.StarNftOrderMapper">
+
+    <resultMap type="StarNftOrder" id="StarNftOrderResult">
+        <result property="id"    column="id"    />
+        <result property="orderSn"    column="order_sn"    />
+        <result property="seriesThemeInfoId"    column="series_theme_info_id"    />
+        <result property="seriesThemeId"    column="series_theme_id"    />
+        <result property="seriesId"    column="series_id"    />
+        <result property="seriesName"    column="series_name"    />
+        <result property="themeName"    column="theme_name"    />
+        <result property="themePic"    column="theme_pic"    />
+        <result property="themeType"    column="theme_type"    />
+        <result property="status"    column="status"    />
+        <result property="userId"    column="user_id"    />
+        <result property="totalAmount"    column="total_amount"    />
+        <result property="payAmount"    column="pay_amount"    />
+        <result property="payNumber"    column="pay_number"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="createdBy"    column="created_by"    />
+        <result property="modifiedAt"    column="modified_at"    />
+        <result property="modifiedBy"    column="modified_by"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectStarNftOrderVo">
+        select id, order_sn, series_theme_info_id, series_theme_id, series_id, series_name, theme_name, theme_pic, theme_type, status, user_id, total_amount, pay_amount, pay_number, created_at, created_by, modified_at, modified_by, is_deleted from star_nft_order
+    </sql>
+
+    <select id="selectStarNftOrderList" parameterType="StarNftOrder" resultMap="StarNftOrderResult">
+        <include refid="selectStarNftOrderVo"/>
+        <where>
+            is_deleted = 0
+            <if test="orderSn != null  and orderSn != ''"> and order_sn = #{orderSn}</if>
+            <if test="seriesThemeInfoId != null "> and series_theme_info_id = #{seriesThemeInfoId}</if>
+            <if test="seriesThemeId != null "> and series_theme_id = #{seriesThemeId}</if>
+            <if test="seriesId != null "> and series_id = #{seriesId}</if>
+            <if test="seriesName != null  and seriesName != ''"> and series_name like concat('%', #{seriesName}, '%')</if>
+            <if test="themeName != null  and themeName != ''"> and theme_name like concat('%', #{themeName}, '%')</if>
+            <if test="themePic != null  and themePic != ''"> and theme_pic = #{themePic}</if>
+            <if test="themeType != null "> and theme_type = #{themeType}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="totalAmount != null "> and total_amount = #{totalAmount}</if>
+            <if test="payAmount != null "> and pay_amount = #{payAmount}</if>
+            <if test="payNumber != null  and payNumber != ''"> and pay_number = #{payNumber}</if>
+            <if test="createdAt != null "> and created_at = #{createdAt}</if>
+            <if test="createdBy != null  and createdBy != ''"> and created_by = #{createdBy}</if>
+            <if test="modifiedAt != null "> and modified_at = #{modifiedAt}</if>
+            <if test="modifiedBy != null  and modifiedBy != ''"> and modified_by = #{modifiedBy}</if>
+            <if test="isDeleted != null "> and is_deleted = #{isDeleted}</if>
+        </where>
+    </select>
+
+    <select id="selectStarNftOrderById" parameterType="Long" resultMap="StarNftOrderResult">
+        <include refid="selectStarNftOrderVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertStarNftOrder" parameterType="StarNftOrder">
+        insert into star_nft_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="orderSn != null and orderSn != ''">order_sn,</if>
+            <if test="seriesThemeInfoId != null">series_theme_info_id,</if>
+            <if test="seriesThemeId != null">series_theme_id,</if>
+            <if test="seriesId != null">series_id,</if>
+            <if test="seriesName != null and seriesName != ''">series_name,</if>
+            <if test="themeName != null and themeName != ''">theme_name,</if>
+            <if test="themePic != null and themePic != ''">theme_pic,</if>
+            <if test="themeType != null">theme_type,</if>
+            <if test="status != null">status,</if>
+            <if test="userId != null and userId != ''">user_id,</if>
+            <if test="totalAmount != null">total_amount,</if>
+            <if test="payAmount != null">pay_amount,</if>
+            <if test="payNumber != null and payNumber != ''">pay_number,</if>
+            <if test="createdAt != null">created_at,</if>
+            <if test="createdBy != null and createdBy != ''">created_by,</if>
+            <if test="modifiedAt != null">modified_at,</if>
+            <if test="modifiedBy != null and modifiedBy != ''">modified_by,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="orderSn != null and orderSn != ''">#{orderSn},</if>
+            <if test="seriesThemeInfoId != null">#{seriesThemeInfoId},</if>
+            <if test="seriesThemeId != null">#{seriesThemeId},</if>
+            <if test="seriesId != null">#{seriesId},</if>
+            <if test="seriesName != null and seriesName != ''">#{seriesName},</if>
+            <if test="themeName != null and themeName != ''">#{themeName},</if>
+            <if test="themePic != null and themePic != ''">#{themePic},</if>
+            <if test="themeType != null">#{themeType},</if>
+            <if test="status != null">#{status},</if>
+            <if test="userId != null and userId != ''">#{userId},</if>
+            <if test="totalAmount != null">#{totalAmount},</if>
+            <if test="payAmount != null">#{payAmount},</if>
+            <if test="payNumber != null and payNumber != ''">#{payNumber},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="createdBy != null and createdBy != ''">#{createdBy},</if>
+            <if test="modifiedAt != null">#{modifiedAt},</if>
+            <if test="modifiedBy != null and modifiedBy != ''">#{modifiedBy},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStarNftOrder" parameterType="StarNftOrder">
+        update star_nft_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderSn != null and orderSn != ''">order_sn = #{orderSn},</if>
+            <if test="seriesThemeInfoId != null">series_theme_info_id = #{seriesThemeInfoId},</if>
+            <if test="seriesThemeId != null">series_theme_id = #{seriesThemeId},</if>
+            <if test="seriesId != null">series_id = #{seriesId},</if>
+            <if test="seriesName != null and seriesName != ''">series_name = #{seriesName},</if>
+            <if test="themeName != null and themeName != ''">theme_name = #{themeName},</if>
+            <if test="themePic != null and themePic != ''">theme_pic = #{themePic},</if>
+            <if test="themeType != null">theme_type = #{themeType},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="userId != null and userId != ''">user_id = #{userId},</if>
+            <if test="totalAmount != null">total_amount = #{totalAmount},</if>
+            <if test="payAmount != null">pay_amount = #{payAmount},</if>
+            <if test="payNumber != null and payNumber != ''">pay_number = #{payNumber},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="createdBy != null and createdBy != ''">created_by = #{createdBy},</if>
+            <if test="modifiedAt != null">modified_at = #{modifiedAt},</if>
+            <if test="modifiedBy != null and modifiedBy != ''">modified_by = #{modifiedBy},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStarNftOrderById" parameterType="Long">
+        update star_nft_order set is_deleted = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteStarNftOrderByIds" parameterType="String">
+        update star_nft_order set is_deleted = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="dayOrder" resultType="com.starnft.star.business.domain.StarNftOrder">
+        select id,total_amount from star_nft_order
+        where to_days(created_at) = to_days(now())
+          and status = 1
+    </select>
+
+    <select id="toDayOrder" resultType="com.starnft.star.business.domain.StarNftOrder">
+        select id,total_amount from star_nft_order
+        WHERE TO_DAYS(NOW()) - TO_DAYS(created_at) = 1
+          and status = 1
+    </select>
+</mapper>

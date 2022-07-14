@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.NftWalletMapper">
+
+    <resultMap type="NftWallet" id="NftWalletResult">
+        <result property="id"    column="id"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="createdBy"    column="created_by"    />
+        <result property="modifiedAt"    column="modified_at"    />
+        <result property="modifiedBy"    column="modified_by"    />
+        <result property="wId"    column="w_id"    />
+        <result property="uid"    column="uid"    />
+        <result property="balance"    column="balance"    />
+        <result property="walletIncome"    column="wallet_income"    />
+        <result property="walletOutcome"    column="wallet_outcome"    />
+        <result property="frozen"    column="frozen"    />
+        <result property="frozenFee"    column="frozen_fee"    />
+    </resultMap>
+
+    <sql id="selectNftWalletVo">
+        select id, is_deleted, created_at, created_by, modified_at, modified_by, w_id, uid, balance, wallet_income, wallet_outcome, frozen, frozen_fee from nft_wallet
+    </sql>
+
+    <select id="selectNftWalletList" parameterType="NftWallet" resultMap="NftWalletResult">
+        <include refid="selectNftWalletVo"/>
+        <where>
+            is_deleted = 0
+<!--            <if test="isDeleted != null "> and is_deleted = #{isDeleted}</if>-->
+            <if test="createdAt != null "> and created_at = #{createdAt}</if>
+            <if test="createdBy != null  and createdBy != ''"> and created_by = #{createdBy}</if>
+            <if test="modifiedAt != null "> and modified_at = #{modifiedAt}</if>
+            <if test="modifiedBy != null  and modifiedBy != ''"> and modified_by = #{modifiedBy}</if>
+            <if test="wId != null  and wId != ''"> and w_id = #{wId}</if>
+            <if test="uid != null "> and uid = #{uid}</if>
+            <if test="balance != null "> and balance = #{balance}</if>
+            <if test="walletIncome != null "> and wallet_income = #{walletIncome}</if>
+            <if test="walletOutcome != null "> and wallet_outcome = #{walletOutcome}</if>
+            <if test="frozen != null "> and frozen = #{frozen}</if>
+            <if test="frozenFee != null "> and frozen_fee = #{frozenFee}</if>
+        </where>
+    </select>
+
+    <select id="selectNftWalletById" parameterType="Long" resultMap="NftWalletResult">
+        <include refid="selectNftWalletVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectNftWalletByUid" parameterType="Long" resultMap="NftWalletResult">
+        <include refid="selectNftWalletVo"/>
+        where uid = #{id}
+    </select>
+    <insert id="insertNftWallet" parameterType="NftWallet" useGeneratedKeys="true" keyProperty="id">
+        insert into nft_wallet
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="createdAt != null">created_at,</if>
+            <if test="createdBy != null">created_by,</if>
+            <if test="modifiedAt != null">modified_at,</if>
+            <if test="modifiedBy != null">modified_by,</if>
+            <if test="wId != null and wId != ''">w_id,</if>
+            <if test="uid != null">uid,</if>
+            <if test="balance != null">balance,</if>
+            <if test="walletIncome != null">wallet_income,</if>
+            <if test="walletOutcome != null">wallet_outcome,</if>
+            <if test="frozen != null">frozen,</if>
+            <if test="frozenFee != null">frozen_fee,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="modifiedAt != null">#{modifiedAt},</if>
+            <if test="modifiedBy != null">#{modifiedBy},</if>
+            <if test="wId != null and wId != ''">#{wId},</if>
+            <if test="uid != null">#{uid},</if>
+            <if test="balance != null">#{balance},</if>
+            <if test="walletIncome != null">#{walletIncome},</if>
+            <if test="walletOutcome != null">#{walletOutcome},</if>
+            <if test="frozen != null">#{frozen},</if>
+            <if test="frozenFee != null">#{frozenFee},</if>
+         </trim>
+    </insert>
+
+    <update id="updateNftWallet" parameterType="NftWallet">
+        update nft_wallet
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="createdBy != null">created_by = #{createdBy},</if>
+            <if test="modifiedAt != null">modified_at = #{modifiedAt},</if>
+            <if test="modifiedBy != null">modified_by = #{modifiedBy},</if>
+            <if test="wId != null and wId != ''">w_id = #{wId},</if>
+            <if test="uid != null">uid = #{uid},</if>
+            <if test="balance != null">balance = #{balance},</if>
+            <if test="walletIncome != null">wallet_income = #{walletIncome},</if>
+            <if test="walletOutcome != null">wallet_outcome = #{walletOutcome},</if>
+            <if test="frozen != null">frozen = #{frozen},</if>
+            <if test="frozenFee != null">frozen_fee = #{frozenFee},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteNftWalletById" parameterType="Long">
+        update nft_wallet set is_deleted = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteNftWalletByIds" parameterType="String">
+        update nft_wallet set is_deleted = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

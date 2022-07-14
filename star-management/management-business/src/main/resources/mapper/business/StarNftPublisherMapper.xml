@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.StarNftPublisherMapper">
+
+    <resultMap type="StarNftPublisher" id="StarNftPublisherResult">
+        <result property="id"    column="id"    />
+        <result property="publisher"    column="publisher"    />
+        <result property="isBase"    column="is_base"    />
+        <result property="pic"    column="pic"    />
+        <result property="pid"    column="pid"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="modifiedAt"    column="modified_at"    />
+    </resultMap>
+
+    <sql id="selectStarNftPublisherVo">
+        select id, publisher, is_base, pic, pid, created_at, modified_at from star_nft_publisher
+    </sql>
+
+    <select id="selectStarNftPublisherList" parameterType="StarNftPublisher" resultMap="StarNftPublisherResult">
+        <include refid="selectStarNftPublisherVo"/>
+        <where>
+            <if test="publisher != null  and publisher != ''"> and publisher = #{publisher}</if>
+            <if test="isBase != null "> and is_base = #{isBase}</if>
+            <if test="pic != null  and pic != ''"> and pic = #{pic}</if>
+            <if test="pid != null "> and pid = #{pid}</if>
+            <if test="params.beginCreatedAt != null and params.beginCreatedAt != '' and params.endCreatedAt != null and params.endCreatedAt != ''"> and created_at between #{params.beginCreatedAt} and #{params.endCreatedAt}</if>
+            <if test="params.beginModifiedAt != null and params.beginModifiedAt != '' and params.endModifiedAt != null and params.endModifiedAt != ''"> and modified_at between #{params.beginModifiedAt} and #{params.endModifiedAt}</if>
+        </where>
+    </select>
+
+    <select id="selectStarNftPublisherById" parameterType="Long" resultMap="StarNftPublisherResult">
+        <include refid="selectStarNftPublisherVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertStarNftPublisher" parameterType="StarNftPublisher">
+        insert into star_nft_publisher
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="publisher != null">publisher,</if>
+            <if test="isBase != null">is_base,</if>
+            <if test="pic != null">pic,</if>
+            <if test="pid != null">pid,</if>
+            <if test="createdAt != null">created_at,</if>
+            <if test="modifiedAt != null">modified_at,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="publisher != null">#{publisher},</if>
+            <if test="isBase != null">#{isBase},</if>
+            <if test="pic != null">#{pic},</if>
+            <if test="pid != null">#{pid},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="modifiedAt != null">#{modifiedAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStarNftPublisher" parameterType="StarNftPublisher">
+        update star_nft_publisher
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="publisher != null">publisher = #{publisher},</if>
+            <if test="isBase != null">is_base = #{isBase},</if>
+            <if test="pic != null">pic = #{pic},</if>
+            <if test="pid != null">pid = #{pid},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="modifiedAt != null">modified_at = #{modifiedAt},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStarNftPublisherById" parameterType="Long">
+        update  star_nft_publisher  set is_deleted = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteStarNftPublisherByIds" parameterType="String">
+        update   star_nft_publisher set is_deleted = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectParentPublisher" resultType="com.starnft.star.business.domain.vo.PublisherVo">
+        select id as `value`,
+               publisher as label
+        from star_nft_publisher
+        where is_base = 1
+    </select>
+
+    <select id="selectChildrenPublisher" resultType="com.starnft.star.business.domain.vo.PublisherVo">
+        select id as `value`,
+               publisher as label
+        from star_nft_publisher
+        where pid = #{pid}
+    </select>
+
+    <select id="selectChildrenPublisherByPids" resultType="StarNftPublisher">
+        <include refid="selectStarNftPublisherVo"/>
+        where pid in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+        #{id}
+    </foreach>
+    </select>
+</mapper>

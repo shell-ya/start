@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.StarNftScopeRecordMapper">
+
+    <resultMap type="StarNftScopeRecord" id="StarNftScopeRecordResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="scope"    column="scope"    />
+        <result property="mold"    column="mold"    />
+        <result property="scopeType"    column="scope_type"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="createdAt"    column="created_at"    />
+    </resultMap>
+
+    <sql id="selectStarNftScopeRecordVo">
+
+        select id, user_id, scope, mold, scope_type, remarks, created_at from star_nft_scope_record
+    </sql>
+
+    <select id="selectStarNftScopeRecordList" parameterType="StarNftScopeRecord" resultMap="StarNftScopeRecordResult">
+        select id, user_id, scope, mold, scope_type, remarks, created_at from star_nft_scope_record
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="scope != null "> and scope = #{scope}</if>
+            <if test="mold != null "> and mold = #{mold}</if>
+            <if test="scopeType != null "> and scope_type = #{scopeType}</if>
+            <if test="remarks != null  and remarks != ''"> and remarks = #{remarks}</if>
+            <if test="params.beginCreatedAt != null and params.beginCreatedAt != '' and params.endCreatedAt != null and params.endCreatedAt != ''">
+              and created_at between #{params.beginCreatedAt} and #{params.endCreatedAt}</if>
+        </where>
+        order by scope desc
+    </select>
+
+    <select id="selectStarNftScopeRecordById" parameterType="Long" resultMap="StarNftScopeRecordResult">
+        <include refid="selectStarNftScopeRecordVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertStarNftScopeRecord" parameterType="StarNftScopeRecord">
+        insert into star_nft_scope_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="scope != null">scope,</if>
+            <if test="mold != null">mold,</if>
+            <if test="scopeType != null">scope_type,</if>
+            <if test="remarks != null">remarks,</if>
+            <if test="createdAt != null">created_at,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="scope != null">#{scope},</if>
+            <if test="mold != null">#{mold},</if>
+            <if test="scopeType != null">#{scopeType},</if>
+            <if test="remarks != null">#{remarks},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStarNftScopeRecord" parameterType="StarNftScopeRecord">
+        update star_nft_scope_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="scope != null">scope = #{scope},</if>
+            <if test="mold != null">mold = #{mold},</if>
+            <if test="scopeType != null">scope_type = #{scopeType},</if>
+            <if test="remarks != null">remarks = #{remarks},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStarNftScopeRecordById" parameterType="Long">
+        update  star_nft_scope_record  set is_deleted = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteStarNftScopeRecordByIds" parameterType="String">
+        update   star_nft_scope_record set is_deleted = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

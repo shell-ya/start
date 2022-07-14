@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.StarNftSeriesMapper">
+
+    <resultMap type="StarNftSeries" id="StarNftSeriesResult">
+        <result property="id"    column="id"    />
+        <result property="seriesName"    column="series_name"    />
+        <result property="seriesType"    column="series_type"    />
+        <result property="createAt"    column="create_at"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateAt"    column="update_at"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="seriesImages"    column="series_images"    />
+        <result property="seriesModels"    column="series_models"    />
+        <result property="seriesStatus"    column="series_status"    />
+        <result property="seriesDescrption"    column="series_descrption"    />
+    </resultMap>
+
+    <sql id="selectStarNftSeriesVo">
+        select id, series_name, series_type, create_at, create_by, update_at, update_by, is_delete, series_images, series_models, series_status,series_descrption from star_nft_series
+    </sql>
+
+    <select id="selectStarNftSeriesList" parameterType="StarNftSeries" resultMap="StarNftSeriesResult">
+        <include refid="selectStarNftSeriesVo"/>
+        <where>
+            is_delete = 0
+            <if test="seriesName != null  and seriesName != ''"> and series_name like concat('%', #{seriesName}, '%')</if>
+            <if test="seriesType != null "> and series_type = #{seriesType}</if>
+            <if test="createAt != null "> and create_at = #{createAt}</if>
+            <if test="updateAt != null "> and update_at = #{updateAt}</if>
+<!--            <if test="isDelete != null "> and is_delete = #{isDelete}</if>-->
+            <if test="seriesImages != null  and seriesImages != ''"> and series_images = #{seriesImages}</if>
+            <if test="seriesModels != null  and seriesModels != ''"> and series_models = #{seriesModels}</if>
+            <if test="seriesStatus != null "> and series_status = #{seriesStatus}</if>
+        </where>
+    </select>
+
+    <select id="selectStarNftSeriesById" parameterType="Long" resultMap="StarNftSeriesResult">
+        <include refid="selectStarNftSeriesVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertStarNftSeries" parameterType="StarNftSeries" useGeneratedKeys="true" keyProperty="id">
+        insert into star_nft_series
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="seriesName != null and seriesName != ''">series_name,</if>
+            <if test="seriesType != null">series_type,</if>
+            <if test="createAt != null">create_at,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="updateAt != null">update_at,</if>
+            <if test="updateBy != null and updateBy != ''">update_by,</if>
+            <if test="isDelete != null">is_delete,</if>
+            <if test="seriesImages != null">series_images,</if>
+            <if test="seriesModels != null">series_models,</if>
+            <if test="seriesStatus != null">series_status,</if>
+            <if test="seriesDescrption != null">series_descrption</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="seriesName != null and seriesName != ''">#{seriesName},</if>
+            <if test="seriesType != null">#{seriesType},</if>
+            <if test="createAt != null">#{createAt},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="updateAt != null">#{updateAt},</if>
+            <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+            <if test="seriesImages != null">#{seriesImages},</if>
+            <if test="seriesModels != null">#{seriesModels},</if>
+            <if test="seriesStatus != null">#{seriesStatus},</if>
+            <if test="seriesDescrption != null">#{seriesDescrption},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStarNftSeries" parameterType="StarNftSeries">
+        update star_nft_series
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="seriesName != null and seriesName != ''">series_name = #{seriesName},</if>
+            <if test="seriesType != null">series_type = #{seriesType},</if>
+            <if test="createAt != null">create_at = #{createAt},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateAt != null">update_at = #{updateAt},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="seriesImages != null">series_images = #{seriesImages},</if>
+            <if test="seriesModels != null">series_models = #{seriesModels},</if>
+            <if test="seriesStatus != null">series_status = #{seriesStatus},</if>
+            <if test="seriesDescrption != null">series_descrption = #{seriesDescrption},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStarNftSeriesById" parameterType="Long">
+        update star_nft_series set is_delete = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteStarNftSeriesByIds" parameterType="String">
+        update star_nft_series set is_delete = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

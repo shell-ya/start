@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.StarNftDictMapper">
+
+    <resultMap type="StarNftDict" id="StarNftDictResult">
+        <result property="id"    column="id"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="createdBy"    column="created_by"    />
+        <result property="modifiedAt"    column="modified_at"    />
+        <result property="modifiedBy"    column="modified_by"    />
+        <result property="dictCode"    column="dict_code"    />
+        <result property="dictDesc"    column="dict_desc"    />
+        <result property="categoryCode"    column="category_code"    />
+        <result property="categoryDesc"    column="category_desc"    />
+        <result property="sortNo"    column="sort_no"    />
+        <result property="dataType"    column="data_type"    />
+        <result property="remark"    column="remark"    />
+        <result property="locateCode"    column="locate_code"    />
+        <result property="version"    column="version"    />
+        <result property="enabled"    column="enabled"    />
+        <result property="doSecret"    column="do_secret"    />
+    </resultMap>
+
+    <sql id="selectStarNftDictVo">
+        select id, is_deleted, created_at, created_by, modified_at, modified_by, dict_code, dict_desc, category_code, category_desc, sort_no, data_type, remark, locate_code, version, enabled, do_secret from star_nft_dict
+    </sql>
+
+    <select id="selectStarNftDictList" parameterType="StarNftDict" resultMap="StarNftDictResult">
+        <include refid="selectStarNftDictVo"/>
+        <where>
+            is_deleted = 0
+            <if test="dictCode != null  and dictCode != ''"> and dict_code = #{dictCode}</if>
+            <if test="dictDesc != null  and dictDesc != ''"> and dict_desc = #{dictDesc}</if>
+            <if test="categoryCode != null  and categoryCode != ''"> and category_code = #{categoryCode}</if>
+            <if test="categoryDesc != null  and categoryDesc != ''"> and category_desc = #{categoryDesc}</if>
+            <if test="sortNo != null "> and sort_no = #{sortNo}</if>
+            <if test="dataType != null  and dataType != ''"> and data_type = #{dataType}</if>
+            <if test="locateCode != null  and locateCode != ''"> and locate_code = #{locateCode}</if>
+            <if test="enabled != null "> and enabled = #{enabled}</if>
+            <if test="doSecret != null "> and do_secret = #{doSecret}</if>
+        </where>
+    </select>
+
+    <select id="selectStarNftDictById" parameterType="Long" resultMap="StarNftDictResult">
+        <include refid="selectStarNftDictVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertStarNftDict" parameterType="StarNftDict" useGeneratedKeys="true" keyProperty="id">
+        insert into star_nft_dict
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="createdAt != null">created_at,</if>
+            <if test="createdBy != null">created_by,</if>
+            <if test="modifiedAt != null">modified_at,</if>
+            <if test="modifiedBy != null">modified_by,</if>
+            <if test="dictCode != null and dictCode != ''">dict_code,</if>
+            <if test="dictDesc != null and dictDesc != ''">dict_desc,</if>
+            <if test="categoryCode != null and categoryCode != ''">category_code,</if>
+            <if test="categoryDesc != null">category_desc,</if>
+            <if test="sortNo != null">sort_no,</if>
+            <if test="dataType != null">data_type,</if>
+            <if test="remark != null">remark,</if>
+            <if test="locateCode != null">locate_code,</if>
+            <if test="version != null">version,</if>
+            <if test="enabled != null">enabled,</if>
+            <if test="doSecret != null">do_secret,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="modifiedAt != null">#{modifiedAt},</if>
+            <if test="modifiedBy != null">#{modifiedBy},</if>
+            <if test="dictCode != null and dictCode != ''">#{dictCode},</if>
+            <if test="dictDesc != null and dictDesc != ''">#{dictDesc},</if>
+            <if test="categoryCode != null and categoryCode != ''">#{categoryCode},</if>
+            <if test="categoryDesc != null">#{categoryDesc},</if>
+            <if test="sortNo != null">#{sortNo},</if>
+            <if test="dataType != null">#{dataType},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="locateCode != null">#{locateCode},</if>
+            <if test="version != null">#{version},</if>
+            <if test="enabled != null">#{enabled},</if>
+            <if test="doSecret != null">#{doSecret},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStarNftDict" parameterType="StarNftDict">
+        update star_nft_dict
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="createdBy != null">created_by = #{createdBy},</if>
+            <if test="modifiedAt != null">modified_at = #{modifiedAt},</if>
+            <if test="modifiedBy != null">modified_by = #{modifiedBy},</if>
+            <if test="dictCode != null and dictCode != ''">dict_code = #{dictCode},</if>
+            <if test="dictDesc != null and dictDesc != ''">dict_desc = #{dictDesc},</if>
+            <if test="categoryCode != null and categoryCode != ''">category_code = #{categoryCode},</if>
+            <if test="categoryDesc != null">category_desc = #{categoryDesc},</if>
+            <if test="sortNo != null">sort_no = #{sortNo},</if>
+            <if test="dataType != null">data_type = #{dataType},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="locateCode != null">locate_code = #{locateCode},</if>
+            <if test="version != null">version = #{version},</if>
+            <if test="enabled != null">enabled = #{enabled},</if>
+            <if test="doSecret != null">do_secret = #{doSecret},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStarNftDictById" parameterType="Long">
+        update star_nft_dict set is_deleted = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteStarNftDictByIds" parameterType="String">
+        update star_nft_dict set is_deleted = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 批量新增数据 -->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into
+        star_nft_dict(is_deleted,created_at,created_by,modified_at,modified_by,dict_code,dict_desc,category_code,category_desc,sort_no,data_type,remark,locate_code,version,enabled,do_secret)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.dictCode},#{entity.dictDesc},#{entity.categoryCode},#{entity.categoryDesc},#{entity.sortNo},#{entity.dataType},#{entity.remark},#{entity.locateCode},#{entity.version},#{entity.enabled},#{entity.doSecret})
+        </foreach>
+    </insert>
+
+    <select id="queryByCategoryCode" resultMap="StarNftDictResult">
+        <include refid="selectStarNftDictVo"/>
+        <where>
+            enabled = 1
+            <if test="categoryCode != null and categoryCode != ''">
+                and category_code = #{categoryCode}
+            </if>
+        </where>
+    </select>
+</mapper>

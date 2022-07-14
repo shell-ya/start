@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.StarNftThemeInfoMapper">
+
+    <resultMap type="StarNftThemeInfo" id="StarNftThemeInfoResult">
+        <result property="id"    column="id"    />
+        <result property="seriesId"    column="series_id"    />
+        <result property="themeType"    column="theme_type"    />
+        <result property="themeName"    column="theme_name"    />
+        <result property="themePic"    column="theme_pic"    />
+        <result property="publishNumber"    column="publish_number"    />
+        <result property="descrption"    column="descrption"    />
+        <result property="themeLevel"    column="theme_level"    />
+        <result property="stock"    column="stock"    />
+        <result property="lssuePrice"    column="lssue_price"    />
+        <result property="createAt"    column="create_at"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateAt"    column="update_at"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="isRecommend"    column="is_recommend"    />
+        <result property="restrictNumber"    column="restrict_number"    />
+        <result property="tags"    column="tags"    />
+        <result property="contractAddress"    column="contract_address"    />
+        <result property="publisherId"    column="publisher_id"    />
+        <result property="marketOpenTime"    column="market_open_time"    />
+        <result property="isResale"    column="is_resale"    />
+
+    </resultMap>
+
+    <sql id="selectStarNftThemeInfoVo">
+        select id, series_id, theme_type, theme_name, theme_pic, publish_number, descrption, theme_level, stock, lssue_price, create_at, create_by, update_at, update_by, is_delete, is_recommend, restrict_number, tags, contract_address,publisher_id,market_open_time,is_resale from star_nft_theme_info
+    </sql>
+
+    <select id="selectStarNftThemeInfoList" parameterType="StarNftThemeInfo" resultMap="StarNftThemeInfoResult">
+        <include refid="selectStarNftThemeInfoVo"/>
+        <where>
+            is_delete = 0
+            <if test="seriesId != null "> and series_id = #{seriesId}</if>
+            <if test="themeType != null "> and theme_type = #{themeType}</if>
+            <if test="themeName != null  and themeName != ''"> and theme_name like concat('%', #{themeName}, '%')</if>
+            <if test="themePic != null  and themePic != ''"> and theme_pic = #{themePic}</if>
+            <if test="publishNumber != null "> and publish_number = #{publishNumber}</if>
+            <if test="descrption != null  and descrption != ''"> and descrption = #{descrption}</if>
+            <if test="themeLevel != null "> and theme_level = #{themeLevel}</if>
+            <if test="stock != null "> and stock = #{stock}</if>
+            <if test="lssuePrice != null "> and lssue_price = #{lssuePrice}</if>
+            <if test="createAt != null "> and create_at = #{createAt}</if>
+            <if test="updateAt != null "> and update_at = #{updateAt}</if>
+<!--            <if test="isDelete != null "> and is_delete = #{isDelete}</if>-->
+            <if test="isRecommend != null "> and is_recommend = #{isRecommend}</if>
+            <if test="restrictNumber != null "> and restrict_number = #{restrictNumber}</if>
+            <if test="tags != null  and tags != ''"> and tags = #{tags}</if>
+            <if test="contractAddress != null  and contractAddress != ''"> and contract_address = #{contractAddress}</if>
+            <if test="publisherId != null  and publisherId != ''"> and publisher_id = #{publisherId}</if>
+            <if test="marketOpenTime != null  and marketOpenTime != ''"> and market_open_time = #{marketOpenTime},</if>
+            <if test="isResale != null  and isResale != ''"> and is_resale = #{isResale},</if>
+        </where>
+    </select>
+
+    <select id="selectStarNftThemeInfoById" parameterType="Long" resultMap="StarNftThemeInfoResult">
+        <include refid="selectStarNftThemeInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertStarNftThemeInfo" parameterType="StarNftThemeInfo">
+        insert into star_nft_theme_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="seriesId != null">series_id,</if>
+            <if test="themeType != null">theme_type,</if>
+            <if test="themeName != null and themeName != ''">theme_name,</if>
+            <if test="themePic != null and themePic != ''">theme_pic,</if>
+            <if test="publishNumber != null">publish_number,</if>
+            <if test="descrption != null">descrption,</if>
+            <if test="themeLevel != null">theme_level,</if>
+            <if test="stock != null">stock,</if>
+            <if test="lssuePrice != null">lssue_price,</if>
+            <if test="createAt != null">create_at,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="updateAt != null">update_at,</if>
+            <if test="updateBy != null and updateBy != ''">update_by,</if>
+            <if test="isDelete != null">is_delete,</if>
+            <if test="isRecommend != null">is_recommend,</if>
+            <if test="restrictNumber != null">restrict_number,</if>
+            <if test="tags != null">tags,</if>
+            <if test="contractAddress != null and contractAddress != ''">contract_address,</if>
+            <if test="publisherId != null  and publisherId != ''"> publisher_id,</if>
+            <if test="marketOpenTime != null">  market_open_time ,</if>
+            <if test="isResale != null  and isResale != ''"> is_resale,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="seriesId != null">#{seriesId},</if>
+            <if test="themeType != null">#{themeType},</if>
+            <if test="themeName != null and themeName != ''">#{themeName},</if>
+            <if test="themePic != null and themePic != ''">#{themePic},</if>
+            <if test="publishNumber != null">#{publishNumber},</if>
+            <if test="descrption != null">#{descrption},</if>
+            <if test="themeLevel != null">#{themeLevel},</if>
+            <if test="stock != null">#{stock},</if>
+            <if test="lssuePrice != null">#{lssuePrice},</if>
+            <if test="createAt != null">#{createAt},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="updateAt != null">#{updateAt},</if>
+            <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+            <if test="isRecommend != null">#{isRecommend},</if>
+            <if test="restrictNumber != null">#{restrictNumber},</if>
+            <if test="tags != null">#{tags},</if>
+            <if test="contractAddress != null and contractAddress != ''">#{contractAddress},</if>
+            <if test="publisherId != null  and publisherId != ''">#{publisherId},</if>
+            <if test="marketOpenTime != null ">  #{marketOpenTime},</if>
+            <if test="isResale != null  and isResale != ''">  #{isResale},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStarNftThemeInfo" parameterType="StarNftThemeInfo">
+        update star_nft_theme_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="seriesId != null">series_id = #{seriesId},</if>
+            <if test="themeType != null">theme_type = #{themeType},</if>
+            <if test="themeName != null and themeName != ''">theme_name = #{themeName},</if>
+            <if test="themePic != null and themePic != ''">theme_pic = #{themePic},</if>
+            <if test="publishNumber != null">publish_number = #{publishNumber},</if>
+            <if test="descrption != null">descrption = #{descrption},</if>
+            <if test="themeLevel != null">theme_level = #{themeLevel},</if>
+            <if test="stock != null">stock = #{stock},</if>
+            <if test="lssuePrice != null">lssue_price = #{lssuePrice},</if>
+            <if test="createAt != null">create_at = #{createAt},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateAt != null">update_at = #{updateAt},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="isRecommend != null">is_recommend = #{isRecommend},</if>
+            <if test="restrictNumber != null">restrict_number = #{restrictNumber},</if>
+            <if test="tags != null">tags = #{tags},</if>
+            <if test="contractAddress != null and contractAddress != ''">contract_address = #{contractAddress},</if>
+            <if test="publisherId != null  and publisherId != ''"> publisher_id = #{publisherId},</if>
+            <if test="marketOpenTime != null "> market_open_time = #{marketOpenTime},</if>
+            <if test="isResale != null  and isResale != ''">  is_resale = #{isResale},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStarNftThemeInfoById" parameterType="Long">
+        update star_nft_theme_info  set is_delete = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteStarNftThemeInfoByIds" parameterType="String">
+        update star_nft_theme_info set is_delete = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectThemeInfoByPublisherId" resultType="com.starnft.star.business.domain.vo.ThemeInfoVo">
+        select  id,
+                theme_name as themeName,
+                stock,
+                publish_number as goodNumber,
+                lssue_price as price,
+                IF(stock = 0, true,false) as disabled
+        from star_nft_theme_info
+        where
+            is_delete = 0
+        and
+            publisher_id = #{publisherId}
+    </select>
+
+    <select id="selectStarNftThemeInfoVoList" resultType="com.starnft.star.business.domain.vo.StarNftThemeInfoVo">
+        select t.id           as id,
+               t.series_id    as seriesId,
+               s.series_name  as seriesName,
+               t.theme_type   as themeType,
+               t.theme_name   as themeName,
+               t.theme_pic    as themePic,
+               t.publish_number   as publishNumber,
+               t.descrption,
+               t.theme_level  as themeLevel,
+               t.stock,
+               t.lssue_price  as lssuePrice,
+               t.create_at    as createAt,
+               t.create_by    as createBy,
+               t.update_at    as updateAt,
+               t.update_by    as updateBy,
+               t.is_delete    as isDelete,
+               t.is_recommend as isRecommend,
+               t.restrict_number  as restrictNumber,
+               t.tags,
+               t.contract_address as contractAddress,
+               t.market_open_time as marketOpenTime,
+               t.publisher_id as publisherId,
+               p.publisher as publisher,
+               p.pic as pic,
+               t.is_resale as isResale
+        from star_nft_theme_info t
+            left join star_nft_series s
+        on t.series_id = s.id
+            left join star_nft_publisher p
+        on p.id = t.publisher_id
+        <where>
+            t.is_delete = 0
+            <if test="seriesId != null "> and t.series_id = #{seriesId}</if>
+            <if test="themeType != null "> and t.theme_type = #{themeType}</if>
+            <if test="themeName != null  and themeName != ''"> and t.theme_name like concat('%', #{themeName}, '%')</if>
+            <if test="themePic != null  and themePic != ''"> and t.theme_pic = #{themePic}</if>
+            <if test="publishNumber != null "> and t.publish_number = #{publishNumber}</if>
+            <if test="descrption != null  and descrption != ''"> and t.descrption = #{descrption}</if>
+            <if test="themeLevel != null "> and t.theme_level = #{themeLevel}</if>
+            <if test="stock != null "> and t.stock = #{stock}</if>
+            <if test="lssuePrice != null "> and t.lssue_price = #{lssuePrice}</if>
+            <if test="createAt != null "> and t.create_at = #{createAt}</if>
+            <if test="updateAt != null "> and t.update_at = #{updateAt}</if>
+            <!--            <if test="isDelete != null "> and is_delete = #{isDelete}</if>-->
+            <if test="isRecommend != null "> and t.is_recommend = #{isRecommend}</if>
+            <if test="restrictNumber != null "> and t.restrict_number = #{restrictNumber}</if>
+            <if test="tags != null  and tags != ''"> and t.tags = #{tags}</if>
+            <if test="contractAddress != null  and contractAddress != ''"> and t.contract_address = #{contractAddress}</if>
+            <if test="publisherId != null  and publisherId != ''"> and t.publisher_id = #{publisherId}</if>
+            <if test="marketOpenTime != null  "> and market_open_time = #{marketOpenTime}</if>
+            <if test="isResale != null  and isResale != ''"> and is_resale = #{isResale}</if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.StarBannerMapper">
+
+    <resultMap type="StarBanner" id="StarBannerResult">
+        <result property="id"    column="id"    />
+        <result property="title"    column="title"    />
+        <result property="imgUrl"    column="img_url"    />
+        <result property="position"    column="position"    />
+        <result property="display"    column="display"    />
+        <result property="sort"    column="sort"    />
+        <result property="url"    column="url"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="createdBy"    column="created_by"    />
+        <result property="modifiedAt"    column="modified_at"    />
+        <result property="modifiedBy"    column="modified_by"    />
+        <result property="jumpType"    column="jump_type"    />
+    </resultMap>
+
+    <sql id="selectStarBannerVo">
+        select id, title, img_url, position, display, sort, url, is_deleted, created_at, created_by, modified_at, modified_by, jump_type from star_banner
+    </sql>
+
+    <select id="selectStarBannerList" parameterType="StarBanner" resultMap="StarBannerResult">
+        <include refid="selectStarBannerVo"/>
+        <where>
+            is_deleted = 0
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="imgUrl != null  and imgUrl != ''"> and img_url = #{imgUrl}</if>
+            <if test="position != null "> and position = #{position}</if>
+            <if test="display != null "> and display = #{display}</if>
+            <if test="sort != null "> and sort = #{sort}</if>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="isDeleted != null "> and is_deleted = #{isDeleted}</if>
+            <if test="createdAt != null "> and created_at = #{createdAt}</if>
+            <if test="createdBy != null  and createdBy != ''"> and created_by = #{createdBy}</if>
+            <if test="modifiedAt != null "> and modified_at = #{modifiedAt}</if>
+            <if test="modifiedBy != null  and modifiedBy != ''"> and modified_by = #{modifiedBy}</if>
+            <if test="jumpType != null "> and jump_type = #{jumpType}</if>
+        </where>
+        order by sort
+    </select>
+
+    <select id="selectStarBannerById" parameterType="Long" resultMap="StarBannerResult">
+        <include refid="selectStarBannerVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertStarBanner" parameterType="StarBanner" useGeneratedKeys="true" keyProperty="id">
+        insert into star_banner
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">title,</if>
+            <if test="imgUrl != null and imgUrl != ''">img_url,</if>
+            <if test="position != null">position,</if>
+            <if test="display != null">display,</if>
+            <if test="sort != null">sort,</if>
+            <if test="url != null">url,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="createdAt != null">created_at,</if>
+            <if test="createdBy != null">created_by,</if>
+            <if test="modifiedAt != null">modified_at,</if>
+            <if test="modifiedBy != null">modified_by,</if>
+            <if test="jumpType != null">jump_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="imgUrl != null and imgUrl != ''">#{imgUrl},</if>
+            <if test="position != null">#{position},</if>
+            <if test="display != null">#{display},</if>
+            <if test="sort != null">#{sort},</if>
+            <if test="url != null">#{url},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="modifiedAt != null">#{modifiedAt},</if>
+            <if test="modifiedBy != null">#{modifiedBy},</if>
+            <if test="jumpType != null">#{jumpType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStarBanner" parameterType="StarBanner">
+        update star_banner
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="imgUrl != null and imgUrl != ''">img_url = #{imgUrl},</if>
+            <if test="position != null">position = #{position},</if>
+            <if test="display != null">display = #{display},</if>
+            <if test="sort != null">sort = #{sort},</if>
+            <if test="url != null">url = #{url},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="createdBy != null">created_by = #{createdBy},</if>
+            <if test="modifiedAt != null">modified_at = #{modifiedAt},</if>
+            <if test="modifiedBy != null">modified_by = #{modifiedBy},</if>
+            <if test="jumpType != null">jump_type = #{jumpType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStarBannerById" parameterType="Long">
+        update  star_banner  set is_deleted = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteStarBannerByIds" parameterType="String">
+        update   star_banner set is_deleted = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

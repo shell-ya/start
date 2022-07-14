@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.StarNftWalletLogMapper">
+
+    <resultMap type="StarNftWalletLog" id="StarNftWalletLogResult">
+        <result property="id"    column="id"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="createdBy"    column="created_by"    />
+        <result property="modifiedAt"    column="modified_at"    />
+        <result property="modifiedBy"    column="modified_by"    />
+        <result property="recordSn"    column="record_sn"    />
+        <result property="uid"    column="uid"    />
+        <result property="wId"    column="w_id"    />
+        <result property="balanceOffset"    column="balance_offset"    />
+        <result property="currentBalance"    column="current_balance"    />
+        <result property="remark"    column="remark"    />
+        <result property="display"    column="display"    />
+        <result property="channel"    column="channel"    />
+    </resultMap>
+
+    <sql id="selectStarNftWalletLogVo">
+        select id, is_deleted, created_at, created_by, modified_at, modified_by, record_sn, uid, w_id, balance_offset, current_balance, remark, display, channel from star_nft_wallet_log
+    </sql>
+
+    <select id="selectStarNftWalletLogList" parameterType="StarNftWalletLog" resultMap="StarNftWalletLogResult">
+        <include refid="selectStarNftWalletLogVo"/>
+        <where>
+            (is_deleted = 0||is_deleted is null )
+            <if test="createdAt != null "> and created_at = #{createdAt}</if>
+            <if test="modifiedAt != null "> and modified_at = #{modifiedAt}</if>
+            <if test="modifiedBy != null  and modifiedBy != ''"> and modified_by = #{modifiedBy}</if>
+            <if test="recordSn != null  and recordSn != ''"> and record_sn = #{recordSn}</if>
+            <if test="uid != null "> and uid = #{uid}</if>
+            <if test="wId != null  and wId != ''"> and w_id = #{wId}</if>
+            <if test="balanceOffset != null "> and balance_offset = #{balanceOffset}</if>
+            <if test="currentBalance != null "> and current_balance = #{currentBalance}</if>
+            <if test="display != null "> and display = #{display}</if>
+            <if test="channel != null  and channel != ''"> and channel = #{channel}</if>
+        </where>
+    </select>
+
+    <select id="selectStarNftWalletLogById" parameterType="Long" resultMap="StarNftWalletLogResult">
+        <include refid="selectStarNftWalletLogVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertStarNftWalletLog" parameterType="StarNftWalletLog" useGeneratedKeys="true" keyProperty="id">
+        insert into star_nft_wallet_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="createdAt != null">created_at,</if>
+            <if test="createdBy != null">created_by,</if>
+            <if test="modifiedAt != null">modified_at,</if>
+            <if test="modifiedBy != null">modified_by,</if>
+            <if test="recordSn != null and recordSn != ''">record_sn,</if>
+            <if test="uid != null">uid,</if>
+            <if test="wId != null and wId != ''">w_id,</if>
+            <if test="balanceOffset != null">balance_offset,</if>
+            <if test="currentBalance != null">current_balance,</if>
+            <if test="remark != null">remark,</if>
+            <if test="display != null">display,</if>
+            <if test="channel != null and channel != ''">channel,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="modifiedAt != null">#{modifiedAt},</if>
+            <if test="modifiedBy != null">#{modifiedBy},</if>
+            <if test="recordSn != null and recordSn != ''">#{recordSn},</if>
+            <if test="uid != null">#{uid},</if>
+            <if test="wId != null and wId != ''">#{wId},</if>
+            <if test="balanceOffset != null">#{balanceOffset},</if>
+            <if test="currentBalance != null">#{currentBalance},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="display != null">#{display},</if>
+            <if test="channel != null and channel != ''">#{channel},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStarNftWalletLog" parameterType="StarNftWalletLog">
+        update star_nft_wallet_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="createdBy != null">created_by = #{createdBy},</if>
+            <if test="modifiedAt != null">modified_at = #{modifiedAt},</if>
+            <if test="modifiedBy != null">modified_by = #{modifiedBy},</if>
+            <if test="recordSn != null and recordSn != ''">record_sn = #{recordSn},</if>
+            <if test="uid != null">uid = #{uid},</if>
+            <if test="wId != null and wId != ''">w_id = #{wId},</if>
+            <if test="balanceOffset != null">balance_offset = #{balanceOffset},</if>
+            <if test="currentBalance != null">current_balance = #{currentBalance},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="display != null">display = #{display},</if>
+            <if test="channel != null and channel != ''">channel = #{channel},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStarNftWalletLogById" parameterType="Long">
+        update star_nft_wallet_log set is_deleted = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteStarNftWalletLogByIds" parameterType="String">
+        update star_nft_wallet_log set is_deleted = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

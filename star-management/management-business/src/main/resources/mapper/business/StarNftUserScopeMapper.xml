@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.StarNftUserScopeMapper">
+
+    <resultMap type="StarNftUserScope" id="StarNftUserScopeResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="userScope"    column="user_scope"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="modifiedAt"    column="modified_at"    />
+        <result property="version"    column="version"    />
+        <result property="scopeType"    column="scope_type"    />
+    </resultMap>
+
+    <sql id="selectStarNftUserScopeVo">
+        select id, user_id, user_scope, created_at, modified_at, version, scope_type from star_nft_user_scope
+    </sql>
+
+    <select id="selectStarNftUserScopeList" parameterType="StarNftUserScope" resultMap="StarNftUserScopeResult">
+        <include refid="selectStarNftUserScopeVo"/>
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="userScope != null "> and user_scope = #{userScope}</if>
+            <if test="params.beginCreatedAt != null and params.beginCreatedAt != '' and params.endCreatedAt != null and params.endCreatedAt != ''"> and created_at between #{params.beginCreatedAt} and #{params.endCreatedAt}</if>
+            <if test="params.beginModifiedAt != null and params.beginModifiedAt != '' and params.endModifiedAt != null and params.endModifiedAt != ''"> and modified_at between #{params.beginModifiedAt} and #{params.endModifiedAt}</if>
+            <if test="version != null "> and version = #{version}</if>
+            <if test="scopeType != null "> and scope_type = #{scopeType}</if>
+        </where>
+    </select>
+
+    <select id="selectStarNftUserScopeById" parameterType="Long" resultMap="StarNftUserScopeResult">
+        <include refid="selectStarNftUserScopeVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertStarNftUserScope" parameterType="StarNftUserScope">
+        insert into star_nft_user_scope
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="userScope != null">user_scope,</if>
+            <if test="createdAt != null">created_at,</if>
+            <if test="modifiedAt != null">modified_at,</if>
+            <if test="version != null">version,</if>
+            <if test="scopeType != null">scope_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="userScope != null">#{userScope},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="modifiedAt != null">#{modifiedAt},</if>
+            <if test="version != null">#{version},</if>
+            <if test="scopeType != null">#{scopeType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStarNftUserScope" parameterType="StarNftUserScope">
+        update star_nft_user_scope
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="userScope != null">user_scope = #{userScope},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="modifiedAt != null">modified_at = #{modifiedAt},</if>
+            <if test="version != null">version = #{version},</if>
+            <if test="scopeType != null">scope_type = #{scopeType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStarNftUserScopeById" parameterType="Long">
+        update  star_nft_user_scope  set is_deleted = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteStarNftUserScopeByIds" parameterType="String">
+        update   star_nft_user_scope set is_deleted = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.StarNftWalletConfigMapper">
+
+    <resultMap type="StarNftWalletConfig" id="StarNftWalletConfigResult">
+        <result property="id"    column="id"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="createdBy"    column="created_by"    />
+        <result property="modifiedAt"    column="modified_at"    />
+        <result property="modifiedBy"    column="modified_by"    />
+        <result property="rechargeLimit"    column="recharge_limit"    />
+        <result property="withdrawTimes"    column="withdraw_times"    />
+        <result property="withdrawLimit"    column="withdraw_limit"    />
+        <result property="chargeRate"    column="charge_rate"    />
+        <result property="copyrightRate"    column="copyright_rate"    />
+        <result property="serviceRate"    column="service_rate"    />
+        <result property="stableRate"    column="stable_rate"    />
+        <result property="identityCode"    column="identity_code"    />
+        <result property="channel"    column="channel"    />
+    </resultMap>
+
+    <sql id="selectStarNftWalletConfigVo">
+        select id, is_deleted, created_at, created_by, modified_at, modified_by, recharge_limit, withdraw_times, withdraw_limit, charge_rate, copyright_rate, service_rate, stable_rate, identity_code, channel from star_nft_wallet_config
+    </sql>
+
+    <select id="selectStarNftWalletConfigList" parameterType="StarNftWalletConfig" resultMap="StarNftWalletConfigResult">
+        <include refid="selectStarNftWalletConfigVo"/>
+        <where>
+            is_deleted = 0
+            <if test="isDeleted != null "> and is_deleted = #{isDeleted}</if>
+            <if test="rechargeLimit != null "> and recharge_limit = #{rechargeLimit}</if>
+            <if test="withdrawLimit != null "> and withdraw_limit = #{withdrawLimit}</if>
+            <if test="chargeRate != null "> and charge_rate = #{chargeRate}</if>
+            <if test="copyrightRate != null "> and copyright_rate = #{copyrightRate}</if>
+            <if test="serviceRate != null "> and service_rate = #{serviceRate}</if>
+            <if test="stableRate != null "> and stable_rate = #{stableRate}</if>
+            <if test="identityCode != null  and identityCode != ''"> and identity_code = #{identityCode}</if>
+            <if test="channel != null  and channel != ''"> and channel = #{channel}</if>
+        </where>
+    </select>
+
+    <select id="selectStarNftWalletConfigById" parameterType="Long" resultMap="StarNftWalletConfigResult">
+        <include refid="selectStarNftWalletConfigVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectStarNftWalletConfigByChannel" parameterType="Long" resultMap="StarNftWalletConfigResult">
+        <include refid="selectStarNftWalletConfigVo"/>
+        where channel = #{channel}
+    </select>
+
+    <insert id="insertStarNftWalletConfig" parameterType="StarNftWalletConfig" useGeneratedKeys="true" keyProperty="id">
+        insert into star_nft_wallet_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="createdAt != null">created_at,</if>
+            <if test="createdBy != null">created_by,</if>
+            <if test="modifiedAt != null">modified_at,</if>
+            <if test="modifiedBy != null">modified_by,</if>
+            <if test="rechargeLimit != null">recharge_limit,</if>
+            <if test="withdrawTimes != null">withdraw_times,</if>
+            <if test="withdrawLimit != null">withdraw_limit,</if>
+            <if test="chargeRate != null">charge_rate,</if>
+            <if test="copyrightRate != null">copyright_rate,</if>
+            <if test="serviceRate != null">service_rate,</if>
+            <if test="stableRate != null">stable_rate,</if>
+            <if test="identityCode != null">identity_code,</if>
+            <if test="channel != null">channel,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="modifiedAt != null">#{modifiedAt},</if>
+            <if test="modifiedBy != null">#{modifiedBy},</if>
+            <if test="rechargeLimit != null">#{rechargeLimit},</if>
+            <if test="withdrawTimes != null">#{withdrawTimes},</if>
+            <if test="withdrawLimit != null">#{withdrawLimit},</if>
+            <if test="chargeRate != null">#{chargeRate},</if>
+            <if test="copyrightRate != null">#{copyrightRate},</if>
+            <if test="serviceRate != null">#{serviceRate},</if>
+            <if test="stableRate != null">#{stableRate},</if>
+            <if test="identityCode != null">#{identityCode},</if>
+            <if test="channel != null">#{channel},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStarNftWalletConfig" parameterType="StarNftWalletConfig">
+        update star_nft_wallet_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="createdBy != null">created_by = #{createdBy},</if>
+            <if test="modifiedAt != null">modified_at = #{modifiedAt},</if>
+            <if test="modifiedBy != null">modified_by = #{modifiedBy},</if>
+            <if test="rechargeLimit != null">recharge_limit = #{rechargeLimit},</if>
+            <if test="withdrawTimes != null">withdraw_times = #{withdrawTimes},</if>
+            <if test="withdrawLimit != null">withdraw_limit = #{withdrawLimit},</if>
+            <if test="chargeRate != null">charge_rate = #{chargeRate},</if>
+            <if test="copyrightRate != null">copyright_rate = #{copyrightRate},</if>
+            <if test="serviceRate != null">service_rate = #{serviceRate},</if>
+            <if test="stableRate != null">stable_rate = #{stableRate},</if>
+            <if test="identityCode != null">identity_code = #{identityCode},</if>
+            <if test="channel != null">channel = #{channel},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStarNftWalletConfigById" parameterType="Long">
+        update star_nft_wallet_config set is_deleted = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteStarNftWalletConfigByIds" parameterType="String">
+        update star_nft_wallet_config set is_deleted = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

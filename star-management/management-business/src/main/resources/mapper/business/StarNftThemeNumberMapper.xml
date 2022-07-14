@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.StarNftThemeNumberMapper">
+
+    <resultMap type="StarNftThemeNumber" id="StarNftThemeNumberResult">
+        <result property="id"    column="id"    />
+        <result property="seriesThemeInfoId"    column="series_theme_info_id"    />
+        <result property="themeNumber"    column="theme_number"    />
+        <result property="contractAddress"    column="contract_address"    />
+        <result property="chainIdentification"    column="chain_identification"    />
+        <result property="price"    column="price"    />
+        <result property="status"    column="status"    />
+        <result property="ownerBy"    column="owner_by"    />
+        <result property="createAt"    column="create_at"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateAt"    column="update_at"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="isDelete"    column="is_delete"    />
+    </resultMap>
+
+    <sql id="selectStarNftThemeNumberVo">
+        select id, series_theme_info_id, theme_number, contract_address, chain_identification, price, status, owner_by, create_at, create_by, update_at, update_by, is_delete from star_nft_theme_number
+    </sql>
+
+    <select id="selectStarNftThemeNumberList" parameterType="StarNftThemeNumber" resultMap="StarNftThemeNumberResult">
+        <include refid="selectStarNftThemeNumberVo"/>
+        <where>
+            is_delete = 0
+            <if test="seriesThemeInfoId != null "> and series_theme_info_id = #{seriesThemeInfoId}</if>
+            <if test="themeNumber != null "> and theme_number = #{themeNumber}</if>
+            <if test="contractAddress != null  and contractAddress != ''"> and contract_address = #{contractAddress}</if>
+            <if test="chainIdentification != null  and chainIdentification != ''"> and chain_identification = #{chainIdentification}</if>
+            <if test="price != null "> and price = #{price}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="ownerBy != null  and ownerBy != ''"> and owner_by = #{ownerBy}</if>
+            <if test="createAt != null "> and create_at = #{createAt}</if>
+            <if test="updateAt != null "> and update_at = #{updateAt}</if>
+<!--            <if test="isDelete != null "> and is_delete = #{isDelete}</if>-->
+        </where>
+    </select>
+
+    <select id="selectStarNftThemeNumberById" parameterType="Long" resultMap="StarNftThemeNumberResult">
+        <include refid="selectStarNftThemeNumberVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertStarNftThemeNumber" parameterType="StarNftThemeNumber">
+        insert into star_nft_theme_number
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="seriesThemeInfoId != null">series_theme_info_id,</if>
+            <if test="themeNumber != null">theme_number,</if>
+            <if test="contractAddress != null and contractAddress != ''">contract_address,</if>
+            <if test="chainIdentification != null and chainIdentification != ''">chain_identification,</if>
+            <if test="price != null">price,</if>
+            <if test="status != null">status,</if>
+            <if test="ownerBy != null">owner_by,</if>
+            <if test="createAt != null">create_at,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="updateAt != null">update_at,</if>
+            <if test="updateBy != null and updateBy != ''">update_by,</if>
+            <if test="isDelete != null">is_delete,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="seriesThemeInfoId != null">#{seriesThemeInfoId},</if>
+            <if test="themeNumber != null">#{themeNumber},</if>
+            <if test="contractAddress != null and contractAddress != ''">#{contractAddress},</if>
+            <if test="chainIdentification != null and chainIdentification != ''">#{chainIdentification},</if>
+            <if test="price != null">#{price},</if>
+            <if test="status != null">#{status},</if>
+            <if test="ownerBy != null">#{ownerBy},</if>
+            <if test="createAt != null">#{createAt},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="updateAt != null">#{updateAt},</if>
+            <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStarNftThemeNumber" parameterType="StarNftThemeNumber">
+        update star_nft_theme_number
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="seriesThemeInfoId != null">series_theme_info_id = #{seriesThemeInfoId},</if>
+            <if test="themeNumber != null">theme_number = #{themeNumber},</if>
+            <if test="contractAddress != null and contractAddress != ''">contract_address = #{contractAddress},</if>
+            <if test="chainIdentification != null and chainIdentification != ''">chain_identification = #{chainIdentification},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="ownerBy != null">owner_by = #{ownerBy},</if>
+            <if test="createAt != null">create_at = #{createAt},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateAt != null">update_at = #{updateAt},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStarNftThemeNumberById" parameterType="Long">
+        update star_nft_theme_number set is_delete = 1 where id = #{id}
+    </delete>
+
+    <delete id="deleteStarNftThemeNumberByIds" parameterType="String">
+        update star_nft_theme_number set is_delete = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectStarNftThemeNumberVoList" resultType="com.starnft.star.business.domain.vo.StarNftThemeNumberVo">
+        select n.id,
+               n.series_theme_info_id as seriesThemeInfoId,
+               t.theme_name  as seriesThemeName,
+               n.theme_number   as themeNumber,
+               n.contract_address as contractAddress,
+               n.chain_identification as chainIdentification,
+               n.price as price,
+               n.status as status,
+               u.user_id as owberBy,
+               a.phone  as ownerPhone,
+               a.avatar as ownerAvatar,
+               n.create_at as createAt,
+               n.create_by as createBy,
+               n.update_at as updateAt,
+               n.update_by as updateBy,
+               n.is_delete as isDelete
+        from star_nft_theme_number n
+            left join  star_nft_theme_info t
+        on  n.series_theme_info_id = t.id
+            left join star_nft_user_theme u
+        on n.id = u.series_theme_id
+            left join account_user a
+        on u.user_id = a.account
+        <where>
+            n.is_delete = 0
+            <if test="seriesThemeInfoId != null "> and n.series_theme_info_id = #{seriesThemeInfoId}</if>
+            <if test="themeNumber != null "> and n.theme_number = #{themeNumber}</if>
+            <if test="contractAddress != null  and contractAddress != ''"> and n.contract_address = #{contractAddress}</if>
+            <if test="chainIdentification != null  and chainIdentification != ''"> and n.chain_identification = #{chainIdentification}</if>
+            <if test="price != null "> and n.price = #{price}</if>
+            <if test="status != null "> and n.status = #{status}</if>
+            <if test="ownerBy != null  and ownerBy != ''"> and n.owner_by = #{ownerBy}</if>
+            <if test="createAt != null "> and n.create_at = #{createAt}</if>
+            <if test="updateAt != null "> and n.update_at = #{updateAt}</if>
+            <!--            <if test="isDelete != null "> and is_delete = #{isDelete}</if>-->
+        </where>
+
+    </select>
+</mapper>
