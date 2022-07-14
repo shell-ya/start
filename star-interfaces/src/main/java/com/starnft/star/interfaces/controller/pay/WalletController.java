@@ -1,5 +1,6 @@
 package com.starnft.star.interfaces.controller.pay;
 
+import com.google.common.base.Strings;
 import com.starnft.star.application.process.wallet.IWalletCore;
 import com.starnft.star.application.process.wallet.req.PayRecordReq;
 import com.starnft.star.application.process.wallet.req.RechargeFacadeReq;
@@ -132,10 +133,11 @@ public class WalletController {
 
 
     @ApiOperation("获取钱包手续费率")
-    @GetMapping("/rates")
+    @GetMapping("/rates/{channel}")
     @TokenIgnore
-    public RopResponse<WalletConfigVO> obtainRates() {
-        return RopResponse.success(WalletConfig.getConfig(StarConstants.PayChannel.Market));
+    public RopResponse<WalletConfigVO> obtainRates(@PathVariable String channel) {
+        return RopResponse.success(WalletConfig.getConfig(Strings.isNullOrEmpty(channel)
+                ? StarConstants.PayChannel.Balance : StarConstants.PayChannel.valueOf(channel)));
     }
 
 }
