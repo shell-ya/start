@@ -416,12 +416,12 @@ public class UserCoreImpl implements UserCore {
     }
 
     @Override
-    public ShardCodeRes shareCodeInfo(Long userId) {
+    public ShareCodeRes shareCodeInfo(Long userId) {
         EventActivityRes activityRes = eventActivityService.queryEnabledActivity();
         String shardCode = InvitationCodeUtil.gen(userId);
         List<DictionaryVO> url = dictionaryRepository.obtainDictionary("URL");
 
-        return ShardCodeRes.builder()
+        return ShareCodeRes.builder()
                 .shardCode(shardCode)
                 .activityType(activityRes.getActivitySign())
                 .url(url.get(0).getDictCode())

@@ -145,7 +145,7 @@ public interface UserCore {
 
     Boolean isCertification(Long userId);
 
-    ShardCodeRes shareCodeInfo(Long userId);
+    ShareCodeRes shareCodeInfo(Long userId);
 
     Boolean isRegister(String phone);
 }

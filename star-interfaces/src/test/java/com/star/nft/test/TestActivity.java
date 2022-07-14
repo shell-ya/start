@@ -11,14 +11,13 @@ import com.starnft.star.application.process.rank.impl.RankProcessor;
 import com.starnft.star.application.process.rank.req.RankReq;
 import com.starnft.star.application.process.user.UserCore;
 import com.starnft.star.application.process.user.req.UserLoginReq;
-import com.starnft.star.application.process.user.res.ShardCodeRes;
+import com.starnft.star.application.process.user.res.ShareCodeRes;
 import com.starnft.star.application.process.user.res.UserInfoRes;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.utils.SnowflakeWorker;
 import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
-import com.starnft.star.domain.rank.core.rank.model.res.InvitationHistoryItem;
 import com.starnft.star.domain.rank.core.rank.model.res.Rankings;
 import com.starnft.star.interfaces.StarApplication;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -90,13 +88,13 @@ public class TestActivity {
 
     @Test
     public void genShardCode(){
-        ShardCodeRes s = userCore.shareCodeInfo(409412742L);
+        ShareCodeRes s = userCore.shareCodeInfo(409412742L);
         log.info("邀请码：{}",s);
     }
 
     @Test
     public void login(){
-        ShardCodeRes code = userCore.shareCodeInfo(409412742L);
+        ShareCodeRes code = userCore.shareCodeInfo(409412742L);
         log.info("code:{}",code);
         UserLoginReq userLoginReq = new UserLoginReq();
         userLoginReq.setLoginScenes(2);

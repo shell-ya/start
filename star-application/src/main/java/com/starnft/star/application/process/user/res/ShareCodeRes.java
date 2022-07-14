@@ -12,9 +12,9 @@ import lombok.Data;
 @Data
 @Builder
 @ApiModel("邀请码返回数据")
-public class ShardCodeRes {
+public class ShareCodeRes {
     @ApiModelProperty(value = "邀请码")
-    private String shardCode;
+    private String shareCode;
     @ApiModelProperty(value = "活动标记")
     private String activityType;
     @ApiModelProperty(value = "接口地址")
