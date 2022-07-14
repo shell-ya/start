@@ -101,7 +101,7 @@ public class TestActivity {
         userLoginReq.setActivityType("launch_acquistion");
         userLoginReq.setCode("1563531");
 //        userLoginReq.setPassword();
-        userLoginReq.setShareCode(code.getShardCode());
+        userLoginReq.setShareCode(code.getShareCode());
         userLoginReq.setPhone("15830887988");
         UserInfoRes userInfoRes = userCore.loginByPhoneAndRegister(userLoginReq);
 
