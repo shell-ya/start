@@ -1,5 +1,6 @@
 package com.starnft.star.application.process.user.impl;
 
+import cn.hutool.core.lang.Validator;
 import com.starnft.star.application.mq.producer.activity.ActivityEventProducer;
 import com.starnft.star.application.process.event.model.EventReqAssembly;
 import com.starnft.star.application.process.event.model.RegisterEventReq;
@@ -66,6 +67,7 @@ public class UserCoreImpl implements UserCore {
     IEventActivityService eventActivityService;
     @Resource
     IDictionaryRepository dictionaryRepository;
+
     @Override
     public UserInfoRes loginByPassword(@Valid UserLoginReq req) {
         Optional.ofNullable(req.getPhone())
@@ -119,6 +121,12 @@ public class UserCoreImpl implements UserCore {
     @Override
     public UserVerifyCodeRes getVerifyCode(UserVerifyCodeReq req) {
         UserVerifyCodeDTO userVerifyCodeDTO = BeanColverUtil.colver(req, UserVerifyCodeDTO.class);
+        if (req.getVerificationScenes().equals(1)) {
+            Boolean register = isRegister(req.getPhone());
+            if (register) {
+                throw new StarException(StarError.USER_EXISTS);
+            }
+        }
         UserVerifyCode verifyCode = this.userService.getVerifyCode(userVerifyCodeDTO);
         return BeanColverUtil.colver(verifyCode, UserVerifyCodeRes.class);
     }
@@ -416,13 +424,13 @@ public class UserCoreImpl implements UserCore {
     }
 
     @Override
-    public ShardCodeRes shareCodeInfo(Long userId) {
+    public ShareCodeRes shareCodeInfo(Long userId) {
         EventActivityRes activityRes = eventActivityService.queryEnabledActivity();
-        String shardCode = InvitationCodeUtil.gen(userId);
+        String shareCode = InvitationCodeUtil.gen(userId);
         List<DictionaryVO> url = dictionaryRepository.obtainDictionary("URL");
 
-        return ShardCodeRes.builder()
-                .shardCode(shardCode)
+        return ShareCodeRes.builder()
+                .shareCode(shareCode)
                 .activityType(activityRes.getActivitySign())
                 .url(url.get(0).getDictCode())
                 .build();
@@ -430,7 +438,22 @@ public class UserCoreImpl implements UserCore {
 
     @Override
     public Boolean isRegister(String phone) {
-        return this.redisTemplate.opsForValue().getBit(RedisKey.REDIS_USER_IS_REGISTERED.getKey(), Long.parseLong(phone));
+        boolean isMobile = Validator.isMobile(phone);
+        if (!isMobile) {
+            throw new StarException("请填写正确手机号码");
+        }
+        String PREFIX = phone.substring(0, 3);
+        String SUFFIX = phone.substring(3);
+        Boolean isExist = this.redisTemplate.opsForValue().getBit(RedisKey.REDIS_USER_IS_REGISTERED_PREFIX.getKey(), Long.parseLong(PREFIX)) && this.redisTemplate.opsForValue().getBit(RedisKey.REDIS_USER_IS_REGISTERED_SUFFIX.getKey(), Long.parseLong(SUFFIX));
+        if (!isExist) {
+            UserInfo userInfo = this.userService.queryUserByMobile(phone);
+            if (Objects.nonNull(userInfo)){
+                this.redisTemplate.opsForValue().setBit(RedisKey.REDIS_USER_IS_REGISTERED_PREFIX.getKey(), Long.parseLong(PREFIX),true) ;
+                this.redisTemplate.opsForValue().setBit(RedisKey.REDIS_USER_IS_REGISTERED_SUFFIX.getKey(), Long.parseLong(SUFFIX),true);
+                isExist=true;
+            }
+        }
+        return isExist;
     }
 
     private void popupAgreement(PopupAgreementRes popupAgreementRes

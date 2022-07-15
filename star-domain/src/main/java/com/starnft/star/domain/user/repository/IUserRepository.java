@@ -159,4 +159,6 @@ public interface IUserRepository {
      * @return
      */
     UserRealInfo getUserInfoAll(Long userId);
+
+    UserInfo queryUserInfoByMobile(String mobile);
 }

@@ -1,5 +1,6 @@
 package com.starnft.star.domain.user.service.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.constant.YesOrNoStatusEnum;
@@ -99,6 +100,12 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     }
 
     @Override
+    public UserInfo queryUserByMobile(String mobile) {
+        return this.userRepository.queryUserInfoByPhone(mobile);
+
+    }
+
+    @Override
     public UserRegisterInfoVO loginByPhone(UserLoginDTO req) {
 
         LoginTypeEnum loginTypeEnum = LoginTypeEnum.getLoginTypeEnum(req.getLoginScenes());
@@ -124,6 +131,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
     @Override
     public UserVerifyCode getVerifyCode(UserVerifyCodeDTO req) {
+       log.info("获取短信验证码进入参数「{}」", JSONUtil.toJsonStr(req));
         //校验图像验证码是否通过
         String imageCaptchaKey = String.format(RedisKey.REDIS_IMAGE_CAPTCHA_CHECK_SUCCESS_TOKEN.getKey(), req.getImageCaptchaId());
         Assert.isTrue(this.redisUtil.hasKey(imageCaptchaKey), () -> new StarException(StarError.IMAGE_CAPTCHA_CHECK_ERROR));

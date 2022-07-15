@@ -26,7 +26,7 @@ public class TestNewPay {
         stringObjectHashMap.put("userName","黄坤煌");
      stringObjectHashMap.put("idCard","445122199510295218");
         PaymentRich req = PaymentRich.builder()
-                .totalMoney(new BigDecimal("0.15")).payChannel(StarConstants.PayChannel.BankCard.name())
+                .totalMoney(new BigDecimal("0.15")).payChannel(StarConstants.PayChannel.CheckPay.name())
                 .frontUrl("https://www.baidu.com?q=1").clientIp("192.168.1.1")
                 .orderSn(IdUtil.getSnowflake(1, 1).nextIdStr())
                 .userId(1L)

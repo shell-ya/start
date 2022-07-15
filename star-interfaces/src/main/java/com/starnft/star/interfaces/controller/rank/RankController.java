@@ -4,27 +4,20 @@ import com.starnft.star.application.process.rank.IRankProcessor;
 import com.starnft.star.application.process.rank.req.RankReq;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.page.RequestConditionPage;
-import com.starnft.star.common.utils.RandomUtil;
-import com.starnft.star.domain.rank.core.rank.model.res.InvitationHistory;
+
+import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.domain.number.model.vo.NumberVO;
 import com.starnft.star.domain.rank.core.rank.model.res.InvitationHistoryItem;
 import com.starnft.star.domain.rank.core.rank.model.res.Rankings;
 import com.starnft.star.domain.rank.core.rank.model.res.RankingsItem;
-import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
-import com.starnft.star.domain.wallet.model.res.WalletResult;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import com.starnft.star.interfaces.interceptor.UserContext;
-import com.starnft.star.interfaces.interceptor.UserResolverInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 /**
  * @Date 2022/7/6 10:47 PM
@@ -38,7 +31,7 @@ public class RankController {
 
     final IRankProcessor rankProcessor;
     @ApiOperation("获取排行榜数据")
-    @GetMapping("/rankings")
+    @PostMapping("/rankings")
     @TokenIgnore
     public RopResponse<Rankings> rankings(@RequestBody RequestConditionPage<RankReq> request) {
 
@@ -64,8 +57,7 @@ public class RankController {
 
 
     @ApiOperation("邀请记录")
-    @GetMapping("/history")
-    @TokenIgnore
+    @PostMapping("/history")
     public RopResponse< List<InvitationHistoryItem>> history(@RequestBody RequestConditionPage<RankReq> request){
 //        InvitationHistory invitationHistory = new InvitationHistory();
 //        List<InvitationHistoryItem> items = new ArrayList<>();

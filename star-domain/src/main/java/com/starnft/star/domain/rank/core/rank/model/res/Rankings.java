@@ -18,4 +18,8 @@ public class Rankings {
     private String rankName;
     @ApiModelProperty(value = "数据")
     private List<RankingsItem> rankItem;
+    @ApiModelProperty(value = "总数")
+    private Long total;
+    private Integer page;
+    private Integer pageSize;
 }

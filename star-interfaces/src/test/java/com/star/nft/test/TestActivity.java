@@ -11,15 +11,20 @@ import com.starnft.star.application.process.rank.impl.RankProcessor;
 import com.starnft.star.application.process.rank.req.RankReq;
 import com.starnft.star.application.process.user.UserCore;
 import com.starnft.star.application.process.user.req.UserLoginReq;
-import com.starnft.star.application.process.user.res.ShardCodeRes;
+import com.starnft.star.application.process.user.res.ShareCodeRes;
 import com.starnft.star.application.process.user.res.UserInfoRes;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.page.RequestConditionPage;
+import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.common.utils.RandomUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
+import com.starnft.star.domain.rank.core.rank.core.IRankService;
 import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
-import com.starnft.star.domain.rank.core.rank.model.res.InvitationHistoryItem;
+import com.starnft.star.domain.rank.core.rank.model.RankItemMetaData;
 import com.starnft.star.domain.rank.core.rank.model.res.Rankings;
+import com.starnft.star.domain.rank.core.rank.model.res.RankingsItem;
+import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.interfaces.StarApplication;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -29,8 +34,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @SpringBootTest(classes = {StarApplication.class})
@@ -46,6 +51,9 @@ public class TestActivity {
 
     @Resource
     RankProcessor rankProcessor;
+
+    @Resource
+    IRankService rankService;
 
     @Resource
     ActivityEventProducer activityEventProducer;
@@ -90,20 +98,20 @@ public class TestActivity {
 
     @Test
     public void genShardCode(){
-        ShardCodeRes s = userCore.shareCodeInfo(409412742L);
+        ShareCodeRes s = userCore.shareCodeInfo(409412742L);
         log.info("邀请码：{}",s);
     }
 
     @Test
     public void login(){
-        ShardCodeRes code = userCore.shareCodeInfo(409412742L);
+        ShareCodeRes code = userCore.shareCodeInfo(409412742L);
         log.info("code:{}",code);
         UserLoginReq userLoginReq = new UserLoginReq();
         userLoginReq.setLoginScenes(2);
         userLoginReq.setActivityType("launch_acquistion");
         userLoginReq.setCode("1563531");
 //        userLoginReq.setPassword();
-        userLoginReq.setShareCode(code.getShardCode());
+        userLoginReq.setShareCode(code.getShareCode());
         userLoginReq.setPhone("15830887988");
         UserInfoRes userInfoRes = userCore.loginByPhoneAndRegister(userLoginReq);
 
@@ -132,7 +140,7 @@ public class TestActivity {
     @Test
     public void rank(){
         RequestConditionPage<RankReq> rankReqRequestConditionPage = new RequestConditionPage<>();
-        rankReqRequestConditionPage.setPage(1);
+        rankReqRequestConditionPage.setPage(0);
         rankReqRequestConditionPage.setSize(10);
         RankReq rankReq = new RankReq();
 //        rankReq.setRankName("test_rank");
@@ -169,6 +177,38 @@ public class TestActivity {
     public void name(){
         RankDefinition nowRank = rankProcessor.getNowRank();
         log.info(nowRank.toString());
+    }
+
+    @Test
+    public void add(){
+        for (int i = 0; i < 100L; i++) {
+            Long aLong = SnowflakeWorker.generateId();
+            RankItemMetaData rankItemMetaData= new RankItemMetaData();
+
+            rankItemMetaData.setChildrenId(SnowflakeWorker.generateId());
+            rankItemMetaData.setNickName(RandomUtil.randomName());
+            rankItemMetaData.setMobile(RandomUtil.randomName());
+            rankItemMetaData.setAvatar("");
+            rankService.setUserPhoneMapping("test_rank",aLong.toString(), RandomUtil.randomPhone());
+            rankService.put("test_rank", aLong.toString(),RandomUtil.randomDouble(100),rankItemMetaData);
+        }
+
+    }
+
+    @Test
+    public void vaild(){
+        for (int i = 0; i<100L;i++){
+
+            RankItemMetaData rankItemMetaData = new RankItemMetaData();
+            rankItemMetaData.setMobile(RandomUtil.randomPhone());
+            rankItemMetaData.setNickName(RandomUtil.randomName());
+            rankItemMetaData.setChildrenId(RandomUtil.randomLong(9));
+
+
+            rankService.put("test_rank","305730346",1,rankItemMetaData);
+            rankService.validPut("test_rank","305730346",1,rankItemMetaData);
+
+        }
     }
 
 }

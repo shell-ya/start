@@ -1,6 +1,5 @@
 package com.starnft.star.common.component;
 
-import cn.hutool.core.util.DesensitizedUtil;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.BeanProperty;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -35,7 +34,8 @@ public class DesensitizedSerialize extends JsonSerializer<String> implements Con
             break;
             case ID_CARD:jsonGenerator.writeString(DesensitizedUtils.backCard(origin));
             break;
-            case MOBILE_PHONE:jsonGenerator.writeString(DesensitizedUtil.mobilePhone(origin));
+            case MOBILE_PHONE:jsonGenerator.writeString(DesensitizedUtils.phone(origin));
+            break;
         }
     }
 

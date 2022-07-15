@@ -5,10 +5,12 @@ import com.google.common.collect.Lists;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
+import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
 import com.starnft.star.domain.rank.core.rank.model.RankItemMetaData;
 import com.starnft.star.domain.rank.core.rank.model.res.InvitationHistoryItem;
 import com.starnft.star.domain.rank.core.rank.model.res.InvitationItem;
+import com.starnft.star.domain.rank.core.rank.model.res.Rankings;
 import com.starnft.star.domain.rank.core.rank.model.res.RankingsItem;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.ListUtils;
@@ -61,7 +63,7 @@ public class RankServiceImpl implements IRankService {
         Boolean isSetSuccess = redisTemplate.opsForHash().putIfAbsent(String.format(RedisKey.RANK_TOTAL_USER.getKey(), rankName, key), rankItemMetaData.getChildrenId().toString(), JSONUtil.toJsonStr(rankItemMetaData));
         Double result=null;
         if (isSetSuccess) {
-             result = redisTemplate.opsForZSet().incrementScore(String.format(RedisKey.RANK_ITEM.getKey(), rankName), key, value);
+             result = redisTemplate.opsForZSet().incrementScore(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), key, value);
         }
 
 
@@ -118,7 +120,7 @@ public class RankServiceImpl implements IRankService {
 
     @Override
     public Long getRankNum(String rankName, Long id) {
-        return redisTemplate.opsForZSet().rank(String.format(RedisKey.RANK_ITEM.getKey(), rankName), id.toString());
+        return redisTemplate.opsForZSet().rank(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), id.toString());
     }
 
     @Override
@@ -143,10 +145,9 @@ public class RankServiceImpl implements IRankService {
     }
 
     @Override
-    public List<RankingsItem> getRankDatasByPage(String rankName, int page, int pageSize) {
-            Set set = 1 == page ?
-                    redisTemplate.opsForZSet().reverseRangeByScore(String.format(RedisKey.RANK_ITEM.getKey(), rankName), 0, pageSize - 1):
-                    redisTemplate.opsForZSet().reverseRangeByScore(String.format(RedisKey.RANK_ITEM.getKey(), rankName), page, pageSize );
+    public List<RankingsItem>getRankDatasByPage(String rankName, int page, int pageSize) {
+
+        Set set = redisTemplate.opsForZSet().reverseRange(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), page, pageSize );
             if (Objects.isNull(set)) return null;
 
         List<RankingsItem> items = Lists.newArrayList();
@@ -210,4 +211,10 @@ public class RankServiceImpl implements IRankService {
     public boolean setUserPhoneMapping(String rankName, String userId, String phone) {
        return redisTemplate.opsForHash().putIfAbsent(String.format(RedisKey.RANK_USER_MAPPING.getKey(),rankName),userId,phone);
     }
+
+    @Override
+    public Long getRankSize(String rankName) {
+        return redisTemplate.opsForZSet().size(String.format(RedisKey.RANK_ITEM_VALID.getKey(),rankName));
+    }
+
 }

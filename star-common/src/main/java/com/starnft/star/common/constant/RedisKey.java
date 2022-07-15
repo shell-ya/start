@@ -66,7 +66,8 @@ public enum RedisKey {
     /**
      * 用户是否已经注册
      */
-    REDIS_USER_IS_REGISTERED(203, StarConstants.SERVICE_NAME.concat(".user:info:isRegister"), -1L, TimeUnit.HOURS),
+    REDIS_USER_IS_REGISTERED_PREFIX(203, StarConstants.SERVICE_NAME.concat(".user:info:isRegister:prefix"), -1L, TimeUnit.HOURS),
+    REDIS_USER_IS_REGISTERED_SUFFIX(203, StarConstants.SERVICE_NAME.concat(".user:info:isRegister:suffix"), -1L, TimeUnit.HOURS),
     REDIS_USER_IS_CERTIFICATION(202, StarConstants.SERVICE_NAME.concat(".user:info:certification"), -1L, TimeUnit.HOURS),
 
     /**
@@ -176,6 +177,7 @@ public enum RedisKey {
      * 排行榜
      */
     RANK_ITEM(602, StarConstants.SERVICE_NAME.concat(".rank:%s"), 3L, TimeUnit.HOURS),
+    RANK_ITEM_VALID(602, StarConstants.SERVICE_NAME.concat(".rank.valid:%s"), 3L, TimeUnit.HOURS),
     //个人总邀请
     RANK_TOTAL_USER(603, StarConstants.SERVICE_NAME.concat(".rank:%s:total:user:%s"), 3L, TimeUnit.HOURS),
     //个人有效邀请

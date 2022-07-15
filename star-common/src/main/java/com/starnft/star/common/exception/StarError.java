@@ -90,7 +90,8 @@ public enum StarError {
     MARKET_DO_NOT_START_ERROR("1000051", "未到市场开放时间！"),
     GOOD_NOT_RESALE_ERROR("1000052","该藏品不可转售"),
     NOT_ENABLED_ACTIVITY("1000053","未到活动开启时间"),
-    NOT_FOUND_ACTIVITY("1000054","当前无开启活动")
+    NOT_FOUND_ACTIVITY("1000054","当前无开启活动"),
+    GOODS_IS_TRANSACTION("1000055","藏品正在交易中，请选择其他藏品"),
     ;
 
     private String NS = "";

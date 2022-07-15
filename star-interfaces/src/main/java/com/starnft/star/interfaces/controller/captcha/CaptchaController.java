@@ -9,6 +9,7 @@ import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "图像验证码相关接口「CaptchaController」")
 @RequestMapping("/captcha")
 @RequiredArgsConstructor
+@Slf4j
 public class CaptchaController {
 
     private final ICaptchaService captchaService;
@@ -28,14 +30,19 @@ public class CaptchaController {
     @GetMapping("/generate")
     @TokenIgnore
     public RopResponse<StarImageCaptchaVO> generateCaptcha(ImageCaptchaGenReq req) {
-        return RopResponse.success(this.captchaService.generateCaptcha(req));
+
+        StarImageCaptchaVO starImageCaptchaVO = this.captchaService.generateCaptcha(req);
+
+        return RopResponse.success(starImageCaptchaVO);
     }
 
     @ApiOperation("校验验证码")
     @PostMapping("/check")
     @TokenIgnore
     public RopResponse<String> checkCaptcha(@Validated @RequestBody ImageCaptchaCheckReq req) {
-        return RopResponse.success(this.captchaService.matching(req));
+
+        String matching = this.captchaService.matching(req);
+        return RopResponse.success(matching);
     }
 
 }
