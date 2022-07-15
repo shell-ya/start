@@ -1,6 +1,7 @@
 package com.starnft.star.business.mapper;
 
 import com.starnft.star.business.domain.StarNftWalletRecord;
+import com.starnft.star.business.domain.vo.StarNftReconVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -83,5 +84,5 @@ public interface StarNftWalletRecordMapper
      */
     public int updateRecordStatusByRecordSn(@Param("withdrawTradeNo") String withdrawTradeNo, @Param("payStatus") String payStatus, @Param("sysUserId") String sysUserId);
 
-    List<StarNftWalletRecord> selectUserRecord(Long userId);
+    List<StarNftReconVo> selectUserRecord(Long userId);
 }

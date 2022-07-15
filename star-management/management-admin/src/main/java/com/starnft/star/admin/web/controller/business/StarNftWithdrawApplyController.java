@@ -1,6 +1,7 @@
 package com.starnft.star.admin.web.controller.business;
 
 import com.starnft.star.business.domain.StarNftWithdrawApply;
+import com.starnft.star.business.domain.vo.WithDrawDetail;
 import com.starnft.star.business.service.IStarNftWithdrawApplyService;
 import com.starnft.star.common.annotation.Log;
 import com.starnft.star.common.core.controller.BaseController;
@@ -38,7 +39,7 @@ public class StarNftWithdrawApplyController extends BaseController
     public TableDataInfo list(StarNftWithdrawApply starNftWithdrawApply)
     {
         startPage();
-        List<StarNftWithdrawApply> list = starNftWithdrawApplyService.selectStarNftWithdrawApplyList(starNftWithdrawApply);
+        List<WithDrawDetail> list = starNftWithdrawApplyService.selectStarNftWithdrawDetail(starNftWithdrawApply);
         return getDataTable(list);
     }
 

@@ -1,6 +1,7 @@
 package com.starnft.star.business.mapper;
 
 import com.starnft.star.business.domain.StarNftWithdrawApply;
+import com.starnft.star.business.domain.vo.WithDrawDetail;
 
 import java.util.List;
 
@@ -64,5 +65,6 @@ public interface StarNftWithdrawApplyMapper
 
     public List<StarNftWithdrawApply>  toDayWithDrawApply();
 
+    List<WithDrawDetail> selectStarWithDrawDetail(StarNftWithdrawApply starNftWithdrawApply);
 
 }

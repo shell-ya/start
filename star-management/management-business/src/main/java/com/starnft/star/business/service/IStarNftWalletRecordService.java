@@ -1,6 +1,7 @@
 package com.starnft.star.business.service;
 
 import com.starnft.star.business.domain.StarNftWalletRecord;
+import com.starnft.star.business.domain.vo.StarNftReconVo;
 
 import java.util.List;
 
@@ -77,5 +78,5 @@ public interface IStarNftWalletRecordService
      */
     public int updateRecordByRecordSn(String withdrawTradeNo, String payStatus, String sysUserId);
 
-    List<StarNftWalletRecord> selectUserRecord(Long userId);
+    List<StarNftReconVo> selectUserRecord(Long userId);
 }

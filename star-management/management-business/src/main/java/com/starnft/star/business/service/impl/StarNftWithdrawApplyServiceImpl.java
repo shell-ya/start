@@ -3,6 +3,7 @@ package com.starnft.star.business.service.impl;
 import com.starnft.star.business.domain.NftWallet;
 import com.starnft.star.business.domain.StarNftWalletLog;
 import com.starnft.star.business.domain.StarNftWithdrawApply;
+import com.starnft.star.business.domain.vo.WithDrawDetail;
 import com.starnft.star.business.mapper.StarNftWithdrawApplyMapper;
 import com.starnft.star.business.service.INftWalletService;
 import com.starnft.star.business.service.IStarNftWalletLogService;
@@ -95,7 +96,7 @@ public class StarNftWithdrawApplyServiceImpl implements IStarNftWithdrawApplySer
         NftWallet nftWallet = nftWalletService.selectNftWalletByUid(starNftWithdrawApply.getWithdrawUid());
 
         //钱包交易状态中锁
-        String isTransactionKey = String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
+        String isTransactionKey = RedisLockUtils.REDIS_LOCK_PREFIX + String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
                 new StringBuffer(String.valueOf(starNftWithdrawApply.getWithdrawUid())).append(nftWallet.getwId()));
         //判断当前是否有其他交易正在进行
         if (redisUtil.hasKey(isTransactionKey)) {
@@ -185,5 +186,10 @@ public class StarNftWithdrawApplyServiceImpl implements IStarNftWithdrawApplySer
     public int deleteStarNftWithdrawApplyById(Long id)
     {
         return starNftWithdrawApplyMapper.deleteStarNftWithdrawApplyById(id);
+    }
+
+    @Override
+    public List<WithDrawDetail> selectStarNftWithdrawDetail(StarNftWithdrawApply starNftWithdrawApply) {
+        return starNftWithdrawApplyMapper.selectStarWithDrawDetail(starNftWithdrawApply);
     }
 }

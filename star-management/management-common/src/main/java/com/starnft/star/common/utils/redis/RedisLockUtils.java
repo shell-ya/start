@@ -15,7 +15,7 @@ import java.util.List;
 @Component
 public class RedisLockUtils {
 
-    private static final String REDIS_LOCK_PREFIX = "STAR_LOCK";
+    public static final String REDIS_LOCK_PREFIX = "STAR_LOCK";
 
     @Autowired
     private RedisTemplate redisTemplate;

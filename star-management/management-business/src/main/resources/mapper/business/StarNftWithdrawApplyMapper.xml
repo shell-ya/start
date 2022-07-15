@@ -136,4 +136,38 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         WHERE TO_DAYS(NOW()) - TO_DAYS(created_at) = 1
     </select>
 
+    <select id="selectStarWithDrawDetail" resultType="com.starnft.star.business.domain.vo.WithDrawDetail">
+        select w.id as id,
+        w.withdraw_uid  as withdrawUid,
+        w.withdraw_money as withdrawMoney,
+        w.withdraw_trade_no as withdrawTradeNo,
+        w.withdraw_bank_no  as withdrawBankNo,
+        w.bank_match_name   as bankMatchName,
+        w.withdraw_channel  as withdrawChannel,
+        w.apply_time    as applyTime,
+        w.apply_pass_time   as applyPassTime,
+        w.apply_status  as applyStatus,
+        w.apply_msg as applyMsg,
+        r.ts_cost   as teCost,
+        r.ts_fee  as fee
+        from star_nft_withdraw_apply as w
+        left join star_nft_wallet_record as r
+        on w.withdraw_trade_no = r.record_sn
+        where
+        w.is_deleted = 0
+        <if test="createdAt != null "> and w.created_at = #{createdAt}</if>
+        <if test="createdBy != null  and createdBy != ''"> and w.created_by = #{createdBy}</if>
+        <if test="modifiedAt != null "> and w.modified_at = #{modifiedAt}</if>
+        <if test="modifiedBy != null  and modifiedBy != ''"> and w.modified_by = #{modifiedBy}</if>
+        <if test="withdrawUid != null "> and w.withdraw_uid = #{withdrawUid}</if>
+        <if test="withdrawMoney != null "> and w.withdraw_money = #{withdrawMoney}</if>
+        <if test="withdrawTradeNo != null  and withdrawTradeNo != ''"> and w.withdraw_trade_no = #{withdrawTradeNo}</if>
+        <if test="withdrawBankNo != null "> and w.withdraw_bank_no = #{withdrawBankNo}</if>
+        <if test="bankMatchName != null  and bankMatchName != ''"> and w.bank_match_name like concat('%', #{bankMatchName}, '%')</if>
+        <if test="withdrawChannel != null  and withdrawChannel != ''"> and w.withdraw_channel = #{withdrawChannel}</if>
+        <if test="applyTime != null  and applyTime != ''"> and w.apply_time = #{applyTime}</if>
+        <if test="applyPassTime != null  and applyPassTime != ''"> and w.apply_pass_time = #{applyPassTime}</if>
+        <if test="applyStatus != null "> and w.apply_status = #{applyStatus}</if>
+        order by w.created_at desc
+    </select>
 </mapper>

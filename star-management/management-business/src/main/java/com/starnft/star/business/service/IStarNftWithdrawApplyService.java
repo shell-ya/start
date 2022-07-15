@@ -1,6 +1,7 @@
 package com.starnft.star.business.service;
 
 import com.starnft.star.business.domain.StarNftWithdrawApply;
+import com.starnft.star.business.domain.vo.WithDrawDetail;
 import com.starnft.star.common.core.domain.model.LoginUser;
 
 import java.util.List;
@@ -60,4 +61,13 @@ public interface IStarNftWithdrawApplyService
      * @return 结果
      */
     public int deleteStarNftWithdrawApplyById(Long id);
+
+    /**
+     * 查询提现申请列表
+     *
+     * @param starNftWithdrawApply 提现申请
+     * @return 提现申请集合
+     */
+    public List<WithDrawDetail> selectStarNftWithdrawDetail(StarNftWithdrawApply starNftWithdrawApply);
+
 }

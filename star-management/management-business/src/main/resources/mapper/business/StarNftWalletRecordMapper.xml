@@ -180,18 +180,50 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             record_sn = #{withdrawTradeNo}
     </update>
 
-    <select id="selectUserRecord" resultMap="StarNftWalletRecordResult">
-        <include refid="selectStarNftWalletRecordVo"/>
-        where
-            is_deleted = 0
-        and from_uid = #{userId}
+    <select id="selectUserRecord" resultType="com.ruoyi.business.domain.vo.StarNftReconVo">
+        select * from (
+                          select r.id as id,
+                                 r.created_at as createdAt,
+                                 r.created_by as createdBy,
+                                 r.record_sn  as recordSn,
+                                 r.from_uid   as fromUid,
+                                 r.to_uid as toUid,
+                                 r.ts_type    as tsType,
+                                 r.ts_money   as tsMoney,
+                                 r.pay_channel    as payChannel,
+                                 r.pay_status as payStatus,
+                                 r.pay_time   as payTime,
+                                 l.balance_offset as balanceOffset,
+                                 l.current_balance    as currentBalance
+                          from star_nft_wallet_record as  r
+                                   left join star_nft_wallet_log  as l
+                                             on  r.record_sn = l.record_sn
+                          where
+                              r.is_deleted = 0
+                            and r.from_uid = #{userId}
 
-        union all
+                          union all
 
-        <include refid="selectStarNftWalletRecordVo"/>
-        where
-        is_deleted = 0
-        and to_uid = #{userId}
-        order by pay_time desc
+                          select r.id as id,
+                                 r.created_at as createdAt,
+                                 r.created_by as createdBy,
+                                 r.record_sn  as recordSn,
+                                 r.from_uid   as fromUid,
+                                 r.to_uid as toUid,
+                                 r.ts_type    as tsType,
+                                 r.ts_money   as tsMoney,
+                                 r.pay_channel    as payChannel,
+                                 r.pay_status as payStatus,
+                                 r.pay_time   as payTime,
+                                 l.balance_offset as balanceOffset,
+                                 l.current_balance    as currentBalance
+                          from star_nft_wallet_record  as r
+                                   left join star_nft_wallet_log as l
+                                             on  r.record_sn = l.record_sn
+                          where
+                              r.is_deleted = 0
+                            and r.to_uid = #{userId}
+                      ) con
+        order by payTime desc
     </select>
 </mapper>

@@ -2,6 +2,7 @@ package com.starnft.star.admin.web.controller.business;
 
 import com.starnft.star.business.domain.StarNftWalletRecord;
 import com.starnft.star.business.domain.StarNftWithdrawApply;
+import com.starnft.star.business.domain.vo.StarNftReconVo;
 import com.starnft.star.business.service.IStarNftWalletRecordService;
 import com.starnft.star.common.annotation.Log;
 import com.starnft.star.common.core.controller.BaseController;
@@ -101,7 +102,7 @@ public class StarNftWalletRecordController extends BaseController
     @GetMapping("/record")
     public TableDataInfo selectUserWalletRecord(StarNftWithdrawApply starNftWithdrawApply){
         startPage();
-        List<StarNftWalletRecord> list = starNftWalletRecordService.selectUserRecord(starNftWithdrawApply.getWithdrawUid());
+        List<StarNftReconVo> list = starNftWalletRecordService.selectUserRecord(starNftWithdrawApply.getWithdrawUid());
         return getDataTable(list);
     }
 }

@@ -1,6 +1,7 @@
 package com.starnft.star.business.service.impl;
 
 import com.starnft.star.business.domain.StarNftWalletRecord;
+import com.starnft.star.business.domain.vo.StarNftReconVo;
 import com.starnft.star.business.mapper.StarNftWalletRecordMapper;
 import com.starnft.star.business.service.IStarNftWalletRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,7 +112,7 @@ public class StarNftWalletRecordServiceImpl implements IStarNftWalletRecordServi
     }
 
     @Override
-    public List<StarNftWalletRecord> selectUserRecord(Long userId) {
+    public List<StarNftReconVo> selectUserRecord(Long userId) {
         return starNftWalletRecordMapper.selectUserRecord(userId);
     }
 }
