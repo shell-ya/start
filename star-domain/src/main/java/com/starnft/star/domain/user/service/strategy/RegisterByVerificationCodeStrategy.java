@@ -33,11 +33,11 @@ public class RegisterByVerificationCodeStrategy extends UserRegisterStrategy{
         //todo 必填参数校验
 
         //校验验证码
-        String key = String.format(RedisKey.REDIS_CODE_REGISIER.getKey(), registerInfo.getPhone());
-        String smsCode =  String.valueOf(redisTemplate.opsForValue().get(key));
-        if (!smsCode.equals(registerInfo.getCode())){
-            throw new StarException(StarError.CODE_NOT_FUND);
-        }
+//        String key = String.format(RedisKey.REDIS_CODE_REGISIER.getKey(), registerInfo.getPhone());
+//        String smsCode =  String.valueOf(redisTemplate.opsForValue().get(key));
+//        if (!smsCode.equals(registerInfo.getCode())){
+//            throw new StarException(StarError.CODE_NOT_FUND);
+//        }
 
         //如果该账号已经注册，则报错
         UserInfo userInfo = userRepository.queryUserInfoByPhone(registerInfo.getPhone());

@@ -7,6 +7,7 @@ import com.starnft.star.application.process.event.model.ActivityEventReq;
 import com.starnft.star.application.process.event.model.BuyActivityEventReq;
 import com.starnft.star.application.process.event.model.EventReqAssembly;
 import com.starnft.star.application.process.event.model.RegisterEventReq;
+import com.starnft.star.application.process.rank.IRankProcessor;
 import com.starnft.star.application.process.rank.impl.RankProcessor;
 import com.starnft.star.application.process.rank.req.RankReq;
 import com.starnft.star.application.process.user.UserCore;
@@ -104,15 +105,16 @@ public class TestActivity {
 
     @Test
     public void login(){
-        ShareCodeRes code = userCore.shareCodeInfo(409412742L);
-        log.info("code:{}",code);
+//        https://cmdev.infiart.cn/#/pages/login/index?shareCode=&activityType=launch_acquistion
+//        ShareCodeRes code = userCore.shareCodeInfo(409412742L);
+//        log.info("code:{}",code);
         UserLoginReq userLoginReq = new UserLoginReq();
         userLoginReq.setLoginScenes(2);
         userLoginReq.setActivityType("launch_acquistion");
-        userLoginReq.setCode("1563531");
+//        userLoginReq.setCode("CCCAYU7S");
 //        userLoginReq.setPassword();
-        userLoginReq.setShareCode(code.getShareCode());
-        userLoginReq.setPhone("15830887988");
+        userLoginReq.setShareCode("CCCAYU7S");
+        userLoginReq.setPhone("17319429625");
         UserInfoRes userInfoRes = userCore.loginByPhoneAndRegister(userLoginReq);
 
     }
@@ -209,6 +211,14 @@ public class TestActivity {
             rankService.validPut("test_rank","305730346",1,rankItemMetaData);
 
         }
+    }
+
+    @Test
+    public void person(){
+        RankReq rankReq = new RankReq();
+        rankReq.setUserId(947048912L);
+        Long aLong = rankProcessor.personNum(rankReq);
+        log.info(aLong.toString());
     }
 
 }

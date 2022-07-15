@@ -68,7 +68,7 @@ public class RankProcessor implements IRankProcessor {
 
     @Override
     public Long personNum(RankReq rankReq) {
-        return rankService.getRankNum(getNowRank().getRankName(),rankReq.getUserId());
+        return rankService.getRankNum(getNowRank().getRankName(),rankReq.getUserId()) + 1;
     }
 
     public RankDefinition getNowRank(){

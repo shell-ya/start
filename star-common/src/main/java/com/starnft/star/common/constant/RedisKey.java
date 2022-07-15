@@ -177,7 +177,7 @@ public enum RedisKey {
      * 排行榜
      */
     RANK_ITEM(602, StarConstants.SERVICE_NAME.concat(".rank:%s"), 3L, TimeUnit.HOURS),
-    RANK_ITEM_VALID(602, StarConstants.SERVICE_NAME.concat(".rank.valid:%s"), 3L, TimeUnit.HOURS),
+    RANK_ITEM_VALID(602, StarConstants.SERVICE_NAME.concat(".rank:valid:%s"), 3L, TimeUnit.HOURS),
     //个人总邀请
     RANK_TOTAL_USER(603, StarConstants.SERVICE_NAME.concat(".rank:%s:total:user:%s"), 3L, TimeUnit.HOURS),
     //个人有效邀请

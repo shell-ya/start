@@ -63,7 +63,12 @@ public class RankServiceImpl implements IRankService {
         Boolean isSetSuccess = redisTemplate.opsForHash().putIfAbsent(String.format(RedisKey.RANK_TOTAL_USER.getKey(), rankName, key), rankItemMetaData.getChildrenId().toString(), JSONUtil.toJsonStr(rankItemMetaData));
         Double result=null;
         if (isSetSuccess) {
-             result = redisTemplate.opsForZSet().incrementScore(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), key, value);
+            Long rank = redisTemplate.opsForZSet().rank(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), key);
+            if (Objects.isNull(rank) || 0 == rank){
+                redisTemplate.opsForZSet().incrementScore(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), key, value);
+            }
+            result = redisTemplate.opsForZSet().incrementScore(String.format(RedisKey.RANK_ITEM.getKey(), rankName), key, value);
+
         }
 
 
@@ -80,7 +85,7 @@ public class RankServiceImpl implements IRankService {
         Boolean isSetSuccess = redisTemplate.opsForHash().putIfAbsent(String.format(RedisKey.RANK_VALID_USER.getKey(), rankName, key), rankItemMetaData.getChildrenId().toString(), JSONUtil.toJsonStr(rankItemMetaData));
         Double result=null;
         if (isSetSuccess) {
-            result = redisTemplate.opsForZSet().incrementScore(String.format(RedisKey.RANK_ITEM.getKey(), rankName), key, value);
+            result = redisTemplate.opsForZSet().incrementScore(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), key, value);
         }
 
 
@@ -120,7 +125,7 @@ public class RankServiceImpl implements IRankService {
 
     @Override
     public Long getRankNum(String rankName, Long id) {
-        return redisTemplate.opsForZSet().rank(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), id.toString());
+        return redisTemplate.opsForZSet().reverseRank(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), id.toString());
     }
 
     @Override
