@@ -389,7 +389,12 @@ public class WalletServiceImpl implements WalletService {
                     vo.setTsType(4);
                 }
             }
-        }).filter(record -> queryReq.getTransactionType().contains(record.getTsType())).collect(Collectors.toList());
+        }).filter(record -> {
+            if (Objects.nonNull(queryReq.getTransactionType())) {
+                return queryReq.getTransactionType().contains(record.getTsType());
+            }
+            return true;
+        }).collect(Collectors.toList());
 
         walletRecordVOResponsePageResult.setList(collect);
         return walletRecordVOResponsePageResult;

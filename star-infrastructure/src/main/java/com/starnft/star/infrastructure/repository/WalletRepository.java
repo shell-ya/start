@@ -275,10 +275,13 @@ public class WalletRepository implements IWalletRepository {
 
         TransactionRecordQueryReq req = TransactionRecordQueryReq.builder().build();
         BeanUtils.copyProperties(queryReq, req);
-        req.setTransactionType(queryReq.getTransactionType().stream().map(x -> {
-            int i = (x == 4) ? 3 : x;
-            return i;
-        }).distinct().collect(Collectors.toList()));
+        if (Objects.nonNull(queryReq.getTransactionType())) {
+            req.setTransactionType(queryReq.getTransactionType().stream().map(x -> {
+                int i = (x == 4) ? 3 : x;
+                return i;
+            }).distinct().collect(Collectors.toList()));
+        }
+
 
         PageInfo<StarNftWalletRecord> starNftWalletRecords = PageHelper.startPage(queryReq.getPage(), queryReq.getSize())
                 .doSelectPageInfo(() -> starNftWalletRecordMapper.queryRecordOnCondition(req));
