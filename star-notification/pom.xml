@@ -2,7 +2,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
     <parent>
         <artifactId>star</artifactId>
         <groupId>com.starnft.star</groupId>
@@ -10,19 +9,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>star-interfaces</artifactId>
+    <artifactId>star-notification</artifactId>
 
     <dependencies>
-<!--        <dependency>-->
-<!--            <groupId>com.baidu.xuper</groupId>-->
-<!--            <artifactId>xasset-sdk-java</artifactId>-->
-<!--            <version>1.0.4</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>com.baidu.xuper</groupId>-->
-<!--            <artifactId>xuper-java-sdk</artifactId>-->
-<!--            <version>0.2.0</version>-->
-<!--        </dependency>-->
+
         <dependency>
             <groupId>com.starnft.star</groupId>
             <artifactId>star-application</artifactId>
@@ -44,12 +34,6 @@
         </dependency>
 
         <dependency>
-            <groupId>io.fusionauth</groupId>
-            <artifactId>fusionauth-jwt</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <exclusions>
@@ -58,18 +42,6 @@
                     <groupId>org.apache.logging.log4j</groupId>
                 </exclusion>
             </exclusions>
-        </dependency>
-
-        <!-- MapStruct begin -->
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>1.4.2.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct-processor</artifactId>
-            <version>1.4.2.Final</version>
         </dependency>
 
         <dependency>
@@ -112,19 +84,13 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.skywalking</groupId>
-            <artifactId>apm-toolkit-logback-1.x</artifactId>
-            <version>8.1.0</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>2.1.2</version>
+            <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
 
         <dependency>
@@ -149,11 +115,16 @@
             <version>1.3.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.skywalking</groupId>
+            <artifactId>apm-toolkit-logback-1.x</artifactId>
+            <version>8.1.0</version>
+        </dependency>
 
     </dependencies>
 
     <build>
-        <finalName>star-app</finalName>
+        <finalName>star-notification</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -168,5 +139,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

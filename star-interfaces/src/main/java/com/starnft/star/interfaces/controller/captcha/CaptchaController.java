@@ -1,6 +1,5 @@
 package com.starnft.star.interfaces.controller.captcha;
 
-import cn.hutool.json.JSONUtil;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.domain.captcha.model.req.ImageCaptchaCheckReq;
 import com.starnft.star.domain.captcha.model.req.ImageCaptchaGenReq;
@@ -31,9 +30,9 @@ public class CaptchaController {
     @GetMapping("/generate")
     @TokenIgnore
     public RopResponse<StarImageCaptchaVO> generateCaptcha(ImageCaptchaGenReq req) {
-        log.info("获取图片验证码：「{}」",JSONUtil.toJsonStr(req));
+
         StarImageCaptchaVO starImageCaptchaVO = this.captchaService.generateCaptcha(req);
-        log.info("获取图片验证码：「{}」",JSONUtil.toJsonStr(starImageCaptchaVO));
+
         return RopResponse.success(starImageCaptchaVO);
     }
 
@@ -41,9 +40,8 @@ public class CaptchaController {
     @PostMapping("/check")
     @TokenIgnore
     public RopResponse<String> checkCaptcha(@Validated @RequestBody ImageCaptchaCheckReq req) {
-        log.info("校验验证码进入参数：「{}」", JSONUtil.toJsonStr(req));
+
         String matching = this.captchaService.matching(req);
-        log.info("校验验证码返回参数：「{}」", matching);
         return RopResponse.success(matching);
     }
 

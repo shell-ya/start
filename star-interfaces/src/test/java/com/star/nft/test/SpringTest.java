@@ -11,8 +11,10 @@ import com.starnft.star.application.process.order.IOrderProcessor;
 import com.starnft.star.application.process.order.model.req.OrderPayReq;
 import com.starnft.star.application.process.order.model.res.OrderPayDetailRes;
 import com.starnft.star.application.process.theme.ThemeCore;
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.template.FreeMakerTemplateHelper;
+import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.payment.config.container.PayConf;
 import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.payment.router.IPaymentRouter;
@@ -20,7 +22,6 @@ import com.starnft.star.domain.sms.adapter.MessageAdapter;
 import com.starnft.star.domain.support.process.assign.TradeType;
 import com.starnft.star.domain.support.process.config.ChannelConf;
 import com.starnft.star.domain.support.process.config.TempConf;
-import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.domain.wallet.model.req.CalculateReq;
 import com.starnft.star.domain.wallet.model.res.CalculateResult;
 import com.starnft.star.domain.wallet.service.WalletService;
@@ -35,6 +36,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 @SpringBootTest(classes = {StarApplication.class})
@@ -49,6 +51,8 @@ public class SpringTest {
     final IPaymentRouter paymentRouter;
     final PayConf payConf;
     final MessageAdapter messageAdapter;
+
+    final RedisUtil redisUtil;
     final WalletService walletService;
     final ThemeCore themeCore;
 
@@ -63,8 +67,7 @@ public class SpringTest {
         orderPayReq.setPayAmount("33.00");
         orderPayReq.setChannel(StarConstants.PayChannel.Balance.name());
         orderPayReq.setFee("0.00");
-        orderPayReq.setFromUid(409412742L);
-        orderPayReq.setToUid(248906830L);
+        orderPayReq.setOwnerId(409412742L);
         orderPayReq.setTotalPayAmount("33.00");
         orderPayReq.setNumberId(991131539320320000L);
         orderPayReq.setThemeId(991131478355697664L);
@@ -78,8 +81,16 @@ public class SpringTest {
 
     @Test
     public void goods() {
-        List<SecKillGoods> secKillGoods = themeCore.querySecKillThemes();
-        secKillGoods.forEach(good -> System.out.println(JSON.toJSONString(good)));
+
+        Long uid = 12345L;
+        if (redisUtil.hasKey(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), uid))) {
+            Long ttl = redisUtil.getTtl(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), uid), TimeUnit.SECONDS);
+            redisUtil.incr(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), uid), 1);
+            redisUtil.expire(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), uid), ttl);
+            return;
+        }
+        redisUtil.incr(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), uid), 1);
+        redisUtil.expire(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), uid), RedisKey.ORDER_BREAK_COUNT.getTime());
 
     }
 
@@ -98,10 +109,10 @@ public class SpringTest {
                 TopicConstants.WALLET_RECHARGE_DESTINATION.getTag());
         PayCheckRes payCheckRes = new PayCheckRes();
         payCheckRes.setStatus(0);
-        payCheckRes.setOrderSn("RC988226768479584256");
-        payCheckRes.setTotalAmount(new BigDecimal("1.00"));
-        payCheckRes.setUid("985174743233269760");
-        payCheckRes.setTransSn("0000000000000000000000002");
+        payCheckRes.setOrderSn("RC993625482387914752");
+        payCheckRes.setTotalAmount(new BigDecimal("10.00"));
+        payCheckRes.setUid("919193136");
+        payCheckRes.setTransSn("00000000000000000000000023");
         payCheckRes.setMessage("good");
         payCheckRes.setPayChannel(StarConstants.PayChannel.BankCard.name());
 

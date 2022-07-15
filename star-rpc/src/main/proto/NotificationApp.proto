@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+
+package com.starnft.star.api.notice;
+
+message MessageSendRequest{
+
+}
+
+message MessageSendResponse{
+
+}
+
+service NotificationDelivery{
+  rpc sendStandalone(MessageSendRequest) returns (MessageSendResponse){}
+}

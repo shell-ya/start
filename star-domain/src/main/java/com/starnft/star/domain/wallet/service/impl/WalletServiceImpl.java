@@ -36,6 +36,7 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -371,7 +372,32 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public ResponsePageResult<WalletRecordVO> queryTransactionRecord(TransactionRecordQueryReq queryReq) {
-        return walletRepository.queryTransactionRecordByCondition(queryReq);
+
+        ResponsePageResult<WalletRecordVO> walletRecordVOResponsePageResult = walletRepository.queryTransactionRecordByCondition(queryReq);
+
+        for (WalletRecordVO walletRecordVO : walletRecordVOResponsePageResult.getList()) {
+            if (walletRecordVO.getTsType() == 3) {
+                if (walletRecordVO.getToUid().equals(queryReq.getUserId())) {
+                    walletRecordVO.setTsType(4);
+                }
+            }
+        }
+
+        List<WalletRecordVO> collect = walletRecordVOResponsePageResult.getList().stream().peek(vo -> {
+            if (vo.getTsType() == 3) {
+                if (vo.getToUid().equals(queryReq.getUserId())) {
+                    vo.setTsType(4);
+                }
+            }
+        }).filter(record -> {
+            if (Objects.nonNull(queryReq.getTransactionType())) {
+                return queryReq.getTransactionType().contains(record.getTsType());
+            }
+            return true;
+        }).collect(Collectors.toList());
+
+        walletRecordVOResponsePageResult.setList(collect);
+        return walletRecordVOResponsePageResult;
     }
 
     // TODO need to optimize with method doTransaction(TransReq transReq)

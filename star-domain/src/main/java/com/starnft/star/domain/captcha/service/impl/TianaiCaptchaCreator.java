@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Component("tianaiCaptchaCreator")
 public class TianaiCaptchaCreator implements ICaptchaCreator {
 
-    @Autowired
+    @Autowired(required = false)
     private ImageCaptchaApplication imageCaptchaApplication;
 
     @Override

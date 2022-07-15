@@ -6,7 +6,6 @@ import com.starnft.star.application.process.order.impl.OrderProcessor;
 import com.starnft.star.application.process.order.model.req.OrderCancelReq;
 import com.starnft.star.application.process.order.model.req.OrderGrabReq;
 import com.starnft.star.application.process.order.model.req.OrderPayReq;
-import com.starnft.star.application.process.order.model.res.OrderGrabRes;
 import com.starnft.star.application.process.task.activity.ActivitiesTask;
 import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.number.model.req.NumberConsignmentCancelRequest;
@@ -23,8 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
-
-import static java.lang.Thread.sleep;
 
 /**
  * @Date 2022/7/4 2:05 PM
@@ -88,13 +85,12 @@ public class MarketTest {
         orderPayReq.setCategoryType(1);
         orderPayReq.setNumberId(995368705385082880L);
         orderPayReq.setChannel("Balance");
-        orderPayReq.setFromUid(0L);
+        orderPayReq.setOwnerId(0L);
         orderPayReq.setSeriesId(5L);
         orderPayReq.setFee("0");
         orderPayReq.setThemeId(995367819184877568L);
         orderPayReq.setTotalPayAmount("1.9");
         orderPayReq.setType(3);
-        orderPayReq.setToUid(320266671L);
 //        orderPayReq.setPayToken();
 //        orderPayReq.setOutTradeNo();
         orderProcessor.orderPay(orderPayReq);
