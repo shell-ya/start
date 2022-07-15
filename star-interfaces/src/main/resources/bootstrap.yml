@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: star-app
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 124.221.181.84:8848
+        enabled: true
+        namespace: ran

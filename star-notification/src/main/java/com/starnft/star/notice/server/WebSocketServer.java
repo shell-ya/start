@@ -54,6 +54,8 @@ public class WebSocketServer {
         } else {
             webSocketMap.put(userId, this);
             addOnlineCount();
+
+            //todo 建立连接 拉取未读消息
         }
         log.info("用户连接:" + userId + ",当前在线人数为:" + getOnlineCount());
         try {

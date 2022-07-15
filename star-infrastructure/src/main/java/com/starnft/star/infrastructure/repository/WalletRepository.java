@@ -21,6 +21,7 @@ import com.starnft.star.infrastructure.mapper.wallet.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -254,7 +255,7 @@ public class WalletRepository implements IWalletRepository {
     }
 
     @Override
-    public boolean updateWalletRecordSuccess(String serialNo, String outTradeNo, String payStatus,BigDecimal currMoney) {
+    public boolean updateWalletRecordSuccess(String serialNo, String outTradeNo, String payStatus, BigDecimal currMoney) {
         StarNftWalletRecord record = queryWalletRecordPO(serialNo, null);
         if (null == record) {
             throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "记录不存在");
@@ -271,8 +272,16 @@ public class WalletRepository implements IWalletRepository {
 
     @Override
     public ResponsePageResult<WalletRecordVO> queryTransactionRecordByCondition(TransactionRecordQueryReq queryReq) {
+
+        TransactionRecordQueryReq req = TransactionRecordQueryReq.builder().build();
+        BeanUtils.copyProperties(queryReq, req);
+        req.setTransactionType(queryReq.getTransactionType().stream().map(x -> {
+            int i = (x == 4) ? 3 : x;
+            return i;
+        }).distinct().collect(Collectors.toList()));
+
         PageInfo<StarNftWalletRecord> starNftWalletRecords = PageHelper.startPage(queryReq.getPage(), queryReq.getSize())
-                .doSelectPageInfo(() -> starNftWalletRecordMapper.queryRecordOnCondition(queryReq));
+                .doSelectPageInfo(() -> starNftWalletRecordMapper.queryRecordOnCondition(req));
 
         return new ResponsePageResult<WalletRecordVO>(starNftWalletRecords.getList()
                 .stream()

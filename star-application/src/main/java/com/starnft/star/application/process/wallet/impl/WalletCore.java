@@ -1,5 +1,6 @@
 package com.starnft.star.application.process.wallet.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -192,7 +193,11 @@ public class WalletCore implements IWalletCore {
                         .endDate(StringUtils.isNotBlank(recordReq.getEndTime()) ? DateUtil.parseDate(recordReq.getEndTime()).toSqlDate() : null)
                         .transactionType(recordReq.getPayType()).build());
 
+
         List<TransactionRecord> res = Lists.newArrayList();
+        if (CollectionUtil.isEmpty(walletRecordResult.getList())) {
+            return ResponsePageResult.listReplace(walletRecordResult, res);
+        }
         for (WalletRecordVO walletRecordVO : walletRecordResult.getList()) {
             TransactionRecord transactionRecord = recordVOConvert(walletRecordVO, recordReq.getUserId());
             //todo 过滤提现订单查询提现记录填写带驳回原因字段填充响应结果  交易流水号 record_sn 与 提现流水号 withdraw_trade_no
@@ -200,13 +205,6 @@ public class WalletCore implements IWalletCore {
                 WithdrawRecordVO withdrawRecordVO = walletService.queryWithDrawByTradeNo(walletRecordVO.getRecordSn());
                 transactionRecord.setApplyMsg(withdrawRecordVO.getApplyMsg());
                 transactionRecord.setCardNo(String.valueOf(withdrawRecordVO.getBankNo()));
-            }
-            if (transactionRecord.getPayType().equals("3")) {
-                if (walletRecordVO.getToUid() == recordReq.getUserId()) {
-                    transactionRecord.setPayType(StarConstants.Transaction_Type.Sell.getFont());
-                } else {
-                    transactionRecord.setPayType(StarConstants.Transaction_Type.Buy.getFont());
-                }
             }
             res.add(transactionRecord);
         }
