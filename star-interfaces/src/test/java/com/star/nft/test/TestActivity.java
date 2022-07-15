@@ -145,7 +145,7 @@ public class TestActivity {
         RankReq rankReq = new RankReq();
 //        rankReq.setRankName("test_rank");
         rankReqRequestConditionPage.setCondition(rankReq);
-        ResponsePageResult<RankingsItem> rankings = rankProcessor.rankings(rankReqRequestConditionPage);
+        Rankings rankings = rankProcessor.rankings(rankReqRequestConditionPage);
 
         log.info(rankings.toString());
     }
@@ -193,6 +193,22 @@ public class TestActivity {
             rankService.put("test_rank", aLong.toString(),RandomUtil.randomDouble(100),rankItemMetaData);
         }
 
+    }
+
+    @Test
+    public void vaild(){
+        for (int i = 0; i<100L;i++){
+
+            RankItemMetaData rankItemMetaData = new RankItemMetaData();
+            rankItemMetaData.setMobile(RandomUtil.randomPhone());
+            rankItemMetaData.setNickName(RandomUtil.randomName());
+            rankItemMetaData.setChildrenId(RandomUtil.randomLong(9));
+
+
+            rankService.put("test_rank","305730346",1,rankItemMetaData);
+            rankService.validPut("test_rank","305730346",1,rankItemMetaData);
+
+        }
     }
 
 }

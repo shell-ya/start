@@ -33,7 +33,7 @@ public class RankController {
     @ApiOperation("获取排行榜数据")
     @PostMapping("/rankings")
     @TokenIgnore
-    public RopResponse<ResponsePageResult<RankingsItem>> rankings(@RequestBody RequestConditionPage<RankReq> request) {
+    public RopResponse<Rankings> rankings(@RequestBody RequestConditionPage<RankReq> request) {
 
 //
 //        Rankings rankings = new Rankings();

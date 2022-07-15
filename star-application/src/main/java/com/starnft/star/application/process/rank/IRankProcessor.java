@@ -20,7 +20,7 @@ public interface IRankProcessor {
      * @param rankName
      * @return
      */
-    ResponsePageResult<RankingsItem> rankings(RequestConditionPage<RankReq> rankName);
+    Rankings rankings(RequestConditionPage<RankReq> rankName);
 
     /**
      * 个人邀请记录

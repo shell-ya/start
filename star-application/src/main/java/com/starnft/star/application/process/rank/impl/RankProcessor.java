@@ -37,7 +37,7 @@ public class RankProcessor implements IRankProcessor {
     final IRankService rankService;
 
     @Override
-    public ResponsePageResult<RankingsItem> rankings(RequestConditionPage<RankReq> rankPage) {
+    public Rankings rankings(RequestConditionPage<RankReq> rankPage) {
         //查询当前时间开启的活动
         RankDefinition nowRank = getNowRank();
         Long total = rankService.getRankSize(nowRank.getRankName());
@@ -49,11 +49,12 @@ public class RankProcessor implements IRankProcessor {
         //先取出分页数据
         List<RankingsItem> list = rankService.getRankDatasByPage(nowRank.getRankName(), start, end);
 
-        ResponsePageResult<RankingsItem> result = new ResponsePageResult<>();
-        result.setList(list);
+        Rankings result = new Rankings();
+        result.setRankName(nowRank.getRankName());
+        result.setRankItem(list);
         result.setTotal(total);
         result.setPage(rankPage.getPage());
-        result.setSize(rankPage.getSize());
+        result.setPageSize(rankPage.getSize());
         return result;
     }
 

@@ -31,7 +31,10 @@ public class CaptchaController {
     @GetMapping("/generate")
     @TokenIgnore
     public RopResponse<StarImageCaptchaVO> generateCaptcha(ImageCaptchaGenReq req) {
-        return RopResponse.success(this.captchaService.generateCaptcha(req));
+        log.info("获取图片验证码：「{}」",JSONUtil.toJsonStr(req));
+        StarImageCaptchaVO starImageCaptchaVO = this.captchaService.generateCaptcha(req);
+        log.info("获取图片验证码：「{}」",JSONUtil.toJsonStr(starImageCaptchaVO));
+        return RopResponse.success(starImageCaptchaVO);
     }
 
     @ApiOperation("校验验证码")
