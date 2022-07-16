@@ -4,13 +4,15 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @Date 2022/5/9 1:55 PM
  * @Author ： shellya
  */
 @Data
 @Builder
-public class BannerVo {
+public class BannerVo implements Serializable {
 
     @ApiModelProperty("标题")
     private String title;

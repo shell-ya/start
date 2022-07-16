@@ -46,6 +46,8 @@ public class StarConstants {
      * 主题详细信息缓存名字
      */
     public static final String THEME_DETAIL_CACHE_NAME = ".theme.detail.cache";
+    /** 轮播图缓存名字 */
+    public static final String BANNER_CACHE_NAME = ".banner.cache";
 
     public enum RankTypes {
         Consumption(2L, "积分"),
