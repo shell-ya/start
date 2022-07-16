@@ -56,7 +56,8 @@ public class UserScopeServiceImpl  implements IUserScopeService {
 
     @Override
     public UserScopeRes getUserScopeByUserId(UserScopeReq userScopeReq) {
-        UserScopeRes resultUserScopeRes = userScopeRepository.queryUserScopeByUserId(userScopeReq);
+        UserScopeRes resultUserScopeRes = Objects.isNull(userScopeReq.getScopeType()) ? userScopeRepository.queryUserAllScopeByUserId(userScopeReq)
+                :userScopeRepository.queryUserScopeByUserId(userScopeReq);
         return Optional.ofNullable(resultUserScopeRes)
                 .orElse(UserScopeRes.builder()
                         .scope(new BigDecimal(0))
