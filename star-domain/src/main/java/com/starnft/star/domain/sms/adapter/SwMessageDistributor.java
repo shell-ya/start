@@ -26,6 +26,7 @@ public class SwMessageDistributor implements MessageDistributor, ProcessInteract
 
     @Resource
     Map<StarConstants.Ids, IIdGenerator> idGeneratorMap;
+
     @Override
     public Boolean delivery(String mobile, String context) {
         String uuid = String.valueOf(idGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId());
@@ -47,6 +48,7 @@ public class SwMessageDistributor implements MessageDistributor, ProcessInteract
                 return true;
             }
         }
+        log.info("发送短信失败 响应结果： {} ,状态码：{}", result, result.getStr("code"));
         return false;
     }
 
