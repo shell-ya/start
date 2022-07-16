@@ -41,8 +41,8 @@ public class LoginByVerificationCodeStrategy extends UserLoginStrategy{
 
     @Override
     public Long saveLoginInfo(UserLoginDTO userLoginDTO) {
-//        Optional.ofNullable(userLoginDTO.getPhone())
-//                .orElseThrow(() -> new  StarException(StarError.PARAETER_UNSUPPORTED , "phone 不能为空"));
+        Optional.ofNullable(userLoginDTO.getPhone())
+                .orElseThrow(() -> new  StarException(StarError.PARAETER_UNSUPPORTED , "phone 不能为空"));
 //        Optional.ofNullable(userLoginDTO.getCode())
 //                .orElseThrow(() -> new  StarException(StarError.PARAETER_UNSUPPORTED , "code 不能为空"));
 

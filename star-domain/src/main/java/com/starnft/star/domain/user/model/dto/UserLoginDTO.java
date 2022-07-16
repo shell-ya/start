@@ -31,9 +31,9 @@ public class UserLoginDTO {
      * 邀请码
      */
 
-    private String shareCode;
+    private String sc;
      /**
      * 活动类型
      */
-    private String activityType;
+    private String at;
 }

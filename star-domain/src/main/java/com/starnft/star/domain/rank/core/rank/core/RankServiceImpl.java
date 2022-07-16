@@ -64,7 +64,7 @@ public class RankServiceImpl implements IRankService {
         Double result=null;
         if (isSetSuccess) {
             Long rank = redisTemplate.opsForZSet().rank(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), key);
-            if (Objects.isNull(rank) || 0 == rank){
+            if (Objects.isNull(rank)){
                 redisTemplate.opsForZSet().incrementScore(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), key, value);
             }
             result = redisTemplate.opsForZSet().incrementScore(String.format(RedisKey.RANK_ITEM.getKey(), rankName), key, value);

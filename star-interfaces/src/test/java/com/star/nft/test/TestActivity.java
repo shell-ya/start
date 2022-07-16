@@ -1,5 +1,6 @@
 package com.star.nft.test;
 
+import cn.hutool.json.JSONUtil;
 import com.starnft.star.application.mq.IMessageSender;
 import com.starnft.star.application.mq.constant.TopicConstants;
 import com.starnft.star.application.mq.producer.activity.ActivityEventProducer;
@@ -26,6 +27,10 @@ import com.starnft.star.domain.rank.core.rank.model.RankItemMetaData;
 import com.starnft.star.domain.rank.core.rank.model.res.Rankings;
 import com.starnft.star.domain.rank.core.rank.model.res.RankingsItem;
 import com.starnft.star.domain.user.model.vo.UserInfo;
+import com.starnft.star.infrastructure.entity.activityEvent.StarNftActivity;
+import com.starnft.star.infrastructure.entity.activityEvent.StarNftActivityExt;
+import com.starnft.star.infrastructure.mapper.activityEvent.StarNftActivityExtMapper;
+import com.starnft.star.infrastructure.mapper.activityEvent.StarNftActivityMapper;
 import com.starnft.star.interfaces.StarApplication;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -57,8 +62,14 @@ public class TestActivity {
     IRankService rankService;
 
     @Resource
+    StarNftActivityExtMapper activityExtMapper;
+
+    @Resource
+    StarNftActivityMapper activityMapper;
+
+    @Resource
     ActivityEventProducer activityEventProducer;
-    static String shardCode = "9XHF8RR7";
+    static String shardCode = "CZ7A";
     @Test
     //活动注册流程向MQ发送标记
     public void pullScopeTest(){
@@ -110,10 +121,10 @@ public class TestActivity {
 //        log.info("code:{}",code);
         UserLoginReq userLoginReq = new UserLoginReq();
         userLoginReq.setLoginScenes(2);
-        userLoginReq.setActivityType("launch_acquistion");
+        userLoginReq.setAt("launch_acquistion");
 //        userLoginReq.setCode("CCCAYU7S");
 //        userLoginReq.setPassword();
-        userLoginReq.setShareCode("CCCAYU7S");
+        userLoginReq.setSc("CCCAYU7S");
         userLoginReq.setPhone("17319429625");
         UserInfoRes userInfoRes = userCore.loginByPhoneAndRegister(userLoginReq);
 
@@ -219,6 +230,20 @@ public class TestActivity {
         rankReq.setUserId(947048912L);
         Long aLong = rankProcessor.personNum(rankReq);
         log.info(aLong.toString());
+    }
+
+    @Test
+    public void activity(){
+        StarNftActivity starNftActivity = activityMapper.selectById(3);
+        RankDefinition rankDefinition = new RankDefinition();
+        rankDefinition.setRankName("launch_rank");
+        rankDefinition.setRankType(Long.valueOf(starNftActivity.getActivityStatus()));
+        rankDefinition.setStartTime(starNftActivity.getStartTime());
+        rankDefinition.setEndTime(starNftActivity.getEndTime());
+        rankDefinition.setIsExtend(1);
+        rankDefinition.setIsTime(1);
+
+        rankService.createRank("launch_rank", rankDefinition);
     }
 
 }
