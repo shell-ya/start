@@ -14,9 +14,9 @@ import lombok.Data;
 @ApiModel("邀请码返回数据")
 public class ShareCodeRes {
     @ApiModelProperty(value = "邀请码")
-    private String shareCode;
+    private String sc;
     @ApiModelProperty(value = "活动标记")
-    private String activityType;
+    private String at;
     @ApiModelProperty(value = "接口地址")
     private String url;
 
