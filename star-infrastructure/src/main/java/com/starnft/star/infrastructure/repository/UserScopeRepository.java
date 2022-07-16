@@ -78,6 +78,6 @@ public class UserScopeRepository   implements IUserScopeRepository {
         userScopeRes.setScope(userScope);
         userScopeRes.setUserId(req.getUserId());
 //        userScopeRes.setVersion(starNftUserScope.getVersion());
-        return userScope;
+        return userScopeRes;
     }
 }
