@@ -32,13 +32,14 @@ public class ScopeTest {
 //
     @Test
     public  void  addScope(){
-
-        AddScoreDTO addScoreDTO = new AddScoreDTO();
-        addScoreDTO.setScope(new BigDecimal(11));
-        addScoreDTO.setUserId(9830832260L);
-        addScoreDTO.setScopeType(0);
-        addScoreDTO.setTemplate("参加拉新活动获得%s积分");
-        iScopeCore.userScopeManageAdd(addScoreDTO);
+        for (int i = 0; i < 100; i++) {
+            AddScoreDTO addScoreDTO = new AddScoreDTO();
+            addScoreDTO.setScope(new BigDecimal(11));
+            addScoreDTO.setUserId(305730346L);
+            addScoreDTO.setScopeType(0);
+            addScoreDTO.setTemplate("参加拉新活动获得%s积分");
+            iScopeCore.userScopeManageAdd(addScoreDTO);
+        }
     }
 
 
