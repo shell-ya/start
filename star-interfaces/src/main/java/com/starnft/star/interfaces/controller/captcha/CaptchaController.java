@@ -23,16 +23,12 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Slf4j
 public class CaptchaController {
-
     private final ICaptchaService captchaService;
-
     @ApiOperation("生成验证码")
     @GetMapping("/generate")
     @TokenIgnore
     public RopResponse<StarImageCaptchaVO> generateCaptcha(ImageCaptchaGenReq req) {
-
         StarImageCaptchaVO starImageCaptchaVO = this.captchaService.generateCaptcha(req);
-
         return RopResponse.success(starImageCaptchaVO);
     }
 
@@ -40,9 +36,7 @@ public class CaptchaController {
     @PostMapping("/check")
     @TokenIgnore
     public RopResponse<String> checkCaptcha(@Validated @RequestBody ImageCaptchaCheckReq req) {
-
         String matching = this.captchaService.matching(req);
         return RopResponse.success(matching);
     }
-
 }

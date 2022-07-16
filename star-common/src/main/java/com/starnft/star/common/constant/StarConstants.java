@@ -477,4 +477,11 @@ public class StarConstants {
         }
     }
 
+    public enum PlatformEnums {
+        Android,
+        Ios,
+        Web;
+
+    }
+
 }
