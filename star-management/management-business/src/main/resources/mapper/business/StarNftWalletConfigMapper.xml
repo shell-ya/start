@@ -47,7 +47,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
 
-    <select id="selectStarNftWalletConfigByChannel" parameterType="Long" resultMap="StarNftWalletConfigResult">
+    <select id="selectStarNftWalletConfigByChannel" parameterType="String" resultMap="StarNftWalletConfigResult">
         <include refid="selectStarNftWalletConfigVo"/>
         where channel = #{channel}
     </select>
