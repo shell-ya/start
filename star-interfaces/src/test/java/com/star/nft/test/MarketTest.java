@@ -43,9 +43,9 @@ public class MarketTest {
     @Test
     public void consigment() {
         NumberConsignmentRequest numberConsignmentRequest = new NumberConsignmentRequest();
-        numberConsignmentRequest.setUid(305730346L);
-        numberConsignmentRequest.setNumberId(996194503701676032L);
-        numberConsignmentRequest.setPrice(BigDecimal.valueOf(333L));
+        numberConsignmentRequest.setUid(947048912L);
+        numberConsignmentRequest.setNumberId(996190528778395648L);
+        numberConsignmentRequest.setPrice(BigDecimal.valueOf(188L));
         Boolean consignment = numberCore.consignment(numberConsignmentRequest);
         assert consignment;
     }
@@ -61,8 +61,8 @@ public class MarketTest {
     @Test
     public void marketOrder() {
         MarketOrderReq marketOrderReq = new MarketOrderReq();
-        marketOrderReq.setUserId(248906830L);
-        marketOrderReq.setNumberId(991119651685904384L);
+        marketOrderReq.setUserId(888887199L);
+        marketOrderReq.setNumberId(996190528778395648L);
         OrderListRes orderListRes = orderProcessor.marketOrder(marketOrderReq);
         log.info("orderList:{}", orderListRes.toString());
     }
@@ -70,7 +70,7 @@ public class MarketTest {
     @Test
     public void cancelOrder() {
         OrderCancelReq orderCancelReq = new OrderCancelReq();
-        orderCancelReq.setUid(248906830L);
+        orderCancelReq.setUid(888887199L);
         orderCancelReq.setOrderSn("TS993518961750605824");
         OrderPlaceRes orderPlaceRes = orderProcessor.cancelSecOrder(orderCancelReq);
         log.info(orderPlaceRes.toString());
@@ -79,18 +79,19 @@ public class MarketTest {
     @Test
     public void pay() {
         OrderPayReq orderPayReq = new OrderPayReq();
-        orderPayReq.setOrderSn("PG995447946508107776");
-        orderPayReq.setPayAmount("1.9");
-        orderPayReq.setUserId(320266671L);
+        orderPayReq.setOrderSn("PG998029505786413056");
+        orderPayReq.setPayAmount("188");
+        orderPayReq.setUserId(888887199L);
         orderPayReq.setCategoryType(1);
-        orderPayReq.setNumberId(995368705385082880L);
+        orderPayReq.setNumberId(996190524906180608L);
         orderPayReq.setChannel("Balance");
-        orderPayReq.setOwnerId(0L);
-        orderPayReq.setSeriesId(5L);
+        orderPayReq.setOwnerId(947048912L);
+        orderPayReq.setSeriesId(1L);
         orderPayReq.setFee("0");
-        orderPayReq.setThemeId(995367819184877568L);
-        orderPayReq.setTotalPayAmount("1.9");
+        orderPayReq.setThemeId(996189485772484608L);
+        orderPayReq.setTotalPayAmount("188");
         orderPayReq.setType(3);
+        orderPayReq.setPayToken("czrgff32tgym23xq");
 //        orderPayReq.setPayToken();
 //        orderPayReq.setOutTradeNo();
         orderProcessor.orderPay(orderPayReq);

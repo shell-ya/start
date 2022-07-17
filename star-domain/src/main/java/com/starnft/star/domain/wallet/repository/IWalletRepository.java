@@ -155,4 +155,11 @@ public interface IWalletRepository {
 
     boolean setDefaultCard(BankRelationVO relationVO);
 
+    /**
+     * 更新交易手续费
+     * @param serialNo
+     * @param fee
+     * @return
+     */
+    boolean updateWalletRecordFee(String serialNo,BigDecimal fee);
 }

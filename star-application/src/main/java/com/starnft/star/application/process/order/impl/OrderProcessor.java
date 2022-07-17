@@ -208,18 +208,30 @@ public class OrderProcessor implements IOrderProcessor {
         return EventReqAssembly.assembly(buyActivityEventReq);
     }
 
-    private TransReq createTranReq(OrderPayReq orderPayReq) {
+    private WalletPayRequest createTranReq(OrderPayReq orderPayReq) {
         //收款方是寄售用户
-        TransReq transReq = new TransReq();
-        transReq.setUid(orderPayReq.getOwnerId());
-        transReq.setTsType(StarConstants.Transaction_Type.Sell.getCode());
-        transReq.setPayChannel(orderPayReq.getChannel());
-        transReq.setOrderSn(orderPayReq.getOrderSn());
-        transReq.setTotalAmount(new BigDecimal(orderPayReq.getTotalPayAmount()));
-        BigDecimal payAmount = new BigDecimal(orderPayReq.getPayAmount());
-        transReq.setPayAmount(payAmount.signum() >= 0 ? payAmount : payAmount.negate());
+//        TransReq transReq = new TransReq();
+//        transReq.setUid(orderPayReq.getOwnerId());
+//        transReq.setTsType(StarConstants.Transaction_Type.Sell.getCode());
+//        transReq.setPayChannel(orderPayReq.getChannel());
+//        transReq.setOrderSn(orderPayReq.getOrderSn());
+//        transReq.setTotalAmount(new BigDecimal(orderPayReq.getTotalPayAmount()));
+//        BigDecimal payAmount = new BigDecimal(orderPayReq.getPayAmount());
+//        transReq.setPayAmount(payAmount.signum() >= 0 ? payAmount : payAmount.negate());
         //实际收款金额是挂失金额减去手续费
-        return transReq;
+        WalletPayRequest walletPayRequest = BeanColverUtil.colver(orderPayReq, WalletPayRequest.class);
+        walletPayRequest.setStatus(StarConstants.Pay_Status.PAY_SUCCESS.name());
+        BigDecimal payAmount = new BigDecimal(orderPayReq.getPayAmount());
+        walletPayRequest.setTotalPayAmount(new BigDecimal(orderPayReq.getTotalPayAmount()));
+//        walletPayRequest.setFee(new BigDecimal(orderPayReq.getFee()));
+//        walletPayRequest.setTotalPayAmount(new BigDecimal(orderPayReq.getTotalPayAmount()));
+        walletPayRequest.setPayAmount(payAmount.signum() == -1 ? payAmount : payAmount.negate());
+        walletPayRequest.setFromUid(orderPayReq.getUserId());
+        walletPayRequest.setToUid(orderPayReq.getOwnerId());
+        walletPayRequest.setUserId(orderPayReq.getOwnerId());
+        walletPayRequest.setType(StarConstants.Transaction_Type.Sell.getCode());
+
+        return walletPayRequest;
     }
 
     private HandoverReq buildHandOverReq(OrderPayReq orderPayReq) {

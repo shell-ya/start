@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
@@ -25,10 +26,10 @@ public class ReceivablesCalculateResult implements Serializable {
     /**
      * 交易费
      */
-    private String serviceMoney;
+    private BigDecimal serviceMoney;
     /**
      * 版权费
      */
-    private String copyrightMoney;
+    private BigDecimal copyrightMoney;
 
 }

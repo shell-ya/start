@@ -413,6 +413,21 @@ public class WalletRepository implements IWalletRepository {
         return updated == 1;
     }
 
+    @Override
+    @Transactional
+    public boolean updateWalletRecordFee(String serialNo, BigDecimal fee) {
+        StarNftWalletRecord record = queryWalletRecordPO(serialNo, null);
+        if (null == record) {
+            throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "记录不存在");
+        }
+
+        LambdaQueryWrapper<StarNftWalletRecord> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(StringUtils.isNotBlank(serialNo), StarNftWalletRecord::getRecordSn, serialNo);
+        StarNftWalletRecord change = new StarNftWalletRecord();
+        change.setTsFee(fee);
+        return starNftWalletRecordMapper.update(change, wrapper) == 1;
+    }
+
 
     private WalletRecordVO walletRecordToVO(StarNftWalletRecord record) {
         return WalletRecordVO.builder().recordSn(record.getRecordSn())

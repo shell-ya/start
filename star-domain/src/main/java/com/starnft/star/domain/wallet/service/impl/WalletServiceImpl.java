@@ -583,8 +583,13 @@ public class WalletServiceImpl implements WalletService {
         number.setMaximumFractionDigits(3);
         percent.setMaximumFractionDigits(4);
         return new ReceivablesCalculateResult(number.format(calculated.setScale(2, BigDecimal.ROUND_HALF_DOWN)), percent.format(config.getServiceRate()),
-                percent.format(config.getCopyrightRate()), transRate.toPlainString(), copyrightRate.toPlainString());
+                percent.format(config.getCopyrightRate()), transRate, copyrightRate);
 
+    }
+
+    @Override
+    public boolean feeProcess(String recordSn, BigDecimal fee) {
+        return walletRepository.updateWalletRecordFee(recordSn,fee);
     }
 
 
