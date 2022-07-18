@@ -30,7 +30,7 @@ public class ApkController {
     @TokenIgnore
     public RopResponse<String> downloadApk(@ApiParam(name = "手机型号", value = "0:安卓 1:苹果")
                                            @PathVariable("phoneModel") Integer phoneModel) {
-        return RopResponse.success(0 == phoneModel ? apkInfoObtain.getUrl() : "https://itunes.apple.com/cn/app/id1634042904?mt=8");
+        return RopResponse.success(0 == phoneModel ? apkInfoObtain.getUrl(phoneModel) : "https://itunes.apple.com/cn/app/id1634042904?mt=8");
     }
 
 }

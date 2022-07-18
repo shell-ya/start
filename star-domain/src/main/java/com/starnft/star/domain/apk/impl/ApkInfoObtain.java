@@ -16,7 +16,7 @@ public class ApkInfoObtain extends ApkConfig implements IApkInfoObtain {
     @Override
     public String getUrl(Integer phoneModel) {
         String url = 0 == phoneModel ? android() : ios();
-        if (Objects.isNull(url)) url = "即将开放";
+        if (Objects.isNull(url)) url = "https://itunes.apple.com/cn/app/id1634042904?mt=8";
         return url;
     }
 }
