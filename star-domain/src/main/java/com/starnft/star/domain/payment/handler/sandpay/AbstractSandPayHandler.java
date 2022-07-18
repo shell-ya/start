@@ -91,16 +91,28 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
         String startTime = instance.getStartTime();
         String endTime = instance.getEndTime();
         String sign = super.processTemplate(signTempPath, paymentRich, vendorConf,startTime,endTime).toUpperCase();
-        String reqTempPath = channelConf.getReqTempPath();
         vendorConf.put("sign",sign);
-        String resultUri = super.processTemplate(reqTempPath, paymentRich, vendorConf, startTime, endTime);
-        PaymentRes paymentRes = new PaymentRes();
-        paymentRes.setGatewayApi(resultUri);
-        paymentRes.setOrderSn(paymentRich.getOrderSn());
-        paymentRes.setStatus(0);
-        paymentRes.setTotalMoney(paymentRich.getTotalMoney().toString());
-        paymentRes.setMessage("成功");
-        return paymentRes;
+        if (!paymentRich.getPlatform().equals(StarConstants.PlatformEnums.Web)){
+            String resTempPath = channelConf.getResTempPath();
+            String result = super.processTemplate(resTempPath, paymentRich, vendorConf, startTime, endTime);
+            PaymentRes paymentRes = new PaymentRes();
+            paymentRes.setThirdPage(result);
+            paymentRes.setOrderSn(paymentRich.getOrderSn());
+            paymentRes.setStatus(0);
+            paymentRes.setTotalMoney(paymentRich.getTotalMoney().toString());
+            paymentRes.setMessage("成功");
+            return paymentRes;
+        }else{
+            String reqTempPath = channelConf.getReqTempPath();
+            String resultUri = super.processTemplate(reqTempPath, paymentRich, vendorConf, startTime, endTime);
+            PaymentRes paymentRes = new PaymentRes();
+            paymentRes.setGatewayApi(resultUri);
+            paymentRes.setOrderSn(paymentRich.getOrderSn());
+            paymentRes.setStatus(0);
+            paymentRes.setTotalMoney(paymentRich.getTotalMoney().toString());
+            paymentRes.setMessage("成功");
+            return paymentRes;
+        }
     }
 
     @SneakyThrows
