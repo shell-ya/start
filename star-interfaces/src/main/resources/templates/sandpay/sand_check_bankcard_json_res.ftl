@@ -16,7 +16,7 @@
 "clear_cycle":3,
 "pay_extra":${helper.urlEscape(param1.getCheckBankPayExtend())},
 "meta_option":${helper.urlEscape('[{"s":"Android","n":"CircleMeta","id":"cn.CircleMeta.app","sc":"/index"},{"s":"IOS","n":"CircleMeta","id":"cn.CircleMeta.app","sc":"/index"}]')},
-"accsplit_flag"=NO,
-"sign_type"=MD5,
-"sign"=${param2.sign}
+"accsplit_flag":NO,
+"sign_type":MD5,
+"sign":${param2.sign}
 }
