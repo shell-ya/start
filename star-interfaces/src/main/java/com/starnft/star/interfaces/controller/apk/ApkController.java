@@ -28,9 +28,9 @@ public class ApkController {
     @ApiOperation("下载安装包")
     @GetMapping("/downloadapk/{phoneModel}")
     @TokenIgnore
-    public RopResponse<String> downloadApk(@ApiParam(name = "手机型号" ,value = "0:安卓 1:苹果")
-                                               @PathVariable("phoneModel") Integer phoneModel){
-        return RopResponse.success(apkInfoObtain.getUrl(phoneModel));
+    public RopResponse<String> downloadApk(@ApiParam(name = "手机型号", value = "0:安卓 1:苹果")
+                                           @PathVariable("phoneModel") Integer phoneModel) {
+        return RopResponse.success(0 == phoneModel ? apkInfoObtain.getUrl() : "https://itunes.apple.com/cn/app/id1634042904?mt=8");
     }
 
 }
