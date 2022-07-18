@@ -8,5 +8,6 @@ import lombok.Data;
  */
 @Data
 public class ApkInfo {
-    private String apkDownloadUrl;
+    private String androidDownloadUrl;
+    private String iosDownloadUrl;
 }
