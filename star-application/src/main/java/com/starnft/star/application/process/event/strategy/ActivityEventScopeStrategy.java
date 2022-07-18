@@ -31,7 +31,7 @@ public  class ActivityEventScopeStrategy  implements  ActivityEventStrategy{
          String template = configs.getStr("template");
          Integer scopeType = configs.getInt("scopeType");
          BigDecimal scale = Optional.ofNullable(configs.getBigDecimal("scale")).orElse(BigDecimal.ONE);
-         Object number = Long.parseLong(Optional.ofNullable(activityEventReq.getParams().get("number")).orElse(1).toString()) ;;
+         Object number = Long.parseLong(Optional.ofNullable(activityEventReq.getParams().get("number")).orElse(1).toString());
          BigDecimal totalScope=new BigDecimal(number.toString()).multiply(scale);
          AddScoreDTO addScoreDTO = new AddScoreDTO();
          addScoreDTO.setTemplate(template);
