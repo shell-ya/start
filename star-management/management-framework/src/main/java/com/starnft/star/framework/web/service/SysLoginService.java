@@ -13,6 +13,7 @@ import com.starnft.star.common.utils.DateUtils;
 import com.starnft.star.common.utils.MessageUtils;
 import com.starnft.star.common.utils.ServletUtils;
 import com.starnft.star.common.utils.ip.IpUtils;
+import com.starnft.star.common.utils.sign.RsaUtils;
 import com.starnft.star.framework.manager.AsyncManager;
 import com.starnft.star.framework.manager.factory.AsyncFactory;
 import com.starnft.star.system.service.ISysUserService;
@@ -72,7 +73,7 @@ public class SysLoginService
         {
             // 该方法会去调用UserDetailsServiceImpl.loadUserByUsername
             authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(username, password));
+                    .authenticate(new UsernamePasswordAuthenticationToken(username, RsaUtils.decryptByPrivateKey(password)));
         }
         catch (Exception e)
         {

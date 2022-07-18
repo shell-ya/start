@@ -22,7 +22,7 @@ aj:
     # blockPuzzle 滑块 clickWord 文字点选  default默认两者都实例化
     type: blockPuzzle
     # 右下角显示字
-    water-mark: ruoyi.vip
+    water-mark: star
     # 校验滑动拼图允许误差偏移量(默认5像素)
     slip-offset: 5
     # aes加密坐标开启或者禁用(true|false)
@@ -81,7 +81,7 @@ spring:
     # 端口，默认为6379
     port: 16379
     # 数据库索引
-    database: 1
+    database: 4
     # 密码
     password: wqd123456.
     # 连接超时时间

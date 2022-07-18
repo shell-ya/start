@@ -180,7 +180,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             record_sn = #{withdrawTradeNo}
     </update>
 
-    <select id="selectUserRecord" resultType="com.ruoyi.business.domain.vo.StarNftReconVo">
+    <select id="selectUserRecord" resultType="com.starnft.star.business.domain.vo.StarNftReconVo">
         select * from (
                           select r.id as id,
                                  r.created_at as createdAt,
