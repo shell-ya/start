@@ -102,7 +102,9 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
             paymentRes.setTotalMoney(paymentRich.getTotalMoney().toString());
             paymentRes.setMessage("成功");
             return paymentRes;
-        }else{
+        }
+        else
+        {
             String reqTempPath = channelConf.getReqTempPath();
             String resultUri = super.processTemplate(reqTempPath, paymentRich, vendorConf, startTime, endTime);
             PaymentRes paymentRes = new PaymentRes();
