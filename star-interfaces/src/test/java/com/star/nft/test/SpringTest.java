@@ -63,8 +63,8 @@ public class SpringTest {
         orderPayReq.setPayAmount("33.00");
         orderPayReq.setChannel(StarConstants.PayChannel.Balance.name());
         orderPayReq.setFee("0.00");
-        orderPayReq.setFromUid(409412742L);
-        orderPayReq.setToUid(248906830L);
+//        orderPayReq.setFromUid(409412742L);
+//        orderPayReq.setToUid(248906830L);
         orderPayReq.setTotalPayAmount("33.00");
         orderPayReq.setNumberId(991131539320320000L);
         orderPayReq.setThemeId(991131478355697664L);
