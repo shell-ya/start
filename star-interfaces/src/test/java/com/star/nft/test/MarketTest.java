@@ -88,13 +88,13 @@ public class MarketTest {
         orderPayReq.setCategoryType(1);
         orderPayReq.setNumberId(995368705385082880L);
         orderPayReq.setChannel("Balance");
-        orderPayReq.setFromUid(0L);
+//        orderPayReq.setFromUid(0L);
         orderPayReq.setSeriesId(5L);
         orderPayReq.setFee("0");
         orderPayReq.setThemeId(995367819184877568L);
         orderPayReq.setTotalPayAmount("1.9");
         orderPayReq.setType(3);
-        orderPayReq.setToUid(320266671L);
+//        orderPayReq.setToUid(320266671L);
 //        orderPayReq.setPayToken();
 //        orderPayReq.setOutTradeNo();
         orderProcessor.orderPay(orderPayReq);

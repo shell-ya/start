@@ -98,10 +98,10 @@ public class TestActivity {
         log.info("code:{}",code);
         UserLoginReq userLoginReq = new UserLoginReq();
         userLoginReq.setLoginScenes(2);
-        userLoginReq.setActivityType("launch_acquistion");
+//        userLoginReq.setActivityType("launch_acquistion");
         userLoginReq.setCode("1563531");
 //        userLoginReq.setPassword();
-        userLoginReq.setShareCode(code.getShareCode());
+//        userLoginReq.setShareCode(code.getShareCode());
         userLoginReq.setPhone("15830887988");
         UserInfoRes userInfoRes = userCore.loginByPhoneAndRegister(userLoginReq);
 
