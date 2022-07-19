@@ -44,7 +44,6 @@ public class PropsCore implements IPropsCore {
                 .propsRelationVO(propsRelationVO)
                 .invoker(() -> propsExecutor.execute(req.getUserId(), propsVO))
                 .build());
-
         return isSuccess;
     }
 }
