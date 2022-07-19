@@ -29,7 +29,7 @@ public class SeriesServiceImpl implements SeriesService {
     @Override
     @Cached(name = StarConstants.SERIES_CACHE_NAME,
             expire = 3600 * 12,
-            cacheType = CacheType.BOTH)
+            cacheType = CacheType.REMOTE)
     @CacheRefresh(refresh = 3600 * 6, stopRefreshAfterLastAccess = 3600 * 3)
     @CachePenetrationProtect
     public List<SeriesVO> querySeriesByType(Integer type) {

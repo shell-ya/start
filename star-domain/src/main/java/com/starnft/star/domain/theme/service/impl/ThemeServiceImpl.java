@@ -33,7 +33,7 @@ public class ThemeServiceImpl implements ThemeService {
     @Override
     @Cached(name = StarConstants.THEME_DETAIL_CACHE_NAME,
             expire = 3600 * 12,
-            cacheType = CacheType.BOTH)
+            cacheType = CacheType.REMOTE)
     @CacheRefresh(refresh = 3600 * 6, stopRefreshAfterLastAccess = 3600 * 3)
     @CachePenetrationProtect
     public ThemeDetailVO queryThemeDetail(Long id) {
@@ -43,7 +43,7 @@ public class ThemeServiceImpl implements ThemeService {
     @Override
     @Cached(name = StarConstants.THEME_CACHE_NAME,
             expire = 3600 * 12,
-            cacheType = CacheType.BOTH)
+            cacheType = CacheType.REMOTE)
     @CacheRefresh(refresh = 3600 * 6, stopRefreshAfterLastAccess = 3600 * 3)
     @CachePenetrationProtect
     public List<ThemeVO> queryThemesBySeriesId(Long seriesId) {

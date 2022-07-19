@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  */
 @Data
 @ApiModel("排行榜")
-public class Rankings {
+public class Rankings implements Serializable {
 
     @ApiModelProperty(value = "排行榜名称")
     private String rankName;
