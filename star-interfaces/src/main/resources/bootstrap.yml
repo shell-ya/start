@@ -6,4 +6,4 @@ spring:
       discovery:
         server-addr: 124.221.181.84:8848
         enabled: true
-        namespace: ran
+#        namespace: ran
