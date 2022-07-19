@@ -14,8 +14,8 @@ import java.util.Map;
 @Component("swIdentifyStrategy")
 @Slf4j
 public class SwIdentifyStrategy implements IdentifyStrategyInterface {
-    private final String appId = "8QiZKhS4";
-    private final String appKey = "kBRnCc2p";
+    private final String appId = "fIatb52I";
+    private final String appKey = "N2UWBXTc";
     private final String url = "http://139.224.206.237:3333/user/api/id-card-auth";
 
     @Override

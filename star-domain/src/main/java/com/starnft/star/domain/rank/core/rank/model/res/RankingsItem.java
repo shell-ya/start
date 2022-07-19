@@ -6,13 +6,15 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @Date 2022/7/6 11:24 PM
  * @Author ： shellya
  */
 @Data
 @ApiModel
-public class RankingsItem {
+public class RankingsItem implements Serializable {
 //    @ApiModelProperty(value = "排名")
 //    private Integer rank;
     @ApiModelProperty(value = "手机号")
