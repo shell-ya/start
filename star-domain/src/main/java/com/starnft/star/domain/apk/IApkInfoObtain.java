@@ -6,5 +6,5 @@ package com.starnft.star.domain.apk;
  */
 
 public interface IApkInfoObtain {
-    String getUrl();
+    String getUrl(Integer phoneModel);
 }

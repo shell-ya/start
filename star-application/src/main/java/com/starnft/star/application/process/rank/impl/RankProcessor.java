@@ -1,9 +1,14 @@
 package com.starnft.star.application.process.rank.impl;
 
+import com.alicp.jetcache.anno.CacheRefresh;
+import com.alicp.jetcache.anno.CacheType;
+import com.alicp.jetcache.anno.Cached;
+import com.alicp.jetcache.anno.KeyConvertor;
 import com.google.common.collect.Lists;
 import com.starnft.star.application.process.rank.IRankProcessor;
 import com.starnft.star.application.process.rank.req.RankReq;
 import com.starnft.star.common.constant.RedisKey;
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.RequestConditionPage;
@@ -24,6 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Date 2022/7/10 2:53 PM
@@ -37,6 +43,12 @@ public class RankProcessor implements IRankProcessor {
     final IRankService rankService;
 
     @Override
+    @Cached(name = StarConstants.RANK_CACHE_NAME,
+            expire = 6,
+            cacheType = CacheType.REMOTE,
+            timeUnit = TimeUnit.MINUTES,
+            keyConvertor = KeyConvertor.FASTJSON)
+    @CacheRefresh(refresh = 5,timeUnit = TimeUnit.MINUTES,stopRefreshAfterLastAccess = 3)
     public Rankings rankings(RequestConditionPage<RankReq> rankPage) {
         //查询当前时间开启的活动
         RankDefinition nowRank = getNowRank();
