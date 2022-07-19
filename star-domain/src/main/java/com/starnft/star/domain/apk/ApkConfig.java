@@ -26,7 +26,12 @@ public class ApkConfig {
         apk.put(categoryCode,apkInfo);
     }
 
-    public static String getDownloadUrl(){
-        return apk.get(categoryCode).getApkDownloadUrl();
+
+    public static String android(){
+        return apk.get(categoryCode).getAndroidDownloadUrl();
+    }
+
+    public static String ios(){
+        return apk.get(categoryCode).getIosDownloadUrl();
     }
 }
