@@ -228,6 +228,7 @@ public class SysRoleServiceImpl implements ISysRoleService
     @Transactional
     public int insertRole(SysRole role)
     {
+        role.setCreateTime(new Date());
         // 新增角色信息
         roleMapper.insertRole(role);
         return insertRoleMenu(role);

@@ -11,6 +11,7 @@ import com.starnft.star.common.enums.BusinessType;
 import com.starnft.star.common.utils.SecurityUtils;
 import com.starnft.star.common.utils.StringUtils;
 import com.starnft.star.common.utils.poi.ExcelUtil;
+import com.starnft.star.common.utils.sign.RsaUtils;
 import com.starnft.star.system.service.ISysPostService;
 import com.starnft.star.system.service.ISysRoleService;
 import com.starnft.star.system.service.ISysUserService;
@@ -113,8 +114,7 @@ public class SysUserController extends BaseController
     @PreAuthorize("@ss.hasPermi('system:user:add')")
     @Log(title = "用户管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@Validated @RequestBody SysUser user)
-    {
+    public AjaxResult add(@Validated @RequestBody SysUser user) throws Exception {
         if (UserConstants.NOT_UNIQUE.equals(userService.checkUserNameUnique(user.getUserName())))
         {
             return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，登录账号已存在");

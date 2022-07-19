@@ -24,6 +24,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.validation.Validator;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -252,6 +253,7 @@ public class SysUserServiceImpl implements ISysUserService
     @Transactional
     public int insertUser(SysUser user)
     {
+        user.setCreateTime(new Date());
         // 新增用户信息
         int rows = userMapper.insertUser(user);
         // 新增用户岗位关联
