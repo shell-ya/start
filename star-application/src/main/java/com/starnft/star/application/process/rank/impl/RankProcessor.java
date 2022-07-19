@@ -3,6 +3,7 @@ package com.starnft.star.application.process.rank.impl;
 import com.alicp.jetcache.anno.CacheRefresh;
 import com.alicp.jetcache.anno.CacheType;
 import com.alicp.jetcache.anno.Cached;
+import com.alicp.jetcache.anno.KeyConvertor;
 import com.google.common.collect.Lists;
 import com.starnft.star.application.process.rank.IRankProcessor;
 import com.starnft.star.application.process.rank.req.RankReq;
@@ -45,7 +46,8 @@ public class RankProcessor implements IRankProcessor {
     @Cached(name = StarConstants.RANK_CACHE_NAME,
             expire = 6,
             cacheType = CacheType.REMOTE,
-            timeUnit = TimeUnit.MINUTES)
+            timeUnit = TimeUnit.MINUTES,
+            keyConvertor = KeyConvertor.FASTJSON)
     @CacheRefresh(refresh = 5,timeUnit = TimeUnit.MINUTES,stopRefreshAfterLastAccess = 3)
     public Rankings rankings(RequestConditionPage<RankReq> rankPage) {
         //查询当前时间开启的活动
