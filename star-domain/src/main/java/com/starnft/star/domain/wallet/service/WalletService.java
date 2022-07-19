@@ -75,4 +75,6 @@ public interface WalletService {
 
     //到账金额计算
     ReceivablesCalculateResult ReceivablesMoneyCalculate(CalculateReq calculate);
+
+    boolean feeProcess(String recordSn,BigDecimal fee);
 }

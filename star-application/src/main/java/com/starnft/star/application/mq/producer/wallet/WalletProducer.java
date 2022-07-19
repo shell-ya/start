@@ -4,6 +4,7 @@ import com.starnft.star.application.mq.constant.TopicConstants;
 import com.starnft.star.application.mq.producer.BaseProducer;
 import com.starnft.star.application.process.order.model.dto.OrderMessageReq;
 import com.starnft.star.domain.wallet.model.req.TransReq;
+import com.starnft.star.domain.wallet.model.req.WalletPayRequest;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +19,7 @@ public class WalletProducer extends BaseProducer {
      *
      * @param message
      */
-    public void receivablesCallback(TransReq message) {
+    public void receivablesCallback(WalletPayRequest message) {
 
         String destination = String.format(TopicConstants.WALLER_RECEIVABLES_DESTINATION.getFormat(), TopicConstants.WALLER_RECEIVABLES_DESTINATION.getTag());
 

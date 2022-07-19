@@ -9,5 +9,7 @@ public interface IUserScopeRepository {
     UserScopeRes queryUserScopeByUserId(UserScopeReq req);
     Boolean updateUserScopeByUserId(UpdateUserScopeReq req);
     Boolean insertUserScopeByUserId(AddUserScopeReq req);
+
+    UserScopeRes queryUserAllScopeByUserId(UserScopeReq userScopeReq);
 //    Boolean updateUserScopeByUserId(UpdateUserScopeReq req);
 }

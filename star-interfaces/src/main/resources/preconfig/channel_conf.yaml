@@ -40,6 +40,7 @@ channel-configs:
           reqHeader: POST
     - trade: Check_Bank_Card_SandPay
       signTempPath: sandpay/sand_check_bankcard_sign.ftl
+      resTempPath: sandpay/sand_check_bankcard_json_res.ftl
       reqTempPath: sandpay/sand_check_bankcard_req.ftl
       httpConf:
         processType: json

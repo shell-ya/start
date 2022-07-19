@@ -91,7 +91,10 @@ public class UserCoreImpl implements UserCore {
     }
 
     private void activitySync(UserLoginReq req, UserRegisterInfoVO userInfo) {
-        if (StringUtils.isBlank(req.getShareCode()) || StringUtils.isBlank(req.getActivityType())) {
+//        if (StringUtils.isBlank(req.getSc()) || StringUtils.isBlank(req.getAt())) {
+//            return;
+//        }
+        if (StringUtils.isBlank(req.getSc())) {
             return;
         }
         Boolean isRegister = redisTemplate.hasKey(String.format(RedisKey.REDIS_USER_REG_NEW.getKey(), userInfo.getUserId()));
@@ -99,10 +102,10 @@ public class UserCoreImpl implements UserCore {
             try {
                 RegisterEventReq rankEventReq = new RegisterEventReq();
                 rankEventReq.setUserId(userInfo.getUserId());
-                rankEventReq.setParent(InvitationCodeUtil.decode(req.getShareCode())); //邀请码转化为id //直接获取到了上级
+                rankEventReq.setParent(InvitationCodeUtil.decode(req.getSc())); //邀请码转化为id //直接获取到了上级
                 rankEventReq.setReqTime(new Date());
                 rankEventReq.setEventSign(StarConstants.EventSign.Register.getSign());
-                rankEventReq.setActivitySign(req.getActivityType());
+                rankEventReq.setActivitySign(StringUtils.isBlank(req.getAt()) ? "la":req.getAt());
                 activityEventProducer.sendScopeMessage(EventReqAssembly.assembly(rankEventReq));
 
             } catch (Exception e) {
@@ -124,7 +127,7 @@ public class UserCoreImpl implements UserCore {
         if (req.getVerificationScenes().equals(1)) {
             Boolean register = isRegister(req.getPhone());
             if (register) {
-                throw new StarException("账号已注册，请不要重复注册");
+                throw new StarException(StarError.USER_EXISTS);
             }
         }
         UserVerifyCode verifyCode = this.userService.getVerifyCode(userVerifyCodeDTO);
@@ -430,8 +433,8 @@ public class UserCoreImpl implements UserCore {
         List<DictionaryVO> url = dictionaryRepository.obtainDictionary("URL");
 
         return ShareCodeRes.builder()
-                .shareCode(shareCode)
-                .activityType(activityRes.getActivitySign())
+                .sc(shareCode)
+                .at(activityRes.getActivitySign())
                 .url(url.get(0).getDictCode())
                 .build();
     }

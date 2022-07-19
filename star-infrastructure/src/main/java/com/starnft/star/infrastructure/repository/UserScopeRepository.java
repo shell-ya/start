@@ -10,10 +10,13 @@ import com.starnft.star.domain.scope.repository.IUserScopeRepository;
 import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.infrastructure.entity.scope.StarNftUserScope;
 import com.starnft.star.infrastructure.mapper.scope.StarNftUserScopeMapper;
+import org.apache.commons.collections.ListUtils;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -63,5 +66,18 @@ public class UserScopeRepository   implements IUserScopeRepository {
         starNftUserScope.setId(idsIIdGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId());
         starNftUserScope.setVersion(StarConstants.INIT_VERSION);
         return  starNftUserScopeMapper.insert(starNftUserScope)>0?Boolean.TRUE:Boolean.FALSE;
+    }
+
+    @Override
+    public UserScopeRes queryUserAllScopeByUserId(UserScopeReq req) {
+        List<StarNftUserScope> starNftUserScopes = starNftUserScopeMapper.selectList(
+                new QueryWrapper<StarNftUserScope>().eq(StarNftUserScope.COL_USER_ID, req.getUserId()));
+        if ( 0 == starNftUserScopes.size()) return null;
+        BigDecimal userScope = starNftUserScopes.stream().map(StarNftUserScope::getUserScope).reduce(BigDecimal.ZERO, BigDecimal::add);
+        UserScopeRes userScopeRes = new UserScopeRes();
+        userScopeRes.setScope(userScope);
+        userScopeRes.setUserId(req.getUserId());
+//        userScopeRes.setVersion(starNftUserScope.getVersion());
+        return userScopeRes;
     }
 }

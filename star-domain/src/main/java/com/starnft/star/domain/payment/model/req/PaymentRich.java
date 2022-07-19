@@ -24,6 +24,11 @@ public class PaymentRich implements Serializable {
      * 支付渠道
      */
     private String payChannel;
+    /**
+     * 平台
+     */
+    private StarConstants.PlatformEnums platform;
+
     private String bankNo;
     /**
      * 用户Id

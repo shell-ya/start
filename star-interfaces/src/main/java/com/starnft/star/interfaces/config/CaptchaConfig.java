@@ -25,21 +25,23 @@ public class CaptchaConfig implements ApplicationListener<ApplicationStartedEven
         ImageCaptchaResourceManager sliderCaptchaResourceManager = this.imageCaptchaApplication.getImageCaptchaResourceManager();
         ResourceStore resourceStore = sliderCaptchaResourceManager.getResourceStore();
         // 清除内置的背景图片
-        //resourceStore.clearAllResources();
-
+        resourceStore.clearAllResources();
+        
         // 添加自定义背景图片
-        resourceStore.addResource(CaptchaTypeConstant.SLIDER, new Resource("classpath", "bgimages/a.jpg"));
-        resourceStore.addResource(CaptchaTypeConstant.SLIDER, new Resource("classpath", "bgimages/b.jpg"));
-        resourceStore.addResource(CaptchaTypeConstant.SLIDER, new Resource("classpath", "bgimages/c.jpg"));
-        resourceStore.addResource(CaptchaTypeConstant.SLIDER, new Resource("classpath", "bgimages/d.jpg"));
-        resourceStore.addResource(CaptchaTypeConstant.SLIDER, new Resource("classpath", "bgimages/e.jpg"));
-        resourceStore.addResource(CaptchaTypeConstant.SLIDER, new Resource("classpath", "bgimages/g.jpg"));
-        resourceStore.addResource(CaptchaTypeConstant.SLIDER, new Resource("classpath", "bgimages/h.jpg"));
-        resourceStore.addResource(CaptchaTypeConstant.SLIDER, new Resource("classpath", "bgimages/i.jpg"));
-        resourceStore.addResource(CaptchaTypeConstant.SLIDER, new Resource("classpath", "bgimages/j.jpg"));
-        resourceStore.clearResources(CaptchaTypeConstant.ROTATE);
+        resourceStore.addResource(CaptchaTypeConstant.ROTATE, new Resource("classpath", "bgimages/a.jpg"));
+        //resourceStore.addResource(CaptchaTypeConstant.SLIDER, new Resource("classpath", "bgimages/b.jpg"));
+        resourceStore.addResource(CaptchaTypeConstant.ROTATE, new Resource("classpath", "bgimages/c.jpg"));
+        resourceStore.addResource(CaptchaTypeConstant.ROTATE, new Resource("classpath", "bgimages/d.jpg"));
+        //resourceStore.addResource(CaptchaTypeConstant.SLIDER, new Resource("classpath", "bgimages/e.jpg"));
+        resourceStore.addResource(CaptchaTypeConstant.ROTATE, new Resource("classpath", "bgimages/g.jpg"));
+        resourceStore.addResource(CaptchaTypeConstant.ROTATE, new Resource("classpath", "bgimages/h.jpg"));
+        resourceStore.addResource(CaptchaTypeConstant.ROTATE, new Resource("classpath", "bgimages/i.jpg"));
+        resourceStore.addResource(CaptchaTypeConstant.ROTATE, new Resource("classpath", "bgimages/j.jpg"));
+
         resourceStore.addResource(CaptchaTypeConstant.ROTATE, new Resource("classpath", "bgimages/48.jpg"));
+
         resourceStore.addResource(CaptchaTypeConstant.CONCAT, new Resource("classpath", "bgimages/48.jpg"));
+
         resourceStore.addResource(CaptchaTypeConstant.IMAGE_CLICK, new Resource("classpath", "bgimages/c.jpg"));
     }
 }

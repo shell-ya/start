@@ -28,7 +28,7 @@ public enum RedisKey {
     REDIS_CODE_REGISIER(1, StarConstants.SERVICE_NAME.concat(".register.phone.code.%s"), 5L, TimeUnit.MINUTES),
 
 
-     REDIS_USER_REG_NEW(111113, StarConstants.SERVICE_NAME.concat(".register.user.new.%s"), 60L, TimeUnit.SECONDS),
+    REDIS_USER_REG_NEW(111113, StarConstants.SERVICE_NAME.concat(".register.user.new.%s"), 60L, TimeUnit.SECONDS),
 
     /**
      * 未登录修改密码验证码
@@ -58,7 +58,7 @@ public enum RedisKey {
     /**
      * 用户token
      */
-    REDIS_USER_TOKEN(200, StarConstants.SERVICE_NAME.concat(".login.token.%s"), 12L, TimeUnit.HOURS),
+    REDIS_USER_TOKEN(200, StarConstants.SERVICE_NAME.concat(".login:token:%s"), 12L, TimeUnit.HOURS),
     /**
      * 用户是否设置登录密码
      */
@@ -78,12 +78,12 @@ public enum RedisKey {
     /**
      * 修改密码成功的限制时间
      */
-    REDIS_CHANGE_PWD_SUCCESS_EXPIRED(102, StarConstants.SERVICE_NAME.concat(".stint.changgepwd.succcess.%s"), 12L, TimeUnit.HOURS),
+    REDIS_CHANGE_PWD_SUCCESS_EXPIRED(102, StarConstants.SERVICE_NAME.concat(".stint.changgepwd:succcess:%s"), 12L, TimeUnit.HOURS),
 
     /**
      * 修改支付密码成功的限制时间
      */
-    REDIS_CHANGE_PAY_PWD_SUCCESS_EXPIRED(103, StarConstants.SERVICE_NAME.concat(".stint.changgepaypwd.succcess.%s"), 24L, TimeUnit.HOURS),
+    REDIS_CHANGE_PAY_PWD_SUCCESS_EXPIRED(103, StarConstants.SERVICE_NAME.concat(".stint.changgepaypwd:succcess:%s"), 24L, TimeUnit.HOURS),
 
     /**
      * 前置支付密码校验令牌
@@ -177,11 +177,12 @@ public enum RedisKey {
      * 排行榜
      */
     RANK_ITEM(602, StarConstants.SERVICE_NAME.concat(".rank:%s"), 3L, TimeUnit.HOURS),
+    RANK_ITEM_VALID(602, StarConstants.SERVICE_NAME.concat(".rank:valid:%s"), 3L, TimeUnit.HOURS),
     //个人总邀请
     RANK_TOTAL_USER(603, StarConstants.SERVICE_NAME.concat(".rank:%s:total:user:%s"), 3L, TimeUnit.HOURS),
     //个人有效邀请
     RANK_VALID_USER(604, StarConstants.SERVICE_NAME.concat(".rank:%s:valid:user:%s"), 3L, TimeUnit.HOURS),
-    RANK_USER_MAPPING(605,StarConstants.SERVICE_NAME.concat(".rank:%s:mapping"),3L,TimeUnit.HOURS);
+    RANK_USER_MAPPING(605, StarConstants.SERVICE_NAME.concat(".rank:%s:mapping"), 3L, TimeUnit.HOURS);
     private Integer code;
 
     private String key;

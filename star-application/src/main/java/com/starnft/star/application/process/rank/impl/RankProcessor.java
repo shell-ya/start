@@ -1,10 +1,18 @@
 package com.starnft.star.application.process.rank.impl;
 
+import com.alicp.jetcache.anno.CacheRefresh;
+import com.alicp.jetcache.anno.CacheType;
+import com.alicp.jetcache.anno.Cached;
+import com.alicp.jetcache.anno.KeyConvertor;
+import com.google.common.collect.Lists;
 import com.starnft.star.application.process.rank.IRankProcessor;
 import com.starnft.star.application.process.rank.req.RankReq;
+import com.starnft.star.common.constant.RedisKey;
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.RequestConditionPage;
+import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.rank.core.rank.core.IRankService;
 import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
 import com.starnft.star.domain.rank.core.rank.model.RankItemMetaData;
@@ -20,6 +28,8 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Date 2022/7/10 2:53 PM
@@ -33,16 +43,31 @@ public class RankProcessor implements IRankProcessor {
     final IRankService rankService;
 
     @Override
-    public Rankings rankings(RequestConditionPage<RankReq> rankName) {
-        //先取出分页数据
+    @Cached(name = StarConstants.RANK_CACHE_NAME,
+            expire = 6,
+            cacheType = CacheType.REMOTE,
+            timeUnit = TimeUnit.MINUTES,
+            keyConvertor = KeyConvertor.FASTJSON)
+    @CacheRefresh(refresh = 5,timeUnit = TimeUnit.MINUTES,stopRefreshAfterLastAccess = 3)
+    public Rankings rankings(RequestConditionPage<RankReq> rankPage) {
         //查询当前时间开启的活动
         RankDefinition nowRank = getNowRank();
-        List<RankingsItem> RankingsItem = rankService.getRankDatasByPage(nowRank.getRankName(), rankName.getPage(), rankName.getSize());
-        //用ID去查询总邀请人数及有效人数
-        Rankings rankings = new Rankings();
-        rankings.setRankName(nowRank.getRankName());
-        rankings.setRankItem(RankingsItem);
-        return rankings;
+        Long total = rankService.getRankSize(nowRank.getRankName());
+
+        if (Objects.isNull(total) || total == 0) return null;
+
+        int start = (rankPage.getPage() - 1) * rankPage.getSize();
+        int end = rankPage.getPage() * rankPage.getSize() -1;
+        //先取出分页数据
+        List<RankingsItem> list = rankService.getRankDatasByPage(nowRank.getRankName(), start, end);
+
+        Rankings result = new Rankings();
+        result.setRankName(nowRank.getRankName());
+        result.setRankItem(list);
+        result.setTotal(total);
+        result.setPage(rankPage.getPage());
+        result.setPageSize(rankPage.getSize());
+        return result;
     }
 
     @Override
@@ -55,7 +80,9 @@ public class RankProcessor implements IRankProcessor {
 
     @Override
     public Long personNum(RankReq rankReq) {
-        return rankService.getRankNum(getNowRank().getRankName(),rankReq.getUserId());
+        Long rankNum = rankService.getRankNum(getNowRank().getRankName(), rankReq.getUserId());
+        if (Objects.isNull(rankNum))  return  0L;
+        return  rankNum + 1;
     }
 
     public RankDefinition getNowRank(){

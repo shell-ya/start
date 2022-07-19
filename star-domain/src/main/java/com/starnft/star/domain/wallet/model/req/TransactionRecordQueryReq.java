@@ -1,6 +1,8 @@
 package com.starnft.star.domain.wallet.model.req;
 
 import com.starnft.star.common.page.RequestPage;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -8,6 +10,8 @@ import java.util.Date;
 import java.util.List;
 
 @SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 public class TransactionRecordQueryReq extends RequestPage implements Serializable {
     /** user id*/
     private Long userId;

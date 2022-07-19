@@ -1,7 +1,5 @@
 package com.star.nft.test;
 
-import cn.hutool.json.JSONUtil;
-import com.alibaba.druid.support.json.JSONUtils;
 import com.starnft.star.application.mq.IMessageSender;
 import com.starnft.star.application.mq.constant.TopicConstants;
 import com.starnft.star.application.mq.producer.activity.ActivityEventProducer;
@@ -18,12 +16,9 @@ import com.starnft.star.application.process.user.res.UserInfoRes;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.page.RequestConditionPage;
-import com.starnft.star.common.utils.JsonUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
 import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
 import com.starnft.star.domain.rank.core.rank.model.res.Rankings;
-import com.starnft.star.infrastructure.entity.activityEvent.StarNftActivity;
-import com.starnft.star.infrastructure.mapper.activityEvent.StarNftActivityMapper;
 import com.starnft.star.interfaces.StarApplication;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -46,8 +41,7 @@ public class TestActivity {
 
     @Resource
     UserCore userCore;
-    @Resource
-    StarNftActivityMapper activityMapper;
+
     @Resource
     RankProcessor rankProcessor;
 
@@ -104,10 +98,10 @@ public class TestActivity {
         log.info("code:{}",code);
         UserLoginReq userLoginReq = new UserLoginReq();
         userLoginReq.setLoginScenes(2);
-//        userLoginReq.setActivityType("launch_acquistion");
+        userLoginReq.setActivityType("launch_acquistion");
         userLoginReq.setCode("1563531");
 //        userLoginReq.setPassword();
-//        userLoginReq.setShareCode(code.getShareCode());
+        userLoginReq.setShareCode(code.getShareCode());
         userLoginReq.setPhone("15830887988");
         UserInfoRes userInfoRes = userCore.loginByPhoneAndRegister(userLoginReq);
 
@@ -173,19 +167,6 @@ public class TestActivity {
     public void name(){
         RankDefinition nowRank = rankProcessor.getNowRank();
         log.info(nowRank.toString());
-    }
-
-    @Test
-    public void addRank(){
-        RankDefinition rankDefinition = new RankDefinition();
-        StarNftActivity starNftActivity = activityMapper.selectById(1L);
-        rankDefinition.setIsTime(1);
-        rankDefinition.setRankType(1L);
-        rankDefinition.setRankName("la_rank");
-        rankDefinition.setStartTime(starNftActivity.getStartTime());
-        rankDefinition.setEndTime(starNftActivity.getEndTime());
-        rankDefinition.setIsExtend(1);
-        redisTemplate.opsForHash().put(RedisKey.RANK_LIST.getKey(),"la_rank", JSONUtil.toJsonStr(rankDefinition));
     }
 
 }

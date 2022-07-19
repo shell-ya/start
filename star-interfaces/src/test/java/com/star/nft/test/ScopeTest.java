@@ -32,13 +32,27 @@ public class ScopeTest {
 //
     @Test
     public  void  addScope(){
+        for (int i = 0; i < 160; i++) {
+//            AddScoreDTO addScoreDTO = new AddScoreDTO();
+//            addScoreDTO.setScope(new BigDecimal(11));
+//            addScoreDTO.setUserId(305730346L);
+//            addScoreDTO.setScopeType(0);
+//            addScoreDTO.setTemplate("参加拉新活动获得%s积分");
+//            iScopeCore.userScopeManageAdd(addScoreDTO);
+            AddScoreDTO addScoreDTO = new AddScoreDTO();
+            addScoreDTO.setScope(new BigDecimal("1.0"));
+            addScoreDTO.setUserId(305730346L);
+            addScoreDTO.setScopeType(2);
+            addScoreDTO.setTemplate("日常活跃获得%s积分");
+            iScopeCore.userScopeManageAdd(addScoreDTO);
 
-        AddScoreDTO addScoreDTO = new AddScoreDTO();
-        addScoreDTO.setScope(new BigDecimal(11));
-        addScoreDTO.setUserId(9830832260L);
-        addScoreDTO.setScopeType(0);
-        addScoreDTO.setTemplate("参加拉新活动获得%s积分");
-        iScopeCore.userScopeManageAdd(addScoreDTO);
+            AddScoreDTO scoreDTO = new AddScoreDTO();
+            scoreDTO.setScope(new BigDecimal("1.0"));
+            scoreDTO.setUserId(305730346L);
+            scoreDTO.setScopeType(3);
+            scoreDTO.setTemplate("商品流转获得%s积分");
+            iScopeCore.userScopeManageAdd(scoreDTO);
+        }
     }
 
 

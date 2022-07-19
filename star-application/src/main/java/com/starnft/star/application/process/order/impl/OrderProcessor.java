@@ -156,6 +156,12 @@ public class OrderProcessor implements IOrderProcessor {
         userService.assertPayPwdCheckSuccess(orderPayReq.getUserId(), orderPayReq.getPayToken());
         //规则验证
         walletService.balanceVerify(orderPayReq.getUserId(), new BigDecimal(orderPayReq.getPayAmount()));
+
+        //市场订单参数手续费计算
+        if (orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
+            calculateFee(orderPayReq);
+        }
+
         String lockKey = String.format(RedisKey.SECKILL_ORDER_TRANSACTION.getKey(), orderPayReq.getOrderSn());
         try {
             //锁住当前订单交易
@@ -186,6 +192,11 @@ public class OrderProcessor implements IOrderProcessor {
         throw new StarException(StarError.PAY_PROCESS_ERROR);
     }
 
+    private void calculateFee(OrderPayReq orderPayReq) {
+        //todo 计算
+        return;
+    }
+
     private ActivityEventReq createEventReq(OrderPayReq orderPayReq) {
         BuyActivityEventReq buyActivityEventReq = new BuyActivityEventReq();
         buyActivityEventReq.setEventSign(StarConstants.EventSign.Buy.getSign());
@@ -197,25 +208,37 @@ public class OrderProcessor implements IOrderProcessor {
         return EventReqAssembly.assembly(buyActivityEventReq);
     }
 
-    private TransReq createTranReq(OrderPayReq orderPayReq) {
+    private WalletPayRequest createTranReq(OrderPayReq orderPayReq) {
         //收款方是寄售用户
-        TransReq transReq = new TransReq();
-        transReq.setUid(orderPayReq.getFromUid());
-        transReq.setTsType(StarConstants.Transaction_Type.Sell.getCode());
-        transReq.setPayChannel(orderPayReq.getChannel());
-        transReq.setOrderSn(orderPayReq.getOrderSn());
-        transReq.setTotalAmount(new BigDecimal(orderPayReq.getTotalPayAmount()));
-        BigDecimal payAmount = new BigDecimal(orderPayReq.getPayAmount());
-        transReq.setPayAmount(payAmount.signum() >= 0 ? payAmount : payAmount.negate());
+//        TransReq transReq = new TransReq();
+//        transReq.setUid(orderPayReq.getOwnerId());
+//        transReq.setTsType(StarConstants.Transaction_Type.Sell.getCode());
+//        transReq.setPayChannel(orderPayReq.getChannel());
+//        transReq.setOrderSn(orderPayReq.getOrderSn());
+//        transReq.setTotalAmount(new BigDecimal(orderPayReq.getTotalPayAmount()));
+//        BigDecimal payAmount = new BigDecimal(orderPayReq.getPayAmount());
+//        transReq.setPayAmount(payAmount.signum() >= 0 ? payAmount : payAmount.negate());
         //实际收款金额是挂失金额减去手续费
-        return transReq;
+        WalletPayRequest walletPayRequest = BeanColverUtil.colver(orderPayReq, WalletPayRequest.class);
+        walletPayRequest.setStatus(StarConstants.Pay_Status.PAY_SUCCESS.name());
+        BigDecimal payAmount = new BigDecimal(orderPayReq.getPayAmount());
+        walletPayRequest.setTotalPayAmount(new BigDecimal(orderPayReq.getTotalPayAmount()));
+//        walletPayRequest.setFee(new BigDecimal(orderPayReq.getFee()));
+//        walletPayRequest.setTotalPayAmount(new BigDecimal(orderPayReq.getTotalPayAmount()));
+        walletPayRequest.setPayAmount(payAmount.signum() == -1 ? payAmount : payAmount.negate());
+        walletPayRequest.setFromUid(orderPayReq.getUserId());
+        walletPayRequest.setToUid(orderPayReq.getOwnerId());
+        walletPayRequest.setUserId(orderPayReq.getOwnerId());
+        walletPayRequest.setType(StarConstants.Transaction_Type.Sell.getCode());
+
+        return walletPayRequest;
     }
 
     private HandoverReq buildHandOverReq(OrderPayReq orderPayReq) {
         HandoverReq handoverReq = new HandoverReq();
         handoverReq.setUid(orderPayReq.getUserId());
-        handoverReq.setFromUid(orderPayReq.getFromUid());// TODO: 2022/6/23 publish id
-        handoverReq.setToUid(orderPayReq.getToUid());
+        handoverReq.setFromUid(orderPayReq.getOwnerId());// TODO: 2022/6/23 publish id
+        handoverReq.setToUid(orderPayReq.getUserId());
         handoverReq.setPreMoney(new BigDecimal(orderPayReq.getPayAmount()));
         handoverReq.setCurrMoney(new BigDecimal(orderPayReq.getPayAmount()));
         handoverReq.setItemStatus(NumberStatusEnum.SOLD.getCode());
@@ -237,6 +260,8 @@ public class OrderProcessor implements IOrderProcessor {
         walletPayRequest.setFee(new BigDecimal(orderPayReq.getFee()));
         walletPayRequest.setTotalPayAmount(new BigDecimal(orderPayReq.getTotalPayAmount()));
         walletPayRequest.setPayAmount(payAmount.signum() == -1 ? payAmount : payAmount.negate());
+        walletPayRequest.setFromUid(orderPayReq.getUserId());
+        walletPayRequest.setToUid(orderPayReq.getOwnerId());
         return walletPayRequest;
     }
 

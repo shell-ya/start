@@ -19,7 +19,6 @@ public class ImageCaptchaCheckReq implements Serializable {
 
     @ApiModelProperty("验证码生成器 暂时只有一种：1 可不填 默认1 需与生成时的类型保持一致")
     private Integer creator;
-
     @ApiModelProperty(value = "生成验证码返回的id")
     @NotBlank(message = "验证码id不能为空")
     private String id;

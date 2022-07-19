@@ -19,7 +19,7 @@ public class UserLoginReq {
     private Integer loginScenes;
     private String code;
     @ApiModelProperty("邀请码")
-    private String shareCode;
+    private String sc;
     @ApiModelProperty("活动标记")
-    private String activityType;
+    private String at;
 }

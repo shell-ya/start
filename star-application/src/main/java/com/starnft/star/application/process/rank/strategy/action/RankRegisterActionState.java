@@ -46,6 +46,7 @@ public class RankRegisterActionState implements IRankActionState {
         }
         UserInfo parentUser = iUserRepository.queryUserInfoByUserId(parent);
         iRankService.setUserPhoneMapping(rankName,parent.toString(),parentUser.getPhone());
+        iRankService.setUserPhoneMapping(rankName,rankItemMetaData.getChildrenId().toString(),rankItemMetaData.getMobile());
         iRankService.put(rankName, parent.toString(),number.doubleValue(),rankItemMetaData);
     }
 
