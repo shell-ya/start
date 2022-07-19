@@ -23,10 +23,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class ActivitiesTask {
@@ -91,6 +88,8 @@ public class ActivitiesTask {
                 String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), secKillGood.getThemeId());
                 //创建库存队列
                 redisUtil.addToListLeft(stockKey, RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTime(), RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTimeUnit(), ids);
+                ids = null;
+                System.gc();
                 //设置库存量
                 redisUtil.hashIncr(RedisKey.SECKILL_GOODS_STOCK_NUMBER.getKey(), String.valueOf(secKillGood.getThemeId()), secKillGood.getStock());
 
@@ -110,7 +109,7 @@ public class ActivitiesTask {
             ArrayList<Long> filters = Lists.newArrayList(222L, 333L, 444L, 555L, 666L, 618L, 777L, 888L, 999L, 6180L,
                     1111L, 2222L, 3333L, 4444L, 5555L, 6666L, 7777L, 8888L, 9999L);
             for (int i = 1; i <= stock; i++) {
-                if (!filters.contains((long)i)) {
+                if (!filters.contains((long) i)) {
                     ids[i - 1] = (long) i;
                 }
             }
