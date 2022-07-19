@@ -43,7 +43,6 @@ import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.domain.theme.service.ThemeService;
 import com.starnft.star.domain.user.service.IUserService;
-import com.starnft.star.domain.wallet.model.req.TransReq;
 import com.starnft.star.domain.wallet.model.req.WalletPayRequest;
 import com.starnft.star.domain.wallet.model.res.WalletPayResult;
 import com.starnft.star.domain.wallet.service.WalletService;
@@ -102,10 +101,10 @@ public class OrderProcessor implements IOrderProcessor {
         }
 
         //用户下单次数验证 防重复下单
-//        Long userOrderedCount = redisUtil.hincr(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUserId()), 1L);
-//        if (userOrderedCount > 1) {
-//            throw new StarException(StarError.ORDER_REPETITION);
-//        }
+        Long userOrderedCount = redisUtil.hincr(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUserId()), 1L);
+        if (userOrderedCount > 1) {
+            throw new StarException(StarError.ORDER_REPETITION);
+        }
 
         //库存验证
         String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), orderGrabReq.getThemeId());
