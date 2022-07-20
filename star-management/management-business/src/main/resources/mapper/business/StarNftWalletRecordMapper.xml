@@ -162,13 +162,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="dayWalletRecord" resultMap="StarNftWalletRecordResult">
         <include refid="selectStarNftWalletRecordVo"/>
-        where to_days(created_at) = to_days(#{date})
+        where to_days(created_at) = to_days(now())
         and pay_status = 'PAY_SUCCESS'
     </select>
 
     <select id="toDayWalletRecord" resultMap="StarNftWalletRecordResult">
         <include refid="selectStarNftWalletRecordVo"/>
-        WHERE TO_DAYS(#{date}) - TO_DAYS(created_at) = 1
+        WHERE TO_DAYS(now()) - TO_DAYS(created_at) = 1
           and pay_status = 'PAY_SUCCESS'
     </select>
 

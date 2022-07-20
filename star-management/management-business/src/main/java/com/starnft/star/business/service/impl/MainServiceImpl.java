@@ -1,6 +1,5 @@
 package com.starnft.star.business.service.impl;
 
-import com.starnft.star.business.domain.StarNftOrder;
 import com.starnft.star.business.domain.StarNftWalletConfig;
 import com.starnft.star.business.domain.StarNftWalletRecord;
 import com.starnft.star.business.domain.StarNftWithdrawApply;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @Date 2022/6/10 1:18 AM
@@ -35,6 +35,13 @@ public class MainServiceImpl implements IMainService {
 
     @Override
     public FrontVo getFront() {
+        Date date = DateUtils.parseDate("2022-07-18 11:16:12");
+        List<Integer> dayUserCountList = accountUserMapper.getDayUserCount(date);
+        List<Integer> toDayUserCountList = accountUserMapper.getToDayUserCount(date);
+        AtomicReference<Integer> dayUserCount = new AtomicReference<>(0);
+        dayUserCountList.stream().reduce(Integer::sum).ifPresent(dayUserCount::set);
+        AtomicReference<Integer> toDayUserCount = new AtomicReference<>(0);
+        toDayUserCountList.stream().reduce(Integer::sum).ifPresent(toDayUserCount::set);
         StarNftWalletConfig starNftWalletConfig = starNftWalletConfigMapper.selectStarNftWalletConfigByChannel("BankCard");
 
         //当日提现订单
@@ -58,11 +65,11 @@ public class MainServiceImpl implements IMainService {
         toDayTotalWithDrawRate = toDayTotalWithDrawRate.add(starNftWalletConfig.getStableRate().multiply(new BigDecimal(dayWithDrawApply.size())));
 
         //当日充值交易
-        Date date = DateUtils.parseDate("2022-07-18 11:16:12");
-        List<StarNftWalletRecord> dayPayRecord = starNftWalletRecordMapper.dayWalletRecord(date);
+
+        List<StarNftWalletRecord> dayPayRecord = starNftWalletRecordMapper.dayWalletRecord();
         //昨日充值交易
-        Date yesterday = DateUtils.parseDate("2022-07-18 11:16:12");
-        List<StarNftWalletRecord> toDayPayRecord = starNftWalletRecordMapper.toDayWalletRecord(yesterday);
+
+        List<StarNftWalletRecord> toDayPayRecord = starNftWalletRecordMapper.toDayWalletRecord();
         //当日充值总金额
         BigDecimal dayTotalPayMoney = dayPayRecord.stream().filter(record -> record.getTsType().equals(1L) ).map(StarNftWalletRecord::getTsMoney).reduce(BigDecimal.ZERO, BigDecimal::add);
         //昨天充值总金额

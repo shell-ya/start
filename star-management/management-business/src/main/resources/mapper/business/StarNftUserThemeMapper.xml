@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.nft.business.mapper.StarNftUserThemeMapper">
+    
+    <resultMap type="StarNftUserTheme" id="StarNftUserThemeResult">
+        <result property="id"    column="id"    />
+        <result property="seriesThemeId"    column="series_theme_id"    />
+        <result property="seriesThemeInfoId"    column="series_theme_info_id"    />
+        <result property="status"    column="status"    />
+        <result property="userId"    column="user_id"    />
+        <result property="source"    column="source"    />
+        <result property="preTaxPrice"    column="pre_tax_price"    />
+        <result property="platformTax"    column="platform_tax"    />
+        <result property="copyrightTax"    column="copyright_tax"    />
+        <result property="afterTaxPrice"    column="after_tax_price"    />
+        <result property="createAt"    column="create_at"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateAt"    column="update_at"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="isDelete"    column="is_delete"    />
+        <result property="seriesId"    column="series_id"    />
+    </resultMap>
+
+    <sql id="selectStarNftUserThemeVo">
+        select id, series_theme_id, series_theme_info_id, status, user_id, source, pre_tax_price, platform_tax, copyright_tax, after_tax_price, create_at, create_by, update_at, update_by, is_delete, series_id from star_nft_user_theme
+    </sql>
+
+    <select id="selectStarNftUserThemeList" parameterType="StarNftUserTheme" resultMap="StarNftUserThemeResult">
+        <include refid="selectStarNftUserThemeVo"/>
+        <where>  
+            <if test="seriesThemeId != null "> and series_theme_id = #{seriesThemeId}</if>
+            <if test="seriesThemeInfoId != null "> and series_theme_info_id = #{seriesThemeInfoId}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="source != null "> and source = #{source}</if>
+            <if test="params.beginCreateAt != null and params.beginCreateAt != '' and params.endCreateAt != null and params.endCreateAt != ''"> and create_at between #{params.beginCreateAt} and #{params.endCreateAt}</if>
+            <if test="params.beginUpdateAt != null and params.beginUpdateAt != '' and params.endUpdateAt != null and params.endUpdateAt != ''"> and update_at between #{params.beginUpdateAt} and #{params.endUpdateAt}</if>
+            <if test="seriesId != null "> and series_id = #{seriesId}</if>
+        </where>
+    </select>
+    
+    <select id="selectStarNftUserThemeById" parameterType="Long" resultMap="StarNftUserThemeResult">
+        <include refid="selectStarNftUserThemeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertStarNftUserTheme" parameterType="StarNftUserTheme">
+        insert into star_nft_user_theme
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="seriesThemeId != null">series_theme_id,</if>
+            <if test="seriesThemeInfoId != null">series_theme_info_id,</if>
+            <if test="status != null">status,</if>
+            <if test="userId != null and userId != ''">user_id,</if>
+            <if test="source != null">source,</if>
+            <if test="preTaxPrice != null">pre_tax_price,</if>
+            <if test="platformTax != null">platform_tax,</if>
+            <if test="copyrightTax != null">copyright_tax,</if>
+            <if test="afterTaxPrice != null">after_tax_price,</if>
+            <if test="createAt != null">create_at,</if>
+            <if test="createBy != null and createBy != ''">create_by,</if>
+            <if test="updateAt != null">update_at,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="isDelete != null">is_delete,</if>
+            <if test="seriesId != null">series_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="seriesThemeId != null">#{seriesThemeId},</if>
+            <if test="seriesThemeInfoId != null">#{seriesThemeInfoId},</if>
+            <if test="status != null">#{status},</if>
+            <if test="userId != null and userId != ''">#{userId},</if>
+            <if test="source != null">#{source},</if>
+            <if test="preTaxPrice != null">#{preTaxPrice},</if>
+            <if test="platformTax != null">#{platformTax},</if>
+            <if test="copyrightTax != null">#{copyrightTax},</if>
+            <if test="afterTaxPrice != null">#{afterTaxPrice},</if>
+            <if test="createAt != null">#{createAt},</if>
+            <if test="createBy != null and createBy != ''">#{createBy},</if>
+            <if test="updateAt != null">#{updateAt},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="isDelete != null">#{isDelete},</if>
+            <if test="seriesId != null">#{seriesId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStarNftUserTheme" parameterType="StarNftUserTheme">
+        update star_nft_user_theme
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="seriesThemeId != null">series_theme_id = #{seriesThemeId},</if>
+            <if test="seriesThemeInfoId != null">series_theme_info_id = #{seriesThemeInfoId},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="userId != null and userId != ''">user_id = #{userId},</if>
+            <if test="source != null">source = #{source},</if>
+            <if test="preTaxPrice != null">pre_tax_price = #{preTaxPrice},</if>
+            <if test="platformTax != null">platform_tax = #{platformTax},</if>
+            <if test="copyrightTax != null">copyright_tax = #{copyrightTax},</if>
+            <if test="afterTaxPrice != null">after_tax_price = #{afterTaxPrice},</if>
+            <if test="createAt != null">create_at = #{createAt},</if>
+            <if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateAt != null">update_at = #{updateAt},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="isDelete != null">is_delete = #{isDelete},</if>
+            <if test="seriesId != null">series_id = #{seriesId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStarNftUserThemeById" parameterType="Long">
+        delete from star_nft_user_theme where id = #{id}
+    </delete>
+
+    <delete id="deleteStarNftUserThemeByIds" parameterType="String">
+        delete from star_nft_user_theme where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

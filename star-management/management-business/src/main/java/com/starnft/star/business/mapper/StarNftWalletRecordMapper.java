@@ -72,9 +72,9 @@ public interface StarNftWalletRecordMapper
     public int deleteStarNftWalletRecordByIds(Long[] ids);
 
 
-    public List<StarNftWalletRecord>  dayWalletRecord(Date date);
+    public List<StarNftWalletRecord>  dayWalletRecord();
 
-    public List<StarNftWalletRecord>  toDayWalletRecord(Date date);
+    public List<StarNftWalletRecord>  toDayWalletRecord();
 
     /**
      * 更新钱包交易记录状态

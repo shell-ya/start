@@ -2,6 +2,7 @@ package com.starnft.star.business.mapper;
 
 import com.starnft.star.business.domain.AccountUser;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -59,4 +60,7 @@ public interface AccountUserMapper
      * @return 结果
      */
     public int deleteAccountUserByIds(Long[] ids);
+
+    public List<Integer> getDayUserCount(Date date);
+    public List<Integer> getToDayUserCount(Date date);
 }

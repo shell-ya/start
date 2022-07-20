@@ -125,4 +125,40 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <select id="getDayUserCount" resultType="java.lang.Integer">
+        select count(account) as num FROM account_user_0
+        where to_days(created_at) = to_days(#{date})
+        UNION
+        select count(account) as num FROM account_user_1
+        where to_days(created_at) = to_days(#{date})
+        UNION
+        select count(account) as num FROM account_user_2
+        where to_days(created_at) = to_days(#{date})
+        UNION
+        select count(account) as num FROM account_user_3
+        where to_days(created_at) = to_days(#{date})
+        UNION
+        select count(account) as num FROM account_user_4
+        where to_days(created_at) = to_days(#{date})
+        UNION
+        select count(account) as num FROM account_user_5
+        where to_days(created_at) = to_days(#{date})
+        UNION
+        select count(account) as num FROM account_user_6
+        where to_days(created_at) = to_days(#{date})
+        UNION
+        select count(account) as num FROM account_user_7
+        where to_days(created_at) = to_days(#{date})
+        UNION
+        select count(account) as num FROM account_user_8
+        where to_days(created_at) = to_days(#{date})
+        UNION
+        select count(account) as num FROM account_user_9
+        where to_days(created_at) = to_days(#{date})
+    </select>
+
+    <select id="getToDayUserCount" resultType="java.lang.Integer">
+
+    </select>
 </mapper>
