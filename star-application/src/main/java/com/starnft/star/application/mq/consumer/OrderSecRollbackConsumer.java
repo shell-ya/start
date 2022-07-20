@@ -38,7 +38,7 @@ public class OrderSecRollbackConsumer implements RocketMQListener<OrderGrabStatu
         try {
             if (redisLockUtils.lock(lockKey, RedisKey.SECKILL_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.SECKILL_ORDER_TRANSACTION.getTime()))) {
                 OrderPlaceRes orderPlaceRes = orderService.orderCancel(message.getUid(), message.getOrderSn(), StarConstants.OrderType.PUBLISH_GOODS);
-                if (orderPlaceRes.getOrderStatus().equals(StarConstants.ORDER_STATE.PAY_CANCEL.getCode())) {
+                if (StarConstants.ORDER_STATE.PAY_CANCEL.getCode().equals(orderPlaceRes.getOrderStatus())) {
                     Object times = redisUtil.hincr(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(message.getUid()), 1L);
                     if (times != null) {
                         redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(message.getUid()));
