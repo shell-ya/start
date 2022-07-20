@@ -35,15 +35,16 @@ public class MainServiceImpl implements IMainService {
 
     @Override
     public FrontVo getFront() {
-        Date date = DateUtils.parseDate("2022-07-18 11:16:12");
-        List<Integer> dayUserCountList = accountUserMapper.getDayUserCount(date);
-        List<Integer> toDayUserCountList = accountUserMapper.getToDayUserCount(date);
+        List<Integer> dayUserCountList = accountUserMapper.getDayUserCount();
+        List<Integer> toDayUserCountList = accountUserMapper.getToDayUserCount();
         AtomicReference<Integer> dayUserCount = new AtomicReference<>(0);
         dayUserCountList.stream().reduce(Integer::sum).ifPresent(dayUserCount::set);
         AtomicReference<Integer> toDayUserCount = new AtomicReference<>(0);
         toDayUserCountList.stream().reduce(Integer::sum).ifPresent(toDayUserCount::set);
+        List<Integer> allUserCountList = accountUserMapper.getAllUserCount();
+        AtomicReference<Integer> allUserCount = new AtomicReference<>(0);
+        allUserCountList.stream().reduce(Integer::sum).ifPresent(allUserCount::set);
         StarNftWalletConfig starNftWalletConfig = starNftWalletConfigMapper.selectStarNftWalletConfigByChannel("BankCard");
-
         //当日提现订单
         List<StarNftWithdrawApply> dayWithDrawApply = starNftWithdrawApplyMapper.dayWithDrawApply();
         //昨日提现订单
@@ -113,6 +114,9 @@ public class MainServiceImpl implements IMainService {
                 .toDayTotalOrderMoney(toDayTotalOrderMoney)
                 .dayTotalOrderRate(dayTotalOrderRate)
                 .toDayTotalOrderRate(toDayTotalOrderRate)
+                .allUserCount(allUserCount.get())
+                .dayUserCount(dayUserCount.get())
+                .toDayUserCount(toDayUserCount.get())
                 .build();
 
 

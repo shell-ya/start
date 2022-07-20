@@ -61,6 +61,7 @@ public interface AccountUserMapper
      */
     public int deleteAccountUserByIds(Long[] ids);
 
-    public List<Integer> getDayUserCount(Date date);
-    public List<Integer> getToDayUserCount(Date date);
+    public List<Integer> getDayUserCount();
+    public List<Integer> getToDayUserCount();
+    public List<Integer> getAllUserCount();
 }

@@ -128,37 +128,87 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="getDayUserCount" resultType="java.lang.Integer">
         select count(account) as num FROM account_user_0
-        where to_days(created_at) = to_days(#{date})
+        where to_days(created_at) = to_days(now())
         UNION
         select count(account) as num FROM account_user_1
-        where to_days(created_at) = to_days(#{date})
+        where to_days(created_at) = to_days(now())
         UNION
         select count(account) as num FROM account_user_2
-        where to_days(created_at) = to_days(#{date})
+        where to_days(created_at) = to_days(now())
         UNION
         select count(account) as num FROM account_user_3
-        where to_days(created_at) = to_days(#{date})
+        where to_days(created_at) = to_days(now())
         UNION
         select count(account) as num FROM account_user_4
-        where to_days(created_at) = to_days(#{date})
+        where to_days(created_at) = to_days(now())
         UNION
         select count(account) as num FROM account_user_5
-        where to_days(created_at) = to_days(#{date})
+        where to_days(created_at) = to_days(now())
         UNION
         select count(account) as num FROM account_user_6
-        where to_days(created_at) = to_days(#{date})
+        where to_days(created_at) = to_days(now())
         UNION
         select count(account) as num FROM account_user_7
-        where to_days(created_at) = to_days(#{date})
+        where to_days(created_at) = to_days(now())
         UNION
         select count(account) as num FROM account_user_8
-        where to_days(created_at) = to_days(#{date})
+        where to_days(created_at) = to_days(now())
         UNION
         select count(account) as num FROM account_user_9
-        where to_days(created_at) = to_days(#{date})
+        where to_days(created_at) = to_days(now())
     </select>
 
     <select id="getToDayUserCount" resultType="java.lang.Integer">
+        select count(account) as num FROM account_user_0
+        where to_days(created_at) - to_days(now()) = 1
+        UNION
+        select count(account) as num FROM account_user_1
+        where to_days(created_at) - to_days(now()) = 1
+        UNION
+        select count(account) as num FROM account_user_2
+        where to_days(created_at) - to_days(now()) = 1
+        UNION
+        select count(account) as num FROM account_user_3
+        where to_days(created_at) - to_days(now()) = 1
+        UNION
+        select count(account) as num FROM account_user_4
+        where to_days(created_at) - to_days(now()) = 1
+        UNION
+        select count(account) as num FROM account_user_5
+        where to_days(created_at) - to_days(now()) = 1
+        UNION
+        select count(account) as num FROM account_user_6
+        where to_days(created_at) - to_days(now()) = 1
+        UNION
+        select count(account) as num FROM account_user_7
+        where to_days(created_at) - to_days(now()) = 1
+        UNION
+        select count(account) as num FROM account_user_8
+        where to_days(created_at) - to_days(now()) = 1
+        UNION
+        select count(account) as num FROM account_user_9
+        where to_days(created_at) - to_days(now()) = 1
+    </select>
 
+    <select id="getAllUserCount" resultType="java.lang.Integer">
+        select count(account) as num FROM account_user_0
+        UNION
+        select count(account) as num FROM account_user_1
+        UNION
+        select count(account) as num FROM account_user_2
+        UNION
+        select count(account) as num FROM account_user_3
+        UNION
+        select count(account) as num FROM account_user_4
+        UNION
+        select count(account) as num FROM account_user_5
+        UNION
+        select count(account) as num FROM account_user_6
+        UNION
+        select count(account) as num FROM account_user_7
+        UNION
+        select count(account) as num FROM account_user_8
+        UNION
+        select count(account) as num FROM account_user_9
     </select>
 </mapper>

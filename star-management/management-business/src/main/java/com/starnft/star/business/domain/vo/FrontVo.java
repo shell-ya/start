@@ -58,4 +58,8 @@ public class FrontVo {
     private BigDecimal dayTotalOrderRate;
     //    @ApiModelProperty(value = "昨日交易手续费")
     private BigDecimal toDayTotalOrderRate;
+
+    private Integer allUserCount;
+    private Integer dayUserCount;
+    private Integer toDayUserCount;
 }
