@@ -83,7 +83,7 @@ captcha:
     # 缓存控制， 默认为false不开启
     enabled: true
     # 验证码会提前缓存一些生成好的验证数据， 默认是20
-    cache-size: 20
+    cache-size: 20000
     # 缓存拉取失败后等待时间 默认是 5秒钟
     wait-time: 5000
     # 缓存检查间隔 默认是2秒钟
