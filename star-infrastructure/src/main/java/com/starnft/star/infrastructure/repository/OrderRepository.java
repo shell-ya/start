@@ -76,6 +76,9 @@ public class OrderRepository implements IOrderRepository {
 
     public OrderVO queryOrderByCondition(Long uid, String orderSn) {
         StarNftOrder starNftOrder = queryOrder(uid, orderSn);
+        if (starNftOrder == null){
+            return null;
+        }
         return orderTransfer(starNftOrder);
     }
 
