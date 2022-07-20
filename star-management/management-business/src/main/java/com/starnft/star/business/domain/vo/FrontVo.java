@@ -31,10 +31,10 @@ public class FrontVo {
     private BigDecimal toDayTotalWithDrawRate;
 
 //    @ApiModelProperty(value = "今日充值总数")
-    private Integer dayPayRecordTotal;
+    private Long dayPayRecordTotal;
 
 //    @ApiModelProperty(value = "昨天充值总数")
-    private Integer toDayPayRecordTotal;
+    private Long toDayPayRecordTotal;
 
 //    @ApiModelProperty(value = "今日充值金额")
     private BigDecimal dayTotalPayMoney;
@@ -43,10 +43,10 @@ public class FrontVo {
     private BigDecimal toDayTotalPayMoney;
 
     //    @ApiModelProperty(value = "今日订单总数")
-    private Integer dayOrderTotal;
+    private Long dayOrderTotal;
 
     //    @ApiModelProperty(value = "昨日订单总数")
-    private Integer toDayOrderTotal;
+    private Long toDayOrderTotal;
 
     //    @ApiModelProperty(value = "今日交易金额")
     private BigDecimal dayTotalOrderMoney;

@@ -7,10 +7,12 @@ import com.starnft.star.business.domain.StarNftWithdrawApply;
 import com.starnft.star.business.domain.vo.FrontVo;
 import com.starnft.star.business.mapper.*;
 import com.starnft.star.business.service.IMainService;
+import com.starnft.star.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -56,35 +58,37 @@ public class MainServiceImpl implements IMainService {
         toDayTotalWithDrawRate = toDayTotalWithDrawRate.add(starNftWalletConfig.getStableRate().multiply(new BigDecimal(dayWithDrawApply.size())));
 
         //当日充值交易
-        List<StarNftWalletRecord> dayPayRecord = starNftWalletRecordMapper.dayWalletRecord(1);
+        Date date = DateUtils.parseDate("2022-07-18 11:16:12");
+        List<StarNftWalletRecord> dayPayRecord = starNftWalletRecordMapper.dayWalletRecord(date);
         //昨日充值交易
-        List<StarNftWalletRecord> toDayPayRecord = starNftWalletRecordMapper.toDayWalletRecord(1);
+        Date yesterday = DateUtils.parseDate("2022-07-18 11:16:12");
+        List<StarNftWalletRecord> toDayPayRecord = starNftWalletRecordMapper.toDayWalletRecord(yesterday);
         //当日充值总金额
-        BigDecimal dayTotalPayMoney = dayPayRecord.stream().map(StarNftWalletRecord::getTsMoney).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal dayTotalPayMoney = dayPayRecord.stream().filter(record -> record.getTsType().equals(1L) ).map(StarNftWalletRecord::getTsMoney).reduce(BigDecimal.ZERO, BigDecimal::add);
         //昨天充值总金额
-        BigDecimal toDayTotalPayMoney = toDayPayRecord.stream().map(StarNftWalletRecord::getTsMoney).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal toDayTotalPayMoney = toDayPayRecord.stream().filter(record -> record.getTsType().equals(1L) ).map(StarNftWalletRecord::getTsMoney).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         //当日交易
-        List<StarNftOrder> dayOrder = starNftOrderMapper.dayOrder();
+//        List<StarNftOrder> dayOrder = starNftOrderMapper.dayOrder();
         //昨日交易
-        List<StarNftOrder> toDayOrder = starNftOrderMapper.toDayOrder();
+//        List<StarNftOrder> toDayOrder = starNftOrderMapper.toDayOrder();
         //当日交易金额
-        BigDecimal dayTotalOrderMoney = dayOrder.stream().map(StarNftOrder::getTotalAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal dayTotalOrderMoney = dayPayRecord.stream().filter(record -> record.getTsType().equals(3L) ).map(StarNftWalletRecord::getTsMoney).reduce(BigDecimal.ZERO, BigDecimal::add);
         //昨日交易金额
-        BigDecimal toDayTotalOrderMoney = toDayOrder.stream().map(StarNftOrder::getTotalAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal toDayTotalOrderMoney = toDayPayRecord.stream().filter(record -> record.getTsType().equals(3L) ).map(StarNftWalletRecord::getTsMoney).reduce(BigDecimal.ZERO, BigDecimal::add);
 
 
         //当日交易手续费
-        BigDecimal dayTotalOrderRate = dayOrder.stream().map(order -> {
-            return order.getTotalAmount().multiply(starNftWalletConfig.getServiceRate());
-        }).reduce(BigDecimal.ZERO, BigDecimal::add);
-        dayTotalOrderRate = dayTotalOrderRate.add(starNftWalletConfig.getStableRate().multiply(new BigDecimal(dayOrder.size())));
+        BigDecimal dayTotalOrderRate = dayPayRecord.stream().filter(record -> record.getTsType().equals(3L) ).map(StarNftWalletRecord::getTsFee).reduce(BigDecimal.ZERO, BigDecimal::add);
+//        dayTotalOrderRate = dayTotalOrderRate.add(starNftWalletConfig.getStableRate().multiply(new BigDecimal(dayOrder.size())));
         //昨日交易手续费
-        BigDecimal toDayTotalOrderRate = toDayOrder.stream().map(order -> {
-            return order.getTotalAmount().multiply(starNftWalletConfig.getServiceRate());
-        }).reduce(BigDecimal.ZERO, BigDecimal::add);
-        toDayTotalOrderRate = toDayTotalOrderRate.add(starNftWalletConfig.getStableRate().multiply(new BigDecimal(toDayOrder.size())));
-
+        BigDecimal toDayTotalOrderRate = toDayPayRecord.stream().filter(record -> record.getTsType().equals(3L) ).map(StarNftWalletRecord::getTsFee).reduce(BigDecimal.ZERO, BigDecimal::add);
+        //充值总数
+        long dayPayTotal = dayPayRecord.stream().filter(record -> record.getTsType().equals(1L)).count();
+        long toDayPayTotal = toDayPayRecord.stream().filter(record -> record.getTsType().equals(1L)).count();
+        //交易总数
+        long dayOrderTotal = dayPayRecord.stream().filter(record -> record.getTsType().equals(3L)).count();
+        long toDayOrderTotal = toDayPayRecord.stream().filter(record -> record.getTsType().equals(3L)).count();
         return FrontVo.builder()
                 .dayWithDrawApplyTotal(dayWithDrawApply.size())
                 .toDayWithDrawApplyTotal(toDayWithDrawApply.size())
@@ -92,12 +96,12 @@ public class MainServiceImpl implements IMainService {
                 .toDayTotalWithdrawMoney(toDayTotalWithdrawMoney)
                 .dayTotalWithDrawRate(dayTotalWithDrawRate)
                 .toDayTotalWithDrawRate(toDayTotalWithDrawRate)
-                .dayPayRecordTotal(dayPayRecord.size())
-                .toDayPayRecordTotal(toDayPayRecord.size())
+                .dayPayRecordTotal(dayPayTotal)
+                .toDayPayRecordTotal(toDayPayTotal)
                 .dayTotalPayMoney(dayTotalPayMoney)
                 .toDayTotalPayMoney(toDayTotalPayMoney)
-                .dayOrderTotal(dayOrder.size())
-                .toDayOrderTotal(toDayOrder.size())
+                .dayOrderTotal(dayOrderTotal)
+                .toDayOrderTotal(toDayOrderTotal)
                 .dayTotalOrderMoney(dayTotalOrderMoney)
                 .toDayTotalOrderMoney(toDayTotalOrderMoney)
                 .dayTotalOrderRate(dayTotalOrderRate)

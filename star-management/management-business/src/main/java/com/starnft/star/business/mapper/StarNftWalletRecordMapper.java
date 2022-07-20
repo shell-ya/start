@@ -4,6 +4,7 @@ import com.starnft.star.business.domain.StarNftWalletRecord;
 import com.starnft.star.business.domain.vo.StarNftReconVo;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -71,9 +72,9 @@ public interface StarNftWalletRecordMapper
     public int deleteStarNftWalletRecordByIds(Long[] ids);
 
 
-    public List<StarNftWalletRecord>  dayWalletRecord(Integer tsType);
+    public List<StarNftWalletRecord>  dayWalletRecord(Date date);
 
-    public List<StarNftWalletRecord>  toDayWalletRecord(Integer tsType);
+    public List<StarNftWalletRecord>  toDayWalletRecord(Date date);
 
     /**
      * 更新钱包交易记录状态

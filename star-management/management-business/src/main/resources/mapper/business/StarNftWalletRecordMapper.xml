@@ -160,18 +160,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </foreach>
     </delete>
 
-    <select id="dayWalletRecord" resultType="com.starnft.star.business.domain.StarNftWalletRecord">
-        select id,ts_money from star_nft_wallet_record
-        where to_days(created_at) = to_days(now())
-        and ts_type = #{tsType}
-        and pay_status = 1
+    <select id="dayWalletRecord" resultMap="StarNftWalletRecordResult">
+        <include refid="selectStarNftWalletRecordVo"/>
+        where to_days(created_at) = to_days(#{date})
+        and pay_status = 'PAY_SUCCESS'
     </select>
 
-    <select id="toDayWalletRecord" resultType="com.starnft.star.business.domain.StarNftWalletRecord">
-        select id,ts_money from star_nft_wallet_record
-        WHERE TO_DAYS(NOW()) - TO_DAYS(created_at) = 1
-          and ts_type = #{tsType}
-          and pay_status = 1
+    <select id="toDayWalletRecord" resultMap="StarNftWalletRecordResult">
+        <include refid="selectStarNftWalletRecordVo"/>
+        WHERE TO_DAYS(#{date}) - TO_DAYS(created_at) = 1
+          and pay_status = 'PAY_SUCCESS'
     </select>
 
     <update id="updateRecordStatusByRecordSn">

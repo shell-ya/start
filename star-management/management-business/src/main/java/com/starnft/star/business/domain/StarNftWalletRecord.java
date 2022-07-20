@@ -67,8 +67,8 @@ public class StarNftWalletRecord extends BaseEntity
     @Excel(name = "接收方uid 0系统提现")
     private Long toUid;
 
-    /** 交易类型 1充值 2提现 3退款 4买入 5卖出 */
-    @Excel(name = "交易类型 1充值 2提现 3退款 4买入 5卖出")
+    /** 交易类型 1充值 2提现 3买入 4卖出 5退款 */
+    @Excel(name = "交易类型 1充值 2提现 3买入 4卖出 5退款")
     private Long tsType;
 
     /** 交易金额 */
@@ -216,11 +216,11 @@ public class StarNftWalletRecord extends BaseEntity
     private BigDecimal getTsCost() {
         return this.tsCost;
     }
-    public void setsFee(BigDecimal tsFee)
+    public void setTsFee(BigDecimal tsFee)
     {
         this.tsFee = tsFee;
     }
-    private BigDecimal getTsFee() {  return this.tsFee;}
+    public BigDecimal getTsFee() {  return this.tsFee;}
 
     public void setPayChannel(String payChannel)
     {
