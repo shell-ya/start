@@ -29,7 +29,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="scopeType != null "> and scope_type = #{scopeType}</if>
         </where>
     </select>
-
+    <select id="selectStarNftUserScope" parameterType="StarNftUserScope" resultMap="StarNftUserScopeResult">
+        <include refid="selectStarNftUserScopeVo"/>
+        <where>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="userScope != null "> and user_scope = #{userScope}</if>
+            <if test="params.beginCreatedAt != null and params.beginCreatedAt != '' and params.endCreatedAt != null and params.endCreatedAt != ''"> and created_at between #{params.beginCreatedAt} and #{params.endCreatedAt}</if>
+            <if test="params.beginModifiedAt != null and params.beginModifiedAt != '' and params.endModifiedAt != null and params.endModifiedAt != ''"> and modified_at between #{params.beginModifiedAt} and #{params.endModifiedAt}</if>
+            <if test="version != null "> and version = #{version}</if>
+            <if test="scopeType != null "> and scope_type = #{scopeType}</if>
+        </where>
+    </select>
     <select id="selectStarNftUserScopeById" parameterType="Long" resultMap="StarNftUserScopeResult">
         <include refid="selectStarNftUserScopeVo"/>
         where id = #{id}
@@ -69,7 +79,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </trim>
         where id = #{id}
     </update>
-
+    <update id="updateStarNftUserScopeVersion" parameterType="StarNftUserScope">
+        update star_nft_user_scope
+        <trim prefix="SET" suffixOverrides=",">
+             version = #{version}+1,
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="userScope != null">user_scope = #{userScope},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="modifiedAt != null">modified_at = #{modifiedAt},</if>
+            <if test="scopeType != null">scope_type = #{scopeType},</if>
+        </trim>
+        where id = #{id} and version=#{version}
+    </update>
     <delete id="deleteStarNftUserScopeById" parameterType="Long">
         update  star_nft_user_scope  set is_deleted = 1 where id = #{id}
     </delete>

@@ -27,6 +27,7 @@ public interface StarNftUserScopeMapper
      * @return 用户积分集合
      */
     public List<StarNftUserScope> selectStarNftUserScopeList(StarNftUserScope starNftUserScope);
+    public StarNftUserScope selectStarNftUserScope(StarNftUserScope starNftUserScope);
 
     /**
      * 新增用户积分
@@ -43,6 +44,7 @@ public interface StarNftUserScopeMapper
      * @return 结果
      */
     public int updateStarNftUserScope(StarNftUserScope starNftUserScope);
+    public int updateStarNftUserScopeVersion(StarNftUserScope starNftUserScope);
 
     /**
      * 删除用户积分

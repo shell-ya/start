@@ -6,6 +6,7 @@ import com.starnft.star.system.service.ISysLogininforService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,6 +29,7 @@ public class SysLogininforServiceImpl implements ISysLogininforService
     @Override
     public void insertLogininfor(SysLogininfor logininfor)
     {
+        logininfor.setLoginTime(new Date());
         logininforMapper.insertLogininfor(logininfor);
     }
 

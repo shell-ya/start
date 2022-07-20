@@ -1,6 +1,7 @@
 package com.starnft.star.business.service;
 
 import com.starnft.star.business.domain.StarNftUserScope;
+import com.starnft.star.business.domain.dto.UserScopeAddDTO;
 
 import java.util.List;
 
@@ -34,7 +35,7 @@ public interface IStarNftUserScopeService
      * @param starNftUserScope 用户积分
      * @return 结果
      */
-    public int insertStarNftUserScope(StarNftUserScope starNftUserScope);
+    public int insertStarNftUserScope(UserScopeAddDTO userScopeAddDTO);
 
     /**
      * 修改用户积分

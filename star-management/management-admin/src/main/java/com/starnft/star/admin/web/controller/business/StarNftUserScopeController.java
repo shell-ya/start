@@ -1,6 +1,7 @@
 package com.starnft.star.admin.web.controller.business;
 
 import com.starnft.star.business.domain.StarNftUserScope;
+import com.starnft.star.business.domain.dto.UserScopeAddDTO;
 import com.starnft.star.business.service.IStarNftUserScopeService;
 import com.starnft.star.common.annotation.Log;
 import com.starnft.star.common.core.controller.BaseController;
@@ -8,7 +9,6 @@ import com.starnft.star.common.core.domain.AjaxResult;
 import com.starnft.star.common.core.page.TableDataInfo;
 import com.starnft.star.common.enums.BusinessType;
 import com.starnft.star.common.utils.poi.ExcelUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -75,16 +75,16 @@ public class StarNftUserScopeController extends BaseController
         return AjaxResult.success(starNftUserScopeService.selectStarNftUserScopeById(id));
     }
 
-//    /**
-//     * 新增用户积分
-//     */
-//    @PreAuthorize("@ss.hasPermi('business:scope:add')")
-//    @Log(title = "用户积分", businessType = BusinessType.INSERT)
-//    @PostMapping
-//    public AjaxResult add(@RequestBody StarNftUserScope starNftUserScope)
-//    {
-//        return toAjax(starNftUserScopeService.insertStarNftUserScope(starNftUserScope));
-//    }
+    /**
+     * 新增用户积分
+     */
+    @PreAuthorize("@ss.hasPermi('business:scope:add')")
+    @Log(title = "用户积分", businessType = BusinessType.INSERT)
+    @PostMapping
+    public AjaxResult add(@RequestBody UserScopeAddDTO userScopeAddDTO)
+    {
+        return toAjax(starNftUserScopeService.insertStarNftUserScope(userScopeAddDTO)>0);
+    }
 
     /**
      * 修改用户积分
