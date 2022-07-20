@@ -273,7 +273,7 @@ public class OrderProcessor implements IOrderProcessor {
                 OrderPlaceRes orderPlaceRes = orderService.orderCancel(orderGrabReq.getUid(), orderGrabReq.getOrderSn(),
                         orderGrabReq.getOrderSn().startsWith(StarConstants.OrderPrefix.PublishGoods.getPrefix()) ?
                                 StarConstants.OrderType.PUBLISH_GOODS : StarConstants.OrderType.MARKET_GOODS);
-                Object times = redisUtil.hget(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUid()));
+                Object times = redisUtil.hincr(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUid()),1L);
                 if (times != null) {
                     redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUid()));
                 }
