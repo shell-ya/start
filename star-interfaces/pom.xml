@@ -27,7 +27,6 @@
             <groupId>com.starnft.star</groupId>
             <artifactId>star-application</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.starnft.star</groupId>
             <artifactId>star-common</artifactId>
