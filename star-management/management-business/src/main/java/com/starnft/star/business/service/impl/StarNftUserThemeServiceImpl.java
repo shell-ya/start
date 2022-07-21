@@ -120,6 +120,7 @@ public class StarNftUserThemeServiceImpl extends ServiceImpl<StarNftUserThemeMap
             userSeriesVO.setSeriesName(starNftSeries.getSeriesName());
             userSeriesVO.setSeriesId(starNftSeries.getId());
             userSeriesVO.setSeriesImages(starNftSeries.getSeriesImages());
+            userSeriesVO.setUserId(item.getUserId());
             userSeriesVO.setTypes(starNftSeries.getSeriesType());
             userSeriesVO.setNums(1);
             userSeriesVO.setStatus(item.getStatus());
@@ -133,11 +134,11 @@ public class StarNftUserThemeServiceImpl extends ServiceImpl<StarNftUserThemeMap
         starNftUserTheme.setIsDelete(IsDeleteStatusEnum.NO.getCode());
         QueryWrapper<StarNftUserTheme> starNftUserThemeQueryWrapper = new QueryWrapper<StarNftUserTheme>().setEntity(starNftUserTheme);
         List<StarNftUserTheme> result = this.getBaseMapper().selectList(starNftUserThemeQueryWrapper);
-        Set<Long> collect = result.stream().map(StarNftUserTheme::getSeriesThemeId).collect(Collectors.toSet());
+        Set<Long> collect = result.stream().map(StarNftUserTheme::getSeriesThemeInfoId).collect(Collectors.toSet());
         if (collect.isEmpty()) {
             return Collections.EMPTY_MAP;
         }
-        Map<Long, StarNftThemeInfo> starNftThemeInfoArrays = starNftThemeInfoService.selectStarNftThemeInfoByIds(collect.toArray(new Long[0])).stream().collect(Collectors.toMap(StarNftThemeInfo::getId, Function.identity()));
+        Map<Long, StarNftThemeInfo> starNftThemeInfoArrays = starNftThemeInfoService.selectStarNftThemeInfoByIds(collect).stream().collect(Collectors.toMap(StarNftThemeInfo::getId, Function.identity()));
         Map<Long, Optional<UserThemeVO>> res = result.stream().map(item -> {
             StarNftThemeInfo starNftThemeInfo = starNftThemeInfoArrays.get(item.getSeriesThemeInfoId());
             UserThemeVO userThemeVO = new UserThemeVO();

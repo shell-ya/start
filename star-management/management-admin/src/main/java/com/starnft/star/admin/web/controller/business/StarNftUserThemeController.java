@@ -51,8 +51,8 @@ public class StarNftUserThemeController extends BaseController
     }
 
     @PreAuthorize("@ss.hasPermi('usertheme:theme:listThemeBySeriesAndAccount')")
-    @PostMapping("/listTheme")
-    public AjaxResult listThemeBySeriesAndAccount(@RequestBody  StarNftUserTheme starNftUserTheme)
+    @PostMapping("/listThemeBySeriesAndAccount")
+    public AjaxResult listThemeBySeriesAndAccount(@RequestBody StarNftUserTheme starNftUserTheme)
     {
         Object o = starNftUserThemeService.listThemeBySeriesAndAccount(starNftUserTheme);
         return AjaxResult.success(o);

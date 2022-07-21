@@ -3,7 +3,9 @@ package com.starnft.star.business.mapper;
 import com.starnft.star.business.domain.StarNftThemeInfo;
 import com.starnft.star.business.domain.vo.StarNftThemeInfoVo;
 import com.starnft.star.business.domain.vo.ThemeInfoVo;
+import org.apache.ibatis.annotations.Param;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -66,7 +68,7 @@ public interface StarNftThemeInfoMapper
 
     List<StarNftThemeInfoVo> selectStarNftThemeInfoVoList(StarNftThemeInfo starNftThemeInfo);
 
-    List<StarNftThemeInfo> selectStarNftThemeInfoByIds(Long[] ids);
+    List<StarNftThemeInfo> selectStarNftThemeInfoByIds(@Param("array") Collection ids);
 
 
 }
