@@ -15,7 +15,7 @@ import java.util.Date;
  * @author ruoyi
  * @date 2022-07-20
  */
-public class StarNftUserTheme extends BaseEntity
+public class StarNftUserTheme
 {
     private static final long serialVersionUID = 1L;
 
@@ -217,9 +217,7 @@ public class StarNftUserTheme extends BaseEntity
             .append("copyrightTax", getCopyrightTax())
             .append("afterTaxPrice", getAfterTaxPrice())
             .append("createAt", getCreateAt())
-            .append("createBy", getCreateBy())
             .append("updateAt", getUpdateAt())
-            .append("updateBy", getUpdateBy())
             .append("isDelete", getIsDelete())
             .append("seriesId", getSeriesId())
             .toString();
