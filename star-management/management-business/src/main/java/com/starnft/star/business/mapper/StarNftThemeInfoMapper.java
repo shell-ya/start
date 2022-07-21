@@ -65,4 +65,8 @@ public interface StarNftThemeInfoMapper
     List<ThemeInfoVo> selectThemeInfoByPublisherId(Long publisherId);
 
     List<StarNftThemeInfoVo> selectStarNftThemeInfoVoList(StarNftThemeInfo starNftThemeInfo);
+
+    List<StarNftThemeInfo> selectStarNftThemeInfoByIds(Long[] ids);
+
+
 }

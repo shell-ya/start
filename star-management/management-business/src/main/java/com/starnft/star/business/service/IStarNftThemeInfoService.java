@@ -21,6 +21,7 @@ public interface IStarNftThemeInfoService
      * @return 主题
      */
     public StarNftThemeInfo selectStarNftThemeInfoById(Long id);
+    public List<StarNftThemeInfo> selectStarNftThemeInfoByIds(Long[] ids);
 
     /**
      * 查询主题列表

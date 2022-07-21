@@ -171,7 +171,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectStarNftThemeInfoVoList" resultType="com.starnft.star.business.domain.vo.StarNftThemeInfoVo">
-        select t.id           as id,
+            select t.id           as id,
                t.series_id    as seriesId,
                s.series_name  as seriesName,
                t.theme_type   as themeType,
@@ -223,5 +223,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="marketOpenTime != null  "> and market_open_time = #{marketOpenTime}</if>
             <if test="isResale != null  and isResale != ''"> and is_resale = #{isResale}</if>
         </where>
+    </select>
+
+    <select id="selectStarNftThemeInfoByIds" resultType="StarNftThemeInfo">
+
+        <include refid="selectStarNftThemeInfoVo"/>
+        where
+        is_delete = 0
+        and  id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
     </select>
 </mapper>

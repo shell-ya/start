@@ -36,6 +36,11 @@ public class StarNftThemeInfoServiceImpl implements IStarNftThemeInfoService
         return starNftThemeInfoMapper.selectStarNftThemeInfoById(id);
     }
 
+    @Override
+    public List<StarNftThemeInfo> selectStarNftThemeInfoByIds(Long[] ids) {
+        return starNftThemeInfoMapper.selectStarNftThemeInfoByIds(ids);
+    }
+
     /**
      * 查询主题列表
      *
