@@ -1,5 +1,6 @@
 package com.starnft.star.business.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.starnft.star.business.domain.StarNftSeries;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
  * @author shellya
  * @date 2022-05-27
  */
-public interface StarNftSeriesMapper
+public interface StarNftSeriesMapper extends BaseMapper<StarNftSeries>
 {
     /**
      * 查询系列

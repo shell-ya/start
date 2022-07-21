@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 /**
  * @author WeiChunLAI
  */
+
 @Data
 public class UserLoginReq {
     @ApiModelProperty("手机号")

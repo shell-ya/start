@@ -34,6 +34,16 @@ public class ResourcesConfig implements WebMvcConfigurer
         /** swagger配置 */
         registry.addResourceHandler("/swagger-ui/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/");
+
+        // swagger页面
+        registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/swagger-resources/**").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+        // knife4j页面
+        registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("mode-Text.js").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+        registry.addResourceHandler("favicon.ico").addResourceLocations("classpath:favicon.ico");
     }
 
     /**
@@ -42,7 +52,21 @@ public class ResourcesConfig implements WebMvcConfigurer
     @Override
     public void addInterceptors(InterceptorRegistry registry)
     {
-        registry.addInterceptor(repeatSubmitInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(repeatSubmitInterceptor).addPathPatterns("/**")
+                .excludePathPatterns(
+                        "/swagger-resources/**",
+                        "/webjars/**",
+                        "/v2/**",
+                        "/swagger-ui.html/**",
+                        "/doc.html/**",
+                        "/favicon.ico/**",
+                        "/captcha/**",
+                        "/mode-Text.js/**"
+//                        "/nav/article/**",
+//                        "/navigation/**"
+                )
+        ;
+
     }
 
     /**

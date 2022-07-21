@@ -1,7 +1,10 @@
 package com.starnft.star.business.mapper;
 
-import java.util.List;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.starnft.star.business.domain.StarNftUserTheme;
+import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * 用户藏品Mapper接口
@@ -9,7 +12,8 @@ import com.starnft.star.business.domain.StarNftUserTheme;
  * @author ruoyi
  * @date 2022-07-20
  */
-public interface StarNftUserThemeMapper
+@Mapper
+public interface StarNftUserThemeMapper extends BaseMapper<StarNftUserTheme>
 {
     /**
      * 查询用户藏品

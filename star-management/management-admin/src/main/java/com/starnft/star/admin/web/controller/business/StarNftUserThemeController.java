@@ -1,25 +1,20 @@
 package com.starnft.star.admin.web.controller.business;
 
-import java.util.List;
-import javax.servlet.http.HttpServletResponse;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.starnft.star.business.domain.StarNftUserTheme;
+import com.starnft.star.business.domain.vo.UserSeriesVO;
+import com.starnft.star.business.service.IStarNftUserThemeService;
 import com.starnft.star.common.annotation.Log;
 import com.starnft.star.common.core.controller.BaseController;
 import com.starnft.star.common.core.domain.AjaxResult;
-import com.starnft.star.common.enums.BusinessType;
-import com.starnft.star.business.domain.StarNftUserTheme;
-import com.starnft.star.business.service.IStarNftUserThemeService;
-import com.starnft.star.common.utils.poi.ExcelUtil;
 import com.starnft.star.common.core.page.TableDataInfo;
+import com.starnft.star.common.enums.BusinessType;
+import com.starnft.star.common.utils.poi.ExcelUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * 用户藏品Controller
@@ -45,7 +40,13 @@ public class StarNftUserThemeController extends BaseController
         List<StarNftUserTheme> list = starNftUserThemeService.selectStarNftUserThemeList(starNftUserTheme);
         return getDataTable(list);
     }
-
+    @PreAuthorize("@ss.hasPermi('usertheme:theme:listSeries')")
+    @PostMapping("/listSeries/{id}")
+    public AjaxResult listSeries(@PathVariable("id") String  id)
+    {
+        List<UserSeriesVO> list = starNftUserThemeService.listSeriesByUserId(id);
+        return AjaxResult.success(list);
+    }
     /**
      * 导出用户藏品列表
      */

@@ -1,7 +1,10 @@
 package com.starnft.star.business.service;
 
-import java.util.List;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.starnft.star.business.domain.StarNftUserTheme;
+import com.starnft.star.business.domain.vo.UserSeriesVO;
+
+import java.util.List;
 
 /**
  * 用户藏品Service接口
@@ -9,7 +12,8 @@ import com.starnft.star.business.domain.StarNftUserTheme;
  * @author ruoyi
  * @date 2022-07-20
  */
-public interface IStarNftUserThemeService
+public interface IStarNftUserThemeService extends IService<StarNftUserTheme>
+
 {
     /**
      * 查询用户藏品
@@ -58,4 +62,6 @@ public interface IStarNftUserThemeService
      * @return 结果
      */
     public int deleteStarNftUserThemeById(Long id);
+
+    List<UserSeriesVO> listSeriesByUserId(String  id);
 }
