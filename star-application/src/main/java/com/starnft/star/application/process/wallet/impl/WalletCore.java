@@ -48,7 +48,9 @@ import org.springframework.validation.annotation.Validated;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -266,6 +268,41 @@ public class WalletCore implements IWalletCore {
         }
         //支付异常返回 需要前端提示人工处理
         return txResultRes;
+    }
+
+    @Override
+    public Boolean queryTxBatch(Integer hours) {
+
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(new Date());
+            calendar.set(Calendar.HOUR,
+                    calendar.get(Calendar.HOUR) - hours);
+            //查找最近时间区间订单
+            TransactionRecordQueryReq req = new TransactionRecordQueryReq();
+//            req.setStartDate(calendar.getTime());
+//            req.setEndDate(new Date());
+            DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            req.setStartDate(fmt.parse("2022-07-18 10:55:49"));
+            req.setEndDate(fmt.parse("2022-07-18 12:55:49"));
+            ArrayList<Integer> integers = new ArrayList<>();
+            integers.add(1);
+            req.setTransactionType(integers);
+            req.setPage(1);
+            req.setPage(1000);
+            ResponsePageResult<WalletRecordVO> walletRecordVOResponsePageResult =
+                    walletService.queryTransactionRecord(req);
+            //遍历去查单
+            List<WalletRecordVO> list = walletRecordVOResponsePageResult.getList();
+            for (WalletRecordVO walletRecordVO : list) {
+                Long uid = walletRecordVO.getToUid();
+                TxResultRes txResultRes = queryTxResult(new TxResultReq(uid, walletRecordVO.getPayChannel(), walletRecordVO.getRecordSn()));
+            }
+        } catch (Exception e) {
+            log.error("查单异常：", e);
+        }
+
+        return Boolean.TRUE;
     }
 
     @Override
