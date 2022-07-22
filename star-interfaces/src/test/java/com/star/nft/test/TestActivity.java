@@ -16,6 +16,7 @@ import com.starnft.star.application.process.user.res.UserInfoRes;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.page.RequestConditionPage;
+import com.starnft.star.common.utils.InvitationCodeUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
 import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
 import com.starnft.star.domain.rank.core.rank.model.res.Rankings;
@@ -88,8 +89,9 @@ public class TestActivity {
 
     @Test
     public void genShardCode(){
-        ShareCodeRes s = userCore.shareCodeInfo(409412742L);
-        log.info("邀请码：{}",s);
+        Long dv46QSKB = InvitationCodeUtil.decode("DV46QSKB");
+        ShareCodeRes s = userCore.shareCodeInfo(305730346L);
+        log.info("邀请码：{},userID:{}",s,dv46QSKB);
     }
 
     @Test
