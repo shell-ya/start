@@ -187,7 +187,6 @@ public class StarNftUserThemeServiceImpl extends ServiceImpl<StarNftUserThemeMap
             userNumberVO.setChainIdentification(starNftThemeNumber.getChainIdentification());
            return userNumberVO;
         }).collect(Collectors.toList());
-
     }
 
     @NotNull
