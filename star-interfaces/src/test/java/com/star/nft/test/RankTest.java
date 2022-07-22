@@ -63,27 +63,44 @@ public class RankTest {
         List<RankingsItem> launch_rank = rankService.getRankDatasByPage("launch_rank", 0, 100);
         for (RankingsItem item :
                 launch_rank) {
-            //遍历集合取总邀请
-            Cursor<Map.Entry<Object,Object>> total = redisTemplate.opsForHash().scan(
-                    String.format(RedisKey.RANK_TOTAL_USER.getKey(), "launch_rank",item.getAccount()), ScanOptions.NONE);
-            while (total.hasNext()){
-                Map.Entry<Object, Object> totalEntry = total.next();
-                RankItemMetaData val = JSONUtil.toBean(totalEntry.getValue().toString(), RankItemMetaData.class);
-                //邀请人是否有时间 有跳过
-                if (Objects.isNull(val.getInvitationTime())){
-                    //数据库查出注册时间 加载到缓存
-                    Date date = userRepository.userCreateTime(Long.valueOf(val.getChildrenId()));
-                    if (Objects.isNull(date)) continue;
-                    val.setInvitationTime(date);
 
-                    redisTemplate.opsForHash().put(String.format(RedisKey.RANK_TOTAL_USER.getKey(), "launch_rank", item.getAccount()), val.getChildrenId().toString(), JSONUtil.toJsonStr(val));
+            List<InvitationHistoryItem> historyItems = rankService.getRankInvitation("launch_rank", item.getAccount(), 1, 100);
+
+            for (InvitationHistoryItem value :historyItems ) {
+
+                if (Objects.isNull(value.getInvitationTime())){
+                    Date date = userRepository.userCreateTime(Long.valueOf(value.getAccount()));
+                    if (Objects.isNull(date)) continue;;
+                    RankItemMetaData rankItemMetaData = new RankItemMetaData();
+                    rankItemMetaData.setInvitationTime(date);
+                    rankItemMetaData.setChildrenId(Long.valueOf(value.getAccount()));
+                    rankItemMetaData.setNickName(value.getNickName());
+                    rankItemMetaData.setMobile(value.getMobile());
+                    redisTemplate.opsForHash().delete(String.format(RedisKey.RANK_TOTAL_USER.getKey(), "launch_rank", item.getAccount()),rankItemMetaData.getChildrenId().toString());
+                    redisTemplate.opsForHash().put(String.format(RedisKey.RANK_TOTAL_USER.getKey(), "launch_rank", item.getAccount()), rankItemMetaData.getChildrenId().toString(), JSONUtil.toJsonStr(rankItemMetaData));
                 }
             }
-            try {
-                total.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            //遍历集合取总邀请
+//            Cursor<Map.Entry<Object,Object>> total = redisTemplate.opsForHash().scan(
+//                    String.format(RedisKey.RANK_TOTAL_USER.getKey(), "launch_rank",item.getAccount()), ScanOptions.NONE);
+//            while (total.hasNext()){
+//                Map.Entry<Object, Object> totalEntry = total.next();
+//                RankItemMetaData val = JSONUtil.toBean(totalEntry.getValue().toString(), RankItemMetaData.class);
+//                //邀请人是否有时间 有跳过
+//                if (Objects.isNull(val.getInvitationTime())){
+//                    //数据库查出注册时间 加载到缓存
+//                    Date date = userRepository.userCreateTime(Long.valueOf(val.getChildrenId()));
+//                    if (Objects.isNull(date)) continue;
+//                    val.setInvitationTime(date);
+//
+//                    redisTemplate.opsForHash().put(String.format(RedisKey.RANK_TOTAL_USER.getKey(), "launch_rank", item.getAccount()), val.getChildrenId().toString(), JSONUtil.toJsonStr(val));
+//                }
+//            }
+//            try {
+//                total.close();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
 
         }
 
