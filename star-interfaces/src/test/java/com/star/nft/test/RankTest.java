@@ -33,8 +33,8 @@ public class RankTest {
     IRankService rankService;
 
     @Resource
-    @Qualifier("RankRedisTemplate")
     RedisTemplate redisTemplate;
+
     @Autowired
     IUserRepository userRepository;
     @Test
@@ -76,8 +76,9 @@ public class RankTest {
                     rankItemMetaData.setChildrenId(Long.valueOf(value.getAccount()));
                     rankItemMetaData.setNickName(value.getNickName());
                     rankItemMetaData.setMobile(value.getMobile());
-                    redisTemplate.opsForHash().delete(String.format(RedisKey.RANK_TOTAL_USER.getKey(), "launch_rank", item.getAccount()),rankItemMetaData.getChildrenId().toString());
-                    redisTemplate.opsForHash().put(String.format(RedisKey.RANK_TOTAL_USER.getKey(), "launch_rank", item.getAccount()), rankItemMetaData.getChildrenId().toString(), JSONUtil.toJsonStr(rankItemMetaData));
+//                    redisTemplate.opsForHash().delete(String.format(RedisKey.RANK_TOTAL_USER.getKey(), "launch_rank", item.getAccount()),rankItemMetaData.getChildrenId().toString());
+//                    redisTemplate.opsForHash().put(String.format(RedisKey.RANK_TOTAL_USER.getKey(), "launch_rank", item.getAccount()), rankItemMetaData.getChildrenId().toString(), JSONUtil.toJsonStr(rankItemMetaData));
+                    rankService.putTime("launch_rank",item.getAccount().toString(),rankItemMetaData);
                 }
             }
             //遍历集合取总邀请

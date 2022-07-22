@@ -148,4 +148,6 @@ public interface IRankService {
     public boolean setUserPhoneMapping(String rankName,String userId,String phone);
 
     public Long getRankSize(String rankName);
+
+    public void putTime(String rankName, String  key, RankItemMetaData rankItemMetaData);
 }

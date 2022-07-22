@@ -10,5 +10,5 @@ public class RankItemMetaData {
      private String nickName;
      private String mobile;
      private String avatar;
-     private Date InvitationTime;
+     private Date invitationTime;
 }

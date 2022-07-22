@@ -223,4 +223,9 @@ public class RankServiceImpl implements IRankService {
         return redisTemplate.opsForZSet().size(String.format(RedisKey.RANK_ITEM_VALID.getKey(),rankName));
     }
 
+    @Override
+    public void putTime(String rankName, String key, RankItemMetaData rankItemMetaData) {
+         redisTemplate.opsForHash().put(String.format(RedisKey.RANK_TOTAL_USER.getKey(), rankName, key), rankItemMetaData.getChildrenId().toString(), JSONUtil.toJsonStr(rankItemMetaData));
+    }
+
 }
