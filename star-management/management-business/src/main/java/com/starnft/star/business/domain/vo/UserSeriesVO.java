@@ -14,7 +14,10 @@ import java.io.Serializable;
 public class UserSeriesVO implements Serializable {
     private Long  seriesId;
     private String seriesName;
+    private String  userId;
+    private String seriesImages;
     private Integer types;
     private Integer nums;
+    private Integer status;
 
 }

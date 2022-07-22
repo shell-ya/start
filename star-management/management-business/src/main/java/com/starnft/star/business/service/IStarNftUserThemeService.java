@@ -5,6 +5,8 @@ import com.starnft.star.business.domain.StarNftUserTheme;
 import com.starnft.star.business.domain.vo.UserSeriesVO;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * 用户藏品Service接口
@@ -63,5 +65,7 @@ public interface IStarNftUserThemeService extends IService<StarNftUserTheme>
      */
     public int deleteStarNftUserThemeById(Long id);
 
-    List<UserSeriesVO> listSeriesByUserId(String  id);
+    Map<Integer, Map<Long, Optional<UserSeriesVO>>> listSeriesByUserId(String  id);
+
+    Object listThemeBySeriesAndAccount(StarNftUserTheme starNftUserTheme);
 }

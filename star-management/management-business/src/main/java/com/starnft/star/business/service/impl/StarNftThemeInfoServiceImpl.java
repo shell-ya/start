@@ -9,6 +9,7 @@ import com.starnft.star.common.utils.SnowflakeWorker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +35,11 @@ public class StarNftThemeInfoServiceImpl implements IStarNftThemeInfoService
     public StarNftThemeInfo selectStarNftThemeInfoById(Long id)
     {
         return starNftThemeInfoMapper.selectStarNftThemeInfoById(id);
+    }
+
+    @Override
+    public List<StarNftThemeInfo> selectStarNftThemeInfoByIds(Collection ids) {
+        return starNftThemeInfoMapper.selectStarNftThemeInfoByIds(ids);
     }
 
     /**

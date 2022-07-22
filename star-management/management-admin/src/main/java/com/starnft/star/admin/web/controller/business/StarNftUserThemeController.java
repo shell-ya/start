@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * 用户藏品Controller
@@ -44,8 +46,16 @@ public class StarNftUserThemeController extends BaseController
     @PostMapping("/listSeries/{id}")
     public AjaxResult listSeries(@PathVariable("id") String  id)
     {
-        List<UserSeriesVO> list = starNftUserThemeService.listSeriesByUserId(id);
+        Map<Integer, Map<Long, Optional<UserSeriesVO>>>  list = starNftUserThemeService.listSeriesByUserId(id);
         return AjaxResult.success(list);
+    }
+
+    @PreAuthorize("@ss.hasPermi('usertheme:theme:listThemeBySeriesAndAccount')")
+    @PostMapping("/listThemeBySeriesAndAccount")
+    public AjaxResult listThemeBySeriesAndAccount(@RequestBody StarNftUserTheme starNftUserTheme)
+    {
+        Object o = starNftUserThemeService.listThemeBySeriesAndAccount(starNftUserTheme);
+        return AjaxResult.success(o);
     }
     /**
      * 导出用户藏品列表

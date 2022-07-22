@@ -4,6 +4,7 @@ import com.starnft.star.business.domain.StarNftThemeInfo;
 import com.starnft.star.business.domain.vo.StarNftThemeInfoVo;
 import com.starnft.star.business.domain.vo.ThemeInfoVo;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -21,6 +22,7 @@ public interface IStarNftThemeInfoService
      * @return 主题
      */
     public StarNftThemeInfo selectStarNftThemeInfoById(Long id);
+    public List<StarNftThemeInfo> selectStarNftThemeInfoByIds(Collection ids);
 
     /**
      * 查询主题列表
