@@ -15,5 +15,13 @@ import lombok.NoArgsConstructor;
 @Builder
 public class UserResolverInfo {
 
+    /**
+     * 用户id
+     */
     private Long userId;
+
+    /**
+     * 用户手机号
+     */
+    private String phone;
 }

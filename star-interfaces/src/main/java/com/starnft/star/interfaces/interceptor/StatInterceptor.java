@@ -3,6 +3,7 @@ package com.starnft.star.interfaces.interceptor;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
+import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.domain.user.service.impl.BaseUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -76,8 +77,8 @@ public class StatInterceptor extends HandlerInterceptorAdapter {
         if (StringUtils.isBlank(token)) {
             throw new StarException(StarError.TOKEN_NOT_EXISTS_ERROR);
         } else {
-            Long userId = this.baseUserService.checkTokenAndReturnUserId(token);
-            UserContext.setUserId(UserResolverInfo.builder().userId(userId).build());
+            UserInfo userInfo = this.baseUserService.checkTokenAndReturnUserId(token);
+            UserContext.setUserResolverInfo(UserResolverInfo.builder().userId(userInfo.getAccount()).phone(userInfo.getPhone()).build());
         }
 
         return true;

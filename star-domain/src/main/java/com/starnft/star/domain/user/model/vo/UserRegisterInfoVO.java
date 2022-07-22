@@ -12,6 +12,9 @@ public class UserRegisterInfoVO {
     @ApiModelProperty("用户id")
     private Long userId;
 
+    @ApiModelProperty("用户手机号")
+    private String phone;
+
     @ApiModelProperty("token")
     private String token;
 }

@@ -41,6 +41,7 @@ public class AuthTokenComponent {
                 .setIssuer(StarConstants.SERVICE_NAME)
                 .setExpiration(tokenZdt)
                 .setIssuedAt(ZonedDateTime.now(ZoneOffset.UTC))
+                .addClaim(StarConstants.PHONE , accessTokenBo.getPhone())
                 .addClaim(StarConstants.USER_ID, accessTokenBo.getUserId());
         return jwtUtil.encryptToken(accessToken);
     }
