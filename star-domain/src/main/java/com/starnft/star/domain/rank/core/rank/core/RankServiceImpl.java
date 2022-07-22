@@ -150,7 +150,7 @@ public class RankServiceImpl implements IRankService {
     }
 
     @Override
-    public List<RankingsItem>getRankDatasByPage(String rankName, int page, int pageSize) {
+    public List<RankingsItem> getRankDatasByPage(String rankName, int page, int pageSize) {
 
         Set set = redisTemplate.opsForZSet().reverseRange(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), page, pageSize );
             if (Objects.isNull(set)) return null;
@@ -163,6 +163,7 @@ public class RankServiceImpl implements IRankService {
             rankingsItem.setTotal(redisTemplate.opsForHash().size(String.format(RedisKey.RANK_TOTAL_USER.getKey(),rankName,userId)));
             rankingsItem.setValid(redisTemplate.opsForHash().size(String.format(RedisKey.RANK_VALID_USER.getKey(),rankName,userId)));
             rankingsItem.setPhone((String) redisTemplate.opsForHash().get(String.format(RedisKey.RANK_USER_MAPPING.getKey(), rankName), userId));
+            rankingsItem.setAccount(Long.valueOf(userId.toString()));
             items.add(rankingsItem);
         }
 

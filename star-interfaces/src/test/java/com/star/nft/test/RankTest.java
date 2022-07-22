@@ -2,16 +2,28 @@ package com.star.nft.test;
 
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONUtil;
+import com.starnft.star.application.process.user.UserCore;
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.template.TemplateHelper;
 import com.starnft.star.domain.rank.core.rank.core.IRankService;
+import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
+import com.starnft.star.domain.rank.core.rank.model.RankItemMetaData;
+import com.starnft.star.domain.rank.core.rank.model.res.InvitationHistoryItem;
+import com.starnft.star.domain.rank.core.rank.model.res.RankingsItem;
+import com.starnft.star.domain.user.repository.IUserRepository;
 import com.starnft.star.interfaces.StarApplication;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 @SpringBootTest(classes = {StarApplication.class})
 public class RankTest {
@@ -19,6 +31,12 @@ public class RankTest {
     TemplateHelper templateHelper;
     @Resource
     IRankService rankService;
+
+    @Resource
+    @Qualifier("RankRedisTemplate")
+    RedisTemplate redisTemplate;
+    @Autowired
+    IUserRepository userRepository;
     @Test
     public void  setSms() throws Exception {
         HashMap<String, Object> dataMap = new HashMap<>();
@@ -35,6 +53,39 @@ public class RankTest {
         System.out.println(process);
         HttpResponse result = HttpUtil.createPost("http://userinterface.vcomcn.com/Opration.aspx").contentType("text/xml").body(process).execute();
         System.out.println(result);
+
+    }
+
+
+    @Test
+    public void setTime(){
+        //取排行榜所有id
+        List<RankingsItem> launch_rank = rankService.getRankDatasByPage("launch_rank", 0, 100);
+        for (RankingsItem item :
+                launch_rank) {
+            //遍历集合取总邀请
+            Cursor<Map.Entry<Object,Object>> total = redisTemplate.opsForHash().scan(
+                    String.format(RedisKey.RANK_TOTAL_USER.getKey(), "launch_rank",item.getAccount()), ScanOptions.NONE);
+            while (total.hasNext()){
+                Map.Entry<Object, Object> totalEntry = total.next();
+                RankItemMetaData val = JSONUtil.toBean(totalEntry.getValue().toString(), RankItemMetaData.class);
+                //邀请人是否有时间 有跳过
+                if (Objects.isNull(val.getInvitationTime())){
+                    //数据库查出注册时间 加载到缓存
+                    Date date = userRepository.userCreateTime(Long.valueOf(val.getChildrenId()));
+                    if (Objects.isNull(date)) continue;
+                    val.setInvitationTime(date);
+
+                    redisTemplate.opsForHash().put(String.format(RedisKey.RANK_TOTAL_USER.getKey(), "launch_rank", item.getAccount()), val.getChildrenId().toString(), JSONUtil.toJsonStr(val));
+                }
+            }
+            try {
+                total.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
 
     }
 }

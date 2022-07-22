@@ -7,15 +7,18 @@ import com.starnft.star.business.service.IAirdropThemeRecordService;
 import com.starnft.star.business.service.IStarNftThemeInfoService;
 import com.starnft.star.business.service.IStarNftThemeNumberService;
 import com.starnft.star.business.service.impl.AirdropThemeRecordServiceImpl;
+import com.starnft.star.common.core.controller.BaseController;
 import com.starnft.star.common.core.domain.AjaxResult;
+import com.starnft.star.common.core.page.TableDataInfo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 @RequestMapping("/business/airdrop")
-public class AirdropController {
+public class AirdropController extends BaseController {
     @Resource
  private IStarNftThemeNumberService iStarNftThemeNumberService;
 
@@ -29,18 +32,22 @@ public class AirdropController {
      */
     @PreAuthorize("@ss.hasPermi('business:airdrop:listNumber')")
     @PostMapping(value = "/listNumber")
-    public AjaxResult listNumber(@RequestBody  StarNftThemeNumber nftThemeNumber)
+    public TableDataInfo listNumber(@RequestBody  StarNftThemeNumber nftThemeNumber)
     {
-        return AjaxResult.success(iStarNftThemeNumberService.selectStarNftThemeNumberList(nftThemeNumber));
+        startPage();
+        List<StarNftThemeNumber> starNftThemeNumbers = iStarNftThemeNumberService.selectStarNftThemeNumberList(nftThemeNumber);
+        return getDataTable(starNftThemeNumbers);
     }
     /**
      * 查询所有主题
      */
     @PreAuthorize("@ss.hasPermi('business:airdrop:listTheme')")
     @PostMapping(value = "/listTheme")
-    public AjaxResult listTheme(@RequestBody StarNftThemeInfo starNftThemeInfo)
+    public TableDataInfo listTheme(@RequestBody StarNftThemeInfo starNftThemeInfo)
     {
-        return AjaxResult.success(iStarNftThemeInfoService.selectStarNftThemeInfoList(starNftThemeInfo));
+        startPage();
+        List<StarNftThemeInfo> starNftThemeInfos = iStarNftThemeInfoService.selectStarNftThemeInfoList(starNftThemeInfo);
+        return getDataTable(starNftThemeInfos);
     }
 
 //    @PreAuthorize("@ss.hasPermi('business:airdrop:add')")

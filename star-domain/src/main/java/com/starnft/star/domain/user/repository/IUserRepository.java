@@ -6,6 +6,7 @@ import com.starnft.star.domain.user.model.dto.UserInfoAddDTO;
 import com.starnft.star.domain.user.model.dto.UserInfoUpdateDTO;
 import com.starnft.star.domain.user.model.vo.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -161,4 +162,6 @@ public interface IUserRepository {
     UserRealInfo getUserInfoAll(Long userId);
 
     UserInfo queryUserInfoByMobile(String mobile);
+
+    Date userCreateTime(Long account);
 }

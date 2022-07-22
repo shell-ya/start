@@ -324,4 +324,12 @@ public class UserRepository implements IUserRepository {
         UserInfoEntity userInfoEntity = this.userInfoMapper.selectOne(queryWrapper);
         return Objects.nonNull(userInfoEntity);
     }
+    @Override
+    public Date userCreateTime(Long account){
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.eq("account", account);
+        queryWrapper.eq("is_deleted", Boolean.FALSE);
+        return this.userInfoMapper.selectOne(queryWrapper).getCreatedAt();
+
+    }
 }
