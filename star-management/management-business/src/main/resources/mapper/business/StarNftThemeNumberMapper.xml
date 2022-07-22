@@ -149,4 +149,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
 
     </select>
+
+    <select id="selectStarNftThemeNumberByIds" resultType="com.starnft.star.business.domain.StarNftThemeNumber">
+        <include refid="selectStarNftThemeNumberVo"/>
+        where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

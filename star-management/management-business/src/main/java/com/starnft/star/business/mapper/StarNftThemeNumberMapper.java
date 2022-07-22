@@ -2,7 +2,9 @@ package com.starnft.star.business.mapper;
 
 import com.starnft.star.business.domain.StarNftThemeNumber;
 import com.starnft.star.business.domain.vo.StarNftThemeNumberVo;
+import org.apache.ibatis.annotations.Param;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -62,4 +64,6 @@ public interface StarNftThemeNumberMapper
     public int deleteStarNftThemeNumberByIds(Long[] ids);
 
     List<StarNftThemeNumberVo> selectStarNftThemeNumberVoList(StarNftThemeNumberVo starNftThemeNumber);
+
+    List<StarNftThemeNumber> selectStarNftThemeNumberByIds(@Param("ids") Collection ids);
 }

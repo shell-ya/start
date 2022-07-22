@@ -3,6 +3,7 @@ package com.starnft.star.business.service;
 import com.starnft.star.business.domain.StarNftThemeNumber;
 import com.starnft.star.business.domain.vo.StarNftThemeNumberVo;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -64,4 +65,6 @@ public interface IStarNftThemeNumberService
     String importThemeNumber(List<StarNftThemeNumber> themeNumberList, Long themeId, String operName);
 
     public List<StarNftThemeNumberVo> selectStarNftThemeNumberVoList(StarNftThemeNumberVo starNftThemeNumber);
+
+    List<StarNftThemeNumber> selectStarNftThemeNumberByIds(Collection ids);
 }

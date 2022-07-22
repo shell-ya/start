@@ -1,7 +1,9 @@
 package com.starnft.star.admin.web.controller.business;
 
 import com.starnft.star.business.domain.StarNftUserTheme;
+import com.starnft.star.business.domain.vo.UserNumberVO;
 import com.starnft.star.business.domain.vo.UserSeriesVO;
+import com.starnft.star.business.domain.vo.UserThemeVO;
 import com.starnft.star.business.service.IStarNftUserThemeService;
 import com.starnft.star.common.annotation.Log;
 import com.starnft.star.common.core.controller.BaseController;
@@ -54,8 +56,16 @@ public class StarNftUserThemeController extends BaseController
     @PostMapping("/listThemeBySeriesAndAccount")
     public AjaxResult listThemeBySeriesAndAccount(@RequestBody StarNftUserTheme starNftUserTheme)
     {
-        Object o = starNftUserThemeService.listThemeBySeriesAndAccount(starNftUserTheme);
-        return AjaxResult.success(o);
+        Map<Long, Optional<UserThemeVO>> result = starNftUserThemeService.listThemeBySeriesAndAccount(starNftUserTheme);
+        return AjaxResult.success(result);
+    }
+
+    @PreAuthorize("@ss.hasPermi('usertheme:theme:listNumberByThemeAndAccount')")
+    @PostMapping("/listNumberByThemeAndAccount")
+    public AjaxResult listNumberByThemeAndAccount(@RequestBody StarNftUserTheme starNftUserTheme)
+    {
+        List<UserNumberVO> result = starNftUserThemeService.listNumberByThemeAndAccount(starNftUserTheme);
+        return AjaxResult.success(result);
     }
     /**
      * 导出用户藏品列表

@@ -4,12 +4,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.starnft.star.business.domain.StarNftSeries;
 import com.starnft.star.business.domain.StarNftThemeInfo;
+import com.starnft.star.business.domain.StarNftThemeNumber;
 import com.starnft.star.business.domain.StarNftUserTheme;
+import com.starnft.star.business.domain.vo.UserNumberVO;
 import com.starnft.star.business.domain.vo.UserSeriesVO;
 import com.starnft.star.business.domain.vo.UserThemeVO;
 import com.starnft.star.business.mapper.StarNftSeriesMapper;
 import com.starnft.star.business.mapper.StarNftUserThemeMapper;
 import com.starnft.star.business.service.IStarNftThemeInfoService;
+import com.starnft.star.business.service.IStarNftThemeNumberService;
 import com.starnft.star.business.service.IStarNftUserThemeService;
 import com.starnft.star.common.constant.IsDeleteStatusEnum;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +38,8 @@ public class StarNftUserThemeServiceImpl extends ServiceImpl<StarNftUserThemeMap
     private StarNftSeriesMapper starNftSeriesMapper;
     @Autowired
     private IStarNftThemeInfoService starNftThemeInfoService;
+    @Autowired
+    private IStarNftThemeNumberService starNftThemeNumberService;
 
     /**
      * 查询用户藏品
@@ -130,7 +135,7 @@ public class StarNftUserThemeServiceImpl extends ServiceImpl<StarNftUserThemeMap
     }
 
     @Override
-    public Object listThemeBySeriesAndAccount(StarNftUserTheme starNftUserTheme) {
+    public  Map<Long, Optional<UserThemeVO>> listThemeBySeriesAndAccount(StarNftUserTheme starNftUserTheme) {
         starNftUserTheme.setIsDelete(IsDeleteStatusEnum.NO.getCode());
         QueryWrapper<StarNftUserTheme> starNftUserThemeQueryWrapper = new QueryWrapper<StarNftUserTheme>().setEntity(starNftUserTheme);
         List<StarNftUserTheme> result = this.getBaseMapper().selectList(starNftUserThemeQueryWrapper);
@@ -145,6 +150,7 @@ public class StarNftUserThemeServiceImpl extends ServiceImpl<StarNftUserThemeMap
             userThemeVO.setThemeId(item.getSeriesThemeInfoId());
             userThemeVO.setThemeName(starNftThemeInfo.getThemeName());
             userThemeVO.setThemeImages(starNftThemeInfo.getThemePic());
+            userThemeVO.setUserId(item.getUserId());
             userThemeVO.setTypes(starNftThemeInfo.getThemeType());
             userThemeVO.setStatus(item.getStatus());
             userThemeVO.setNums(1);
@@ -154,6 +160,34 @@ public class StarNftUserThemeServiceImpl extends ServiceImpl<StarNftUserThemeMap
             return b;
         })));
         return  res;
+    }
+
+    @Override
+    public List<UserNumberVO> listNumberByThemeAndAccount(StarNftUserTheme starNftUserTheme) {
+        starNftUserTheme.setIsDelete(IsDeleteStatusEnum.NO.getCode());
+        QueryWrapper<StarNftUserTheme> starNftUserThemeQueryWrapper = new QueryWrapper<StarNftUserTheme>().setEntity(starNftUserTheme);
+        List<StarNftUserTheme> result = this.getBaseMapper().selectList(starNftUserThemeQueryWrapper);
+        Set<Long> collect = result.stream().map(StarNftUserTheme::getSeriesThemeId).collect(Collectors.toSet());
+        if (collect.isEmpty()) {
+            return Collections.EMPTY_LIST;
+        }
+        Map<Long, StarNftThemeNumber> starNftThemeNumberMap = starNftThemeNumberService.selectStarNftThemeNumberByIds(collect).stream().collect(Collectors.toMap(StarNftThemeNumber::getId, Function.identity()));
+        return  result.stream().map(item->{
+            StarNftThemeNumber starNftThemeNumber = starNftThemeNumberMap.get(item.getSeriesThemeId());
+            UserNumberVO userNumberVO = new UserNumberVO();
+            userNumberVO.setUserId(item.getUserId());
+            userNumberVO.setId(item.getId());
+            userNumberVO.setAfterTaxPrice(item.getAfterTaxPrice());
+            userNumberVO.setCopyrightTax(item.getCopyrightTax());
+            userNumberVO.setPlatformTax(item.getPlatformTax());
+            userNumberVO.setCopyrightTax(item.getCopyrightTax());
+            userNumberVO.setStatus(item.getStatus());
+            userNumberVO.setSource(item.getSource());
+            userNumberVO.setThemeNumber(starNftThemeNumber.getThemeNumber());
+            userNumberVO.setChainIdentification(starNftThemeNumber.getChainIdentification());
+           return userNumberVO;
+        }).collect(Collectors.toList());
+
     }
 
     @NotNull

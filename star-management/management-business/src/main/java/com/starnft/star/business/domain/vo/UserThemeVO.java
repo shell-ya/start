@@ -8,6 +8,7 @@ public class UserThemeVO {
     private String themeName;
     private String themeImages;
     private Integer types;
+    private String  userId;
     private Integer nums;
     private Integer status;
 }

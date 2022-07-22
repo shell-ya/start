@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Validator;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -172,5 +173,10 @@ public class StarNftThemeNumberServiceImpl implements IStarNftThemeNumberService
     public List<StarNftThemeNumberVo> selectStarNftThemeNumberVoList(StarNftThemeNumberVo starNftThemeNumber) {
 
         return this.starNftThemeNumberMapper.selectStarNftThemeNumberVoList(starNftThemeNumber);
+    }
+
+    @Override
+    public List<StarNftThemeNumber> selectStarNftThemeNumberByIds(Collection ids) {
+        return starNftThemeNumberMapper.selectStarNftThemeNumberByIds(ids);
     }
 }
