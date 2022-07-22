@@ -33,6 +33,8 @@ public interface IWalletCore {
     //查询充值交易状态db
     TxResultRes queryTxResult(TxResultReq txResultReq);
 
+    Boolean queryTxBatch(Integer hours);
+
     //查询银行卡信息
     List<CardBindResult> obtainCardBinds(Long uid);
 

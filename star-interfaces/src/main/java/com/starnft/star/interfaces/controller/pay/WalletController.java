@@ -50,9 +50,18 @@ public class WalletController {
 
     @ApiOperation("充值结果查询 最终查单")
     @PostMapping("/recharge/check")
+    @TokenIgnore
     public RopResponse<TxResultRes> check(@Validated @RequestBody TxResultReq req) {
         req.setUid(UserContext.getUserId().getUserId());
         return RopResponse.success(this.walletCore.queryTxResult(req));
+    }
+
+
+    @ApiOperation("异常批量最终查单")
+    @PostMapping("/recharge/checkbatch/{num}")
+    @TokenIgnore
+    public RopResponse<Boolean> checkBatch(@PathVariable Integer num) {
+        return RopResponse.success(this.walletCore.queryTxBatch(num));
     }
 
     @ApiOperation("充值结果查询 轮训")
