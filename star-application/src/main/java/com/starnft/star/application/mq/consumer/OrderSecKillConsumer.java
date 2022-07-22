@@ -122,7 +122,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
         ThemeNumberVo themeNumberVo = numberService.queryNumberExist(stockQueueId, message.getGoods().getThemeId());
 
         if (themeNumberVo == null) {
-            log.error("藏品可能未上架 themeId:[] , themeNumber:[{}]", message.getGoods().getThemeId(), stockQueueId);
+            log.error("藏品可能未上架 themeId:[{}] , themeNumber:[{}]", message.getGoods().getThemeId(), stockQueueId);
             throw new RuntimeException("查询藏品失败！");
         }
 
