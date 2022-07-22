@@ -1,5 +1,8 @@
 package com.starnft.star.business.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.starnft.star.common.annotation.Excel;
 import com.starnft.star.common.core.domain.BaseEntity;
@@ -63,10 +66,14 @@ public class StarNftUserTheme
     @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date createAt;
 
+    private String createBy;
+
     /** 更新时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "更新时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date updateAt;
+
+    private String updateBy;
 
     /** 是否删除(0-未删除 1-已删除) */
     @Excel(name = "是否删除(0-未删除 1-已删除)")
@@ -221,5 +228,13 @@ public class StarNftUserTheme
             .append("isDelete", getIsDelete())
             .append("seriesId", getSeriesId())
             .toString();
+    }
+
+    public String getCreateBy() {
+        return createBy;
+    }
+
+    public void setCreateBy(String createBy) {
+        this.createBy = createBy;
     }
 }

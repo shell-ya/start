@@ -1,9 +1,12 @@
 package com.starnft.star.admin.web.controller.business;
 
+import com.starnft.star.business.domain.AirdropThemeRecord;
 import com.starnft.star.business.domain.StarNftThemeInfo;
 import com.starnft.star.business.domain.StarNftThemeNumber;
+import com.starnft.star.business.service.IAirdropThemeRecordService;
 import com.starnft.star.business.service.IStarNftThemeInfoService;
 import com.starnft.star.business.service.IStarNftThemeNumberService;
+import com.starnft.star.business.service.impl.AirdropThemeRecordServiceImpl;
 import com.starnft.star.common.core.domain.AjaxResult;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +21,9 @@ public class AirdropController {
 
     @Resource
     private IStarNftThemeInfoService iStarNftThemeInfoService;
+
+    @Resource
+    private IAirdropThemeRecordService airdropThemeRecordService;
     /**
      * 查询编号
      */
@@ -36,4 +42,12 @@ public class AirdropController {
     {
         return AjaxResult.success(iStarNftThemeInfoService.selectStarNftThemeInfoList(starNftThemeInfo));
     }
+
+//    @PreAuthorize("@ss.hasPermi('business:airdrop:add')")
+    @PostMapping(value = "/addAirdrop")
+    public AjaxResult listTheme(@RequestBody AirdropThemeRecord record)
+    {
+        return AjaxResult.success(airdropThemeRecordService.addUserAirdrop(record));
+    }
+
 }
