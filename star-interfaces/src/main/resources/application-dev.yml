@@ -11,7 +11,7 @@ spring:
         #type为数据源，如果是Druid数据库连接池，可以去改
         type: com.alibaba.druid.pool.DruidDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://sh-cynosdbmysql-grp-ibkpxd68.sql.tencentcdb.com:23543/star_dev?serverTimezone=GMT%2B8&characterEncoding=utf8
+        url: jdbc:mysql://sh-cynosdbmysql-grp-ibkpxd68.sql.tencentcdb.com:23543/star_test?serverTimezone=GMT%2B8&characterEncoding=utf8
         username: root
         password: wqd1234.
 
@@ -53,21 +53,21 @@ star:
 #rocketmq配置信息
 rocketmq:
   # tdmq-rocketmq服务接入地址
-  name-server: rocketmq-og7vj4e94qw4.rocketmq.ap-gz.public.tencenttdmq.com:9876
+  name-server: rocketmq-8geezgooejbg.rocketmq.ap-gz.public.tencenttdmq.com:9876
   # 生产者配置
   producer:
-  # 生产者组名
+    # 生产者组名
     group: star-producer-group
     # 角色密钥
-    access-key: eyJrZXlJZCI6InJvY2tldG1xLW9nN3ZqNGU5NHF3NCIsImFsZyI6IkhTMjU2In0.eyJzdWIiOiJyb2NrZXRtcS1vZzd2ajRlOTRxdzRfYWRtaW4ifQ.PYqPb_vU_PmUVPzSyLOy7nypReluFayLRWs7ztVp_aI
+    access-key: eyJrZXlJZCI6InJvY2tldG1xLThnZWV6Z29vZWpiZyIsImFsZyI6IkhTMjU2In0.eyJzdWIiOiJyb2NrZXRtcS04Z2Vlemdvb2VqYmdfc3VwZXIifQ.r2CfEbotMkzf8JSc50xX650LkBfXpPAuZiqcZ0F9ijU
     # 已授权的角色名称
-    secret-key: admin
+    secret-key: super
   # 消费者公共配置
   consumer:
     # 角色密钥
-    access-key: eyJrZXlJZCI6InJvY2tldG1xLW9nN3ZqNGU5NHF3NCIsImFsZyI6IkhTMjU2In0.eyJzdWIiOiJyb2NrZXRtcS1vZzd2ajRlOTRxdzRfYWRtaW4ifQ.PYqPb_vU_PmUVPzSyLOy7nypReluFayLRWs7ztVp_aI
+    access-key: eyJrZXlJZCI6InJvY2tldG1xLThnZWV6Z29vZWpiZyIsImFsZyI6IkhTMjU2In0.eyJzdWIiOiJyb2NrZXRtcS04Z2Vlemdvb2VqYmdfc3VwZXIifQ.r2CfEbotMkzf8JSc50xX650LkBfXpPAuZiqcZ0F9ijU
     # 已授权的角色名称
-    secret-key: admin
+    secret-key: super
 
 # 验证码相关配置
 captcha:

@@ -28,6 +28,7 @@ import org.springframework.http.HttpHeaders;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -107,7 +108,7 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
     protected PayCheckRes doOrderCheck(PayCheckReq payCheckReq, Map<String, String> vendorConf) {
 
         TempConf channelConf = getChannelConf(TradeType.SandPay_Order_Query);
-        String signString = processTemplate(channelConf.getSignTempPath(), payCheckReq.getOrderSn(), vendorConf);
+        String signString = processTemplate(channelConf.getSignTempPath(), payCheckReq.getOrderSn(), vendorConf,new Date(),new Date());
         SdKeysHelper sdKeysHelper = applicationContext.getBean(SdKeysHelper.class);
         Map<String, String> req = getSignAndMap(sdKeysHelper, signString);
         IInteract iInteract = obtainProcessInteraction(StarConstants.ProcessType.JSON);
@@ -129,7 +130,7 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
 
         JSONObject resObj = JSONUtil.parseObj(respData);
 
-        String resModel = super.processTemplate(channelConf.getResTempPath(), resObj, vendorConf);
+        String resModel = super.processTemplate(channelConf.getResTempPath(), resObj, vendorConf,new Date(),new Date());
         RemoteRes remoteRes = JSON.parseObject(resModel, RemoteRes.class);
 
         return iInteract.verifyResAndGet(remoteRes, PayCheckRes.class);

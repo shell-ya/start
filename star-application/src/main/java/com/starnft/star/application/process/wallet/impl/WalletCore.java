@@ -252,12 +252,17 @@ public class WalletCore implements IWalletCore {
         //根据状态做不同的处理
         if (StarConstants.Pay_Status.PAY_ING.name().equals(txResultRes.getStatus())) {
             //轮训多次无果 查单
-            PayCheckRes payCheckRes = paymentService.orderCheck(PayCheckReq.builder()
-                    .payChannel(txResultReq.getPayChannel()).orderSn(txResultReq.getOrderSn()).build());
-            //将查询到的结果发送mq
-            String rechargeCallbackProcessTopic = String.format(TopicConstants.WALLET_RECHARGE_DESTINATION.getFormat(),
-                    TopicConstants.WALLET_RECHARGE_DESTINATION.getTag());
-            messageSender.send(rechargeCallbackProcessTopic, Optional.of(payCheckRes));
+            try {
+                PayCheckRes payCheckRes = paymentService.orderCheck(PayCheckReq.builder()
+                        .payChannel(txResultReq.getPayChannel()).orderSn(txResultReq.getOrderSn()).build());
+                //将查询到的结果发送mq
+                String rechargeCallbackProcessTopic = String.format(TopicConstants.WALLET_RECHARGE_DESTINATION.getFormat(),
+                        TopicConstants.WALLET_RECHARGE_DESTINATION.getTag());
+                messageSender.send(rechargeCallbackProcessTopic, Optional.of(payCheckRes));
+            }catch (Exception e){
+                log.error("查单失败：单号：{}",txResultReq.getOrderSn());
+
+            }
             //todo 前端轮训后 仍然是支付中 提示 用户稍后再试 前端判断还是直接异常？
             return txResultRes;
         }
@@ -280,16 +285,16 @@ public class WalletCore implements IWalletCore {
                     calendar.get(Calendar.HOUR) - hours);
             //查找最近时间区间订单
             TransactionRecordQueryReq req = new TransactionRecordQueryReq();
-//            req.setStartDate(calendar.getTime());
-//            req.setEndDate(new Date());
-            DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            req.setStartDate(fmt.parse("2022-07-18 10:55:49"));
-            req.setEndDate(fmt.parse("2022-07-18 12:55:49"));
+            req.setStartDate(calendar.getTime());
+            req.setEndDate(new Date());
+//            DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//            req.setStartDate(fmt.parse("2022-07-18 10:55:49"));
+//            req.setEndDate(fmt.parse("2022-07-18 12:55:49"));
             ArrayList<Integer> integers = new ArrayList<>();
             integers.add(1);
             req.setTransactionType(integers);
             req.setPage(1);
-            req.setPage(1000);
+            req.setSize(1000);
             ResponsePageResult<WalletRecordVO> walletRecordVOResponsePageResult =
                     walletService.queryTransactionRecord(req);
             //遍历去查单
