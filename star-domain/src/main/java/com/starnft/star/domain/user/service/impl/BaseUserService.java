@@ -6,6 +6,7 @@ import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.po.AccessToken;
 import com.starnft.star.common.utils.JwtUtil;
+import com.starnft.star.domain.user.model.vo.UserInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -30,10 +31,11 @@ public class BaseUserService {
      * @param userId
      * @return
      */
-    protected String createUserTokenAndSaveRedis(Long userId) {
+    protected String createUserTokenAndSaveRedis(Long userId , String phone) {
         //创建token
         AccessToken accessToken = new AccessToken();
         accessToken.setUserId(userId);
+        accessToken.setPhone(phone);
 
         String userToken = authTokenComponent.createAccessToken(accessToken);
 
@@ -64,13 +66,14 @@ public class BaseUserService {
      * @param token
      * @return
      */
-    public Long checkTokenAndReturnUserId(String token) {
+    public UserInfo checkTokenAndReturnUserId(String token) {
         String accountId = JwtUtil.getAccountId(token);
+        String phone = JwtUtil.getPhone(token);
         if (StringUtils.isNotBlank(accountId)) {
             String key = String.format(RedisKey.REDIS_USER_TOKEN.getKey(), accountId);
             String tokenRes = String.valueOf(redisTemplate.opsForValue().get(key));
             if (StringUtils.isNotBlank(tokenRes) && !"null".equals(tokenRes)) {
-                return Long.valueOf(accountId);
+                return new UserInfo().setAccount(Long.valueOf(accountId)).setPhone(phone);
             }
         }
         throw new StarException(StarError.TOKEN_EXPIRED_ERROR);
