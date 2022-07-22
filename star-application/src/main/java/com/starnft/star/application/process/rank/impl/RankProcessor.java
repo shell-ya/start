@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @Date 2022/7/10 2:53 PM
@@ -75,6 +76,9 @@ public class RankProcessor implements IRankProcessor {
         //查询个人邀请记录
         List<InvitationHistoryItem> rankInvitation = rankService.getRankInvitation(getNowRank().getRankName(), historyReq.getCondition().getUserId(), historyReq.getPage(), historyReq.getSize());
 
+        //筛选是否有效 isValid为空不筛选
+        if (Objects.isNull(historyReq.getCondition().getIsValid())) return rankInvitation;
+        rankInvitation = rankInvitation.stream().filter(i -> historyReq.getCondition().getIsValid().equals(i.getValid())).collect(Collectors.toList());
         return rankInvitation;
     }
 

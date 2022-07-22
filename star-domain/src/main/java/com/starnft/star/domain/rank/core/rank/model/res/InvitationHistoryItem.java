@@ -1,5 +1,6 @@
 package com.starnft.star.domain.rank.core.rank.model.res;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.starnft.star.common.annotations.Desensitized;
 import com.starnft.star.common.enums.SensitiveTypeEnum;
 import io.swagger.annotations.ApiModel;
@@ -24,7 +25,9 @@ public class InvitationHistoryItem {
     @ApiModelProperty(value = "账户")
     private String account;
     @ApiModelProperty(value = "是否有效")
-    private Integer valid;
-//    @ApiModelProperty(value = "邀请时间")
-//    private Date InvitationTime;
+    private Integer valid  = 0;
+    @ApiModelProperty(value = "邀请时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
+    private Date InvitationTime;
+
 }
