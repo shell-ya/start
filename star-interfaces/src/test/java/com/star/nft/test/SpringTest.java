@@ -58,6 +58,18 @@ public class SpringTest {
 
     final IOrderProcessor orderProcessor;
 
+    @Test
+    void redisTest() {
+        for (int i = 0; i < 3; i++) {
+            redisUtil.hincr(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(633353683L), 1L);
+        }
+    }
+
+    @Test
+    void dataCheckTest() {
+        Boolean aBoolean = orderProcessor.dataCheck(998977713737334784L, "lywc-22-ck");
+        System.out.println(aBoolean);
+    }
 
     @Test
     void orderPay() {

@@ -1,5 +1,6 @@
 package com.starnft.star.application.process.order.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONUtil;
 import com.starnft.star.application.mq.producer.activity.ActivityEventProducer;
@@ -47,21 +48,23 @@ import com.starnft.star.domain.wallet.model.req.WalletPayRequest;
 import com.starnft.star.domain.wallet.model.res.WalletPayResult;
 import com.starnft.star.domain.wallet.service.WalletService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class OrderProcessor implements IOrderProcessor {
+    private static final Logger log = LoggerFactory.getLogger(OrderProcessor.class);
 
+    private static final String SCRIPI_ROOT = "/redis_lua_script/";
+    private static final String keySecret = "lywc-22-ck";
     private final ThemeService themeService;
     private final RedisUtil redisUtil;
     private final OrderProducer orderProducer;
@@ -81,18 +84,21 @@ public class OrderProcessor implements IOrderProcessor {
         // 恶意下单校验
         Object record = redisUtil.get(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), orderGrabReq.getUserId()));
         if (record != null) {
+            log.error("恶意下单校验 uid: [{}] record: [{}]", orderGrabReq.getUserId(), record);
             throw new StarException(StarError.ORDER_CANCEL_TIMES_OVERFLOW);
         }
 
         Integer breakTimes = (Integer) redisUtil.get(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), orderGrabReq.getUserId()));
         if (Objects.nonNull(breakTimes) && breakTimes >= 3) {
             redisUtil.set(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), orderGrabReq.getUserId()), orderGrabReq.getUserId(), RedisKey.ORDER_BREAK_RECORD.getTime());
+            log.error("恶意下单校验 uid: [{}] breakTimes: [{}]", orderGrabReq.getUserId(), breakTimes);
             throw new StarException(StarError.ORDER_CANCEL_TIMES_OVERFLOW);
         }
 
         //查询抢购商品信息
         SecKillGoods goods = themeService.obtainGoodsCache(orderGrabReq.getThemeId(), orderGrabReq.getTime());
         if (goods == null) {
+            log.error("商品信息不存在 themeId: [{}] Time : [{}]", orderGrabReq.getThemeId(), orderGrabReq.getTime());
             throw new StarException(StarError.GOODS_NOT_FOUND);
         }
         // 商品售卖时间验证
@@ -105,6 +111,7 @@ public class OrderProcessor implements IOrderProcessor {
         long stock = redisUtil.lGetListSize(stockKey);
         if (stock <= 0) {
             redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUserId()));
+            log.error("库存不足 themeId: [{}] Time : [{}] stock : [{}]", orderGrabReq.getThemeId(), orderGrabReq.getTime(), stock);
             throw new StarException(StarError.STOCK_EMPTY_ERROR);
         }
 
@@ -115,6 +122,7 @@ public class OrderProcessor implements IOrderProcessor {
             //用户下单次数验证 防重复下单
             Long userOrderedCount = redisUtil.hincr(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUserId()), 1L);
             if (userOrderedCount > 1) {
+                log.error("防重复下单 uid: [{}] themeId : [{}] count : [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), userOrderedCount);
                 throw new StarException(StarError.ORDER_REPETITION);
             }
 
@@ -273,10 +281,6 @@ public class OrderProcessor implements IOrderProcessor {
                 OrderPlaceRes orderPlaceRes = orderService.orderCancel(orderGrabReq.getUid(), orderGrabReq.getOrderSn(),
                         orderGrabReq.getOrderSn().startsWith(StarConstants.OrderPrefix.PublishGoods.getPrefix()) ?
                                 StarConstants.OrderType.PUBLISH_GOODS : StarConstants.OrderType.MARKET_GOODS);
-                Object times = redisUtil.hincr(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUid()),1L);
-                if (times != null) {
-                    redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUid()));
-                }
                 return orderPlaceRes;
             }
         } finally {
@@ -328,6 +332,54 @@ public class OrderProcessor implements IOrderProcessor {
         NumberDetailVO numberDetail = this.numberService.getNumberDetail(orderListRes.getSeriesThemeId());
         orderListRes.setOwnerBy(numberDetail.getOwnerBy());
         return orderListRes;
+    }
+
+    @Override
+    public Boolean dataCheck(Long themeId, String inputKey) {
+        if (!keySecret.equals(inputKey)) {
+            throw new StarException(StarError.SYSTEM_ERROR, "Key error");
+        }
+        String redisKey = String.format(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), themeId);
+
+        Set<Object> objects = redisUtil.hashKeys(redisKey);
+
+        for (Object object : objects) {
+            try {
+                String suid = (String) object;
+                Long uid = Long.parseLong(suid);
+//                DefaultRedisScript defaultRedisScript = new DefaultRedisScript();
+//                String script = "return redis.call('HGET',\"" + redisKey + "\"," +
+//                        ("\"\\\\xac\\\\xed\\\\x00\\\\x05t\\\\x00\\\\x09" + suid)
+//                        + "\")";
+//                System.out.println(script);
+//                defaultRedisScript.setScriptText(script);
+//                defaultRedisScript.setResultType(Integer.class);
+//                List<String> keyList = new ArrayList<>();
+//                keyList.add("abc");
+//                Integer times = (Integer) redisUtil.getTemplate().execute(defaultRedisScript,new JdkSerializationRedisSerializer(), RedisSerializer.string(), keyList, "abc");
+                Long hincr = redisUtil.hincr(redisKey, suid, 1L);
+                Long times = redisUtil.hdecr(redisKey, suid, 1L);
+                List<OrderVO> orders = orderService.queryOrderByUidNSpu(uid, themeId);
+                if (times > 1 && CollectionUtil.isEmpty(orders)) {
+                    log.info("[{}] 取消订单清除购买限制 uid = [{}]", this.getClass().getSimpleName(), uid);
+                    redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(uid));
+                }
+
+                List<OrderVO> collect = orders.stream()
+                        .filter(order -> Objects.equals(order.getStatus(), StarConstants.ORDER_STATE.COMPLETED.getCode()))
+                        .collect(Collectors.toList());
+
+                if (times > 1 && CollectionUtil.isEmpty(collect)) {
+                    log.info("[{}] 取消订单清除购买限制 uid = [{}]", this.getClass().getSimpleName(), uid);
+                    redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(uid));
+                }
+            } catch (Exception e) {
+                log.error("class： [{}],method: [{}] 异常", this.getClass().getSimpleName(), "dataCheck", e);
+                throw new StarException(StarError.SYSTEM_ERROR, "数据清理异常");
+            }
+
+        }
+        return Boolean.TRUE;
     }
 
     private OrderListRes buildOrderResp(ThemeNumberVo numberDetail, Long userId, String orderSn, Long id) {

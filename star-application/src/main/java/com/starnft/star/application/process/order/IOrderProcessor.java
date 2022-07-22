@@ -1,7 +1,6 @@
 package com.starnft.star.application.process.order;
 
 import com.starnft.star.application.process.number.req.MarketOrderReq;
-import com.starnft.star.application.process.number.res.MarketOrderRes;
 import com.starnft.star.application.process.order.model.req.OrderCancelReq;
 import com.starnft.star.application.process.order.model.req.OrderGrabReq;
 import com.starnft.star.application.process.order.model.req.OrderPayReq;
@@ -33,4 +32,7 @@ public interface IOrderProcessor {
     OrderListRes marketOrder(MarketOrderReq marketOrderReq);
 
     OrderListRes orderDetails(OrderListReq req);
+
+
+    Boolean dataCheck(Long themeId, String keySecret);
 }

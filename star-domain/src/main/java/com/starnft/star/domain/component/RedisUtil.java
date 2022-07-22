@@ -197,6 +197,11 @@ public class RedisUtil {
      */
     public Object hget(String key, String item) {
         return this.redisTemplate.opsForHash().get(key, item);
+
+    }
+
+    public RedisTemplate getTemplate() {
+        return this.redisTemplate;
     }
 
     /**
@@ -328,7 +333,7 @@ public class RedisUtil {
      * @param by   要减少记(小于0)
      * @return
      */
-    public double hdecr(String key, String item, double by) {
+    public Long hdecr(String key, String item, Long by) {
         return this.redisTemplate.opsForHash().increment(key, item, -by);
     }
 

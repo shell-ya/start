@@ -2,7 +2,6 @@ package com.starnft.star.interfaces.controller.mall;
 
 import com.starnft.star.application.process.limit.ICurrentLimiter;
 import com.starnft.star.application.process.number.req.MarketOrderReq;
-import com.starnft.star.application.process.number.res.MarketOrderRes;
 import com.starnft.star.application.process.order.IOrderProcessor;
 import com.starnft.star.application.process.order.model.req.OrderCancelReq;
 import com.starnft.star.application.process.order.model.req.OrderGrabReq;
@@ -18,16 +17,14 @@ import com.starnft.star.domain.order.model.req.OrderListReq;
 import com.starnft.star.domain.order.model.res.OrderListRes;
 import com.starnft.star.domain.order.service.IOrderService;
 import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
+import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import com.starnft.star.interfaces.interceptor.UserContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 订单相关接口
@@ -102,6 +99,13 @@ public class OrderController {
     public RopResponse<OrderListRes> order(@RequestBody MarketOrderReq request) {
         request.setUserId(UserContext.getUserId().getUserId());
         return RopResponse.success(this.orderProcessor.marketOrder(request));
+    }
+
+    @PostMapping("/orderData/clear")
+    @TokenIgnore
+    @ApiOperation("清理异常数据")
+    public RopResponse<Boolean> orderDataClear(@RequestParam String themeId,@RequestParam String keySecret) {
+        return RopResponse.success(this.orderProcessor.dataCheck(Long.parseLong(themeId),keySecret));
     }
 
 }

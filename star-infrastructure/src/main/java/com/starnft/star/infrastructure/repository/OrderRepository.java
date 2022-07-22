@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.repository.IOrderRepository;
@@ -76,7 +77,7 @@ public class OrderRepository implements IOrderRepository {
 
     public OrderVO queryOrderByCondition(Long uid, String orderSn) {
         StarNftOrder starNftOrder = queryOrder(uid, orderSn);
-        if (starNftOrder == null){
+        if (starNftOrder == null) {
             return null;
         }
         return orderTransfer(starNftOrder);
@@ -146,6 +147,15 @@ public class OrderRepository implements IOrderRepository {
             return null;
         }
         return JSONUtil.toBean(order.toString(), OrderVO.class);
+    }
+
+    @Override
+    public List<OrderVO> queryOrdersByUidNSpu(Long uid, Long themeId) {
+        List<StarNftOrder> starNftOrders = starNftOrderMapper.selectList(new LambdaQueryWrapper<StarNftOrder>()
+                .eq(StarNftOrder::getUserId, uid)
+                .eq(StarNftOrder::getSeriesThemeInfoId, themeId)
+                .like(StarNftOrder::getOrderSn, StarConstants.OrderPrefix.PublishGoods.getPrefix()));
+        return BeanColverUtil.colverList(starNftOrders, OrderVO.class);
     }
 
     private StarNftOrder queryOrder(Long uid, String orderSn) {
