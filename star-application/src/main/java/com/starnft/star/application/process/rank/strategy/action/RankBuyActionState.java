@@ -86,6 +86,7 @@ public class RankBuyActionState implements  IRankActionState {
             rankItemMetaData.setNickName(userInfo.getNickName());
             rankItemMetaData.setMobile(userInfo.getPhone());
             rankItemMetaData.setAvatar(userInfo.getAvatar());
+            rankItemMetaData.setInvitationTime(activityEventReq.getReqTime());
             return rankItemMetaData;
         }
         return null;

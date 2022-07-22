@@ -25,6 +25,6 @@ public class InvitationHistoryItem {
     private String account;
     @ApiModelProperty(value = "是否有效")
     private Integer valid;
-//    @ApiModelProperty(value = "邀请时间")
-//    private Date InvitationTime;
+    @ApiModelProperty(value = "邀请时间")
+    private Date InvitationTime;
 }
