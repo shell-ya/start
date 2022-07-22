@@ -56,7 +56,7 @@ rocketmq:
   name-server: rocketmq-8geezgooejbg.rocketmq.ap-gz.public.tencenttdmq.com:9876
   # 生产者配置
   producer:
-  # 生产者组名
+    # 生产者组名
     group: star-producer-group
     # 角色密钥
     access-key: eyJrZXlJZCI6InJvY2tldG1xLThnZWV6Z29vZWpiZyIsImFsZyI6IkhTMjU2In0.eyJzdWIiOiJyb2NrZXRtcS04Z2Vlemdvb2VqYmdfc3VwZXIifQ.r2CfEbotMkzf8JSc50xX650LkBfXpPAuZiqcZ0F9ijU
