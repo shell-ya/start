@@ -65,7 +65,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
         if (stockQueueId == null) {
             log.error("队列轮空 uid: [{}] goods : [{}]", userId, goods);
             //清理排队信息
-            redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.name(), userId);
+            redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), userId);
             //抢单失败
             redisUtil.hset(String.format(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), themeId),
                     String.valueOf(userId), JSONUtil.toJsonStr(new OrderGrabStatus(userId, -1, null, time)));
