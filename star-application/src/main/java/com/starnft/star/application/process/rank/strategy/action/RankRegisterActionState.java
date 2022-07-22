@@ -45,6 +45,10 @@ public class RankRegisterActionState implements IRankActionState {
             return;
         }
         UserInfo parentUser = iUserRepository.queryUserInfoByUserId(parent);
+        if (Objects.isNull(parentUser)){
+            log.info("未找到邀请人:{},用户id:{}",parent,rankItemMetaData.getChildrenId());
+            return;
+        }
         iRankService.setUserPhoneMapping(rankName,parent.toString(),parentUser.getPhone());
         iRankService.setUserPhoneMapping(rankName,rankItemMetaData.getChildrenId().toString(),rankItemMetaData.getMobile());
         iRankService.put(rankName, parent.toString(),number.doubleValue(),rankItemMetaData);
@@ -63,6 +67,7 @@ public class RankRegisterActionState implements IRankActionState {
             rankItemMetaData.setNickName(userInfo.getNickName());
             rankItemMetaData.setMobile(userInfo.getPhone());
             rankItemMetaData.setAvatar(userInfo.getAvatar());
+            rankItemMetaData.setInvitationTime(activityEventReq.getReqTime());
             return rankItemMetaData;
         }
         return null;

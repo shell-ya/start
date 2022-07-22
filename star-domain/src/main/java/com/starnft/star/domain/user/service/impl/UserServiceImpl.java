@@ -75,8 +75,9 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         accessToken.setUserId(userId);
 
         UserInfoVO userInfo = new UserInfoVO();
-        userInfo.setToken(this.createUserTokenAndSaveRedis(userId));
+        userInfo.setToken(this.createUserTokenAndSaveRedis(userId, req.getPhone()));
         userInfo.setUserId(userId);
+        userInfo.setPhone(req.getPhone());
 
         return userInfo;
     }
@@ -116,8 +117,9 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
         AccessToken accessToken = new AccessToken();
         accessToken.setUserId(userId);
-        userRegisterInfoVO.setToken(this.createUserTokenAndSaveRedis(userId));
+        userRegisterInfoVO.setToken(this.createUserTokenAndSaveRedis(userId, req.getPhone()));
         userRegisterInfoVO.setUserId(userId);
+        userRegisterInfoVO.setPhone(req.getPhone());
 
         return userRegisterInfoVO;
     }

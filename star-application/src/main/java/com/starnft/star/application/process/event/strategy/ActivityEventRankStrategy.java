@@ -63,28 +63,28 @@ public class ActivityEventRankStrategy implements ActivityEventStrategy {
 
     }
 
-
-    public static void main(String[] args) {
+//
+//    public static void main(String[] args) {
+////        @Data
+////        class Params{
+////            private String template;
+////            private BigDecimal scale;
+////            private Integer scopeType;
+////        }
 //        @Data
 //        class Params{
-//            private String template;
-//            private BigDecimal scale;
-//            private Integer scopeType;
+//            private String rankName;
+//          private Boolean  isCheckThemeId;
+//          private Long themeId;
+////            private Integer scopeType;
 //        }
-        @Data
-        class Params{
-            private String rankName;
-          private Boolean  isCheckThemeId;
-          private Long themeId;
-//            private Integer scopeType;
-        }
-        Params params = new Params();
-        params.setRankName("test_tank");
-        params.setIsCheckThemeId(true);
-        params.setThemeId(991131478355697664L);
-
-//        params.setTemplate("参加拉新活动获得%s积分");
-//        params.setScopeType(0);
-        System.out.println(JSONUtil.toJsonStr(params));
-    }
+//        Params params = new Params();
+//        params.setRankName("test_tank");
+//        params.setIsCheckThemeId(true);
+//        params.setThemeId(991131478355697664L);
+//
+////        params.setTemplate("参加拉新活动获得%s积分");
+////        params.setScopeType(0);
+//        System.out.println(JSONUtil.toJsonStr(params));
+//    }
 }

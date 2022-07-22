@@ -6,6 +6,8 @@ package com.starnft.star.common.constant;
 public class StarConstants {
 
     public static final String USER_ID = "userId";
+    public static final String PHONE = "phone";
+
     public static final Integer INIT_VERSION = 0;
 
     /**

@@ -8,7 +8,7 @@ public class UserContext {
 
     public static ThreadLocal<UserResolverInfo> threadLocal = new ThreadLocal();
 
-    public static void setUserId(UserResolverInfo userResolverInfo){
+    public static void setUserResolverInfo(UserResolverInfo userResolverInfo){
         threadLocal.set(userResolverInfo);
     }
 

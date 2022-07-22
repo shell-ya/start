@@ -1,11 +1,13 @@
 package com.starnft.star.domain.user.model.vo;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 
 /**
  * @author LaIWeiChun
  */
+@Accessors(chain = true)
 @Data
 public class UserInfo {
 

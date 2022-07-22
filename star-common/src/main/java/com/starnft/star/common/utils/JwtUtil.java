@@ -1,6 +1,7 @@
 package com.starnft.star.common.utils;
 
 
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import io.fusionauth.jwt.JWTExpiredException;
@@ -47,6 +48,21 @@ public class JwtUtil {
         JWT jwt = parseJwt(token);
         //获取AccountName
         return jwt.getAllClaims().get("userId").toString();
+    }
+
+    /**
+     * 获取手机号
+     *
+     * @param token token
+     * @return phone
+     */
+    public static String getPhone(String token) {
+        JWT jwt = parseJwt(token);
+        if (jwt.getAllClaims().containsKey(StarConstants.PHONE)){
+            //获取手机号
+            return jwt.getAllClaims().get(StarConstants.PHONE).toString();
+        }
+        return null;
     }
 
 
