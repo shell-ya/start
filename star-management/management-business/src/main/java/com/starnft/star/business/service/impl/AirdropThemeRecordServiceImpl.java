@@ -3,6 +3,7 @@ package com.starnft.star.business.service.impl;
 import com.starnft.star.business.domain.AirdropThemeRecord;
 import com.starnft.star.business.domain.StarNftThemeNumber;
 import com.starnft.star.business.domain.StarNftUserTheme;
+import com.starnft.star.business.domain.dto.AirdropRecordDto;
 import com.starnft.star.business.mapper.AirdropThemeRecordMapper;
 import com.starnft.star.business.mapper.StarNftThemeNumberMapper;
 import com.starnft.star.business.mapper.StarNftUserThemeMapper;
@@ -91,5 +92,13 @@ public class AirdropThemeRecordServiceImpl implements IAirdropThemeRecordService
         record.setCreatedBy(record.getUserId().toString());
         record.setIsDeleted(0);
         return recordMapper.insert(record) == 1;
+    }
+
+    /**
+     * 单个用户 多个藏品
+     * 多个用户 多个藏品
+     */
+    public void airdropProcess(AirdropRecordDto airdropRecordDto){
+
     }
 }
