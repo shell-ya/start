@@ -28,6 +28,5 @@ public class InvitationHistoryItem {
     private Integer valid  = 0;
     @ApiModelProperty(value = "邀请时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
-    private Date InvitationTime;
-
+    private Date invitationTime;
 }

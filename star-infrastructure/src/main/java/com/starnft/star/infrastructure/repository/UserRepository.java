@@ -329,7 +329,8 @@ public class UserRepository implements IUserRepository {
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("account", account);
         queryWrapper.eq("is_deleted", Boolean.FALSE);
-        return this.userInfoMapper.selectOne(queryWrapper).getCreatedAt();
-
+        UserInfoEntity userInfoEntity = this.userInfoMapper.selectOne(queryWrapper);
+        if (Objects.isNull(userInfoEntity)) return null;
+        return userInfoEntity.getCreatedAt();
     }
 }
