@@ -12,6 +12,7 @@ import com.starnft.star.domain.rank.core.rank.model.res.InvitationHistoryItem;
 import com.starnft.star.domain.rank.core.rank.model.res.InvitationItem;
 import com.starnft.star.domain.rank.core.rank.model.res.Rankings;
 import com.starnft.star.domain.rank.core.rank.model.res.RankingsItem;
+import com.starnft.star.domain.user.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.ListUtils;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -31,7 +32,8 @@ public class RankServiceImpl implements IRankService {
     @Autowired
     @Qualifier("RankRedisTemplate")
     private RedisTemplate redisTemplate;
-
+    @Autowired
+    private IUserService iUserService;
     @Override
     public boolean createRank(String rankName, RankDefinition rankDefinition) {
         return redisTemplate.opsForHash().putIfAbsent(RedisKey.RANK_LIST.getKey(), rankName, JSONUtil.toJsonStr(rankDefinition));
@@ -188,6 +190,7 @@ public class RankServiceImpl implements IRankService {
 //            Map.Entry<Object, Object> validEntry = valid.hasNext() ? valid.next() : null;
             InvitationHistoryItem item = JSONUtil.toBean(totalEntry.getValue().toString(), InvitationHistoryItem.class);
             item.setAccount(totalEntry.getKey().toString());
+            item.setValid(iUserService.isCertification((Long) totalEntry.getKey()) ? 1 : 0);
             if (validKeys.contains(totalEntry.getKey())){
                 item.setValid(2);
             }
