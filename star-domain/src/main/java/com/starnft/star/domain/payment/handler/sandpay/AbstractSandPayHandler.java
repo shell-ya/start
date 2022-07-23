@@ -93,6 +93,9 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
         String endTime = instance.getEndTime();
         String sign = super.processTemplate(signTempPath, paymentRich, vendorConf,startTime,endTime).toUpperCase();
         vendorConf.put("sign",sign);
+        if (Objects.isNull(paymentRich.getPlatform())){
+            paymentRich.setPlatform(StarConstants.PlatformEnums.Web);
+        }
         if (!paymentRich.getPlatform().equals(StarConstants.PlatformEnums.Web)){
             String resTempPath = channelConf.getResTempPath();
             String result = super.processTemplate(resTempPath, paymentRich, vendorConf, startTime, endTime);
