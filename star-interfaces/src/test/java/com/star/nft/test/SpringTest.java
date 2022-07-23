@@ -56,9 +56,9 @@ public class SpringTest {
 
     @Test
     void redisTest() {
-        for (int i = 0; i < 3; i++) {
-            redisUtil.hincr(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(633353683L), 1L);
-        }
+//        for (int i = 0; i < 3; i++) {
+//            redisUtil.hincr(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(633353683L), 1L);
+//        }
     }
 
     @Test

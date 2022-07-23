@@ -1,6 +1,8 @@
 package com.starnft.star.domain.prop.repository;
 
 
+import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.domain.prop.model.req.PropShopListReq;
 import com.starnft.star.domain.prop.model.req.PropsListReq;
 import com.starnft.star.domain.prop.model.res.PropsListRes;
 import com.starnft.star.domain.prop.model.vo.PropsRelationVO;
@@ -19,4 +21,6 @@ public interface IPropsRepository {
     Boolean modifyPropsNums(Long id, Long uid, Long propId, Integer counts);
 
     List<PropsVO> propsList();
+
+    ResponsePageResult<PropsVO> propsShopList(PropShopListReq propShopListReq);
 }

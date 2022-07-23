@@ -181,24 +181,29 @@ public class RankServiceImpl implements IRankService {
     @Override
     public List<InvitationHistoryItem> getRankInvitation(String rankName, Long userId,int page,int pageSize) {
 
-        Cursor<Map.Entry<Object,Object>> total = redisTemplate.opsForHash().scan(String.format(RedisKey.RANK_TOTAL_USER.getKey(), rankName,userId), ScanOptions.NONE);
-//        Cursor<Map.Entry<Object,Object>> valid = redisTemplate.opsForHash().scan(String.format(RedisKey.RANK_VALID_USER.getKey(), rankName,userId), ScanOptions.NONE);
-        Set validKeys = redisTemplate.opsForHash().keys(String.format(RedisKey.RANK_VALID_USER.getKey(), rankName, userId));
         ArrayList<InvitationHistoryItem> items = Lists.newArrayList();
+        try{
+        Cursor<Map.Entry<Object,Object>> total = redisTemplate.opsForHash().scan(String.format(RedisKey.RANK_TOTAL_USER.getKey(), rankName,userId), ScanOptions.NONE);
+        Set validKeys = redisTemplate.opsForHash().keys(String.format(RedisKey.RANK_VALID_USER.getKey(), rankName, userId));
+
         while (total.hasNext()){
             Map.Entry<Object, Object> totalEntry = total.next();
-//            Map.Entry<Object, Object> validEntry = valid.hasNext() ? valid.next() : null;
             InvitationHistoryItem item = JSONUtil.toBean(totalEntry.getValue().toString(), InvitationHistoryItem.class);
             item.setAccount(totalEntry.getKey().toString());
-            item.setValid(iUserService.isCertification((Long) totalEntry.getKey()) ? 1 : 0);
+            boolean isCretification = false;
+            try {
+                isCretification = iUserService.isCertification(Long.valueOf((String) totalEntry.getKey()));
+            }catch (Exception e){
+
+            }
+            item.setValid(isCretification ? 1 : 0);
             if (validKeys.contains(totalEntry.getKey())){
                 item.setValid(2);
             }
             items.add(item);
         }
-        try{
+
             total.close();
-//            valid.close();
         }catch (Exception e){
             log.error("游标关闭异常",e);
             throw new StarException(StarError.SYSTEM_ERROR);

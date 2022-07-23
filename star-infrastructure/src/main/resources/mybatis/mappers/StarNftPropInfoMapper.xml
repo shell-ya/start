@@ -17,27 +17,61 @@
         <result property="propDesc" column="prop_desc" jdbcType="VARCHAR"/>
         <result property="execution" column="execution" jdbcType="VARCHAR"/>
 <!--        <result property="onSell" column="on_sell" jdbcType="INTEGER"/>-->
+<!--        <result property="canBuy" column="can_buy" jdbcType="INTEGER"/>-->
 <!--        <result property="price" column="price" jdbcType="DECIMAL"/>-->
+<!--        <result property="stock" column="stock" jdbcType="INTEGER"/>-->
     </resultMap>
+
+    <sql id="select_list">
+        id
+        , is_deleted
+             , created_at
+             , created_by
+             , modified_at
+             , modified_by
+             , prop_type
+             , prop_name
+             , prop_level
+             , expire
+             , prop_icon
+             , prop_time
+             , prop_desc
+             , execution
+--              , on_sell
+--              , can_buy
+--              , price
+--              , stock
+    </sql>
 
     <!-- 通过ID查询单条数据 -->
     <select id="queryById" resultMap="StarNftPropInfoMap">
         select
-            id,is_deleted,created_at,created_by,modified_at,modified_by,prop_type,prop_name,prop_level,expire,prop_icon,prop_time,prop_desc,execution
---              ,on_sell,price
+        <include refid="select_list"/>
         from star_nft_prop_info
         where id = #{id}
     </select>
 
     <select id="queryAll" resultMap="StarNftPropInfoMap">
         select
-            id,is_deleted,created_at,created_by,modified_at,modified_by,prop_type,prop_name,prop_level,expire,prop_icon,prop_time,prop_desc,execution
---              ,on_sell,price
+        <include refid="select_list"/>
         from star_nft_prop_info
+    </select>
+
+    <select id="queryShopList" resultMap="StarNftPropInfoMap">
+        select
+        <include refid="select_list"/>
+        from star_nft_prop_info
+        <where>
+            <if test="onSell != null ">
+                on_sell = #{onSell}
+            </if>
+        </where>
     </select>
 
     <!--通过主键删除-->
     <delete id="deleteById">
-        delete from star_nft_prop_info where id = #{id}
+        delete
+        from star_nft_prop_info
+        where id = #{id}
     </delete>
 </mapper>

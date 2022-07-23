@@ -1,6 +1,8 @@
 package com.starnft.star.domain.prop.service.impl;
 
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.domain.prop.model.req.PropShopListReq;
 import com.starnft.star.domain.prop.model.req.PropsConsumptionReq;
 import com.starnft.star.domain.prop.model.req.PropsListReq;
 import com.starnft.star.domain.prop.model.res.PropsListRes;
@@ -37,6 +39,11 @@ public class PropsService implements IPropsService {
     @Override
     public List<PropsVO> propsList() {
         return propsRepository.propsList();
+    }
+
+    @Override
+    public ResponsePageResult<PropsVO> propsShopList(PropShopListReq propShopListReq) {
+        return propsRepository.propsShopList(propShopListReq);
     }
 
     @Override
