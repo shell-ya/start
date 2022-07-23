@@ -482,6 +482,38 @@ public class StarConstants {
         }
     }
 
+    public enum PropsLevel {
+
+        NORMAL(1, "普通"),
+        BOUTIQUE(2, "精品"),
+        BEST(3, "极品"),
+        LEGEND(4, "传说"),
+        ;
+        private Integer code;
+        private String desc;
+
+        PropsLevel(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public void setCode(Integer code) {
+            this.code = code;
+        }
+    }
+
     public enum PlatformEnums {
         Android,
         Ios,

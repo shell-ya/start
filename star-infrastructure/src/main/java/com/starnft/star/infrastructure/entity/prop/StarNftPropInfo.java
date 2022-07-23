@@ -68,10 +68,22 @@ public class StarNftPropInfo extends BaseEntity implements Serializable {
     private Integer onSell;
 
     /**
+     * 是否可以购买
+     */
+    @ApiModelProperty(name = "是否可以购买", notes = "")
+    private Integer canBuy;
+
+    /**
      * 出售价格
      */
     @ApiModelProperty(name = "出售价格", notes = "")
     private BigDecimal price;
+
+    /**
+     * 出售数量 -1 不限量
+     */
+    @ApiModelProperty(name = "出售数量 -1 不限量", notes = "")
+    private BigDecimal stock;
 
     public Long getId() {
         return id;
@@ -153,11 +165,27 @@ public class StarNftPropInfo extends BaseEntity implements Serializable {
         this.onSell = onSell;
     }
 
+    public Integer getCanBuy() {
+        return canBuy;
+    }
+
+    public void setCanBuy(Integer canBuy) {
+        this.canBuy = canBuy;
+    }
+
     public BigDecimal getPrice() {
         return price;
     }
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public BigDecimal getStock() {
+        return stock;
+    }
+
+    public void setStock(BigDecimal stock) {
+        this.stock = stock;
     }
 }

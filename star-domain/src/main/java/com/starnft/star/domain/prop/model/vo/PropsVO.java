@@ -1,5 +1,6 @@
 package com.starnft.star.domain.prop.model.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -39,6 +40,7 @@ public class PropsVO implements Serializable {
      * 道具过期时间
      */
     @ApiModelProperty(name = "道具过期时间", notes = "")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private Date expire;
     /**
      * 道具图标
@@ -49,6 +51,7 @@ public class PropsVO implements Serializable {
      * 道具可使用时间
      */
     @ApiModelProperty(name = "道具可使用时间", notes = "")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private Date propTime;
     /**
      * 道具描述
@@ -74,4 +77,16 @@ public class PropsVO implements Serializable {
      */
     @ApiModelProperty(name = "出售价格", notes = "")
     private BigDecimal price;
+
+    /**
+     * 是否可以购买
+     */
+    @ApiModelProperty(name = "是否可以购买", notes = "")
+    private Integer canBuy;
+
+    /**
+     * 出售数量 -1 不限量
+     */
+    @ApiModelProperty(name = "出售数量 -1 不限量", notes = "")
+    private BigDecimal stock;
 }

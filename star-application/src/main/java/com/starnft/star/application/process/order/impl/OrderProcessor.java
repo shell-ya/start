@@ -108,8 +108,10 @@ public class OrderProcessor implements IOrderProcessor {
 
         //库存验证
         String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), orderGrabReq.getThemeId());
+        String poolKey = String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), orderGrabReq.getThemeId());
         long stock = redisUtil.lGetListSize(stockKey);
-        if (stock <= 0) {
+        long poolStock = redisUtil.sGetSetSize(poolKey);
+        if ((stock + poolStock) <= 0) {
             redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUserId()));
             log.error("库存不足 themeId: [{}] Time : [{}] stock : [{}]", orderGrabReq.getThemeId(), orderGrabReq.getTime(), stock);
             throw new StarException(StarError.STOCK_EMPTY_ERROR);
