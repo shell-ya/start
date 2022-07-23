@@ -58,6 +58,7 @@ public class RankController {
 
     @ApiOperation("邀请记录")
     @PostMapping("/history")
+    @TokenIgnore
     public RopResponse< List<InvitationHistoryItem>> history(@RequestBody RequestConditionPage<RankReq> request){
 //        InvitationHistory invitationHistory = new InvitationHistory();
 //        List<InvitationHistoryItem> items = new ArrayList<>();
@@ -69,7 +70,7 @@ public class RankController {
 //            items.add(item);
 //        }
 //        invitationHistory.setItems(items);
-        request.getCondition().setUserId(UserContext.getUserId().getUserId());
+//        request.getCondition().setUserId(UserContext.getUserId().getUserId());
         return RopResponse.success(rankProcessor.invitationHistory(request));
     }
 
