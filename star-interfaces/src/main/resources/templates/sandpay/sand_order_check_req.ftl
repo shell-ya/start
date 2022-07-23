@@ -6,7 +6,7 @@
 "head":
 {
 "method":"sandpay.trade.query",
-"productId":"00000030",
+"productId":"00000018",
 "mid":"${param2.mid}",
 "channelType":"08",
 "reqTime":"${helper.getCurrentTime()}",
