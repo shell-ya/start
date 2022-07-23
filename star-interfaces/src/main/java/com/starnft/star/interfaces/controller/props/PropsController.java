@@ -1,6 +1,8 @@
 package com.starnft.star.interfaces.controller.props;
 
 import com.starnft.star.common.RopResponse;
+import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.domain.prop.model.req.PropShopListReq;
 import com.starnft.star.domain.prop.model.req.PropsListReq;
 import com.starnft.star.domain.prop.model.res.PropsListRes;
 import com.starnft.star.domain.prop.model.vo.PropsVO;
@@ -11,10 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -36,10 +35,17 @@ public class PropsController {
 
 
     @ApiOperation("用户道具详情")
-    @PostMapping("/details")
+    @PostMapping("/details/{propsId}")
     @TokenIgnore
-    public RopResponse<PropsVO> details(@RequestParam("propsId") String propsId) {
+    public RopResponse<PropsVO> details(@PathVariable("propsId") String propsId) {
         return RopResponse.success(this.propsService.queryPropsDetails(Long.parseLong(propsId)));
+    }
+
+    @ApiOperation("道具商城列表")
+    @PostMapping("/shop/list")
+    @TokenIgnore
+    public RopResponse<ResponsePageResult<PropsVO>> shopList(@RequestBody PropShopListReq propShopListReq) {
+        return RopResponse.success(this.propsService.propsShopList(propShopListReq));
     }
 
 
