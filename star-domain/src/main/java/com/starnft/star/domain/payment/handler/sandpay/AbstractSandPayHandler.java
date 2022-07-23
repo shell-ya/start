@@ -127,9 +127,8 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
                 Base64.decodeBase64(sign), sdKeysHelper.getPublicKey(), "SHA1WithRSA");
 
         if (!valid) throw new RuntimeException("签名校验出错");
-
+        log.info("查单返回解密报文：{}",respData);
         JSONObject resObj = JSONUtil.parseObj(respData);
-
         String resModel = super.processTemplate(channelConf.getResTempPath(), resObj, vendorConf,new Date(),new Date());
         RemoteRes remoteRes = JSON.parseObject(resModel, RemoteRes.class);
 
