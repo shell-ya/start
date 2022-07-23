@@ -28,11 +28,17 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class Knife4jConfiguration {
     @Value("${swagger.packages}")
     private  String packages;
+
+    /** 是否开启swagger */
+    @Value("${swagger.enabled}")
+    private boolean enabled;
+
     @Bean
     public Docket createRestApi() {
          log.info("---------{}----------",packages);
         Predicate<RequestHandler> requestHandlerPredicate = RequestHandlerSelectors.basePackage(packages);
         return new Docket(DocumentationType.SWAGGER_2)
+                .enable(enabled)
                 .useDefaultResponseMessages(false)
                 .apiInfo(apiInfo())
                 .select()

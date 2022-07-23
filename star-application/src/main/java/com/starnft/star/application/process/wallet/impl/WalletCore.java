@@ -294,12 +294,13 @@ public class WalletCore implements IWalletCore {
             integers.add(1);
             req.setTransactionType(integers);
             req.setPage(1);
-            req.setSize(1000);
+            req.setSize(2000);
             req.setPayStatus(StarConstants.Pay_Status.PAY_ING.name());
             ResponsePageResult<WalletRecordVO> walletRecordVOResponsePageResult =
                     walletService.queryTransactionRecord(req);
             //遍历去查单
             List<WalletRecordVO> list = walletRecordVOResponsePageResult.getList();
+            log.info("支付中充值订单数量:{}",list.size());
             for (WalletRecordVO walletRecordVO : list) {
                 Long uid = walletRecordVO.getToUid();
                 TxResultRes txResultRes = queryTxResult(new TxResultReq(uid, walletRecordVO.getPayChannel(), walletRecordVO.getRecordSn()));
