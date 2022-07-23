@@ -1,6 +1,7 @@
 package com.starnft.star.admin.web.core.config;
 
 import com.starnft.star.common.config.RuoYiConfig;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,9 +51,11 @@ public class SwaggerConfig
                 .apiInfo(apiInfo())
                 // 设置哪些接口暴露给Swagger展示
                 .select()
+//                .gr(globalRequestParameters())
+                //.apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 // 扫描所有有注解的api，用这种方式更灵活
-//                .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
-                .apis(RequestHandlerSelectors.basePackage("com.starnft.star.web.controller"))
+//
+               .apis(RequestHandlerSelectors.basePackage("com.starnft.star"))
                 // 扫描指定包中的swagger注解
                 // .apis(RequestHandlerSelectors.basePackage("com.starnft.star.project.tool.swagger"))
                 // 扫描所有 .apis(RequestHandlerSelectors.any())
@@ -61,7 +64,7 @@ public class SwaggerConfig
                 /* 设置安全模式，swagger可以设置访问token */
                 .securitySchemes(securitySchemes())
                 .securityContexts(securityContexts())
-                .pathMapping(pathMapping);
+                 .pathMapping(pathMapping);
     }
 
     /**

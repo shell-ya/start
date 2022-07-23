@@ -1,6 +1,9 @@
 package com.starnft.star.business.service.impl;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.starnft.star.business.mapper.StarNftPromoteRecordMapper;
@@ -14,7 +17,7 @@ import com.starnft.star.business.service.IStarNftPromoteRecordService;
  * @date 2022-07-23
  */
 @Service
-public class StarNftPromoteRecordServiceImpl implements IStarNftPromoteRecordService
+public class StarNftPromoteRecordServiceImpl  implements IStarNftPromoteRecordService
 {
     @Autowired
     private StarNftPromoteRecordMapper starNftPromoteRecordMapper;
@@ -54,7 +57,12 @@ public class StarNftPromoteRecordServiceImpl implements IStarNftPromoteRecordSer
     {
         return starNftPromoteRecordMapper.insertStarNftPromoteRecord(starNftPromoteRecord);
     }
+    @Override
+    public int insertStarNftPromoteRecordBatch(List<StarNftPromoteRecord> starNftPromoteRecord)
+    {
+        return  starNftPromoteRecordMapper.insertStarNftPromoteRecordBatch(starNftPromoteRecord);
 
+    }
     /**
      * 修改推广记录
      *

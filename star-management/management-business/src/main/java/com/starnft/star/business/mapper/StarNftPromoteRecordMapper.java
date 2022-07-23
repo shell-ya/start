@@ -1,7 +1,10 @@
 package com.starnft.star.business.mapper;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.starnft.star.business.domain.StarNftPromoteRecord;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 推广记录Mapper接口
@@ -34,6 +37,7 @@ public interface StarNftPromoteRecordMapper
      * @return 结果
      */
     public int insertStarNftPromoteRecord(StarNftPromoteRecord starNftPromoteRecord);
+    public int insertStarNftPromoteRecordBatch(@Param("arrays") List<StarNftPromoteRecord> starNftPromoteRecord);
 
     /**
      * 修改推广记录

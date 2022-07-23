@@ -1,17 +1,16 @@
 package com.starnft.star.admin.web.controller.business;
 
 import java.util.List;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+
+import com.starnft.star.business.service.IPromoteService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.SneakyThrows;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.starnft.star.common.annotation.Log;
 import com.starnft.star.common.core.controller.BaseController;
 import com.starnft.star.common.core.domain.AjaxResult;
@@ -20,6 +19,7 @@ import com.starnft.star.business.domain.StarNftPromoteRecord;
 import com.starnft.star.business.service.IStarNftPromoteRecordService;
 import com.starnft.star.common.utils.poi.ExcelUtil;
 import com.starnft.star.common.core.page.TableDataInfo;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 推广记录Controller
@@ -28,12 +28,21 @@ import com.starnft.star.common.core.page.TableDataInfo;
  * @date 2022-07-23
  */
 @RestController
+@Api("推广管理")
 @RequestMapping("/promote/promoteRecord")
 public class StarNftPromoteRecordController extends BaseController
 {
     @Autowired
     private IStarNftPromoteRecordService starNftPromoteRecordService;
 
+    @Resource
+    IPromoteService promoteService;
+    @PostMapping("promoteExcel")
+    @SneakyThrows
+    @ApiOperation(tags = "Excel导入推广",value = "Excel导入推广")
+    public AjaxResult promoteExcel(@RequestParam("file") MultipartFile file, @RequestParam("context") String context, @RequestParam("types") Integer types){
+        return   AjaxResult.success( promoteService.promoteExcel(file.getInputStream(),context,types));
+    }
     /**
      * 查询推广记录列表
      */

@@ -40,6 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="display != null "> and display = #{display}</if>
             <if test="channel != null  and channel != ''"> and channel = #{channel}</if>
         </where>
+        order by  id desc
     </select>
 
     <select id="selectStarNftWalletLogById" parameterType="Long" resultMap="StarNftWalletLogResult">

@@ -1,6 +1,8 @@
 package com.starnft.star.business.service;
 
 import java.util.List;
+
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.starnft.star.business.domain.StarNftPromoteRecord;
 
 /**
@@ -34,6 +36,7 @@ public interface IStarNftPromoteRecordService
      * @return 结果
      */
     public int insertStarNftPromoteRecord(StarNftPromoteRecord starNftPromoteRecord);
+    public int insertStarNftPromoteRecordBatch(List<StarNftPromoteRecord> starNftPromoteRecord);
 
     /**
      * 修改推广记录

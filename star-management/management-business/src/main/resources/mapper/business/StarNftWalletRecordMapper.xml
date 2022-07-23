@@ -50,6 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="payStatus != null  and payStatus != ''"> and pay_status = #{payStatus}</if>
             <if test="payTime != null "> and pay_time = #{payTime}</if>
         </where>
+        order by  id desc
     </select>
 
     <select id="selectStarNftWalletRecordById" parameterType="Long" resultMap="StarNftWalletRecordResult">
