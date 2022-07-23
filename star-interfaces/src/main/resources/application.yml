@@ -26,3 +26,4 @@ mybatis-plus:
     log-impl: com.starnft.star.interfaces.config.StdOutImpl
 swagger:
     packages: com.starnft.star
+    enabled: true

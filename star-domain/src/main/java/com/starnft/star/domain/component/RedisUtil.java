@@ -197,6 +197,11 @@ public class RedisUtil {
      */
     public Object hget(String key, String item) {
         return this.redisTemplate.opsForHash().get(key, item);
+
+    }
+
+    public RedisTemplate getTemplate() {
+        return this.redisTemplate;
     }
 
     /**
@@ -328,7 +333,7 @@ public class RedisUtil {
      * @param by   要减少记(小于0)
      * @return
      */
-    public double hdecr(String key, String item, double by) {
+    public Long hdecr(String key, String item, Long by) {
         return this.redisTemplate.opsForHash().increment(key, item, -by);
     }
 
@@ -343,6 +348,21 @@ public class RedisUtil {
     public Set<Serializable> sGet(String key) {
         try {
             return this.redisTemplate.opsForSet().members(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * 根据key获取Set中随机值
+     *
+     * @param key 键
+     * @return
+     */
+    public Serializable spop(String key) {
+        try {
+            return this.redisTemplate.opsForSet().pop(key);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

@@ -1,6 +1,7 @@
 package com.starnft.star.interfaces.config;
 
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -18,10 +19,13 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class Swagger2Configure {
-
+    /** 是否开启swagger */
+    @Value("${swagger.enabled}")
+    private boolean enabled;
     @Bean
     public Docket webApiConfig(){
         return new Docket(DocumentationType.SWAGGER_2)
+                .enable(enabled)
                 .groupName("star")
                 .select()
                 //withMethodAnnotation使用ApiOperation这个注解的接口，才会生成文档

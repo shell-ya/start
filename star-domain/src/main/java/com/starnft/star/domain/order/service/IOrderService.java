@@ -8,6 +8,8 @@ import com.starnft.star.domain.order.model.vo.MarketCancelOrderVo;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
 
+import java.util.List;
+
 public interface IOrderService {
 
     //下单
@@ -27,5 +29,7 @@ public interface IOrderService {
     OrderPlaceRes orderCancel(Long uid, String orderSn, StarConstants.OrderType orderType);
 
     boolean cancelOrder(MarketCancelOrderVo cancelOrderVo);
+
+    List<OrderVO> queryOrderByUidNSpu(Long uid, Long spu);
 
 }

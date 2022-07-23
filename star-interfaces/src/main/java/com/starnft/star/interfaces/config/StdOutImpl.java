@@ -46,7 +46,7 @@ public class StdOutImpl implements Log {
 
     @Override
     public void trace(String s) {
-//        log.trace(s);
+        log.trace(s);
     }
 
     @Override

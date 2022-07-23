@@ -56,4 +56,12 @@ public class TransactionRecordQueryReq extends RequestPage implements Serializab
     public void setTransactionType(List<Integer> transactionType) {
         this.transactionType = transactionType;
     }
+
+    public void setPayStatus(String payStatus){
+        this.payStatus = payStatus;
+    }
+
+    public String getPayStatus(){
+        return payStatus;
+    }
 }

@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -110,9 +111,10 @@ public class OrderService implements IOrderService {
                 //清理用户订单缓存
                 redisUtil.hdel(String.format(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), orderVO.getSeriesThemeInfoId()), String.valueOf(uid));
                 //清理排队信息
-                redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.name(), String.valueOf(uid));
-            }else if (orderType.equals(StarConstants.OrderType.MARKET_GOODS)){
-                redisLockUtils.unlock(String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(),orderVO.getSeriesThemeId()));
+                log.info("[{}] 取消订单清除购买限制 uid = [{}]", this.getClass().getSimpleName(), uid);
+                redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(uid));
+            } else if (orderType.equals(StarConstants.OrderType.MARKET_GOODS)) {
+                redisLockUtils.unlock(String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), orderVO.getSeriesThemeId()));
             }
             return new OrderPlaceRes(StarConstants.ORDER_STATE.PAY_CANCEL.getCode(), orderSn);
         }
@@ -137,4 +139,11 @@ public class OrderService implements IOrderService {
         return this.orderRepository.updateOrder(cancelOrderVo.getUid(), cancelOrderVo.getOrderSn(),
                 StarConstants.ORDER_STATE.PAY_CANCEL.getCode(), null);
     }
+
+    @Override
+    public List<OrderVO> queryOrderByUidNSpu(Long uid, Long spu) {
+        return orderRepository.queryOrdersByUidNSpu(uid, spu);
+    }
+
+
 }

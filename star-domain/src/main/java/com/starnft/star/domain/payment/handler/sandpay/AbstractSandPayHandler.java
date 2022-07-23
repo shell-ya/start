@@ -28,7 +28,6 @@ import org.springframework.http.HttpHeaders;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -131,8 +130,7 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
                 .formData(req).httpHeaders(new HttpHeaders())
                 .restMethod(StarRequestMethod.POST_FORM)
                 .url(channelConf.getHttpConf().getApiUrl()).build(), () -> null);
-        log.info("请求地址：「{}」",channelConf.getHttpConf().getApiUrl());
-        log.info("查单返回报文：{}",context);
+
         //参数解密
         String result = URLDecoder.decode(Objects.requireNonNull(context), "utf-8");
         Map<String, String> data = TemplateHelper.getInstance().convertResultStringToMap(result);
