@@ -25,10 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -75,7 +72,7 @@ public class RankProcessor implements IRankProcessor {
     public  List<InvitationHistoryItem> invitationHistory(RequestConditionPage<RankReq> historyReq) {
         //查询个人邀请记录
         List<InvitationHistoryItem> rankInvitation = rankService.getRankInvitation(getNowRank().getRankName(), historyReq.getCondition().getUserId(), historyReq.getPage(), historyReq.getSize());
-
+        rankInvitation = rankInvitation.stream().sorted(Comparator.comparing(InvitationHistoryItem::getInvitationTime,Comparator.nullsLast(Comparator.reverseOrder()))).collect(Collectors.toList());
         //筛选是否有效 isValid为空不筛选
         if (Objects.isNull(historyReq.getCondition().getIsValid())) return rankInvitation;
         rankInvitation = rankInvitation.stream().filter(i -> historyReq.getCondition().getIsValid().equals(i.getValid())).collect(Collectors.toList());

@@ -189,7 +189,7 @@ public class RankServiceImpl implements IRankService {
             InvitationHistoryItem item = JSONUtil.toBean(totalEntry.getValue().toString(), InvitationHistoryItem.class);
             item.setAccount(totalEntry.getKey().toString());
             if (validKeys.contains(totalEntry.getKey())){
-                item.setValid(1);
+                item.setValid(2);
             }
             items.add(item);
         }

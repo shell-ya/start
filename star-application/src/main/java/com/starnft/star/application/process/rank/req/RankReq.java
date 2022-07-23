@@ -19,6 +19,6 @@ public class RankReq {
     @ApiModelProperty(value = "用户id")
     private Long userId;
 
-    @ApiModelProperty(value = "是否有效 0 失效 1 有效 不传返回全部")
+    @ApiModelProperty(value = "是否有效 0(未实名) 1（已经实名）2（有效邀请） 不传返回全部")
     private Integer isValid;
 }

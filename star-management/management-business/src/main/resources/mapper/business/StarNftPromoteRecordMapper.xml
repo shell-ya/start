@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.StarNftPromoteRecordMapper">
+
+    <resultMap type="StarNftPromoteRecord" id="StarNftPromoteRecordResult">
+        <result property="id"    column="id"    />
+        <result property="recipient"    column="recipient"    />
+        <result property="context"    column="context"    />
+        <result property="sendStatus"    column="send_status"    />
+        <result property="promoteType"    column="promote_type"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="modifiedAt"    column="modified_at"    />
+        <result property="ordersn"    column="ordersn"    />
+    </resultMap>
+
+    <sql id="selectStarNftPromoteRecordVo">
+        select id, recipient, context, send_status, promote_type, created_at, modified_at, ordersn from star_nft_promote_record
+    </sql>
+
+    <select id="selectStarNftPromoteRecordList" parameterType="StarNftPromoteRecord" resultMap="StarNftPromoteRecordResult">
+        <include refid="selectStarNftPromoteRecordVo"/>
+        <where>
+            <if test="recipient != null  and recipient != ''"> and recipient = #{recipient}</if>
+            <if test="context != null  and context != ''"> and context like concat('%', #{context}, '%')</if>
+            <if test="sendStatus != null "> and send_status = #{sendStatus}</if>
+            <if test="promoteType != null "> and promote_type = #{promoteType}</if>
+            <if test="params.beginCreatedAt != null and params.beginCreatedAt != '' and params.endCreatedAt != null and params.endCreatedAt != ''"> and created_at between #{params.beginCreatedAt} and #{params.endCreatedAt}</if>
+            <if test="params.beginModifiedAt != null and params.beginModifiedAt != '' and params.endModifiedAt != null and params.endModifiedAt != ''"> and modified_at between #{params.beginModifiedAt} and #{params.endModifiedAt}</if>
+            <if test="ordersn != null  and ordersn != ''"> and ordersn = #{ordersn}</if>
+        </where>
+    </select>
+
+    <select id="selectStarNftPromoteRecordById" parameterType="Long" resultMap="StarNftPromoteRecordResult">
+        <include refid="selectStarNftPromoteRecordVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertStarNftPromoteRecord" parameterType="StarNftPromoteRecord">
+        insert into star_nft_promote_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="recipient != null">recipient,</if>
+            <if test="context != null">context,</if>
+            <if test="sendStatus != null">send_status,</if>
+            <if test="promoteType != null">promote_type,</if>
+            <if test="createdAt != null">created_at,</if>
+            <if test="modifiedAt != null">modified_at,</if>
+            <if test="ordersn != null">ordersn,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="recipient != null">#{recipient},</if>
+            <if test="context != null">#{context},</if>
+            <if test="sendStatus != null">#{sendStatus},</if>
+            <if test="promoteType != null">#{promoteType},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="modifiedAt != null">#{modifiedAt},</if>
+            <if test="ordersn != null">#{ordersn},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStarNftPromoteRecord" parameterType="StarNftPromoteRecord">
+        update star_nft_promote_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recipient != null">recipient = #{recipient},</if>
+            <if test="context != null">context = #{context},</if>
+            <if test="sendStatus != null">send_status = #{sendStatus},</if>
+            <if test="promoteType != null">promote_type = #{promoteType},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="modifiedAt != null">modified_at = #{modifiedAt},</if>
+            <if test="ordersn != null">ordersn = #{ordersn},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStarNftPromoteRecordById" parameterType="Long">
+        delete from star_nft_promote_record where id = #{id}
+    </delete>
+
+    <delete id="deleteStarNftPromoteRecordByIds" parameterType="String">
+        delete from star_nft_promote_record where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
