@@ -1,7 +1,11 @@
 package com.starnft.star.infrastructure.repository;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
+import com.starnft.star.domain.prop.model.req.PropShopListReq;
 import com.starnft.star.domain.prop.model.req.PropsListReq;
 import com.starnft.star.domain.prop.model.res.PropsListRes;
 import com.starnft.star.domain.prop.model.vo.PropsRelationVO;
@@ -53,5 +57,16 @@ public class PropsRepository implements IPropsRepository {
     @Override
     public List<PropsVO> propsList() {
         return BeanColverUtil.colverList(starNftPropInfoMapper.queryAll(), PropsVO.class);
+    }
+
+    @Override
+    public ResponsePageResult<PropsVO> propsShopList(PropShopListReq propShopListReq) {
+        PageInfo<StarNftPropInfo> propInfoPageInfo = PageHelper.startPage(propShopListReq.getPage(), propShopListReq.getSize())
+                .doSelectPageInfo(() -> starNftPropInfoMapper.queryShopList(1));
+
+        return new ResponsePageResult<>(BeanColverUtil.colverList(propInfoPageInfo.getList(), PropsVO.class)
+                , propShopListReq.getPage()
+                , propShopListReq.getSize()
+                , propInfoPageInfo.getTotal());
     }
 }
