@@ -57,15 +57,12 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
         Long themeId = message.getGoods().getThemeId();
         SecKillGoods goods = message.getGoods();
 
-        //商品库存队列
-        Object stockQueueId = redisUtil.rightPop(String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), themeId));
-
-        log.info("[{}] 用户：[{}] 获得库存编号 ： [{}]", this.getClass().getSimpleName(), userId, stockQueueId);
+        Object stockQueueId = filterNum(userId, themeId);
 
         if (stockQueueId == null) {
             log.error("队列轮空 uid: [{}] goods : [{}]", userId, goods);
             //清理排队信息
-            redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), userId);
+            redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(userId));
             //抢单失败
             redisUtil.hset(String.format(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), themeId),
                     String.valueOf(userId), JSONUtil.toJsonStr(new OrderGrabStatus(userId, -1, null, time)));
@@ -97,6 +94,33 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
             }
         }
 
+    }
+
+    private Object filterNum(long userId, Long themeId) {
+        //商品库存队列
+        Object stockQueueId = redisUtil.rightPop(String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), themeId));
+
+        String poolKey = String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), themeId);
+        //不存在库存池 生成并加载一百个库存 或 如果库存池大小小于10 扩容加100
+        boolean exists = redisUtil.hasKey(poolKey);
+        if (!exists || redisUtil.sGetSetSize(poolKey) <= 10) {
+            supplyPool(themeId, poolKey);
+        }
+
+        Object spop = redisUtil.spop(poolKey);
+        log.info("[{}] 用户：[{}] 获得库存编号 ： [{}]", this.getClass().getSimpleName(), userId, stockQueueId);
+        return spop;
+    }
+
+    private void supplyPool(Long themeId, String poolKey) {
+        for (int i = 0; i < 100; i++) {
+            Object number = redisUtil.rightPop(String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), themeId));
+            if (number == null) {
+                continue;
+            }
+            Integer num = (int) number;
+            redisUtil.sSet(poolKey, num);
+        }
     }
 
     private void stockSubtract(long userId, String time, Long themeId, SecKillGoods goods) {

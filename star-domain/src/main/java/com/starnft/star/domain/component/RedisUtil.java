@@ -355,6 +355,21 @@ public class RedisUtil {
     }
 
     /**
+     * 根据key获取Set中随机值
+     *
+     * @param key 键
+     * @return
+     */
+    public Serializable spop(String key) {
+        try {
+            return this.redisTemplate.opsForSet().pop(key);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
      * 根据value从一个set中查询,是否存在
      *
      * @param key   键
