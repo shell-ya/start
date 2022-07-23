@@ -49,13 +49,16 @@ public class PromoteServiceImpl implements IPromoteService, ApplicationContextAw
         }
         Integer successCount = 0;
         Integer errorCount = 0;
-        for (Future<Boolean> future : futures) {
+
+        for (int i = 0; i < futures.size(); i++) {
             try {
-                Boolean isSuccess = future.get();
-                if (isSuccess) successCount++;
+                Future<Boolean> booleanFuture = futures.get(i);
+                Boolean isSuccess = booleanFuture.get();
+                if (isSuccess) successCount+=partitions.get(i).size();
             } catch (Exception e) {
-                errorCount++;
+                errorCount+=partitions.get(i).size();
             }
+
         }
         PromoteResult promoteResult = new PromoteResult();
         promoteResult.setErrorCount(errorCount);
