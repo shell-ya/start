@@ -260,7 +260,7 @@ public class WalletCore implements IWalletCore {
                         TopicConstants.WALLET_RECHARGE_DESTINATION.getTag());
                 messageSender.send(rechargeCallbackProcessTopic, Optional.of(payCheckRes));
             }catch (Exception e){
-                log.error("查单失败：单号：{}",txResultReq.getOrderSn());
+                log.error("查单失败：单号：{}",txResultReq.getOrderSn(),e);
 
             }
             //todo 前端轮训后 仍然是支付中 提示 用户稍后再试 前端判断还是直接异常？
@@ -295,6 +295,7 @@ public class WalletCore implements IWalletCore {
             req.setTransactionType(integers);
             req.setPage(1);
             req.setSize(1000);
+            req.setPayStatus(StarConstants.Pay_Status.PAY_ING.name());
             ResponsePageResult<WalletRecordVO> walletRecordVOResponsePageResult =
                     walletService.queryTransactionRecord(req);
             //遍历去查单

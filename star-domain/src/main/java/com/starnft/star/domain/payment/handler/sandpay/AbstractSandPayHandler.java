@@ -116,7 +116,7 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
                 .formData(req).httpHeaders(new HttpHeaders())
                 .restMethod(StarRequestMethod.POST_FORM)
                 .url(channelConf.getHttpConf().getApiUrl()).build(), () -> null);
-
+        log.info("查单请求报文：{}",req);
         //参数解密
         String result = URLDecoder.decode(Objects.requireNonNull(context), "utf-8");
         Map<String, String> data = TemplateHelper.getInstance().convertResultStringToMap(result);
