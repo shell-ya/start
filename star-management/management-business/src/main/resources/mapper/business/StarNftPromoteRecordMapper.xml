@@ -88,7 +88,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
         <insert id="insertStarNftPromoteRecordBatch" parameterType="java.util.List">
-        INSERT INTO star_nft_promote_record VALUES
+        INSERT INTO star_nft_promote_record (id,recipient,send_status,promote_type,created_at,modified_at,ordersn,`context`) VALUES
             <foreach collection="arrays" item="item" index="index" separator=",">
             (#{item.id,jdbcType=BIGINT}, #{item.recipient,jdbcType=VARCHAR}, #{item.sendStatus,jdbcType=INTEGER},
             #{item.promoteType,jdbcType=INTEGER}, #{item.createdAt,jdbcType=TIMESTAMP}, #{item.modifiedAt,jdbcType=TIMESTAMP},

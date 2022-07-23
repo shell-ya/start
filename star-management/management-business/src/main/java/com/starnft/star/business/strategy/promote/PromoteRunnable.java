@@ -22,7 +22,7 @@ public class PromoteRunnable implements ApplicationContextAware {
     @Resource
     IStarNftPromoteRecordService starNftPromoteRecordService;
     @Transactional
-  public Boolean running(List<String> partitions,Integer types,String context){
+    public Boolean running(List<String> partitions,Integer types,String context){
       PromoteStrategy promoteStrategy = applicationContext.getBean(PromoteTypeEnums.getDefaultMessageType(types).getStrategy(), PromoteStrategy.class);
         String orderSn = promoteStrategy.promoteBatch(partitions, context);
         List<StarNftPromoteRecord> collect = partitions.stream().map(partition -> {
