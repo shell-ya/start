@@ -124,12 +124,13 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
         String signString = processTemplate(channelConf.getSignTempPath(), payCheckReq.getOrderSn(), vendorConf);
         SdKeysHelper sdKeysHelper = applicationContext.getBean(SdKeysHelper.class);
         Map<String, String> req = getSignAndMap(sdKeysHelper, signString);
+        log.info("查单请求报文：{}",JSONUtil.toJsonStr(req));
         IInteract iInteract = obtainProcessInteraction(StarConstants.ProcessType.JSON);
         String context = iInteract.interact(ConnContext.builder()
                 .formData(req).httpHeaders(new HttpHeaders())
                 .restMethod(StarRequestMethod.POST_FORM)
                 .url(channelConf.getHttpConf().getApiUrl()).build(), () -> null);
-
+        log.info("查单返回报文：{}",context);
         //参数解密
         String result = URLDecoder.decode(Objects.requireNonNull(context), "utf-8");
         Map<String, String> data = TemplateHelper.getInstance().convertResultStringToMap(result);
@@ -140,7 +141,7 @@ public abstract class AbstractSandPayHandler extends PaymentHandlerBase {
                 Base64.decodeBase64(sign), sdKeysHelper.getPublicKey(), "SHA1WithRSA");
 
         if (!valid) throw new RuntimeException("签名校验出错");
-
+        log.info("查单返回解密报文：{}",respData);
         JSONObject resObj = JSONUtil.parseObj(respData);
 
         String resModel = super.processTemplate(channelConf.getResTempPath(), resObj, vendorConf);
