@@ -12,6 +12,7 @@ import com.starnft.star.domain.article.model.req.UserHaveSeriesReq;
 import com.starnft.star.domain.article.model.req.UserHaveThemeReq;
 import com.starnft.star.domain.article.model.vo.UserNumbersVO;
 import com.starnft.star.domain.article.model.vo.UserSeriesVO;
+import com.starnft.star.domain.article.model.vo.UserThemeDetailVo;
 import com.starnft.star.domain.article.model.vo.UserThemeVO;
 import com.starnft.star.domain.article.repository.IUserThemeRepository;
 import com.starnft.star.infrastructure.entity.user.StarNftUserTheme;

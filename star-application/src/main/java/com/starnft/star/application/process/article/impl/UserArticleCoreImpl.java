@@ -1,14 +1,22 @@
 package com.starnft.star.application.process.article.impl;
 
 import com.starnft.star.application.process.article.IUserArticleCore;
+import com.starnft.star.application.process.user.res.UserInfoRes;
+import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.common.enums.UserNumberStatusEnum;
 import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.article.model.req.UserHaveNumbersReq;
 import com.starnft.star.domain.article.model.req.UserHaveSeriesReq;
 import com.starnft.star.domain.article.model.req.UserHaveThemeReq;
+import com.starnft.star.domain.article.model.req.UserThemeDetailReq;
 import com.starnft.star.domain.article.model.vo.UserNumbersVO;
 import com.starnft.star.domain.article.model.vo.UserSeriesVO;
+import com.starnft.star.domain.article.model.vo.UserThemeDetailVo;
 import com.starnft.star.domain.article.model.vo.UserThemeVO;
 import com.starnft.star.domain.article.service.UserThemeService;
+import com.starnft.star.domain.number.model.vo.NumberDetailVO;
+import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.theme.service.ThemeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +34,7 @@ import java.util.Optional;
 public class UserArticleCoreImpl implements IUserArticleCore {
     private final UserThemeService userThemeService;
     private final ThemeService themeService;
+    private final INumberService numberService;
 
     @Override
     public ResponsePageResult<UserSeriesVO> obtainUserArticleSeriesInfo(UserHaveSeriesReq userHaveSeriesReq) {
@@ -48,5 +57,11 @@ public class UserArticleCoreImpl implements IUserArticleCore {
                     return qty;
                 })));
         return result;
+    }
+
+    @Override
+    public UserThemeDetailVo obtainThemeDetail(UserThemeDetailReq req) {
+        NumberDetailVO numberDetail = numberService.getNumberDetail(req.getNumberId());
+        return BeanColverUtil.colver(numberDetail, UserThemeDetailVo.class);
     }
 }

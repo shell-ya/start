@@ -36,7 +36,8 @@
                b.theme_name           name,
                b.theme_pic            picture,
                b.descrption           descrption,
-               b.theme_type           type
+               b.theme_type           type,
+               b.is_resale            resale
         FROM star_nft_theme_number a
                  LEFT JOIN star_nft_theme_info b
                            ON a.series_theme_info_id = b.id
