@@ -10,6 +10,7 @@ import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.order.model.res.OrderListRes;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.repository.IOrderRepository;
 import com.starnft.star.infrastructure.entity.order.StarNftOrder;
@@ -154,6 +155,15 @@ public class OrderRepository implements IOrderRepository {
         List<StarNftOrder> starNftOrders = starNftOrderMapper.selectList(new LambdaQueryWrapper<StarNftOrder>()
                 .eq(StarNftOrder::getUserId, uid)
                 .eq(StarNftOrder::getSeriesThemeInfoId, themeId)
+                .like(StarNftOrder::getOrderSn, StarConstants.OrderPrefix.PublishGoods.getPrefix()));
+        return BeanColverUtil.colverList(starNftOrders, OrderVO.class);
+    }
+
+    @Override
+    public List<OrderVO> queryAllSuccessByTheme(String themeInfoId) {
+        List<StarNftOrder> starNftOrders = starNftOrderMapper.selectList(new LambdaQueryWrapper<StarNftOrder>()
+                .eq(StarNftOrder::getSeriesThemeInfoId, themeInfoId)
+                .eq(StarNftOrder::getStatus,StarConstants.ORDER_STATE.COMPLETED.getCode())
                 .like(StarNftOrder::getOrderSn, StarConstants.OrderPrefix.PublishGoods.getPrefix()));
         return BeanColverUtil.colverList(starNftOrders, OrderVO.class);
     }

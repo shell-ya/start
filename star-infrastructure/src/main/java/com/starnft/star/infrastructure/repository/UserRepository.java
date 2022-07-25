@@ -333,4 +333,14 @@ public class UserRepository implements IUserRepository {
         if (Objects.isNull(userInfoEntity)) return null;
         return userInfoEntity.getCreatedAt();
     }
+
+    @Override
+    public UserInfo queryUserParent(Long userId) {
+        QueryWrapper<UserInfoEntity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("account", userId);
+        queryWrapper.eq("is_deleted", Boolean.FALSE);
+        UserInfoEntity userInfoEntity = this.userInfoMapper.selectOne(queryWrapper);
+        return  BeanColverUtil.colver(userInfoEntity, UserInfo.class);
+    }
+
 }

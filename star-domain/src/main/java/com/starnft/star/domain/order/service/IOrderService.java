@@ -32,4 +32,6 @@ public interface IOrderService {
 
     List<OrderVO> queryOrderByUidNSpu(Long uid, Long spu);
 
+
+    List<OrderVO> queryAllSuccessOrder();
 }

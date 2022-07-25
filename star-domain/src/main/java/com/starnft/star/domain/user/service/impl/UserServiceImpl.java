@@ -138,7 +138,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         String imageCaptchaKey = String.format(RedisKey.REDIS_IMAGE_CAPTCHA_CHECK_SUCCESS_TOKEN.getKey(), req.getImageCaptchaId());
         Assert.isTrue(this.redisUtil.hasKey(imageCaptchaKey), () -> new StarException(StarError.IMAGE_CAPTCHA_CHECK_ERROR));
         redisUtil.del(imageCaptchaKey);
-        
+
         //发送验证码
         String code = StarUtils.getVerifyCode();
 
@@ -550,5 +550,14 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
             this.redisTemplate.opsForValue().setBit(RedisKey.REDIS_USER_IS_CERTIFICATION.getKey(), userId, isSetting);
         }
         return isSetting;
+    }
+
+    @Override
+    public Long queryHasParent(Long userId) {
+        UserInfo userInfo = this.userRepository.queryUserParent(userId);
+        if (Objects.isNull(userInfo.getParent())){
+            return null;
+        }
+        return userInfo.getParent();
     }
 }

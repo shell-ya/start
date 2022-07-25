@@ -236,4 +236,14 @@ public class RankServiceImpl implements IRankService {
          redisTemplate.opsForHash().put(String.format(RedisKey.RANK_TOTAL_USER.getKey(), rankName, key), rankItemMetaData.getChildrenId().toString(), JSONUtil.toJsonStr(rankItemMetaData));
     }
 
+    @Override
+    public boolean scopeUserExist(Long parent, Long childrenId) {
+        return Boolean.TRUE.equals(redisTemplate.opsForHash().hasKey(String.format(RedisKey.SCOPE_USER_MAPPING.getKey(), parent.toString()), childrenId.toString()));
+    }
+
+    @Override
+    public boolean putScopeUser(Long parent, Long childrenId) {
+        return redisTemplate.opsForHash().putIfAbsent(String.format(RedisKey.SCOPE_USER_MAPPING.getKey(), parent.toString()),childrenId.toString(),"exist");
+    }
+
 }

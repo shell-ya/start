@@ -189,6 +189,7 @@ public enum RedisKey {
     RANK_VALID_USER(604, StarConstants.SERVICE_NAME.concat(".rank:%s:valid:user:%s"), 3L, TimeUnit.HOURS),
     RANK_USER_MAPPING(605, StarConstants.SERVICE_NAME.concat(".rank:%s:mapping"), 3L, TimeUnit.HOURS),
 
+    SCOPE_USER_MAPPING(606,StarConstants.SERVICE_NAME.concat(".scope.user:%s"),3L,TimeUnit.HOURS),
 
     RANK_STORE(602,StarConstants.SERVICE_NAME.concat(".rank:%s:store"),3L, TimeUnit.HOURS),
     RANK_EXTEND(603,StarConstants.SERVICE_NAME.concat(".rank:%s:extend"),3L, TimeUnit.HOURS)
