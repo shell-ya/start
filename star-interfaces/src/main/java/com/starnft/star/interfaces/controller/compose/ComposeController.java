@@ -27,14 +27,15 @@ public class ComposeController {
     public RopResponse list(RequestConditionPage<ComposeReq> reqRequestConditionPage) {
         return RopResponse.success(composeService.composeList(reqRequestConditionPage));
     }
+
     @PostMapping("details/{id}")
     public RopResponse details(@PathVariable Long id) {
         return RopResponse.success(composeCore.composeDetails(id));
     }
-//    @PostMapping("details/material")
-//    public RopResponse material(@PathVariable Long id) {
-//        return RopResponse.success(composeCore.composeMaterial(id));
-//    }
+    @PostMapping("details/material")
+    public RopResponse material(@PathVariable Long id) {
+        return RopResponse.success(composeCore.composeMaterial(id));
+    }
 //    @PostMapping("details/synthetic")
 //    public RopResponse synthetic(@PathVariable Long id) {
 ////        return RopResponse.success(composeService.composeDetails(id));
