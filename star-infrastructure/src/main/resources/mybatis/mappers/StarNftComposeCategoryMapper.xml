@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.compose.StarNftComposeCategoryMapper">
+  <resultMap id="BaseResultMap" type="com.starnft.star.infrastructure.entity.compose.StarNftComposeCategory">
+    <!--@mbg.generated-->
+    <!--@Table star_nft_compose_category-->
+    <id column="id" property="id" />
+    <result column="compose_id" property="composeId" />
+    <result column="compose_material" property="composeMaterial" />
+    <result column="is_score" property="isScore" />
+    <result column="compose_scope_type" property="composeScopeType" />
+    <result column="compose_scope_number" property="composeScopeNumber" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, compose_id, compose_material, is_score, compose_scope_type, compose_scope_number
+  </sql>
+</mapper>
