@@ -21,7 +21,7 @@ public class PropInvokeReq implements Serializable {
      */
     @ApiModelProperty(name = "道具id", required = true)
     @NotNull(message = "道具id 不能为空")
-    private Long propId;
+    private String propId;
     /**
      * 道具类型
      */

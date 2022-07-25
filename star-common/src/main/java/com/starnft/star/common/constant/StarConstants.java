@@ -329,6 +329,8 @@ public class StarConstants {
         WithdrawSn("WD"),
         //发行商品订单前缀
         PublishGoods("PG"),
+        //道具订单
+        PROPSHOP("PS"),
         //市场交易订单前缀
         TransactionSn("TS");
 

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.prop.StarPropsPurchaseRecordMapper">
+    <resultMap type="com.starnft.star.infrastructure.entity.prop.StarPropsPurchaseRecord"
+               id="StarPropsPurchaseRecordMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="isDeleted" column="is_deleted" jdbcType="INTEGER"/>
+        <result property="createdAt" column="created_at" jdbcType="DATE"/>
+        <result property="createdBy" column="created_by" jdbcType="VARCHAR"/>
+        <result property="modifiedAt" column="modified_at" jdbcType="DATE"/>
+        <result property="modifiedBy" column="modified_by" jdbcType="VARCHAR"/>
+        <result property="uid" column="uid" jdbcType="BIGINT"/>
+        <result property="propId" column="prop_id" jdbcType="BIGINT"/>
+        <result property="orderSn" column="order_sn" jdbcType="VARCHAR"/>
+        <result property="count" column="count" jdbcType="INTEGER"/>
+        <result property="unitCost" column="unit_cost" jdbcType="DECIMAL"/>
+        <result property="discounts" column="discounts" jdbcType="DECIMAL"/>
+        <result property="discountsChannel" column="discounts_channel" jdbcType="VARCHAR"/>
+        <result property="orderCost" column="order_cost" jdbcType="DECIMAL"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="insert_list">
+        is_deleted
+        , created_at, created_by, modified_at, modified_by, uid,
+        prop_id, order_sn, count, unit_cost, discounts, discounts_channel,
+        order_cost, status
+    </sql>
+
+    <!-- 通过ID查询单条数据 -->
+    <select id="queryById" resultMap="StarPropsPurchaseRecordMap">
+        select id,
+               is_deleted,
+               created_at,
+               created_by,
+               modified_at,
+               modified_by,
+               uid,
+               prop_id,
+               order_sn,
+               count,
+               unit_cost,
+               discounts,
+               discounts_channel,
+               order_cost,
+               status
+        from star_props_purchase_record
+        where id = #{id}
+    </select>
+
+    <!--分页查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="StarPropsPurchaseRecordMap">
+        select
+        id,is_deleted,created_at,created_by,modified_at,modified_by,uid,prop_id,order_sn,count,unit_cost,discounts,discounts_channel,order_cost,status
+        from star_props_purchase_record
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                and is_deleted = #{isDeleted}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                and created_at = #{createdAt}
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                and modified_at = #{modifiedAt}
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                and modified_by = #{modifiedBy}
+            </if>
+            <if test="uid != null and uid != ''">
+                and uid = #{uid}
+            </if>
+            <if test="propId != null and propId != ''">
+                and prop_id = #{propId}
+            </if>
+            <if test="orderSn != null and orderSn != ''">
+                and order_sn = #{orderSn}
+            </if>
+            <if test="count != null and count != ''">
+                and count = #{count}
+            </if>
+            <if test="unitCost != null and unitCost != ''">
+                and unit_cost = #{unitCost}
+            </if>
+            <if test="discounts != null and discounts != ''">
+                and discounts = #{discounts}
+            </if>
+            <if test="discountsChannel != null and discountsChannel != ''">
+                and discounts_channel = #{discountsChannel}
+            </if>
+            <if test="orderCost != null and orderCost != ''">
+                and order_cost = #{orderCost}
+            </if>
+            <if test="status != null and status != ''">
+                and status = #{status}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+    <!--新增数据-->
+    <insert id="insertWithoutId" keyProperty="id" useGeneratedKeys="true" parameterType="com.starnft.star.infrastructure.entity.prop.StarPropsPurchaseRecord">
+        insert into star_props_purchase_record(
+        <include refid="insert_list"/>
+        )
+        values (#{isDeleted}, #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{uid}, #{propId}, #{orderSn},
+        #{count}, #{unitCost}, #{discounts}, #{discountsChannel}, #{orderCost}, #{status})
+    </insert>
+
+    <!-- 批量新增数据 -->
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into
+        star_props_purchase_record(id,is_deleted,created_at,created_by,modified_at,modified_by,uid,prop_id,order_sn,count,unit_cost,discounts,discounts_channel,order_cost,status)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.uid},#{entity.propId},#{entity.orderSn},#{entity.count},#{entity.unitCost},#{entity.discounts},#{entity.discountsChannel},#{entity.orderCost},#{entity.status})
+        </foreach>
+    </insert>
+
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from star_props_purchase_record
+        where id = #{id}
+    </delete>
+</mapper>

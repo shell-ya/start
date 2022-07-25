@@ -48,9 +48,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.text.DateFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -221,6 +219,11 @@ public class WalletCore implements IWalletCore {
         walletService.verifyParam(withDrawReq.getChannel());
         //验证余额
         walletService.balanceVerify(withDrawReq.getUid(), new BigDecimal(withDrawReq.getMoney()));
+        //提现金额验证
+        BigDecimal money = new BigDecimal(withDrawReq.getMoney());
+        if (money.subtract(new BigDecimal(100)).doubleValue() < 0) {
+            throw new StarException(StarError.WITHDRAW_ILLEGAL_MONEY);
+        }
         try {
             return walletService.withdraw(withDrawReq);
         } finally {
@@ -259,8 +262,8 @@ public class WalletCore implements IWalletCore {
                 String rechargeCallbackProcessTopic = String.format(TopicConstants.WALLET_RECHARGE_DESTINATION.getFormat(),
                         TopicConstants.WALLET_RECHARGE_DESTINATION.getTag());
                 messageSender.send(rechargeCallbackProcessTopic, Optional.of(payCheckRes));
-            }catch (Exception e){
-                log.error("查单失败：单号：{}",txResultReq.getOrderSn(),e);
+            } catch (Exception e) {
+                log.error("查单失败：单号：{}", txResultReq.getOrderSn(), e);
 
             }
             //todo 前端轮训后 仍然是支付中 提示 用户稍后再试 前端判断还是直接异常？
@@ -300,7 +303,7 @@ public class WalletCore implements IWalletCore {
                     walletService.queryTransactionRecord(req);
             //遍历去查单
             List<WalletRecordVO> list = walletRecordVOResponsePageResult.getList();
-            log.info("支付中充值订单数量:{}",list.size());
+            log.info("支付中充值订单数量:{}", list.size());
             for (WalletRecordVO walletRecordVO : list) {
                 Long uid = walletRecordVO.getToUid();
                 TxResultRes txResultRes = queryTxResult(new TxResultReq(uid, walletRecordVO.getPayChannel(), walletRecordVO.getRecordSn()));

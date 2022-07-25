@@ -16,10 +16,11 @@
         <result property="propTime" column="prop_time" jdbcType="DATE"/>
         <result property="propDesc" column="prop_desc" jdbcType="VARCHAR"/>
         <result property="execution" column="execution" jdbcType="VARCHAR"/>
-<!--        <result property="onSell" column="on_sell" jdbcType="INTEGER"/>-->
-<!--        <result property="canBuy" column="can_buy" jdbcType="INTEGER"/>-->
-<!--        <result property="price" column="price" jdbcType="DECIMAL"/>-->
-<!--        <result property="stock" column="stock" jdbcType="INTEGER"/>-->
+        <result property="onSell" column="on_sell" jdbcType="INTEGER"/>
+        <result property="canBuy" column="can_buy" jdbcType="INTEGER"/>
+        <result property="price" column="price" jdbcType="DECIMAL"/>
+        <result property="stock" column="stock" jdbcType="INTEGER"/>
+        <result property="buyLimit" column="buy_limit" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="select_list">
@@ -37,10 +38,11 @@
              , prop_time
              , prop_desc
              , execution
---              , on_sell
---              , can_buy
---              , price
---              , stock
+             , on_sell
+             , can_buy
+             , price
+             , stock
+             , buy_limit
     </sql>
 
     <!-- 通过ID查询单条数据 -->
