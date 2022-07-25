@@ -7,6 +7,4 @@ import com.starnft.star.domain.compose.model.res.ComposeRes;
 
 public interface IComposeRepository {
     ResponsePageResult<ComposeRes> queryComposePageByCondition(RequestConditionPage<ComposeReq> conditionPage);
-
-    ComposeRes queryComposeById(Long id);
 }

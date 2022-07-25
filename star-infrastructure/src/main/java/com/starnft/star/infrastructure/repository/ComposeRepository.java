@@ -54,10 +54,4 @@ public class ComposeRepository implements IComposeRepository, PageHelperInterfac
         }).collect(Collectors.toList());
         return listReplace(result,collect);
     }
-
-    @Override
-    public ComposeRes queryComposeById(Long id) {
-        StarNftCompose starNftCompose = starNftComposeMapper.selectById(id);
-        return  BeanColverUtil.colver(starNftCompose,ComposeRes.class);
-    }
 }
