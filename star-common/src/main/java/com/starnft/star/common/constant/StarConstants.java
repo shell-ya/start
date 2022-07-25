@@ -50,7 +50,12 @@ public class StarConstants {
     public static final String THEME_DETAIL_CACHE_NAME = ".theme.detail.cache";
     /** 轮播图缓存名字 */
     public static final String BANNER_CACHE_NAME = ".banner.cache";
+    /** 排行榜缓存名字 */
     public static final String RANK_CACHE_NAME = ".rank.cache";
+    /** 公告缓存名字 */
+    public static final String BULLETIN_LIST_CACHE_NAME = ".bulletin.list.cache";
+    /** 公告详情缓存名字 */
+    public static final String BULLETIN_CACHE_NAME = ".bulletin.cache";
 
     public enum RankTypes {
         Consumption(2L, "积分"),

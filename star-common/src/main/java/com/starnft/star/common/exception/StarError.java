@@ -100,6 +100,8 @@ public enum StarError {
     PROP_CAN_NOT_BUY("4000001","道具不可购买"),
     PROP_CAN_BUY_OVERFLOW("4000002","超出可购买数量"),
     //################# ===  #################
+
+    BULLETIN_NOT_FOUND("50000001","公告不存在"),
     ;
 
     private String NS = "";

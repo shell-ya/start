@@ -111,7 +111,7 @@ public class ScopeTest {
             addScoreDTO.setScope(new BigDecimal(300));
             addScoreDTO.setScopeType(0);
             addScoreDTO.setUserId(parent);
-            addScoreDTO.setTemplate("参加拉新-邀请活动获得%s元石");
+            addScoreDTO.setTemplate("拉新活动-邀请获得%s元石");
 
             iScopeCore.userScopeManageAdd(addScoreDTO);
         }
