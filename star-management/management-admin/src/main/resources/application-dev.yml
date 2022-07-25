@@ -11,7 +11,7 @@ spring:
         #type为数据源，如果是Druid数据库连接池，可以去改
         type: com.zaxxer.hikari.HikariDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver
-        jdbc-url: jdbc:mysql://sh-cynosdbmysql-grp-ibkpxd68.sql.tencentcdb.com:23543/star_dev?serverTimezone=GMT%2B8&characterEncoding=utf8
+        jdbc-url: jdbc:mysql://sh-cynosdbmysql-grp-ibkpxd68.sql.tencentcdb.com:23543/star_test?serverTimezone=GMT%2B8&characterEncoding=utf8
         username: root
         password: wqd1234.
         connection-test-query: SELECT 1

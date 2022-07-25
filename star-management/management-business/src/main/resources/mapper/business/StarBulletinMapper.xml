@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.StarBulletinMapper">
+
+    <resultMap type="StarBulletin" id="StarBulletinResult">
+        <result property="id"    column="id"    />
+        <result property="title"    column="title"    />
+        <result property="picUrl"    column="pic_url"    />
+        <result property="content"    column="content"    />
+        <result property="publishTime"    column="publish_time"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="createdBy"    column="created_by"    />
+        <result property="modifiedAt"    column="modified_at"    />
+        <result property="modifiedBy"    column="modified_by"    />
+    </resultMap>
+
+    <sql id="selectStarBulletinVo">
+        select id, title, pic_url, content, publish_time, is_deleted, created_at, created_by, modified_at, modified_by from star_bulletin
+    </sql>
+
+    <select id="selectStarBulletinList" parameterType="StarBulletin" resultMap="StarBulletinResult">
+        <include refid="selectStarBulletinVo"/>
+        <where>
+            is_deleted = 0
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="isDeleted != null "> and is_deleted = #{isDeleted}</if>
+        </where>
+    </select>
+
+    <select id="selectStarBulletinById" parameterType="Long" resultMap="StarBulletinResult">
+        <include refid="selectStarBulletinVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertStarBulletin" parameterType="StarBulletin">
+        insert into star_bulletin
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="title != null and title != ''">title,</if>
+            <if test="picUrl != null">pic_url,</if>
+            <if test="content != null and content != ''">content,</if>
+            <if test="publishTime != null">publish_time,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="createdAt != null">created_at,</if>
+            <if test="createdBy != null">created_by,</if>
+            <if test="modifiedAt != null">modified_at,</if>
+            <if test="modifiedBy != null">modified_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="picUrl != null">#{picUrl},</if>
+            <if test="content != null and content != ''">#{content},</if>
+            <if test="publishTime != null">#{publishTime},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="modifiedAt != null">#{modifiedAt},</if>
+            <if test="modifiedBy != null">#{modifiedBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStarBulletin" parameterType="StarBulletin">
+        update star_bulletin
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="picUrl != null">pic_url = #{picUrl},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="publishTime != null">publish_time = #{publishTime},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="createdBy != null">created_by = #{createdBy},</if>
+            <if test="modifiedAt != null">modified_at = #{modifiedAt},</if>
+            <if test="modifiedBy != null">modified_by = #{modifiedBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStarBulletinById" parameterType="Long">
+        update star_bulletin set is_deleted = 1  where id = #{id}
+    </delete>
+
+    <delete id="deleteStarBulletinByIds" parameterType="String">
+        update star_bulletin  set is_deleted = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
