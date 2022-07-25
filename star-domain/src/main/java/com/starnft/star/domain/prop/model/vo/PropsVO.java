@@ -2,6 +2,8 @@ package com.starnft.star.domain.prop.model.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +22,7 @@ public class PropsVO implements Serializable {
      * id
      */
     @ApiModelProperty(name = "id", notes = "")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     /**
      * 道具类型
@@ -88,5 +91,11 @@ public class PropsVO implements Serializable {
      * 出售数量 -1 不限量
      */
     @ApiModelProperty(name = "出售数量 -1 不限量", notes = "")
-    private BigDecimal stock;
+    private Integer stock;
+
+    /**
+     * 限购数量 -1 不限量
+     */
+    @ApiModelProperty(name = "限购数量 -1 不限量", notes = "")
+    private Integer buyLimit;
 }

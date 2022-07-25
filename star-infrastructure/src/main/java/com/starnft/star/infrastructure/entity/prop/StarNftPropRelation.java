@@ -23,12 +23,12 @@ public class StarNftPropRelation extends BaseEntity implements Serializable {
      * 用户id
      */
     @ApiModelProperty(name = "用户id", notes = "")
-    private Integer uid;
+    private Long uid;
     /**
      * 道具id
      */
     @ApiModelProperty(name = "道具id", notes = "")
-    private Integer propId;
+    private Long propId;
     /**
      * 道具数量
      */
@@ -63,19 +63,19 @@ public class StarNftPropRelation extends BaseEntity implements Serializable {
         this.id = id;
     }
 
-    public Integer getUid() {
+    public Long getUid() {
         return uid;
     }
 
-    public void setUid(Integer uid) {
+    public void setUid(Long uid) {
         this.uid = uid;
     }
 
-    public Integer getPropId() {
+    public Long getPropId() {
         return propId;
     }
 
-    public void setPropId(Integer propId) {
+    public void setPropId(Long propId) {
         this.propId = propId;
     }
 

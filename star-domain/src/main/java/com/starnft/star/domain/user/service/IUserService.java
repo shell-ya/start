@@ -194,4 +194,5 @@ public interface IUserService {
 
     Boolean isCertification(Long userId);
 
+    Long queryHasParent(Long userId);
 }

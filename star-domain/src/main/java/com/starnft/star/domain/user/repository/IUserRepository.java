@@ -164,4 +164,6 @@ public interface IUserRepository {
     UserInfo queryUserInfoByMobile(String mobile);
 
     Date userCreateTime(Long account);
+
+    UserInfo queryUserParent(Long userId);
 }

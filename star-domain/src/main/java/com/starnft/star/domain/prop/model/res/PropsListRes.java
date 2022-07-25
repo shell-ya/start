@@ -1,5 +1,7 @@
 package com.starnft.star.domain.prop.model.res;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -10,7 +12,8 @@ import java.util.Date;
 public class PropsListRes implements Serializable {
 
     @ApiModelProperty(name = "道具id", notes = "")
-    private Integer propId;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long propId;
     /**
      * 道具数量
      */

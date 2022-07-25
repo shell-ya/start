@@ -3,8 +3,10 @@ package com.starnft.star.domain.prop.service;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.prop.model.req.PropShopListReq;
 import com.starnft.star.domain.prop.model.req.PropsConsumptionReq;
+import com.starnft.star.domain.prop.model.req.PropsDeliveryReq;
 import com.starnft.star.domain.prop.model.req.PropsListReq;
 import com.starnft.star.domain.prop.model.res.PropsListRes;
+import com.starnft.star.domain.prop.model.vo.PropsRecordVO;
 import com.starnft.star.domain.prop.model.vo.PropsRelationVO;
 import com.starnft.star.domain.prop.model.vo.PropsVO;
 
@@ -29,4 +31,10 @@ public interface IPropsService {
 
     //道具使用
     Boolean propsConsumption(PropsConsumptionReq req);
+
+    //道具发放
+    Boolean propsDelivery(PropsDeliveryReq propsDeliveryReq);
+
+    //生成道具购买记录
+    Boolean propsPurchaseRecordGenerated(PropsRecordVO propsRecordVO);
 }

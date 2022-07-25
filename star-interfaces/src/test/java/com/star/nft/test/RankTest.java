@@ -6,6 +6,7 @@ import cn.hutool.json.JSONUtil;
 import com.starnft.star.application.process.user.UserCore;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.template.TemplateHelper;
+import com.starnft.star.common.utils.RandomUtil;
 import com.starnft.star.domain.rank.core.rank.core.IRankService;
 import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
 import com.starnft.star.domain.rank.core.rank.model.RankItemMetaData;
@@ -56,6 +57,20 @@ public class RankTest {
 
     }
 
+    @Test
+    public void setValidUser(){
+        for (int i = 0; i < 15; i++) {
+            RankItemMetaData rankItemMetaData = new RankItemMetaData();
+            rankItemMetaData.setMobile(RandomUtil.randomPhone());
+            rankItemMetaData.setNickName(RandomUtil.randomName());
+            rankItemMetaData.setChildrenId(RandomUtil.randomLong(9));
+            rankItemMetaData.setInvitationTime(new Date());
+            rankService.put("launch_rank", "294592515",1,rankItemMetaData);
+            rankService.validPut("launch_rank","294592515",1,rankItemMetaData);
+        }
+
+    }
+    //查询订单表成功新人徽章订单 如果购买人有邀请人 添加邀请人元石记录 元石备注 拉新活动-邀请获得300元石
 
     @Test
     public void setTime(){

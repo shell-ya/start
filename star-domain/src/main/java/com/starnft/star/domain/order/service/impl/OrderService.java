@@ -145,5 +145,11 @@ public class OrderService implements IOrderService {
         return orderRepository.queryOrdersByUidNSpu(uid, spu);
     }
 
+    @Override
+    public List<OrderVO> queryAllSuccessOrder() {
+         return orderRepository.queryAllSuccessByTheme("998977713737334784");
+//        return BeanColverUtil.colverList(orderVOS, OrderListRes.class);
+    }
+
 
 }

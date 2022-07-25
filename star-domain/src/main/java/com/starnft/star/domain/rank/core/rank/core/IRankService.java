@@ -150,4 +150,8 @@ public interface IRankService {
     public Long getRankSize(String rankName);
 
     public void putTime(String rankName, String  key, RankItemMetaData rankItemMetaData);
+
+    public boolean scopeUserExist(Long parent,Long childrenId);
+
+    public boolean putScopeUser(Long parent,Long childrenId);
 }

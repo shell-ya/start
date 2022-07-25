@@ -1,5 +1,7 @@
 package com.starnft.star.domain.prop.model.vo;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,17 +19,18 @@ public class PropsRelationVO implements Serializable {
      * id
      */
     @ApiModelProperty(name = "id", notes = "")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     /**
      * 用户id
      */
     @ApiModelProperty(name = "用户id", notes = "")
-    private Integer uid;
+    private Long uid;
     /**
      * 道具id
      */
     @ApiModelProperty(name = "道具id", notes = "")
-    private Integer propId;
+    private Long propId;
     /**
      * 道具数量
      */

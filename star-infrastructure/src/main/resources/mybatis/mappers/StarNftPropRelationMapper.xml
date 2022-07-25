@@ -21,6 +21,7 @@
         id
         ,is_deleted,created_at,created_by,modified_at,modified_by,uid,prop_id,prop_counts,expire,prop_icon,prop_level,prop_type
     </sql>
+
     <sql id="condition">
         <if test="id != null and id != ''">
             and id = #{id}
@@ -65,6 +66,7 @@
 
 
     <select id="selectSpecific" resultMap="StarNftPropRelationMap">
+        select
         <include refid="items"/>
         from
         star_nft_prop_relation

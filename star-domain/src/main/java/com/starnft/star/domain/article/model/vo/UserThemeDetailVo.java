@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @Date 2022/7/24 2:09 PM
@@ -20,17 +21,17 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserThemeDetailVo implements Serializable {
-    @ApiModelProperty("商品id")
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long id;
-    @ApiModelProperty("主题id")
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long themeId;
-    @ApiModelProperty("商品编号")
-    @JsonSerialize(using = ToStringSerializer.class)
-    private Long number;
-    @ApiModelProperty("发行数量")
-    private Integer issuedQty;
+//    @ApiModelProperty("商品id")
+//    @JsonSerialize(using = ToStringSerializer.class)
+//    private Long id;
+//    @ApiModelProperty("主题id")
+//    @JsonSerialize(using = ToStringSerializer.class)
+//    private Long themeId;
+//    @ApiModelProperty("商品编号")
+//    @JsonSerialize(using = ToStringSerializer.class)
+//    private Long number;
+//    @ApiModelProperty("发行数量")
+//    private Integer issuedQty;
     @ApiModelProperty("商品名称")
     private String name;
     @ApiModelProperty("商品图片")
