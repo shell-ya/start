@@ -6,6 +6,4 @@ import java.util.List;
 
 public interface IComposeCore {
     List<ComposeCategoryMaterialRes> composeMaterial(Long id);
-
-    Object composeDetails(Long id);
 }

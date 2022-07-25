@@ -30,14 +30,14 @@ public class ComposeController {
 
     @PostMapping("details/{id}")
     public RopResponse details(@PathVariable Long id) {
-        return RopResponse.success(composeCore.composeDetails(id));
+        return RopResponse.success(composeService.composeDetails(id));
     }
     @PostMapping("details/material")
     public RopResponse material(@PathVariable Long id) {
         return RopResponse.success(composeCore.composeMaterial(id));
     }
-//    @PostMapping("details/synthetic")
-//    public RopResponse synthetic(@PathVariable Long id) {
-////        return RopResponse.success(composeService.composeDetails(id));
-//    }
+    @PostMapping("details/synthetic")
+    public RopResponse synthetic(@PathVariable Long id) {
+        return RopResponse.success(composeService.composeDetails(id));
+    }
 }
