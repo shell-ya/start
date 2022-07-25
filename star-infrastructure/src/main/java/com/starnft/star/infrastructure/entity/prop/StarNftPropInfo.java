@@ -85,6 +85,12 @@ public class StarNftPropInfo extends BaseEntity implements Serializable {
     @ApiModelProperty(name = "出售数量 -1 不限量", notes = "")
     private BigDecimal stock;
 
+    /**
+     * 限购数量 -1 不限量
+     */
+    @ApiModelProperty(name = "限购数量 -1 不限量", notes = "")
+    private Integer buyLimit;
+
     public Long getId() {
         return id;
     }
@@ -187,5 +193,13 @@ public class StarNftPropInfo extends BaseEntity implements Serializable {
 
     public void setStock(BigDecimal stock) {
         this.stock = stock;
+    }
+
+    public Integer getBuyLimit() {
+        return buyLimit;
+    }
+
+    public void setBuyLimit(Integer buyLimit) {
+        this.buyLimit = buyLimit;
     }
 }

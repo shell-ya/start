@@ -59,6 +59,8 @@ public enum StarError {
     IS_TRANSACTION("300002", "有其他交易正在进行，请先完成正在进行的交易!"),
     IS_WITHDRAWING("300010", "您已有提现订单正在处理,请耐心等待!"),
 
+    WITHDRAW_ILLEGAL_MONEY("300011", "小于最低提现金额!"),
+
     OVER_WITHDRAW_TIMES("300003", "已达到当日提现最大次数"),
     OVER_WITHDRAW_MONEY("300004", "超过限制提现金额"),
 
@@ -92,6 +94,12 @@ public enum StarError {
     NOT_ENABLED_ACTIVITY("1000053","未到活动开启时间"),
     NOT_FOUND_ACTIVITY("1000054","当前无开启活动"),
     GOODS_IS_TRANSACTION("1000055","藏品正在交易中，请选择其他藏品"),
+
+
+    //################# 道具  #################
+    PROP_CAN_NOT_BUY("4000001","道具不可购买"),
+    PROP_CAN_BUY_OVERFLOW("4000002","超出可购买数量"),
+    //################# ===  #################
     ;
 
     private String NS = "";

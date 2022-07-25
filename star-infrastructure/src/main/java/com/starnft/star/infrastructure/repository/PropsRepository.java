@@ -6,18 +6,23 @@ import com.github.pagehelper.PageInfo;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.prop.model.req.PropShopListReq;
+import com.starnft.star.domain.prop.model.req.PropsDeliveryReq;
 import com.starnft.star.domain.prop.model.req.PropsListReq;
 import com.starnft.star.domain.prop.model.res.PropsListRes;
+import com.starnft.star.domain.prop.model.vo.PropsRecordVO;
 import com.starnft.star.domain.prop.model.vo.PropsRelationVO;
 import com.starnft.star.domain.prop.model.vo.PropsVO;
 import com.starnft.star.domain.prop.repository.IPropsRepository;
 import com.starnft.star.infrastructure.entity.prop.StarNftPropInfo;
 import com.starnft.star.infrastructure.entity.prop.StarNftPropRelation;
+import com.starnft.star.infrastructure.entity.prop.StarPropsPurchaseRecord;
 import com.starnft.star.infrastructure.mapper.prop.StarNftPropInfoMapper;
 import com.starnft.star.infrastructure.mapper.prop.StarNftPropRelationMapper;
+import com.starnft.star.infrastructure.mapper.prop.StarPropsPurchaseRecordMapper;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -28,6 +33,9 @@ public class PropsRepository implements IPropsRepository {
 
     @Resource
     private StarNftPropRelationMapper starNftPropRelationMapper;
+
+    @Resource
+    private StarPropsPurchaseRecordMapper starPropsPurchaseRecordMapper;
 
     @Override
     public List<PropsListRes> obtainProps(PropsListReq req) {
@@ -68,5 +76,39 @@ public class PropsRepository implements IPropsRepository {
                 , propShopListReq.getPage()
                 , propShopListReq.getSize()
                 , propInfoPageInfo.getTotal());
+    }
+
+    @Override
+    public Boolean propsPurchaseRecordGenerated(PropsRecordVO propsRecordVO) {
+        StarPropsPurchaseRecord record = BeanColverUtil.colver(propsRecordVO, StarPropsPurchaseRecord.class);
+        record.setCreatedAt(new Date());
+        record.setCreatedBy(propsRecordVO.getUid());
+        record.setIsDeleted(Boolean.FALSE);
+        return starPropsPurchaseRecordMapper.insert(record) == 1;
+    }
+
+    @Override
+    public Boolean propsDelivery(PropsDeliveryReq propsDeliveryReq) {
+        PropsRelationVO propsRelationVO = this.specificProps(propsDeliveryReq.getUid(), propsDeliveryReq.getPropsVO().getId());
+        if (propsRelationVO == null) {
+            StarNftPropRelation starNftPropRelation = new StarNftPropRelation();
+            starNftPropRelation.setPropId(propsDeliveryReq.getPropsVO().getId());
+            starNftPropRelation.setUid(propsDeliveryReq.getUid());
+            starNftPropRelation.setPropCounts(propsDeliveryReq.getPropNums());
+            starNftPropRelation.setPropIcon(propsDeliveryReq.getPropsVO().getPropIcon());
+            starNftPropRelation.setPropLevel(propsDeliveryReq.getPropsVO().getPropLevel());
+            starNftPropRelation.setPropType(propsDeliveryReq.getPropsVO().getPropType());
+            starNftPropRelation.setExpire(propsDeliveryReq.getPropsVO().getExpire());
+            starNftPropRelation.setCreatedBy(propsDeliveryReq.getUid());
+            starNftPropRelation.setIsDeleted(Boolean.FALSE);
+            starNftPropRelation.setCreatedAt(new Date());
+            return starNftPropRelationMapper.insert(starNftPropRelation) == 1;
+        }
+
+        propsRelationVO.setPropCounts(propsRelationVO.getPropCounts() + propsDeliveryReq.getPropNums());
+        StarNftPropRelation updatePo = BeanColverUtil.colver(propsRelationVO, StarNftPropRelation.class);
+        updatePo.setModifiedAt(new Date());
+        updatePo.setModifiedBy(propsDeliveryReq.getUid());
+        return starNftPropRelationMapper.updateById(updatePo) == 1;
     }
 }

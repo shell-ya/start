@@ -1,5 +1,7 @@
 package com.starnft.star.interfaces.controller.props;
 
+import com.starnft.star.application.process.props.IPropsCore;
+import com.starnft.star.application.process.props.model.req.PropBuyReq;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.prop.model.req.PropShopListReq;
@@ -26,6 +28,8 @@ public class PropsController {
 
     private final IPropsService propsService;
 
+    private final IPropsCore propsCore;
+
     @ApiOperation("用户道具列表")
     @PostMapping("/users/list")
     public RopResponse<List<PropsListRes>> list() {
@@ -39,6 +43,13 @@ public class PropsController {
     @TokenIgnore
     public RopResponse<PropsVO> details(@PathVariable("propsId") String propsId) {
         return RopResponse.success(this.propsService.queryPropsDetails(Long.parseLong(propsId)));
+    }
+
+    @ApiOperation("道具购买")
+    @PostMapping("/buy")
+    @TokenIgnore
+    public RopResponse<Boolean> buy(@RequestBody PropBuyReq req) {
+        return RopResponse.success(this.propsCore.propPay(req));
     }
 
     @ApiOperation("道具商城列表")

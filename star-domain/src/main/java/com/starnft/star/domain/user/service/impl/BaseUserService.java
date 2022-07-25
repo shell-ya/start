@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author WeiChunLAI
  */
@@ -31,7 +33,7 @@ public class BaseUserService {
      * @param userId
      * @return
      */
-    protected String createUserTokenAndSaveRedis(Long userId , String phone) {
+    protected String createUserTokenAndSaveRedis(Long userId, String phone) {
         //创建token
         AccessToken accessToken = new AccessToken();
         accessToken.setUserId(userId);
@@ -73,6 +75,7 @@ public class BaseUserService {
             String key = String.format(RedisKey.REDIS_USER_TOKEN.getKey(), accountId);
             String tokenRes = String.valueOf(redisTemplate.opsForValue().get(key));
             if (StringUtils.isNotBlank(tokenRes) && !"null".equals(tokenRes)) {
+                redisTemplate.expire(tokenRes, 24, TimeUnit.HOURS);
                 return new UserInfo().setAccount(Long.valueOf(accountId)).setPhone(phone);
             }
         }
