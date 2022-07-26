@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.compose.StarNftComposePrizeMapper">
+  <resultMap id="BaseResultMap" type="com.starnft.star.infrastructure.entity.compose.StarNftComposePrize">
+    <!--@mbg.generated-->
+    <!--@Table star_nft_compose_prize-->
+    <id column="id" property="id" />
+    <result column="compose_id" property="composeId" />
+    <result column="prize_type" property="prizeType" />
+    <result column="prize_stamp" property="prizeStamp" />
+    <result column="prize_probability" property="prizeProbability" />
+    <result column="is_deleted" property="isDeleted" />
+    <result column="prize_number" property="prizeNumber" />
+    <result column="modified_at" property="modifiedAt" />
+    <result column="created_at" property="createdAt" />
+    <result column="current_prize_number" property="currentPrizeNumber" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, compose_id, prize_type, prize_stamp, prize_probability, is_deleted, prize_number, 
+    modified_at, created_at,current_prize_number
+  </sql>
+</mapper>

@@ -31,7 +31,6 @@ public class ComposeServiceImpl  implements IComposeService {
         return iComposeRepository.queryComposeById(id);
     }
 
-
     @Override
     public List<ComposeCategoryRes> composeCategory(Long id) {
         return composeCategoryRepository.queryComposeCategoryByComposeId(id);
