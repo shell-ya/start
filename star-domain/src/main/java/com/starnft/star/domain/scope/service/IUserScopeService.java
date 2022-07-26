@@ -8,4 +8,5 @@ public interface IUserScopeService {
 
    public UserScopeRes updateUserScopeByUserId(UpdateUserScopeReq userScopeReq);
    public UserScopeRes getUserScopeByUserId(UserScopeReq userScopeReq);
+   public Boolean updateScopeByUserId(UpdateUserScopeReq updateUserScopeReq);
 }

@@ -10,6 +10,8 @@ import com.starnft.star.application.process.compose.model.res.ComposeDetailRes;
 import com.starnft.star.application.process.compose.strategy.lottery.ComposeDrawConfiguration;
 import com.starnft.star.application.process.compose.strategy.lottery.ComposeDrawLotteryStrategy;
 import com.starnft.star.application.process.compose.strategy.prize.ComposePrizeStrategy;
+import com.starnft.star.application.process.scope.IScopeCore;
+import com.starnft.star.application.process.scope.model.ScoreDTO;
 import com.starnft.star.common.enums.ComposeDrawLotteryStrategyEnums;
 import com.starnft.star.common.enums.ComposePrizeTypeEnums;
 import com.starnft.star.common.enums.UserNumberStatusEnum;
@@ -27,6 +29,7 @@ import com.starnft.star.domain.compose.model.res.ComposePrizeRes;
 import com.starnft.star.domain.compose.model.res.ComposeRes;
 import com.starnft.star.domain.compose.repository.IComposePrizeRepository;
 import com.starnft.star.domain.compose.service.IComposeService;
+import com.starnft.star.domain.scope.service.IUserScopeService;
 import com.starnft.star.domain.theme.service.ThemeService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,7 @@ import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -49,6 +53,8 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
     private IComposeService composeService;
     @Resource
     private UserThemeService userThemeService;
+    @Resource
+    private IScopeCore iScopeCore;
     @Resource
     private  ComposeDrawConfiguration composeDrawConfiguration;
 
@@ -94,6 +100,11 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
     @Override
     public Object composeManage(ComposeManageReq composeManageReq) {
         ComposeCategoryRes composeCategoryRes = composeService.composeCategoryByCategoryId(composeManageReq.getCategoryId());
+        //积分判断操作
+        if (composeCategoryRes.getIsScore()){
+            ScoreDTO subScoreDTO = getScoreDTO(composeManageReq, composeCategoryRes);
+            iScopeCore.userScopeManageSub(subScoreDTO);
+        }
         List<ComposeMaterialDTO> composeMaterials = JSONUtil.toList(composeCategoryRes.getComposeMaterial(), ComposeMaterialDTO.class);
         List<UserNumbersVO> userNumbersList = userThemeService.queryUserArticleNumberInfoByNumberIds(composeManageReq.getUserId(), composeManageReq.getSourceIds(), UserNumberStatusEnum.PURCHASED);
         Assert.isTrue(composeManageReq.getSourceIds().size() == userNumbersList.size(), () -> new StarException("不能操作非本人物品"));
@@ -119,6 +130,16 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
         //todo 依据判断看是否需要销毁商品
 
         return null;
+    }
+
+    private ScoreDTO getScoreDTO(ComposeManageReq composeManageReq, ComposeCategoryRes composeCategoryRes) {
+        ScoreDTO subScoreDTO = new ScoreDTO();
+        subScoreDTO.setIsSub(true);
+        subScoreDTO.setScope(new BigDecimal(composeCategoryRes.getComposeScopeNumber()));
+        subScoreDTO.setScopeType(composeCategoryRes.getComposeScopeType());
+        subScoreDTO.setTemplate("合成消耗%s积分");
+        subScoreDTO.setUserId(composeManageReq.getUserId());
+        return subScoreDTO;
     }
 
     private void checkThemeCounts(Map<Long, List<UserNumbersVO>> collect, Map<Long, ComposeMaterialDTO> composeMaterialDTOMap) {
