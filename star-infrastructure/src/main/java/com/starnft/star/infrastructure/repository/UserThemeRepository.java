@@ -59,6 +59,12 @@ public class UserThemeRepository implements IUserThemeRepository, PageHelperInte
         return  this.starNftUserThemeMapper.queryUserArticleNumberInfoByThemeIds(uid,themeIds,statusEnum);
     }
 
+
+    @Override
+    public List<UserNumbersVO> queryUserArticleNumberInfoByNumberIds(Long uid, List<Long> numbersIds, UserNumberStatusEnum statusEnum) {
+        return  this.starNftUserThemeMapper.queryUserArticleNumberInfoByThemeIds(uid,numbersIds,statusEnum);
+    }
+
     @Override
     public UserNumbersVO queryUserNumberInfo(Long uid, Long numberId,UserNumberStatusEnum statusEnum) {
         StarNftUserTheme starNftUserTheme = this.starNftUserThemeMapper.selectOne(Wrappers.lambdaQuery(StarNftUserTheme.class)
