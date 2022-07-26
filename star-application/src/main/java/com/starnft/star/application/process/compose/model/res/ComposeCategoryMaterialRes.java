@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class ComposeCategoryMaterialRes implements  Serializable {
+
     private Long id;
     private List<ComposeMaterialDTO> composeMaterials;
 

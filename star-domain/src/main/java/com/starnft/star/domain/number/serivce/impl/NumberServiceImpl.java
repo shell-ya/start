@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -79,6 +80,11 @@ public class NumberServiceImpl implements INumberService {
     @Override
     public ThemeNumberVo queryNumberExist(Integer themeNumber, Long themeId) {
         return this.numberRepository.queryNumberExist(themeNumber, themeId);
+    }
+
+    @Override
+    public ThemeNumberVo queryRandomThemeNumber(Long themeId) {
+        return this.numberRepository.selectRandomThemeNumber(themeId);
     }
 
     @Override

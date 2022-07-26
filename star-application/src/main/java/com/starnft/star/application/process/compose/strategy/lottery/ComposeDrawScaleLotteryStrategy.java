@@ -1,14 +1,15 @@
-package com.starnft.star.domain.compose.strategy;
+package com.starnft.star.application.process.compose.strategy.lottery;
 
-import cn.hutool.core.util.RandomUtil;
 import com.starnft.star.domain.compose.model.dto.ComposePrizeDTO;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 @Component("composeDrawScaleLotteryStrategy")
-public class ComposeDrawScaleLotteryStrategy implements  ComposeDrawLotteryStrategy
+public class ComposeDrawScaleLotteryStrategy implements ComposeDrawLotteryStrategy
 {
     @Override
     public ComposePrizeDTO drawPrize(List<ComposePrizeDTO> composePrizes, int randNum, int seed) {

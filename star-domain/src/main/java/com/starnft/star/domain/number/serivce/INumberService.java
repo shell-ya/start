@@ -11,6 +11,8 @@ import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
 import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
 
+import java.util.List;
+
 public interface INumberService {
     ResponsePageResult<NumberVO> queryThemeNumber(NumberReq numberReq);
 
@@ -22,6 +24,7 @@ public interface INumberService {
 
     //查询对应编号藏品信息
     ThemeNumberVo queryNumberExist(Integer themeNumber, Long themeId);
+    ThemeNumberVo queryRandomThemeNumber(Long themeId);
 
     //物品转移
     boolean handover(HandoverReq handoverReq);

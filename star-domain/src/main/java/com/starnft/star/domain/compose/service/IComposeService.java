@@ -13,4 +13,5 @@ public interface IComposeService {
 
     ComposeRes composeDetails(Long id);
     public List<ComposeCategoryRes> composeCategory(Long id);
+    public ComposeCategoryRes composeCategoryByCategoryId(Long id);
 }

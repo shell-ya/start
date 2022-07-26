@@ -35,4 +35,9 @@ public class ComposeServiceImpl  implements IComposeService {
     public List<ComposeCategoryRes> composeCategory(Long id) {
         return composeCategoryRepository.queryComposeCategoryByComposeId(id);
     }
+
+    @Override
+    public ComposeCategoryRes composeCategoryByCategoryId(Long id) {
+        return composeCategoryRepository.composeCategoryByCategoryId(id);
+    }
 }

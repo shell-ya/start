@@ -136,6 +136,11 @@ public class NumberRepository implements INumberRepository {
     }
 
     @Override
+    public ThemeNumberVo selectRandomThemeNumber(Long id) {
+        return  this.starNftThemeNumberMapper.selectRandomThemeNumber(id);
+    }
+
+    @Override
     public boolean modifyNumberStatus(Long numberId, Long uid, Integer status) {
         LambdaQueryWrapper<StarNftThemeNumber> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Objects.nonNull(numberId), StarNftThemeNumber::getId, numberId);

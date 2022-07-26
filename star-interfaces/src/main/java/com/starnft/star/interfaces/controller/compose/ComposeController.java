@@ -1,18 +1,18 @@
 package com.starnft.star.interfaces.controller.compose;
 
 import com.starnft.star.application.process.compose.IComposeCore;
+import com.starnft.star.application.process.compose.model.req.UserMaterialReq;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.page.RequestConditionPage;
+import com.starnft.star.domain.compose.model.req.ComposeManageReq;
 import com.starnft.star.domain.compose.model.req.ComposeReq;
 import com.starnft.star.domain.compose.service.IComposeService;
+import com.starnft.star.interfaces.interceptor.UserResolverInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,21 +23,28 @@ import java.util.List;
 public class ComposeController {
     final IComposeService composeService;
     final IComposeCore composeCore;
+
+    @ApiOperation("合成列表")
     @PostMapping("list")
     public RopResponse list(RequestConditionPage<ComposeReq> reqRequestConditionPage) {
         return RopResponse.success(composeService.composeList(reqRequestConditionPage));
     }
 
+    @ApiOperation("合成详情")
     @PostMapping("details/{id}")
     public RopResponse details(@PathVariable Long id) {
         return RopResponse.success(composeCore.composeDetails(id));
     }
-    @PostMapping("details/material")
-    public RopResponse material(@PathVariable Long id) {
-        return RopResponse.success(composeCore.composeMaterial(id));
+
+    @ApiOperation("用户素材列表获取")
+    @PostMapping("/user/material/{id}")
+    public RopResponse material(UserResolverInfo userResolverInfo, @PathVariable("id") Long id) {
+        return RopResponse.success(composeCore.composeUserMaterial(new UserMaterialReq(id, userResolverInfo.getUserId())));
     }
-//    @PostMapping("details/synthetic")
-//    public RopResponse synthetic(@PathVariable Long id) {
-////        return RopResponse.success(composeService.composeDetails(id));
-//    }
+    @ApiOperation("合成操作")
+    @PostMapping("manage")
+    public RopResponse manage(@RequestBody ComposeManageReq composeManageReq) {
+        return RopResponse.success(composeCore.composeManage(composeManageReq));
+    }
+
 }

@@ -25,4 +25,10 @@ public class ComposeCategoryRepository implements IComposeCategoryRepository {
         List<StarNftComposeCategory> starNftComposeCategories = starNftComposeCategoryMapper.selectList(wrapper);
         return  BeanColverUtil.colverList(starNftComposeCategories,ComposeCategoryRes.class);
     }
+
+    @Override
+    public ComposeCategoryRes composeCategoryByCategoryId(Long id) {
+        StarNftComposeCategory starNftComposeCategory = starNftComposeCategoryMapper.selectById(id);
+        return BeanColverUtil.colver(starNftComposeCategory,ComposeCategoryRes.class);
+    }
 }

@@ -1,8 +1,7 @@
-package com.starnft.star.domain.compose.strategy;
+package com.starnft.star.application.process.compose.strategy.lottery;
 
 import com.starnft.star.domain.compose.model.dto.ComposePrizeDTO;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public interface ComposeDrawLotteryStrategy {
