@@ -6,6 +6,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface ComposeDrawLotteryStrategy {
-    int drawPrize(List<ComposePrizeDTO> composePrizes);
-    int draw(List<BigDecimal> scales);
+    ComposePrizeDTO drawPrize(List<ComposePrizeDTO> composePrizes, int randNum, int seed);
+//    int draw(List<BigDecimal> scales);
 }
