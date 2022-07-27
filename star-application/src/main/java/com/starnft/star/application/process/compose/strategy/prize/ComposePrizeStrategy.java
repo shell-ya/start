@@ -7,5 +7,5 @@ import com.starnft.star.domain.compose.model.req.ComposeManageReq;
 import java.util.List;
 
 public interface ComposePrizeStrategy {
-    public void composePrize(List<UserNumbersVO> userNumbersVOList, ComposeManageReq composeManageReq, ComposePrizeDTO composePrizeDTO);
+    public void composePrize( ComposeManageReq composeManageReq, ComposePrizeDTO composePrizeDTO);
 }

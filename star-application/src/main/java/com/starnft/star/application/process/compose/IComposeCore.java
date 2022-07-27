@@ -5,6 +5,7 @@ import com.starnft.star.application.process.compose.model.res.ComposeCategoryMat
 import com.starnft.star.application.process.compose.model.res.ComposeDetailRes;
 import com.starnft.star.domain.article.model.vo.UserNumbersVO;
 import com.starnft.star.domain.compose.model.req.ComposeManageReq;
+import com.starnft.star.domain.compose.model.res.ComposeManageRes;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,7 @@ public interface IComposeCore {
 
     Map<Long, List<UserNumbersVO>> composeUserMaterial(UserMaterialReq userMaterialReq);
 
-    Object composeManage(ComposeManageReq composeManageReq);
+    ComposeManageRes composeManage(ComposeManageReq composeManageReq);
 
 
 }

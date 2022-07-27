@@ -2,4 +2,28 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.starnft.star.infrastructure.mapper.number.StarNftNumberCirculationHistMapper">
 
+    <insert id="saveBatchNumberCirculationRecord"  >
+        INSERT INTO star_nft_number_circulation_hist(
+        `number_id`, `type`, `before_price`,
+        `after_price`, `create_at`, `create_by`,
+        `update_at`, `update_by`,
+        `is_delete`, `before_owner`,
+        `after_owner`)
+        VALUES
+        <foreach collection ="arrays" item="item" separator =",">
+            (#{item.numberId},
+            #{item.type},
+            #{item.beforePrice},
+            #{item.afterPrice},
+            #{item.createAt},
+            #{item.createBy},
+            #{item.updateAt},
+            #{item.updateBy},
+            #{item.isDelete},
+            #{item.beforeOwner},
+            #{item.afterOwner}
+            )
+        </foreach >
+
+    </insert>
 </mapper>

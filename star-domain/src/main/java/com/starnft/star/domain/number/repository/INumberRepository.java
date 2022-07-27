@@ -11,6 +11,8 @@ import com.starnft.star.domain.number.model.vo.NumberVO;
 import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
 import com.starnft.star.domain.number.model.vo.UserThemeMappingVO;
 
+import java.util.List;
+
 public interface INumberRepository {
     ResponsePageResult<NumberVO> queryNumber(NumberReq numberReq);
 
@@ -21,6 +23,7 @@ public interface INumberRepository {
     Boolean modifyNumberInfo(NumberUpdateDTO param);
 
     Boolean saveNumberCirculationRecord(NumberCirculationAddDTO numberCirculation);
+    Boolean saveBatchNumberCirculationRecord(List<NumberCirculationAddDTO> numberCirculation);
 
     NumberCirculationDTO getLastConsignedCirculation(Long numberId);
 
@@ -30,6 +33,7 @@ public interface INumberRepository {
     boolean modifyNumberStatus(Long numberId, Long uid, Integer status);
 
     boolean createUserNumberMapping(UserThemeMappingVO userThemeMappingVO);
+
 
     ThemeNumberVo queryNumberExist(Integer themeNumber, Long themeId);
 

@@ -128,8 +128,18 @@ public class NumberServiceImpl implements INumberService {
     }
 
     @Override
+    public boolean createUserNumberMapping(UserThemeMappingVO userThemeMappingVO) {
+     return    this.numberRepository.createUserNumberMapping(userThemeMappingVO);
+    }
+
+    @Override
     public Boolean saveNumberCirculationRecord(NumberCirculationAddDTO numberCirculation) {
         return this.numberRepository.saveNumberCirculationRecord(numberCirculation);
+    }
+
+    @Override
+    public Boolean saveBatchNumberCirculationRecord(List<NumberCirculationAddDTO> numberCirculation) {
+        return this.numberRepository.saveBatchNumberCirculationRecord(numberCirculation);
     }
 
     private UserThemeMappingVO createMapping(HandoverReq handoverReq) {
