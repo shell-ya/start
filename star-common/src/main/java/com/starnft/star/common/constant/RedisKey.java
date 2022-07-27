@@ -192,7 +192,10 @@ public enum RedisKey {
     SCOPE_USER_MAPPING(606,StarConstants.SERVICE_NAME.concat(".scope.user:%s"),3L,TimeUnit.HOURS),
 
     RANK_STORE(602,StarConstants.SERVICE_NAME.concat(".rank:%s:store"),3L, TimeUnit.HOURS),
-    RANK_EXTEND(603,StarConstants.SERVICE_NAME.concat(".rank:%s:extend"),3L, TimeUnit.HOURS)
+    RANK_EXTEND(603,StarConstants.SERVICE_NAME.concat(".rank:%s:extend"),3L, TimeUnit.HOURS),
+    //合成数字锁
+    COMPOSE_DRAW_STRATEGY(701, StarConstants.SERVICE_NAME.concat(".compose:draw:strategy"), 3L, TimeUnit.HOURS),
+    COMPOSE_NUMBER_LOCK(702,StarConstants.SERVICE_NAME.concat(".compose:number:%s"),3L, TimeUnit.MINUTES)
 
     ;
         /**

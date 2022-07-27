@@ -22,6 +22,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Repository
@@ -51,6 +52,17 @@ public class UserThemeRepository implements IUserThemeRepository, PageHelperInte
                 .startPage(userHaveNumbersReq.getPage(), userHaveNumbersReq.getSize())
                 .doSelectPageInfo(() -> this.starNftUserThemeMapper.selectUserThemeToNumbersByUserId(userHaveNumbersReq));
         return this.listReplace(result, result.getList());
+    }
+
+    @Override
+    public List<UserNumbersVO> queryUserArticleNumberInfoByThemeIds(Long uid, List<Long> themeIds, UserNumberStatusEnum statusEnum) {
+        return  this.starNftUserThemeMapper.queryUserArticleNumberInfoByThemeIds(uid,themeIds,statusEnum);
+    }
+
+
+    @Override
+    public List<UserNumbersVO> queryUserArticleNumberInfoByNumberIds(Long uid, List<Long> numbersIds, UserNumberStatusEnum statusEnum) {
+        return  this.starNftUserThemeMapper.queryUserArticleNumberInfoByThemeIds(uid,numbersIds,statusEnum);
     }
 
     @Override

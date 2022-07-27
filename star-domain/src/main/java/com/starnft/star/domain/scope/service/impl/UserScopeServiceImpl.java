@@ -1,5 +1,7 @@
 package com.starnft.star.domain.scope.service.impl;
 
+import com.starnft.star.common.exception.StarException;
+import com.starnft.star.common.utils.Assert;
 import com.starnft.star.domain.scope.model.req.AddUserScopeReq;
 import com.starnft.star.domain.scope.model.req.UpdateUserScopeReq;
 import com.starnft.star.domain.scope.model.req.UserScopeReq;
@@ -26,19 +28,26 @@ public class UserScopeServiceImpl  implements IUserScopeService {
        if (Objects.nonNull(resultUserScopeRes)){
            UpdateUserScopeReq insertScope = new UpdateUserScopeReq();
            extractedUpdateUserScope(updateUserScopeReq, userScopeReq, resultUserScopeRes, insertScope);
-           userScopeRepository.updateUserScopeByUserId(insertScope);
+           Boolean isSuccess = userScopeRepository.updateUserScopeByUserId(insertScope);
+           Assert.isTrue(isSuccess,()->new StarException("积分更新失败"));
            resultUpdateExtracted(updateUserScopeReq, resultUserScopeRes);
 
        }else{
            AddUserScopeReq addUserScopeReq = new AddUserScopeReq();
            extractedInsertUserScope(updateUserScopeReq, addUserScopeReq);
-           userScopeRepository.insertUserScopeByUserId(addUserScopeReq);
+           Boolean isSuccess =userScopeRepository.insertUserScopeByUserId(addUserScopeReq);
+           Assert.isTrue(isSuccess,()->new StarException("积分更新失败"));
            resultUserScopeRes=new UserScopeRes();
            resultInsertExtracted(updateUserScopeReq, resultUserScopeRes);
        }
         return resultUserScopeRes;
     }
+    @Transactional
+    @Override
+    public Boolean updateScopeByUserId(UpdateUserScopeReq updateUserScopeReq) {
 
+      return   userScopeRepository.updateUserScopeByUserId(updateUserScopeReq);
+    }
     private void resultInsertExtracted(UpdateUserScopeReq updateUserScopeReq, UserScopeRes resultUserScopeRes) {
 
         resultUserScopeRes.setScope(updateUserScopeReq.getScope());

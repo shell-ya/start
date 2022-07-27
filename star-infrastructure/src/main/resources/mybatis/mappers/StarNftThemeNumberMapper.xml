@@ -103,4 +103,27 @@
 
     </select>
 
+    <select id="selectRandomThemeNumber" resultType="com.starnft.star.domain.number.model.vo.ThemeNumberVo">
+        SELECT a.id       id,
+        a.theme_number         number,
+        a.contract_address     contract_address,
+        a.chain_identification chain_identification,
+        a.price                price,
+        a.status               status,
+        a.owner_by             owner_by,
+        b.id                   theme_id,
+        b.theme_name           name,
+        b.theme_pic            picture,
+        b.descrption           descrption,
+        b.theme_type           type,
+        b.is_resale            resale
+        FROM star_nft_theme_number a
+        LEFT JOIN star_nft_theme_info b
+        ON a.series_theme_info_id = b.id
+        JOIN (SELECT ROUND(RAND() * ((SELECT MAX(id ) FROM star_nft_theme_number)-(SELECT MIN(id) FROM star_nft_theme_number))+(SELECT MIN(id) FROM star_nft_theme_number)) AS id)AS t2
+        WHERE a.id = #{id}
+        AND a.is_delete = 0
+        AND a.status=0
+        AND a.id >= t2.id ORDER BY a.id LIMIT 1;
+    </select>
 </mapper>

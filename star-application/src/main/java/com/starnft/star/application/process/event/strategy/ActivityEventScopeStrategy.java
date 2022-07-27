@@ -4,7 +4,8 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.starnft.star.application.process.event.model.ActivityEventReq;
 import com.starnft.star.application.process.scope.IScopeCore;
-import com.starnft.star.application.process.scope.model.AddScoreDTO;
+
+import com.starnft.star.application.process.scope.model.ScoreDTO;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.event.model.res.EventActivityExtRes;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,7 @@ public  class ActivityEventScopeStrategy  implements  ActivityEventStrategy{
          BigDecimal scale = Optional.ofNullable(configs.getBigDecimal("scale")).orElse(BigDecimal.ONE);
          Object number = Long.parseLong(Optional.ofNullable(activityEventReq.getParams().get("number")).orElse(1).toString()) ;;
          BigDecimal totalScope=new BigDecimal(number.toString()).multiply(scale);
-         AddScoreDTO addScoreDTO = new AddScoreDTO();
+         ScoreDTO addScoreDTO = new ScoreDTO();
          addScoreDTO.setTemplate(template);
          addScoreDTO.setScopeType(scopeType);
          addScoreDTO.setUserId(activityEventReq.getUserId());

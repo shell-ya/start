@@ -15,6 +15,7 @@ import com.starnft.star.domain.article.service.UserThemeService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 public class UserThemeServiceImpl implements UserThemeService {
@@ -44,5 +45,15 @@ public class UserThemeServiceImpl implements UserThemeService {
     @Override
     public Boolean modifyUserNumberStatus(Long uid, Long numberId, UserNumberStatusEnum beforeStatusEnum, UserNumberStatusEnum statusEnum) {
         return this.userThemeRepository.modifyUserNumberStatus(uid, numberId, beforeStatusEnum,statusEnum);
+    }
+
+    @Override
+    public List<UserNumbersVO> queryUserArticleNumberInfoByThemeIds(Long uid, List<Long> themeIds, UserNumberStatusEnum statusEnum) {
+        return this.userThemeRepository.queryUserArticleNumberInfoByThemeIds(uid, themeIds,statusEnum);
+    }
+
+    @Override
+    public List<UserNumbersVO> queryUserArticleNumberInfoByNumberIds(Long uid, List<Long> numberIds, UserNumberStatusEnum statusEnum) {
+        return this.userThemeRepository.queryUserArticleNumberInfoByNumberIds(uid, numberIds,statusEnum);
     }
 }

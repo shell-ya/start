@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface IComposeCategoryRepository {
    List<ComposeCategoryRes> queryComposeCategoryByComposeId(Long composeId);
+
+    ComposeCategoryRes composeCategoryByCategoryId(Long id);
 }

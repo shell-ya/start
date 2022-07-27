@@ -6,7 +6,7 @@ import cn.hutool.json.JSONUtil;
 import com.starnft.star.application.process.event.model.ActivityEventReq;
 import com.starnft.star.application.process.event.model.BuyActivityEventReq;
 import com.starnft.star.application.process.scope.IScopeCore;
-import com.starnft.star.application.process.scope.model.AddScoreDTO;
+import com.starnft.star.application.process.scope.model.ScoreDTO;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.event.model.res.EventActivityExtRes;
 import com.starnft.star.domain.rank.core.rank.core.IRankService;
@@ -76,7 +76,7 @@ public class RankBuyActionState implements  IRankActionState {
             return;
         }
         iRankService.validPut(rankName, parent.toString(),number.doubleValue(),rankItemMetaData);
-        AddScoreDTO addScoreDTO = compensationScope(parent, rankItemMetaData.getChildrenId());
+        ScoreDTO addScoreDTO = compensationScope(parent, rankItemMetaData.getChildrenId());
         if (Objects.isNull(addScoreDTO)){
             log.info("已处理被邀请人积分");
             return;
@@ -103,7 +103,7 @@ public class RankBuyActionState implements  IRankActionState {
         return null;
     }
 
-    private AddScoreDTO compensationScope(Long parent , Long childrenId){
+    private ScoreDTO compensationScope(Long parent , Long childrenId){
         //检查redis 当前childrenId 是否命中 命中不处理
         boolean userExist = iRankService.scopeUserExist(parent, childrenId);
         if (userExist) return null;
@@ -112,7 +112,7 @@ public class RankBuyActionState implements  IRankActionState {
         if (Boolean.FALSE.equals(putSuccess)) return null;
         //配置积分数据
 
-        AddScoreDTO addScoreDTO = new AddScoreDTO();
+        ScoreDTO addScoreDTO = new ScoreDTO();
 
         addScoreDTO.setScope(new BigDecimal(300));
         addScoreDTO.setScopeType(0);

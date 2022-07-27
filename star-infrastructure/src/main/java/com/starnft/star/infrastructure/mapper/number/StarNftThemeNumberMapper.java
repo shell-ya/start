@@ -18,4 +18,5 @@ public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
     List<NumberVO> selectNumberList(NumberQueryDTO numberQuery);
 
     ThemeNumberVo selectConsignThemeNumberDetail(Long id);
+    ThemeNumberVo selectRandomThemeNumber(Long id);
 }
