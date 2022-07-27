@@ -122,7 +122,7 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
         List<ComposePrizeDTO> composePrizeDTOS = BeanColverUtil.colverList(composePrizeRes, ComposePrizeDTO.class);
         int randNums = RandomUtil.randomInt();
         //获得随机的合成物品
-        ComposePrizeDTO composePrizeDTO = composeDrawLotteryStrategy.drawPrize(composePrizeDTOS, randNums, 1000);
+        ComposePrizeDTO composePrizeDTO = composeDrawLotteryStrategy.drawPrize(composePrizeDTOS);
         ComposePrizeStrategy composePrizeStrategy = applicationContext.getBean(ComposePrizeTypeEnums.getComposePrizeType(composePrizeDTO.getPrizeType()).getStrategy(), ComposePrizeStrategy.class);
        //执行商品合成操作
         composePrizeStrategy.composePrize(composePrizeDTO);

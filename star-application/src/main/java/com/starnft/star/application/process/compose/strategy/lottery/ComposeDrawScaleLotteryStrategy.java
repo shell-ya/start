@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Component("composeDrawScaleLotteryStrategy")
 public class ComposeDrawScaleLotteryStrategy implements ComposeDrawLotteryStrategy {
     @Override
-    public ComposePrizeDTO drawPrize(List<ComposePrizeDTO> composePrizes, int randNum, int seed) {
+    public ComposePrizeDTO drawPrize(List<ComposePrizeDTO> composePrizes) {
 
         //验证奖品概率配置和为1
         BigDecimal rateTotal = BigDecimal.ZERO;
@@ -107,7 +107,7 @@ public class ComposeDrawScaleLotteryStrategy implements ComposeDrawLotteryStrate
         int allTimes = 0;
         while (currRate < (minRate - 0.05) || currRate > (minRate + 0.05)) {
             ComposeDrawScaleLotteryStrategy composeDrawScaleLotteryStrategy = new ComposeDrawScaleLotteryStrategy();
-            ComposePrizeDTO composePrizeDTO = composeDrawScaleLotteryStrategy.drawPrize(prizeDTOS, 0, 0);
+            ComposePrizeDTO composePrizeDTO = composeDrawScaleLotteryStrategy.drawPrize(prizeDTOS);
             if (composePrizeDTO.getPrizeProbability().doubleValue() == minRate) {
                 times++;
             }
