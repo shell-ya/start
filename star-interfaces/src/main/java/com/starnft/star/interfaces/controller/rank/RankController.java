@@ -52,6 +52,7 @@ public class RankController {
 ////                .thenComparing(RankingsItem::getValid,Comparator.reverseOrder())
 //        ).collect(Collectors.toList());
 //        rankings.setRankItem(rankingsItems);
+        request.getCondition().setUserId(null);
         return RopResponse.success(rankProcessor.rankings(request));
     }
 
