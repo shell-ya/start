@@ -27,7 +27,7 @@ public class BulletinController {
     private IBulletinService bulletinService;
 
     @ApiOperation("公告列表")
-    @GetMapping("/list")
+    @PostMapping("/list")
     @TokenIgnore
     public RopResponse<ResponsePageResult<BulletinVo>> bulletinList(@RequestBody(required = false) BulletinPageDto dto){
         if (Objects.isNull(dto)) {
