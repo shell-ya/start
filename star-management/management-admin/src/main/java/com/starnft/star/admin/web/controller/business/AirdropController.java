@@ -52,9 +52,14 @@ public class AirdropController extends BaseController {
 
 //    @PreAuthorize("@ss.hasPermi('business:airdrop:add')")
     @PostMapping(value = "/addAirdrop")
-    public AjaxResult listTheme(@RequestBody AirdropThemeRecord record)
+    public AjaxResult addAirdrop(@RequestBody AirdropThemeRecord record)
     {
         return AjaxResult.success(airdropThemeRecordService.addUserAirdrop(record));
     }
 
+    @PostMapping(value = "/airdropList")
+    public AjaxResult listTheme(@RequestBody List<AirdropThemeRecord> records)
+    {
+        return AjaxResult.success(airdropThemeRecordService.addUserAirdropList(records));
+    }
 }
