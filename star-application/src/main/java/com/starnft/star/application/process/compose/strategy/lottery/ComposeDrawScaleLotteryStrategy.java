@@ -1,6 +1,7 @@
 package com.starnft.star.application.process.compose.strategy.lottery;
 
 import com.google.common.collect.Lists;
+import com.starnft.star.common.exception.StarException;
 import com.starnft.star.domain.compose.model.dto.ComposePrizeDTO;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.stereotype.Component;
@@ -55,7 +56,7 @@ public class ComposeDrawScaleLotteryStrategy implements ComposeDrawLotteryStrate
             }
         }
         //逻辑上没有该种可能可抛异常
-        return null;
+       throw  new StarException("不可控异常");
     }
 
 

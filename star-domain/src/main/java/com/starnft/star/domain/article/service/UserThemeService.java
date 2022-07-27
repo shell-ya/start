@@ -21,6 +21,7 @@ public interface UserThemeService {
     UserNumbersVO queryUserNumberInfo(Long uid, Long numberId,UserNumberStatusEnum statusEnum);
 
     Boolean modifyUserNumberStatus(Long uid, Long numberId,  UserNumberStatusEnum beforeStatusEnum,UserNumberStatusEnum statusEnum);
+    Boolean modifyUserBatchNumberStatus(Long uid, List<Long> numberId,  UserNumberStatusEnum beforeStatusEnum,UserNumberStatusEnum statusEnum);
     List<UserNumbersVO> queryUserArticleNumberInfoByThemeIds(Long uid, List<Long> themeIds, UserNumberStatusEnum statusEnum);
 
     List<UserNumbersVO> queryUserArticleNumberInfoByNumberIds(Long uid, List<Long> numberIds, UserNumberStatusEnum statusEnum);

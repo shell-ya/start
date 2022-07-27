@@ -125,10 +125,10 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
         ComposePrizeDTO composePrizeDTO = composeDrawLotteryStrategy.drawPrize(composePrizeDTOS);
         ComposePrizeStrategy composePrizeStrategy = applicationContext.getBean(ComposePrizeTypeEnums.getComposePrizeType(composePrizeDTO.getPrizeType()).getStrategy(), ComposePrizeStrategy.class);
        //执行商品合成操作
-        composePrizeStrategy.composePrize(composePrizeDTO);
+        composePrizeStrategy.composePrize(userNumbersList,composeManageReq,composePrizeDTO);
 
         //todo 依据判断看是否需要销毁商品
-
+         //先默认销毁
         return null;
     }
 

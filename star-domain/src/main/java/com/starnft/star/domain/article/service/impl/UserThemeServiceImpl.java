@@ -48,6 +48,11 @@ public class UserThemeServiceImpl implements UserThemeService {
     }
 
     @Override
+    public Boolean modifyUserBatchNumberStatus(Long uid, List<Long> numberId, UserNumberStatusEnum beforeStatusEnum, UserNumberStatusEnum statusEnum) {
+        return this.userThemeRepository.modifyUserBatchNumberStatus(uid,numberId,beforeStatusEnum,statusEnum);
+    }
+
+    @Override
     public List<UserNumbersVO> queryUserArticleNumberInfoByThemeIds(Long uid, List<Long> themeIds, UserNumberStatusEnum statusEnum) {
         return this.userThemeRepository.queryUserArticleNumberInfoByThemeIds(uid, themeIds,statusEnum);
     }
