@@ -45,7 +45,6 @@ public class ThemeComposePrizeStrategy implements ComposePrizeStrategy {
         Assert.isTrue(lock, () -> new StarException("合成人数过多，请稍后再试～"));
         //物品派发
         numberService.createUserNumberMapping(getUserThemeMappingVO(composeManageReq, themeNumberVo));
-
     }
 
     private UserThemeMappingVO getUserThemeMappingVO(ComposeManageReq composeManageReq, ThemeNumberVo themeNumberVo) {

@@ -42,6 +42,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -105,7 +106,7 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
     }
 
     @Override
-
+    @Transactional
     public ComposeManageRes composeManage(ComposeManageReq composeManageReq) {
         ComposeCategoryRes composeCategoryRes = composeService.composeCategoryByCategoryId(composeManageReq.getCategoryId());
         //积分判断操作
@@ -132,17 +133,18 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
         ComposePrizeDTO composePrizeDTO = composeDrawLotteryStrategy.drawPrize(composePrizeDTOS);
         //随机合成的处理bean
         ComposePrizeStrategy composePrizeStrategy = applicationContext.getBean(ComposePrizeTypeEnums.getComposePrizeType(composePrizeDTO.getPrizeType()).getStrategy(), ComposePrizeStrategy.class);
-        //执行商品合成操作
-        composePrizeStrategy.composePrize(composeManageReq, composePrizeDTO);
+
 
         //下方对素材的处理
         log.info("销毁的素材id：「{}」", JSONUtil.toJsonStr(composeManageReq.getSourceIds()));
         List<Long> userNumberIds = userNumbersList.stream().map(item -> item.getNumberId()).collect(Collectors.toList());
+
+        List<NumberCirculationAddDTO> numberCirculations = getNumberCirculations(userNumbersList, composeManageReq);
+        //执行商品合成操作
+        composePrizeStrategy.composePrize(composeManageReq, composePrizeDTO);
         //修改藏品的状态
         userThemeService.modifyUserBatchNumberStatus(composeManageReq.getUserId(), userNumberIds, UserNumberStatusEnum.PURCHASED, UserNumberStatusEnum.DESTROY);
         //物品流转状态
-        List<NumberCirculationAddDTO> numberCirculations = getNumberCirculations(userNumbersList, composeManageReq);
-
         numberService.saveBatchNumberCirculationRecord(numberCirculations);
         //封装返回数据
         ComposeManageRes composeManageRes = new ComposeManageRes();
