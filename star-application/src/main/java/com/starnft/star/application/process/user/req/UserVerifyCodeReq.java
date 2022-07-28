@@ -23,6 +23,6 @@ public class UserVerifyCodeReq {
     @ApiModelProperty("验证码")
     private String code;
 
-    @ApiModelProperty("图形验证码id")
+    @ApiModelProperty("校验图形验证码成功返回的id")
     private String imageCaptchaId;
 }
