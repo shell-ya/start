@@ -38,4 +38,6 @@ public interface INumberRepository {
     ThemeNumberVo queryNumberExist(Integer themeNumber, Long themeId);
 
     boolean updateUserNumberMapping(UserThemeMappingVO updateThemeMappingVo);
+
+    List<Integer> loadNotSellNumberNumCollection(Long themeId);
 }

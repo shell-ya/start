@@ -168,6 +168,11 @@ public enum RedisKey {
      */
     ORDER_BREAK_RECORD(509, StarConstants.SERVICE_NAME.concat(".seckill:ordered:record:%s"), 3600L, TimeUnit.SECONDS),
 
+    /**
+     * 秒杀商品详情
+     */
+    SECKILL_GOODS_NOT_ONSELL(511, StarConstants.SERVICE_NAME.concat(".seckill:notonsell:%s"), -1L, TimeUnit.MINUTES),
+
     //======================================= sec kill goods end   =======================================
 
     /**

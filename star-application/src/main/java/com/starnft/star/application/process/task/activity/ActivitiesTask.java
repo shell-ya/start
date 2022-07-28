@@ -7,6 +7,7 @@ import com.starnft.star.common.utils.DateUtil;
 import com.starnft.star.domain.activity.IActivitiesService;
 import com.starnft.star.domain.activity.model.vo.ActivityVO;
 import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.publisher.model.req.PublisherReq;
 import com.starnft.star.domain.publisher.model.vo.PublisherVO;
 import com.starnft.star.domain.publisher.service.PublisherService;
@@ -15,15 +16,18 @@ import com.starnft.star.domain.series.service.SeriesService;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.domain.theme.model.vo.ThemeDetailVO;
 import com.starnft.star.domain.theme.service.ThemeService;
+import com.xxl.job.core.handler.annotation.XxlJob;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class ActivitiesTask {
@@ -49,6 +53,9 @@ public class ActivitiesTask {
     @Resource
     private PublisherService publisherService;
 
+    @Resource
+    private INumberService numberService;
+
     /*****
      * 15秒执行一次
      * 0/15:表示从0秒开始执行，每过15秒再次执行
@@ -59,7 +66,8 @@ public class ActivitiesTask {
      * 4、秒杀结束时间<当前循环的时间区间的开始时间+2小时
      * 5、导入到Redis缓存。使用Hash类型存储
      */
-    @Scheduled(cron = "0/15 * * * * ?")
+//    @Scheduled(cron = "0/15 * * * * ?")
+    @XxlJob("activitiesTask")
     public void loadActivities() {
         //1.查询所有时间区间 2小时一个时区
         List<Date> dateMenus = DateUtil.getDateMenus(interval);
@@ -96,7 +104,6 @@ public class ActivitiesTask {
                 log.info("当前时间: " + sdf.format(DateUtil.getDaDate()));
                 log.info("加载商品 themeId:[{}] , seriesId:[{}] , themeName:[{}] , stock:[{}] time:[{}-{}]",
                         secKillGood.getThemeId(), secKillGood.getSeriesId(), secKillGood.getThemeName(), secKillGood.getStock(), secKillGood.getStartTime(), secKillGood.getEndTime());
-                ;
             }
         }
     }
@@ -115,9 +122,9 @@ public class ActivitiesTask {
             }
             return ids;
         }
-
-        for (int i = 1; i <= stock; i++) {
-            ids[i - 1] = (long) i;
+        List<Integer> stockNums = this.numberService.loadNotSellNumberNumCollection(themeId);
+        for (int i = 0; i <= stockNums.size() - 1; i++) {
+            ids[i] = (long) stockNums.get(i);
         }
         return ids;
     }

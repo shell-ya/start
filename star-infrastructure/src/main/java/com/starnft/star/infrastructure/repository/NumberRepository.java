@@ -130,8 +130,8 @@ public class NumberRepository implements INumberRepository {
                 .build()
 
         ).collect(Collectors.toList());
-         this.starNftNumberCirculationHistMapper.saveBatchNumberCirculationRecord(collect);
-         return Boolean.TRUE;
+        this.starNftNumberCirculationHistMapper.saveBatchNumberCirculationRecord(collect);
+        return Boolean.TRUE;
     }
 
     @Override
@@ -156,7 +156,7 @@ public class NumberRepository implements INumberRepository {
 
     @Override
     public ThemeNumberVo selectRandomThemeNumber(Long id) {
-        return  this.starNftThemeNumberMapper.selectRandomThemeNumber(id);
+        return this.starNftThemeNumberMapper.selectRandomThemeNumber(id);
     }
 
     @Override
@@ -194,6 +194,15 @@ public class NumberRepository implements INumberRepository {
     @Override
     public boolean updateUserNumberMapping(UserThemeMappingVO updateThemeMappingVo) {
         return this.starNftUserThemeMapper.updateUserThemeMapping(updateThemeMappingVo);
+    }
+
+    @Override
+    public List<Integer> loadNotSellNumberNumCollection(Long themeId) {
+        List<StarNftThemeNumber> starNftThemeNumbers = this.starNftThemeNumberMapper.selectList(
+                new LambdaQueryWrapper<StarNftThemeNumber>()
+                        .eq(Objects.nonNull(themeId), StarNftThemeNumber::getSeriesThemeInfoId, themeId)
+                        .isNull(StarNftThemeNumber::getOwnerBy));
+        return starNftThemeNumbers.stream().map(po -> po.getThemeNumber().intValue()).collect(Collectors.toList());
     }
 
     private ThemeNumberVo copyToVO(StarNftThemeNumber starNftThemeNumber) {

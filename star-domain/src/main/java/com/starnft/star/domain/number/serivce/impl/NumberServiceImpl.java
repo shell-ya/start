@@ -88,6 +88,11 @@ public class NumberServiceImpl implements INumberService {
     }
 
     @Override
+    public List<Integer> loadNotSellNumberNumCollection(Long themeId) {
+        return this.numberRepository.loadNotSellNumberNumCollection(themeId);
+    }
+
+    @Override
     public boolean handover(HandoverReq handoverReq) {
         NumberDetailVO numberDetail = this.numberRepository.getNumberDetail(handoverReq.getNumberId());
 
