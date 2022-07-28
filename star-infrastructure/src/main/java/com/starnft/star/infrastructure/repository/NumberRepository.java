@@ -116,6 +116,25 @@ public class NumberRepository implements INumberRepository {
     }
 
     @Override
+    public Boolean saveBatchNumberCirculationRecord(List<NumberCirculationAddDTO> numberCirculations) {
+        List<StarNftNumberCirculationHist> collect = numberCirculations.stream().map(numberCirculation -> StarNftNumberCirculationHist.builder()
+                .numberId(numberCirculation.getNumberId())
+                .beforePrice(numberCirculation.getBeforePrice())
+                .afterPrice(numberCirculation.getAfterPrice())
+                .type(numberCirculation.getType().getCode())
+                .createAt(new Date())
+                .createBy(String.valueOf(numberCirculation.getUid()))
+                .updateAt(new Date())
+                .updateBy(String.valueOf(numberCirculation.getUid()))
+                .isDelete(Boolean.FALSE)
+                .build()
+
+        ).collect(Collectors.toList());
+         this.starNftNumberCirculationHistMapper.saveBatchNumberCirculationRecord(collect);
+         return Boolean.TRUE;
+    }
+
+    @Override
     public NumberCirculationDTO getLastConsignedCirculation(Long numberId) {
         StarNftNumberCirculationHist hist = this.starNftNumberCirculationHistMapper.selectOne(
                 Wrappers.lambdaQuery(StarNftNumberCirculationHist.class)

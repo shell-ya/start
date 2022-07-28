@@ -25,4 +25,5 @@ public interface IUserThemeRepository {
     UserNumbersVO queryUserNumberInfo(Long uid, Long numberId,UserNumberStatusEnum statusEnum) ;
 
     Boolean modifyUserNumberStatus(Long uid, Long numberId,UserNumberStatusEnum beforeStatusEnum, UserNumberStatusEnum statusEnum);
+    Boolean modifyUserBatchNumberStatus(Long uid, List<Long> numberId,UserNumberStatusEnum beforeStatusEnum, UserNumberStatusEnum statusEnum);
 }

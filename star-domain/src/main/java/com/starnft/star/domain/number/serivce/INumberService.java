@@ -10,6 +10,7 @@ import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
 import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
+import com.starnft.star.domain.number.model.vo.UserThemeMappingVO;
 
 import java.util.List;
 
@@ -32,6 +33,8 @@ public interface INumberService {
 
     Boolean modifyNumberInfo(NumberUpdateDTO param);
 
+    boolean createUserNumberMapping(UserThemeMappingVO userThemeMappingVO);
     Boolean saveNumberCirculationRecord(NumberCirculationAddDTO numberCirculation);
+    Boolean saveBatchNumberCirculationRecord(List<NumberCirculationAddDTO> numberCirculation);
 
 }

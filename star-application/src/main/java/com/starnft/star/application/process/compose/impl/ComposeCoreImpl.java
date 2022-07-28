@@ -14,6 +14,7 @@ import com.starnft.star.application.process.scope.IScopeCore;
 import com.starnft.star.application.process.scope.model.ScoreDTO;
 import com.starnft.star.common.enums.ComposeDrawLotteryStrategyEnums;
 import com.starnft.star.common.enums.ComposePrizeTypeEnums;
+import com.starnft.star.common.enums.NumberCirculationTypeEnum;
 import com.starnft.star.common.enums.UserNumberStatusEnum;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.utils.Assert;
@@ -25,18 +26,23 @@ import com.starnft.star.domain.compose.model.dto.ComposeMaterialDTO;
 import com.starnft.star.domain.compose.model.dto.ComposePrizeDTO;
 import com.starnft.star.domain.compose.model.req.ComposeManageReq;
 import com.starnft.star.domain.compose.model.res.ComposeCategoryRes;
+import com.starnft.star.domain.compose.model.res.ComposeManageRes;
 import com.starnft.star.domain.compose.model.res.ComposePrizeRes;
 import com.starnft.star.domain.compose.model.res.ComposeRes;
 import com.starnft.star.domain.compose.repository.IComposePrizeRepository;
 import com.starnft.star.domain.compose.service.IComposeService;
+import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
+import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.scope.service.IUserScopeService;
 import com.starnft.star.domain.theme.service.ThemeService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -47,6 +53,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
+@Slf4j
 public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
 
     @Resource
@@ -56,8 +63,9 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
     @Resource
     private IScopeCore iScopeCore;
     @Resource
-    private  ComposeDrawConfiguration composeDrawConfiguration;
-
+    private ComposeDrawConfiguration composeDrawConfiguration;
+    @Resource
+    INumberService numberService;
     ApplicationContext applicationContext;
 
     @Override
@@ -98,10 +106,11 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
     }
 
     @Override
-    public Object composeManage(ComposeManageReq composeManageReq) {
+    @Transactional
+    public ComposeManageRes composeManage(ComposeManageReq composeManageReq) {
         ComposeCategoryRes composeCategoryRes = composeService.composeCategoryByCategoryId(composeManageReq.getCategoryId());
         //积分判断操作
-        if (composeCategoryRes.getIsScore()){
+        if (composeCategoryRes.getIsScore()) {
             ScoreDTO subScoreDTO = getScoreDTO(composeManageReq, composeCategoryRes);
             iScopeCore.userScopeManageSub(subScoreDTO);
         }
@@ -114,22 +123,45 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
         //执行合成业务
         ComposeDrawLotteryStrategy composeDrawLotteryStrategy = applicationContext
                 .getBean(ComposeDrawLotteryStrategyEnums.getScaleLotteryStrategy(
-                        composeDrawConfiguration.getComposeDraw()).getStrategy(),
+                                composeDrawConfiguration.getComposeDraw()).getStrategy(),
                         ComposeDrawLotteryStrategy.class
                 );
         //获取随机合成参数
         List<ComposePrizeRes> composePrizeRes = composeService.composePrizeByComposeId(composeManageReq.getComposeId());
         List<ComposePrizeDTO> composePrizeDTOS = BeanColverUtil.colverList(composePrizeRes, ComposePrizeDTO.class);
-        int randNums = RandomUtil.randomInt();
         //获得随机的合成物品
-        ComposePrizeDTO composePrizeDTO = composeDrawLotteryStrategy.drawPrize(composePrizeDTOS, randNums, 1000);
+        ComposePrizeDTO composePrizeDTO = composeDrawLotteryStrategy.drawPrize(composePrizeDTOS);
+        //随机合成的处理bean
         ComposePrizeStrategy composePrizeStrategy = applicationContext.getBean(ComposePrizeTypeEnums.getComposePrizeType(composePrizeDTO.getPrizeType()).getStrategy(), ComposePrizeStrategy.class);
-       //执行商品合成操作
-        composePrizeStrategy.composePrize(composePrizeDTO);
 
-        //todo 依据判断看是否需要销毁商品
 
-        return null;
+        //下方对素材的处理
+        log.info("销毁的素材id：「{}」", JSONUtil.toJsonStr(composeManageReq.getSourceIds()));
+        List<Long> userNumberIds = userNumbersList.stream().map(item -> item.getNumberId()).collect(Collectors.toList());
+
+        List<NumberCirculationAddDTO> numberCirculations = getNumberCirculations(userNumbersList, composeManageReq);
+        //执行商品合成操作
+        composePrizeStrategy.composePrize(composeManageReq, composePrizeDTO);
+        //修改藏品的状态
+        userThemeService.modifyUserBatchNumberStatus(composeManageReq.getUserId(), userNumberIds, UserNumberStatusEnum.PURCHASED, UserNumberStatusEnum.DESTROY);
+        //物品流转状态
+        numberService.saveBatchNumberCirculationRecord(numberCirculations);
+        //封装返回数据
+        ComposeManageRes composeManageRes = new ComposeManageRes();
+        //先默认销毁
+        return composeManageRes;
+    }
+
+    private List<NumberCirculationAddDTO> getNumberCirculations(List<UserNumbersVO> userNumbersVOList, ComposeManageReq composeManageReq) {
+        List<NumberCirculationAddDTO> numberCirculations = userNumbersVOList.stream().map(item -> NumberCirculationAddDTO.builder()
+                .numberId(item.getNumberId())
+                .type(NumberCirculationTypeEnum.CASTING)
+                .uid(composeManageReq.getUserId())
+                .beforePrice(item.getPrice())
+                .afterPrice(BigDecimal.ZERO)
+                .build()
+        ).collect(Collectors.toList());
+        return numberCirculations;
     }
 
     private ScoreDTO getScoreDTO(ComposeManageReq composeManageReq, ComposeCategoryRes composeCategoryRes) {

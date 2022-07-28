@@ -1,6 +1,7 @@
 package com.starnft.star.application.process.compose.strategy.lottery;
 
 import com.google.common.collect.Lists;
+import com.starnft.star.common.exception.StarException;
 import com.starnft.star.domain.compose.model.dto.ComposePrizeDTO;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.stereotype.Component;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 @Component("composeDrawScaleLotteryStrategy")
 public class ComposeDrawScaleLotteryStrategy implements ComposeDrawLotteryStrategy {
     @Override
-    public ComposePrizeDTO drawPrize(List<ComposePrizeDTO> composePrizes, int randNum, int seed) {
+    public ComposePrizeDTO drawPrize(List<ComposePrizeDTO> composePrizes) {
 
         //验证奖品概率配置和为1
         BigDecimal rateTotal = BigDecimal.ZERO;
@@ -55,7 +56,7 @@ public class ComposeDrawScaleLotteryStrategy implements ComposeDrawLotteryStrate
             }
         }
         //逻辑上没有该种可能可抛异常
-        return null;
+       throw  new StarException("不可控异常");
     }
 
 
@@ -107,7 +108,7 @@ public class ComposeDrawScaleLotteryStrategy implements ComposeDrawLotteryStrate
         int allTimes = 0;
         while (currRate < (minRate - 0.05) || currRate > (minRate + 0.05)) {
             ComposeDrawScaleLotteryStrategy composeDrawScaleLotteryStrategy = new ComposeDrawScaleLotteryStrategy();
-            ComposePrizeDTO composePrizeDTO = composeDrawScaleLotteryStrategy.drawPrize(prizeDTOS, 0, 0);
+            ComposePrizeDTO composePrizeDTO = composeDrawScaleLotteryStrategy.drawPrize(prizeDTOS);
             if (composePrizeDTO.getPrizeProbability().doubleValue() == minRate) {
                 times++;
             }

@@ -1,5 +1,6 @@
 package com.starnft.star.infrastructure.repository;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -56,21 +57,21 @@ public class UserThemeRepository implements IUserThemeRepository, PageHelperInte
 
     @Override
     public List<UserNumbersVO> queryUserArticleNumberInfoByThemeIds(Long uid, List<Long> themeIds, UserNumberStatusEnum statusEnum) {
-        return  this.starNftUserThemeMapper.queryUserArticleNumberInfoByThemeIds(uid,themeIds,statusEnum);
+        return this.starNftUserThemeMapper.queryUserArticleNumberInfoByThemeIds(uid, themeIds, statusEnum);
     }
 
 
     @Override
     public List<UserNumbersVO> queryUserArticleNumberInfoByNumberIds(Long uid, List<Long> numbersIds, UserNumberStatusEnum statusEnum) {
-        return  this.starNftUserThemeMapper.queryUserArticleNumberInfoByThemeIds(uid,numbersIds,statusEnum);
+        return this.starNftUserThemeMapper.queryUserArticleNumberInfoByThemeIds(uid, numbersIds, statusEnum);
     }
 
     @Override
-    public UserNumbersVO queryUserNumberInfo(Long uid, Long numberId,UserNumberStatusEnum statusEnum) {
+    public UserNumbersVO queryUserNumberInfo(Long uid, Long numberId, UserNumberStatusEnum statusEnum) {
         StarNftUserTheme starNftUserTheme = this.starNftUserThemeMapper.selectOne(Wrappers.lambdaQuery(StarNftUserTheme.class)
                 .eq(StarNftUserTheme::getUserId, uid)
                 .eq(StarNftUserTheme::getSeriesThemeId, numberId)
-                .eq(Objects.nonNull(statusEnum),StarNftUserTheme::getStatus, statusEnum.getCode()));
+                .eq(Objects.nonNull(statusEnum), StarNftUserTheme::getStatus, statusEnum.getCode()));
         if (Objects.isNull(starNftUserTheme)) {
             return null;
         }
@@ -83,7 +84,7 @@ public class UserThemeRepository implements IUserThemeRepository, PageHelperInte
     }
 
     @Override
-    public Boolean modifyUserNumberStatus(Long uid, Long numberId, UserNumberStatusEnum beforeStatusEnum,UserNumberStatusEnum statusEnum) {
+    public Boolean modifyUserNumberStatus(Long uid, Long numberId, UserNumberStatusEnum beforeStatusEnum, UserNumberStatusEnum statusEnum) {
         return this.starNftUserThemeMapper.update(StarNftUserTheme.builder()
                         .status(statusEnum.getCode())
                         .updateAt(new Date())
@@ -92,7 +93,20 @@ public class UserThemeRepository implements IUserThemeRepository, PageHelperInte
                 Wrappers.lambdaUpdate(StarNftUserTheme.class)
                         .eq(StarNftUserTheme::getSeriesThemeId, numberId)
                         .eq(StarNftUserTheme::getUserId, uid)
-                        .eq(StarNftUserTheme::getStatus,beforeStatusEnum.getCode())) == 1;
+                        .eq(StarNftUserTheme::getStatus, beforeStatusEnum.getCode())) == 1;
+    }
+
+    @Override
+    public Boolean modifyUserBatchNumberStatus(Long uid, List<Long> numberIds, UserNumberStatusEnum beforeStatusEnum, UserNumberStatusEnum statusEnum) {
+        QueryWrapper<StarNftUserTheme> wrapper = new QueryWrapper<>();
+        wrapper.eq(StarNftUserTheme.COL_USER_ID, uid)
+                .eq(StarNftUserTheme.COL_STATUS, beforeStatusEnum.getCode())
+                .in(StarNftUserTheme.COL_SERIES_THEME_ID, numberIds);
+        return this.starNftUserThemeMapper.update(StarNftUserTheme.builder()
+                .status(statusEnum.getCode())
+                .updateAt(new Date())
+                .updateBy(String.valueOf(uid))
+                .build(), wrapper) == numberIds.size();
     }
 
 
