@@ -54,6 +54,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -81,6 +82,15 @@ public class OrderProcessor implements IOrderProcessor {
 
     @Override
     public OrderGrabRes orderGrab(OrderGrabReq orderGrabReq) {
+
+        //是否可购买验证
+        List<Serializable> notOnSellList = redisUtil.lGet(RedisKey.SECKILL_GOODS_NOT_ONSELL.getKey(), 0, -1);
+        for (Serializable serializable : notOnSellList) {
+            Object themeId = serializable;
+            if (orderGrabReq.getThemeId().equals(Long.parseLong(themeId.toString()))) {
+                throw new StarException(StarError.ORDER_DONT_SELL_ERROR);
+            }
+        }
         // 恶意下单校验
         Object record = redisUtil.get(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), orderGrabReq.getUserId()));
         if (record != null) {

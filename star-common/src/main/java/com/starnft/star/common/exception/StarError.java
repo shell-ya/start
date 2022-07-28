@@ -83,25 +83,26 @@ public enum StarError {
     ORDER_DO_NOT_EXIST("100045", "未找到该订单"),
     ORDER_STATUS_ERROR("100046", "订单状态异常"),
     ORDER_CANCEL_ERROR("100047", "取消订单失败"),
+    ORDER_DONT_SELL_ERROR("100056", "该藏品为赠品， 请参与活动获取！"),
     GOODS_SELF_ERROR("1000148", "禁止购买自己挂售商品"),
 
     GOODS_DO_NOT_START_ERROR("1000049", "未到商品出售时间！"),
 
-    ORDER_CANCEL_TIMES_OVERFLOW("100049", "取消订单过于频繁,操作限制1小时,请稍后再试"),
+    ORDER_CANCEL_TIMES_OVERFLOW("100050", "取消订单过于频繁,操作限制1小时,请稍后再试"),
 
     MARKET_DO_NOT_START_ERROR("1000051", "未到市场开放时间！"),
-    GOOD_NOT_RESALE_ERROR("1000052","该藏品不可转售"),
-    NOT_ENABLED_ACTIVITY("1000053","未到活动开启时间"),
-    NOT_FOUND_ACTIVITY("1000054","当前无开启活动"),
-    GOODS_IS_TRANSACTION("1000055","藏品正在交易中，请选择其他藏品"),
+    GOOD_NOT_RESALE_ERROR("1000052", "该藏品不可转售"),
+    NOT_ENABLED_ACTIVITY("1000053", "未到活动开启时间"),
+    NOT_FOUND_ACTIVITY("1000054", "当前无开启活动"),
+    GOODS_IS_TRANSACTION("1000055", "藏品正在交易中，请选择其他藏品"),
 
 
     //################# 道具  #################
-    PROP_CAN_NOT_BUY("4000001","道具不可购买"),
-    PROP_CAN_BUY_OVERFLOW("4000002","超出可购买数量"),
+    PROP_CAN_NOT_BUY("4000001", "道具不可购买"),
+    PROP_CAN_BUY_OVERFLOW("4000002", "超出可购买数量"),
     //################# ===  #################
 
-    BULLETIN_NOT_FOUND("50000001","公告不存在"),
+    BULLETIN_NOT_FOUND("50000001", "公告不存在"),
     ;
 
     private String NS = "";

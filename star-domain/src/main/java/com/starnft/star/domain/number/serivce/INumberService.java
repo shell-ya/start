@@ -27,6 +27,8 @@ public interface INumberService {
     ThemeNumberVo queryNumberExist(Integer themeNumber, Long themeId);
     ThemeNumberVo queryRandomThemeNumber(Long themeId);
 
+    List<Integer> loadNotSellNumberNumCollection(Long themeId);
+
     //物品转移
     boolean handover(HandoverReq handoverReq);
 
