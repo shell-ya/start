@@ -166,8 +166,8 @@ public class SnowflakeWorker {
         return System.currentTimeMillis();
     }
 
-    public static void main(String[] args) {
-        System.out.println(SnowflakeWorker.generateId());
-    }
+//    public static void main(String[] args) {
+//        System.out.println(SnowflakeWorker.generateId());
+//    }
 
 }
