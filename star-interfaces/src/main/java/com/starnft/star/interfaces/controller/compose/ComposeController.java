@@ -26,7 +26,7 @@ public class ComposeController {
 
     @ApiOperation("合成列表")
     @PostMapping("list")
-    public RopResponse list(RequestConditionPage<ComposeReq> reqRequestConditionPage) {
+    public RopResponse list(@RequestBody  RequestConditionPage<ComposeReq> reqRequestConditionPage) {
         return RopResponse.success(composeService.composeList(reqRequestConditionPage));
     }
 
@@ -38,11 +38,11 @@ public class ComposeController {
 
     @ApiOperation("用户素材列表获取")
     @PostMapping("/user/material/{id}")
-    public RopResponse material(UserResolverInfo userResolverInfo, @PathVariable("id") Long id) {
+    public RopResponse material( UserResolverInfo userResolverInfo, @PathVariable("id") Long id) {
         return RopResponse.success(composeCore.composeUserMaterial(new UserMaterialReq(id, userResolverInfo.getUserId())));
     }
     @ApiOperation("合成操作")
-    @PostMapping("manage")
+    @PostMapping("/manage")
     public RopResponse manage(@RequestBody ComposeManageReq composeManageReq) {
         return RopResponse.success(composeCore.composeManage(composeManageReq));
     }

@@ -447,12 +447,12 @@ public class UserCoreImpl implements UserCore {
         }
         String PREFIX = phone.substring(0, 3);
         String SUFFIX = phone.substring(3);
-        Boolean isExist = this.redisTemplate.opsForValue().getBit(RedisKey.REDIS_USER_IS_REGISTERED_PREFIX.getKey(), Long.parseLong(PREFIX)) && this.redisTemplate.opsForValue().getBit(RedisKey.REDIS_USER_IS_REGISTERED_SUFFIX.getKey(), Long.parseLong(SUFFIX));
+        String key = String.format(RedisKey.REDIS_USER_IS_REGISTERED.getKey(), PREFIX);
+        Boolean isExist = this.redisTemplate.opsForValue().getBit(key, Long.parseLong(SUFFIX));
         if (!isExist) {
             UserInfo userInfo = this.userService.queryUserByMobile(phone);
             if (Objects.nonNull(userInfo)){
-                this.redisTemplate.opsForValue().setBit(RedisKey.REDIS_USER_IS_REGISTERED_PREFIX.getKey(), Long.parseLong(PREFIX),true) ;
-                this.redisTemplate.opsForValue().setBit(RedisKey.REDIS_USER_IS_REGISTERED_SUFFIX.getKey(), Long.parseLong(SUFFIX),true);
+                this.redisTemplate.opsForValue().setBit(key, Long.parseLong(PREFIX),true) ;
                 isExist=true;
             }
         }

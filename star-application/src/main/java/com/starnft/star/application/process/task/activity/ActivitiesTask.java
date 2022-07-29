@@ -16,7 +16,7 @@ import com.starnft.star.domain.series.service.SeriesService;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.domain.theme.model.vo.ThemeDetailVO;
 import com.starnft.star.domain.theme.service.ThemeService;
-import com.xxl.job.core.handler.annotation.XxlJob;
+
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,7 @@ public class ActivitiesTask {
      * 5、导入到Redis缓存。使用Hash类型存储
      */
 //    @Scheduled(cron = "0/15 * * * * ?")
-    @XxlJob("activitiesTask")
+//    @XxlJob("activitiesTask")
     public void loadActivities() {
         //1.查询所有时间区间 2小时一个时区
         List<Date> dateMenus = DateUtil.getDateMenus(interval);
