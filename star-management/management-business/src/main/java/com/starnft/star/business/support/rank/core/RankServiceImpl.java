@@ -4,15 +4,20 @@ import cn.hutool.json.JSONUtil;
 import com.starnft.star.business.support.rank.model.RankDefinition;
 import com.starnft.star.business.support.rank.model.RankItemMetaData;
 import com.starnft.star.common.constant.RedisKey;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+
 @Component
 public class RankServiceImpl implements IRankService {
-    @Resource
+    @Autowired
+    @Qualifier("RankRedisTemplate")
     private RedisTemplate redisTemplate;
     @Override
     public boolean createRank(String rankName, RankDefinition rankDefinition) {
@@ -40,11 +45,40 @@ public class RankServiceImpl implements IRankService {
     @Override
     public Double put(String rankName, String  key, double value, RankItemMetaData rankItemMetaData) {
         boolean hasRank = hasRank(rankName);
-        if (!hasRank)  throw new RuntimeException("请先创建排行榜");
-        //todo 依据rankDefinition 进行不同的配置信息
-         RankDefinition rankDefinition = JSONUtil.toBean(redisTemplate.opsForHash().get(RedisKey.RANK_LIST.getKey(), rankName).toString(), RankDefinition.class);
-         redisTemplate.opsForHash().putIfAbsent(String.format(RedisKey.RANK_EXTEND.getKey(),rankName),key,JSONUtil.toJsonStr(rankItemMetaData));
-        return  redisTemplate.opsForZSet().incrementScore(String.format(RedisKey.RANK_STORE.getKey(), rankName), key, value);
+        if (!hasRank) throw new RuntimeException("请先创建排行榜");
+        //个人拉新总人数
+
+        Boolean isSetSuccess = redisTemplate.opsForHash().putIfAbsent(String.format(RedisKey.RANK_TOTAL_USER.getKey(), rankName, key), rankItemMetaData.getChildrenId().toString(), JSONUtil.toJsonStr(rankItemMetaData));
+        Double result=null;
+        if (isSetSuccess) {
+            Long rank = redisTemplate.opsForZSet().rank(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), key);
+            if (Objects.isNull(rank)){
+                redisTemplate.opsForZSet().incrementScore(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), key, value);
+            }
+            result = redisTemplate.opsForZSet().incrementScore(String.format(RedisKey.RANK_ITEM.getKey(), rankName), key, value);
+
+        }
+
+
+        //总榜单
+        return result;
+    }
+
+    @Override
+    public Double validPut(String rankName, String key, double value, RankItemMetaData rankItemMetaData) {
+        boolean hasRank = hasRank(rankName);
+        if (!hasRank) throw new RuntimeException("请先创建排行榜");
+        //个人有效拉新
+
+        Boolean isSetSuccess = redisTemplate.opsForHash().putIfAbsent(String.format(RedisKey.RANK_VALID_USER.getKey(), rankName, key), rankItemMetaData.getChildrenId().toString(), JSONUtil.toJsonStr(rankItemMetaData));
+        Double result=null;
+        if (isSetSuccess) {
+            result = redisTemplate.opsForZSet().incrementScore(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), key, value);
+        }
+
+
+        //总榜单
+        return result;
     }
 
     @Override

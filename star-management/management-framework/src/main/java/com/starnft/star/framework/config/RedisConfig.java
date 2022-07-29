@@ -76,4 +76,20 @@ public class RedisConfig extends CachingConfigurerSupport
                 "end\n" +
                 "return tonumber(current);";
     }
+
+    @Bean("RankRedisTemplate")
+    @SuppressWarnings(value = { "unchecked", "rawtypes" })
+    public RedisTemplate redisTemplates(RedisConnectionFactory connectionFactory)
+    {
+        RedisTemplate<String , Object > template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new StringRedisSerializer());
+
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setHashValueSerializer(new StringRedisSerializer());
+
+        template.afterPropertiesSet();
+        return template;
+    }
 }

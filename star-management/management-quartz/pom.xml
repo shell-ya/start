@@ -36,6 +36,11 @@
             <artifactId>management-common</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.starnft.star</groupId>
+            <artifactId>management-business</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

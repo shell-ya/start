@@ -44,6 +44,8 @@ public interface IRankService {
      * @return 如果存在之前的值，返回之前的值，否则，返回-1
      */
     public Double put(String rankName, String  key, double value, RankItemMetaData rankItemMetaData);
+
+    public Double validPut(String rankName, String key, double value, RankItemMetaData rankItemMetaData);
     /**
      * 设置一个数据，如果该id存在，替换为当前数据
      * @param rankName 排行的名字
