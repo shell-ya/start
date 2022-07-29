@@ -34,6 +34,7 @@ public class RyTask
 
         for (String item: split
              ) {
+            String trim = item.trim();
             int i = RandomUtil.randomInt(1,10);
             for (int j = 0; j < i; j++) {
                     RankItemMetaData rankItemMetaData = new RankItemMetaData();
@@ -41,8 +42,8 @@ public class RyTask
                     rankItemMetaData.setNickName(RandomUtil.randomName());
                     rankItemMetaData.setChildrenId(RandomUtil.randomLong(9));
                     rankItemMetaData.setInvitationTime(new Date());
-                    rankService.put("launch_rank", item,1,rankItemMetaData);
-                    rankService.validPut("launch_rank",item,1,rankItemMetaData);
+                    rankService.put("launch_rank", trim,1,rankItemMetaData);
+                    rankService.validPut("launch_rank",trim,1,rankItemMetaData);
             }
         }
     }
