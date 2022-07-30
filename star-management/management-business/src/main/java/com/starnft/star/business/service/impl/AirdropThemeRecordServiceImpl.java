@@ -4,6 +4,7 @@ import com.starnft.star.business.domain.AirdropThemeRecord;
 import com.starnft.star.business.domain.StarNftThemeNumber;
 import com.starnft.star.business.domain.StarNftUserTheme;
 import com.starnft.star.business.domain.dto.AirdropRecordDto;
+import com.starnft.star.business.domain.dto.RecordItem;
 import com.starnft.star.business.mapper.AirdropThemeRecordMapper;
 import com.starnft.star.business.mapper.StarNftThemeNumberMapper;
 import com.starnft.star.business.mapper.StarNftUserThemeMapper;
@@ -16,11 +17,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -49,11 +52,35 @@ public class AirdropThemeRecordServiceImpl implements IAirdropThemeRecordService
     }
 
     @Override
-    public boolean addUserAirdropList(List<AirdropThemeRecord> recordList) {
-        long successNum = recordList.stream().map(this::addUserAirdrop).filter(Boolean.TRUE::equals).count();
+    public boolean addUserAirdropList(List<AirdropRecordDto> recordList) {
 
+        List<AirdropThemeRecord> airdropThemeRecords = new ArrayList<>();
+        for (AirdropRecordDto dto :
+                recordList) {
+            List<RecordItem> recordItems = dto.getRecordItems();
+            for (RecordItem recordItem :
+                    recordItems) {
+                List<AirdropThemeRecord> collect = recordItem.getSeriesThemeId().stream().map(item -> createAirdropThemeRecord(dto.getUserId(), dto.getAirdropType(), recordItem.getSeriesId(), recordItem.getSeriesThemeInfoId(), item)).collect(Collectors.toList());
+                airdropThemeRecords.addAll(collect);
+            }
+        }
+
+        long successNum = airdropThemeRecords.stream().map(this::addUserAirdrop).filter(Boolean.TRUE::equals).count();
+//        long successNum = recordList.stream().map(this::addUserAirdrop).filter(Boolean.TRUE::equals).count();
+//
         return successNum == recordList.size();
     }
+
+    private AirdropThemeRecord createAirdropThemeRecord(Long userId, Integer airdropType, Long seriesId, Long seriesThemeInfoId, Long item) {
+        AirdropThemeRecord airdropThemeRecord = new AirdropThemeRecord();
+        airdropThemeRecord.setUserId(userId);
+        airdropThemeRecord.setAirdropType(airdropType);
+        airdropThemeRecord.setSeriesId(seriesId);
+        airdropThemeRecord.setSeriesThemeInfoId(seriesThemeInfoId);
+        airdropThemeRecord.setSeriesThemeId(item);
+        return airdropThemeRecord;
+    }
+
 
     private boolean createUserTheme(AirdropThemeRecord record){
         StarNftUserTheme userTheme = new StarNftUserTheme();

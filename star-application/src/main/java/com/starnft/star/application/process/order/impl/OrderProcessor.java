@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONUtil;
 import com.starnft.star.application.mq.producer.activity.ActivityEventProducer;
 import com.starnft.star.application.mq.producer.order.OrderProducer;
+import com.starnft.star.application.mq.producer.rebates.RebatesProducer;
 import com.starnft.star.application.mq.producer.wallet.WalletProducer;
 import com.starnft.star.application.process.event.model.ActivityEventReq;
 import com.starnft.star.application.process.event.model.BuyActivityEventReq;
@@ -19,6 +20,7 @@ import com.starnft.star.application.process.order.model.req.OrderPayReq;
 import com.starnft.star.application.process.order.model.res.OrderGrabRes;
 import com.starnft.star.application.process.order.model.res.OrderGrabStatus;
 import com.starnft.star.application.process.order.model.res.OrderPayDetailRes;
+import com.starnft.star.application.process.rebates.model.RebatesMessage;
 import com.starnft.star.common.Result;
 import com.starnft.star.common.ResultCode;
 import com.starnft.star.common.constant.RedisKey;
@@ -79,6 +81,7 @@ public class OrderProcessor implements IOrderProcessor {
     private final TransactionTemplate template;
     private final WalletProducer walletProducer;
     private final ActivityEventProducer activityProducer;
+    private final RebatesProducer rebatesProducer;
 
     @Override
     public OrderGrabRes orderGrab(OrderGrabReq orderGrabReq) {
@@ -200,6 +203,7 @@ public class OrderProcessor implements IOrderProcessor {
                         walletProducer.receivablesCallback(createTranReq(orderPayReq));
                     }
                     activityProducer.sendScopeMessage(createEventReq(orderPayReq));
+                    rebatesProducer.sendRebatesMessage(createRebates(orderPayReq));
                     return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn());
                 }
                 throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "订单处理异常！");
@@ -209,6 +213,15 @@ public class OrderProcessor implements IOrderProcessor {
             redisLockUtils.unlock(lockKey);
         }
         throw new StarException(StarError.PAY_PROCESS_ERROR);
+    }
+
+    private RebatesMessage createRebates(OrderPayReq orderPayReq) {
+        RebatesMessage rebatesMessage = new RebatesMessage();
+        rebatesMessage.setPayMoney(new BigDecimal(orderPayReq.getPayAmount()));
+        rebatesMessage.setOrderType(orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.PublishGoods.getPrefix(), 0) ?
+                StarConstants.OrderType.PUBLISH_GOODS : StarConstants.OrderType.MARKET_GOODS);
+        rebatesMessage.setUserId(orderPayReq.getUserId());
+        return rebatesMessage;
     }
 
     private void calculateFee(OrderPayReq orderPayReq) {

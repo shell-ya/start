@@ -1,6 +1,7 @@
 package com.starnft.star.business.service;
 
 import com.starnft.star.business.domain.AirdropThemeRecord;
+import com.starnft.star.business.domain.dto.AirdropRecordDto;
 
 import java.util.List;
 
@@ -17,5 +18,5 @@ public interface IAirdropThemeRecordService {
      * @param recordList
      * @return
      */
-    boolean addUserAirdropList(List<AirdropThemeRecord> recordList);
+    boolean addUserAirdropList(List<AirdropRecordDto> recordList);
 }

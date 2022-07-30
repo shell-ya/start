@@ -3,6 +3,7 @@ package com.starnft.star.admin.web.controller.business;
 import com.starnft.star.business.domain.AirdropThemeRecord;
 import com.starnft.star.business.domain.StarNftThemeInfo;
 import com.starnft.star.business.domain.StarNftThemeNumber;
+import com.starnft.star.business.domain.dto.AirdropRecordDto;
 import com.starnft.star.business.service.IAirdropThemeRecordService;
 import com.starnft.star.business.service.IStarNftThemeInfoService;
 import com.starnft.star.business.service.IStarNftThemeNumberService;
@@ -58,7 +59,7 @@ public class AirdropController extends BaseController {
     }
 
     @PostMapping(value = "/airdropList")
-    public AjaxResult listTheme(@RequestBody List<AirdropThemeRecord> records)
+    public AjaxResult listTheme(@RequestBody List<AirdropRecordDto> records)
     {
         return AjaxResult.success(airdropThemeRecordService.addUserAirdropList(records));
     }

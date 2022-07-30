@@ -17,6 +17,9 @@ import java.util.ArrayList;
 public class AirdropTest {
 
     private final IAirdropThemeRecordService airdropThemeRecordService;
+    //注册用户链上地址 密钥使用加密后密码
+
+    //铸造创世金章 创世银章 创世铜章 首发白羊座 创世摩羯座
 
     @Autowired
     public AirdropTest(IAirdropThemeRecordService airdropThemeRecordService) {
@@ -59,8 +62,8 @@ public class AirdropTest {
 
         ArrayList<AirdropThemeRecord> airdropThemeRecords = Lists.newArrayList(record, themeRecord, airdropThemeRecord);
 
-        boolean b = airdropThemeRecordService.addUserAirdropList(airdropThemeRecords);
-        assert b;
+//        boolean b = airdropThemeRecordService.addUserAirdropList(airdropThemeRecords);
+//        assert b;
 
 
     }
