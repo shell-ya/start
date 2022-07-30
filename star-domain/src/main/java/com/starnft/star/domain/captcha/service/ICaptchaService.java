@@ -2,6 +2,7 @@ package com.starnft.star.domain.captcha.service;
 
 import com.starnft.star.domain.captcha.model.req.ImageCaptchaCheckReq;
 import com.starnft.star.domain.captcha.model.req.ImageCaptchaGenReq;
+import com.starnft.star.domain.captcha.model.req.NetEaseMatchingReq;
 import com.starnft.star.domain.captcha.model.vo.StarImageCaptchaVO;
 
 /**
@@ -13,4 +14,6 @@ public interface ICaptchaService {
     StarImageCaptchaVO generateCaptcha(ImageCaptchaGenReq req);
 
     String matching(ImageCaptchaCheckReq req);
+
+    String matchingNetEase(NetEaseMatchingReq req);
 }
