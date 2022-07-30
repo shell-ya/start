@@ -26,17 +26,17 @@ public class ComposeCategoryMaterialRes implements  Serializable {
 
     private Integer composeScopeNumber;
 
-    public static void main(String[] args) {
-        List<ComposeMaterialDTO> composeMaterials=new ArrayList<>();
-        ComposeMaterialDTO composeMaterialDTO = new ComposeMaterialDTO();
-        composeMaterialDTO.setNumber(3);
-        composeMaterialDTO.setThemeId(999728276368560128L);
-        composeMaterialDTO.setThemeImages("https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1658395373459_da5bcd1b.jpg");
-        composeMaterialDTO.setThemeName("空投测试");
-        composeMaterials.add(composeMaterialDTO);
-        System.out.println(JSONUtil.toJsonStr(composeMaterials));
-
-    }
+//    public static void main(String[] args) {
+//        List<ComposeMaterialDTO> composeMaterials=new ArrayList<>();
+//        ComposeMaterialDTO composeMaterialDTO = new ComposeMaterialDTO();
+//        composeMaterialDTO.setNumber(3);
+//        composeMaterialDTO.setThemeId(999728276368560128L);
+//        composeMaterialDTO.setThemeImages("https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1658395373459_da5bcd1b.jpg");
+//        composeMaterialDTO.setThemeName("空投测试");
+//        composeMaterials.add(composeMaterialDTO);
+//        System.out.println(JSONUtil.toJsonStr(composeMaterials));
+//
+//    }
 }
 
 

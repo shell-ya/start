@@ -13,20 +13,20 @@ import org.springframework.stereotype.Service;
  * @Author ： shellya
  * 返利（元石）
  */
-@Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@RocketMQMessageListener(topic = "${consumer.topic.rebates}", consumerGroup = "${consumer.group.rebates}", selectorExpression = "pay")
-public class RebatesConsumer implements RocketMQListener<RebatesMessage> {
-
-    private final RebatesProcess rebatesProcess;
-
-    /**
-     * 购买人有邀请人id 返还元石 如果订单是秒杀订单 返还等比金额元石 是市场订单 返回20%元石
-     */
-    @Override
-    public void onMessage(RebatesMessage rebatesMessage) {
-
-    }
-
-
-}
+//@Service
+//@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+//@RocketMQMessageListener(topic = "${consumer.topic.rebates}", consumerGroup = "${consumer.group.rebates}", selectorExpression = "pay")
+//public class RebatesConsumer implements RocketMQListener<RebatesMessage> {
+//
+//    private final RebatesProcess rebatesProcess;
+//
+//    /**
+//     * 购买人有邀请人id 返还元石 如果订单是秒杀订单 返还等比金额元石 是市场订单 返回20%元石
+//     */
+//    @Override
+//    public void onMessage(RebatesMessage rebatesMessage) {
+//
+//    }
+//
+//
+//}

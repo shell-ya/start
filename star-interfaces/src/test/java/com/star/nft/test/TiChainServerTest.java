@@ -2,6 +2,7 @@ package com.star.nft.test;
 
 import cn.hutool.core.util.HashUtil;
 import cn.hutool.crypto.SecureUtil;
+import cn.hutool.json.JSONUtil;
 import com.starnft.star.common.chain.TiChainFactory;
 
 import com.starnft.star.common.chain.config.ChainConfiguration;
@@ -18,6 +19,10 @@ import org.web3j.crypto.Hash;
 
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @SpringBootTest(classes = {StarApplication.class})
 public class TiChainServerTest {
@@ -28,8 +33,8 @@ public class TiChainServerTest {
     @Test
     public  void usercreate(){
         CreateAccountReq createAccountReq = new CreateAccountReq();
-        createAccountReq.setUserId("3");
-        String userKey = SecureUtil.sha1("3".concat("dasdasd"));
+        createAccountReq.setUserId("666");
+        String userKey = SecureUtil.sha1("666".concat("dasdasd"));
         createAccountReq.setUserKey(userKey);
         System.out.println(userKey);
         CreateAccountRes account = tiChainServer.createAccount(createAccountReq);
@@ -38,14 +43,25 @@ public class TiChainServerTest {
 
     @Test
     public  void goodspush(){
+        Map<String,Object> map=new HashMap<>();
+
+        List<String> ids=new ArrayList<>();
+        int nums=10;
+        long prifix=202207300000L;
+        for (int i = 1; i <= nums; i++) {
+            ids.add(String.format("%s",prifix+i));
+        }
+        map.put("images","https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1659005019651_ca518707.png");
         PublishGoodsReq publishGoodsReq = new PublishGoodsReq();
-        publishGoodsReq.setUserId("2");
-        String userKey = SecureUtil.sha1("2".concat("dasdasd"));
+        publishGoodsReq.setUserId("3");
+        String userKey = SecureUtil.sha1("3".concat("dasdasd"));
         publishGoodsReq.setUserKey(userKey);
         publishGoodsReq.setAuthor("链元文创");
+        publishGoodsReq.setProductIds(ids.toArray(new String[ids.size()]));
         publishGoodsReq.setPieceCount(10);
-        publishGoodsReq.setInitPrice("19.9");
+        publishGoodsReq.setInitPrice("199.9");
         publishGoodsReq.setName("链元文创-创世爪爪座");
+        publishGoodsReq.setFeature(JSONUtil.toJsonStr(map));
         PublishGoodsRes createAccountRes = tiChainServer.publishGoods(publishGoodsReq);
         System.out.println(createAccountRes);
     }
@@ -54,19 +70,19 @@ public class TiChainServerTest {
     @Test
     public  void goodtransfer(){
   //address
-        //0xea5c7de81ee738cc42e8d1040e9d96a9cd92c3b5
+        //0xf69fb213058f4d10843c22f7bb476846e54fe2c5
   //
         //0x65e75e3f32179675a8d8ce0ca89fce1f56959246
 
 
         //to 0xf69fb213058f4d10843c22f7bb476846e54fe2c5
         GoodsTransferReq goodsTransferReq = new GoodsTransferReq();
-        goodsTransferReq.setUserId("2");
-        String userKey = SecureUtil.sha1("2".concat("dasdasd"));
+        goodsTransferReq.setUserId("3");
+        String userKey = SecureUtil.sha1("3".concat("dasdasd"));
         goodsTransferReq.setUserKey(userKey);
-        goodsTransferReq.setFrom("0x65e75e3f32179675a8d8ce0ca89fce1f56959246");
-        goodsTransferReq.setTo("0xf69fb213058f4d10843c22f7bb476846e54fe2c5");
-        goodsTransferReq.setContractAddress("0xea5c7de81ee738cc42e8d1040e9d96a9cd92c3b5");
+        goodsTransferReq.setFrom("0xf69fb213058f4d10843c22f7bb476846e54fe2c5");
+        goodsTransferReq.setTo("0x231042f4c3636bbf7b91622ba6808ef538309d01");
+        goodsTransferReq.setContractAddress("0xfdb23570c13e3d706470ea9e224a95e43c0af0f7");
         goodsTransferReq.setTokenId("2");
 //        goodsTransferReq.setPieceCount(10);
 //        goodsTransferReq.setInitPrice("19.9");
@@ -80,7 +96,7 @@ public class TiChainServerTest {
     public  void transferDetail(){
         //address
         //0xea5c7de81ee738cc42e8d1040e9d96a9cd92c3b5
-        //
+        //3
         //0x65e75e3f32179675a8d8ce0ca89fce1f56959246
 
 
@@ -99,16 +115,10 @@ public class TiChainServerTest {
     }
     @Test
     public  void userInfo(){
-        //address
-        //0xea5c7de81ee738cc42e8d1040e9d96a9cd92c3b5
-        //
-        //0x65e75e3f32179675a8d8ce0ca89fce1f56959246
 
-
-        //to 0xf69Tra13058f4d10843c22f7bb476846e54fe2c5
         ChainUserInfoReq goodsTransferReq = new ChainUserInfoReq();
-        goodsTransferReq.setUserId("2");
-        String userKey = SecureUtil.sha1("2".concat("dasdasd"));
+        goodsTransferReq.setUserId("3");
+        String userKey = SecureUtil.sha1("3".concat("dasdasd"));
         goodsTransferReq.setUserKey(userKey);
 
         ChainUserInfoRes chainUserInfoRes = tiChainServer.userInfo(goodsTransferReq);
@@ -126,7 +136,7 @@ public class TiChainServerTest {
         UserUpdateKeyReq goodsTransferReq = new UserUpdateKeyReq();
         goodsTransferReq.setUserId("2");
 
-        goodsTransferReq.setUserKey( SecureUtil.sha1("2".concat("dasdasd")));
+        goodsTransferReq.setUserKey( SecureUtil.sha1("2b".concat("dasdasd")));
         goodsTransferReq.setNewUserKey( SecureUtil.sha1("2b".concat("dasdasd")));
 
         ChainUserInfoRes chainUserInfoRes = tiChainServer.userUpdateKey(goodsTransferReq);

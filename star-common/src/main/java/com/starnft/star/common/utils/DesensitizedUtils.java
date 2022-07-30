@@ -18,10 +18,10 @@ public class DesensitizedUtils{
         String regex = String.format(REGEX_TEMPLATE,left,right);
         return value.replaceAll(regex,SYMBOL);
     }
-
-    public static void main(String[] args) {
-        System.out.println(backCard("6225758268281192"));
-    }
+//
+//    public static void main(String[] args) {
+//        System.out.println(backCard("6225758268281192"));
+//    }
 
 
     public static String phone(String origin) {
