@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.StarNftComposeCategoryMapper">
+    
+    <resultMap type="StarNftComposeCategory" id="StarNftComposeCategoryResult">
+        <result property="id"    column="id"    />
+        <result property="composeId"    column="compose_id"    />
+        <result property="composeMaterial"    column="compose_material"    />
+        <result property="isScore"    column="is_score"    />
+        <result property="composeScopeType"    column="compose_scope_type"    />
+        <result property="composeScopeNumber"    column="compose_scope_number"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectStarNftComposeCategoryVo">
+        select id, compose_id, compose_material, is_score, compose_scope_type, compose_scope_number, is_deleted from star_nft_compose_category
+    </sql>
+
+    <select id="selectStarNftComposeCategoryList" parameterType="StarNftComposeCategory" resultMap="StarNftComposeCategoryResult">
+        <include refid="selectStarNftComposeCategoryVo"/>
+        <where>  
+            <if test="composeId != null "> and compose_id = #{composeId}</if>
+            <if test="composeMaterial != null  and composeMaterial != ''"> and compose_material = #{composeMaterial}</if>
+            <if test="isScore != null "> and is_score = #{isScore}</if>
+            <if test="composeScopeType != null "> and compose_scope_type = #{composeScopeType}</if>
+            <if test="composeScopeNumber != null "> and compose_scope_number = #{composeScopeNumber}</if>
+            <if test="isDeleted != null "> and is_deleted = #{isDeleted}</if>
+        </where>
+    </select>
+    
+    <select id="selectStarNftComposeCategoryById" parameterType="Long" resultMap="StarNftComposeCategoryResult">
+        <include refid="selectStarNftComposeCategoryVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertStarNftComposeCategory" parameterType="StarNftComposeCategory">
+        insert into star_nft_compose_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="composeId != null">compose_id,</if>
+            <if test="composeMaterial != null">compose_material,</if>
+            <if test="isScore != null">is_score,</if>
+            <if test="composeScopeType != null">compose_scope_type,</if>
+            <if test="composeScopeNumber != null">compose_scope_number,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="composeId != null">#{composeId},</if>
+            <if test="composeMaterial != null">#{composeMaterial},</if>
+            <if test="isScore != null">#{isScore},</if>
+            <if test="composeScopeType != null">#{composeScopeType},</if>
+            <if test="composeScopeNumber != null">#{composeScopeNumber},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStarNftComposeCategory" parameterType="StarNftComposeCategory">
+        update star_nft_compose_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="composeId != null">compose_id = #{composeId},</if>
+            <if test="composeMaterial != null">compose_material = #{composeMaterial},</if>
+            <if test="isScore != null">is_score = #{isScore},</if>
+            <if test="composeScopeType != null">compose_scope_type = #{composeScopeType},</if>
+            <if test="composeScopeNumber != null">compose_scope_number = #{composeScopeNumber},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStarNftComposeCategoryById" parameterType="Long">
+        delete from star_nft_compose_category where id = #{id}
+    </delete>
+
+    <delete id="deleteStarNftComposeCategoryByIds" parameterType="String">
+        delete from star_nft_compose_category where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
