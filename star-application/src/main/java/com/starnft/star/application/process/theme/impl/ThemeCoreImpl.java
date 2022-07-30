@@ -74,7 +74,7 @@ public class ThemeCoreImpl implements ThemeCore {
     }
 
     @Override
-    public List<SecKillGoods> querySecKillThemes() {
+    public Set<SecKillGoods> querySecKillThemes() {
         Set<String> keys = redisUtil.keys(String.format(RedisKey.SECKILL_GOODS_INFO.getKey(), "*"));
         if (keys.isEmpty()) {
             return null;
@@ -88,7 +88,20 @@ public class ThemeCoreImpl implements ThemeCore {
                 goodsList.add(good);
             }
         }
-        return goodsList.stream().sorted(Comparator.comparing(secKillGoods -> secKillGoods != null ? secKillGoods.getStartTime() : new Date())).collect(Collectors.toList());
+
+        List<@Nullable SecKillGoods> noNoneStock = goodsList.stream()
+                .filter(Objects::nonNull).filter(goods -> goods.getStock() > 0)
+                .sorted(Comparator.comparing(SecKillGoods::getStartTime)).collect(Collectors.toList());
+
+        List<@Nullable SecKillGoods> nonStock = goodsList.stream()
+                .filter(Objects::nonNull).filter(goods -> goods.getStock() <= 0)
+                .sorted(Comparator.comparing(SecKillGoods::getStartTime).reversed()).collect(Collectors.toList());
+
+        Set<@Nullable SecKillGoods> results = new LinkedHashSet<>();
+        results.addAll(noNoneStock);
+        results.addAll(nonStock);
+
+        return results;
     }
 
     //更新展示库存量

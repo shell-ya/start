@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @Api(tags = "主题相关接口「ThemeController」")
@@ -56,7 +57,7 @@ public class ThemeController {
     @PostMapping("/seckill/list")
     @ApiOperation("秒杀商品列表")
     @TokenIgnore
-    public RopResponse<List<SecKillGoods>> seriesTheme() {
+    public RopResponse<Set<SecKillGoods>> seriesTheme() {
         return RopResponse.success(this.themeCore.querySecKillThemes());
     }
 
