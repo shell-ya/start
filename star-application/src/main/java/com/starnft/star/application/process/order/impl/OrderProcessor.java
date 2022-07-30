@@ -5,7 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONUtil;
 import com.starnft.star.application.mq.producer.activity.ActivityEventProducer;
 import com.starnft.star.application.mq.producer.order.OrderProducer;
-import com.starnft.star.application.mq.producer.rebates.RebatesProducer;
+//import com.starnft.star.application.mq.producer.rebates.RebatesProducer;
 import com.starnft.star.application.mq.producer.wallet.WalletProducer;
 import com.starnft.star.application.process.event.model.ActivityEventReq;
 import com.starnft.star.application.process.event.model.BuyActivityEventReq;
@@ -81,7 +81,7 @@ public class OrderProcessor implements IOrderProcessor {
     private final TransactionTemplate template;
     private final WalletProducer walletProducer;
     private final ActivityEventProducer activityProducer;
-    private final RebatesProducer rebatesProducer;
+//    private final RebatesProducer rebatesProducer;
 
     @Override
     public OrderGrabRes orderGrab(OrderGrabReq orderGrabReq) {
@@ -203,7 +203,7 @@ public class OrderProcessor implements IOrderProcessor {
                         walletProducer.receivablesCallback(createTranReq(orderPayReq));
                     }
                     activityProducer.sendScopeMessage(createEventReq(orderPayReq));
-                    rebatesProducer.sendRebatesMessage(createRebates(orderPayReq));
+//                    rebatesProducer.sendRebatesMessage(createRebates(orderPayReq));
                     return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn());
                 }
                 throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "订单处理异常！");

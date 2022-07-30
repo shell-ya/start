@@ -15,27 +15,27 @@ import java.util.function.Consumer;
  * @Author ： shellya
  * 返利（元石）
  */
-@Slf4j
-@Service
-public class RebatesProducer extends BaseProducer {
-
-
-    public void sendRebatesMessage(RebatesMessage message){
-        String destination = String.format(TopicConstants.PAY_REBATES_DESTINATION.getFormat(), TopicConstants.PAY_REBATES_DESTINATION.getTag());
-
-        messageSender.asyncSend(destination, Optional.of(message), success(), rollback());
-    }
-
-
-    private Consumer<SendResult> success() {
-        return sendResult -> {
-
-        };
-    }
-
-    private Runnable rollback() {
-        return () -> {
-
-        };
-    }
-}
+//@Slf4j
+//@Service
+//public class RebatesProducer extends BaseProducer {
+//
+//
+//    public void sendRebatesMessage(RebatesMessage message){
+//        String destination = String.format(TopicConstants.PAY_REBATES_DESTINATION.getFormat(), TopicConstants.PAY_REBATES_DESTINATION.getTag());
+//
+//        messageSender.asyncSend(destination, Optional.of(message), success(), rollback());
+//    }
+//
+//
+//    private Consumer<SendResult> success() {
+//        return sendResult -> {
+//
+//        };
+//    }
+//
+//    private Runnable rollback() {
+//        return () -> {
+//
+//        };
+//    }
+//}
