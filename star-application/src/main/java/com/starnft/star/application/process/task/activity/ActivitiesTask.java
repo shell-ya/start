@@ -16,10 +16,10 @@ import com.starnft.star.domain.series.service.SeriesService;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.domain.theme.model.vo.ThemeDetailVO;
 import com.starnft.star.domain.theme.service.ThemeService;
-
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -66,7 +66,7 @@ public class ActivitiesTask {
      * 4、秒杀结束时间<当前循环的时间区间的开始时间+2小时
      * 5、导入到Redis缓存。使用Hash类型存储
      */
-//    @Scheduled(cron = "0/15 * * * * ?")
+    @Scheduled(cron = "0/15 * * * * ?")
 //    @XxlJob("activitiesTask")
     public void loadActivities() {
         //1.查询所有时间区间 2小时一个时区
@@ -123,7 +123,7 @@ public class ActivitiesTask {
             return ids;
         }
         List<Integer> stockNums = this.numberService.loadNotSellNumberNumCollection(themeId);
-        for (int i = 0; i <= stockNums.size() - 1; i++) {
+        for (int i = 0; i <= stock - 1; i++) {
             ids[i] = (long) stockNums.get(i);
         }
         return ids;

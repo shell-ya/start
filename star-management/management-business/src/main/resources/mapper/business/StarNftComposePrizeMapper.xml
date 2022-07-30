@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.StarNftComposePrizeMapper">
+    
+    <resultMap type="StarNftComposePrize" id="StarNftComposePrizeResult">
+        <result property="id"    column="id"    />
+        <result property="composeId"    column="compose_id"    />
+        <result property="prizeType"    column="prize_type"    />
+        <result property="prizeStamp"    column="prize_stamp"    />
+        <result property="prizeProbability"    column="prize_probability"    />
+        <result property="isDeleted"    column="is_deleted"    />
+        <result property="prizeNumber"    column="prize_number"    />
+        <result property="modifiedAt"    column="modified_at"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="currentPrizeNumber"    column="current_prize_number"    />
+    </resultMap>
+
+    <sql id="selectStarNftComposePrizeVo">
+        select id, compose_id, prize_type, prize_stamp, prize_probability, is_deleted, prize_number, modified_at, created_at, current_prize_number from star_nft_compose_prize
+    </sql>
+
+    <select id="selectStarNftComposePrizeList" parameterType="StarNftComposePrize" resultMap="StarNftComposePrizeResult">
+        <include refid="selectStarNftComposePrizeVo"/>
+        <where>  
+            <if test="prizeType != null "> and prize_type = #{prizeType}</if>
+            <if test="prizeStamp != null  and prizeStamp != ''"> and prize_stamp = #{prizeStamp}</if>
+            <if test="isDeleted != null "> and is_deleted = #{isDeleted}</if>
+            <if test="prizeNumber != null "> and prize_number = #{prizeNumber}</if>
+            <if test="currentPrizeNumber != null "> and current_prize_number = #{currentPrizeNumber}</if>
+        </where>
+    </select>
+    
+    <select id="selectStarNftComposePrizeById" parameterType="Long" resultMap="StarNftComposePrizeResult">
+        <include refid="selectStarNftComposePrizeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertStarNftComposePrize" parameterType="StarNftComposePrize">
+        insert into star_nft_compose_prize
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="composeId != null">compose_id,</if>
+            <if test="prizeType != null">prize_type,</if>
+            <if test="prizeStamp != null">prize_stamp,</if>
+            <if test="prizeProbability != null">prize_probability,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+            <if test="prizeNumber != null">prize_number,</if>
+            <if test="modifiedAt != null">modified_at,</if>
+            <if test="createdAt != null">created_at,</if>
+            <if test="currentPrizeNumber != null">current_prize_number,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="composeId != null">#{composeId},</if>
+            <if test="prizeType != null">#{prizeType},</if>
+            <if test="prizeStamp != null">#{prizeStamp},</if>
+            <if test="prizeProbability != null">#{prizeProbability},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+            <if test="prizeNumber != null">#{prizeNumber},</if>
+            <if test="modifiedAt != null">#{modifiedAt},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="currentPrizeNumber != null">#{currentPrizeNumber},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStarNftComposePrize" parameterType="StarNftComposePrize">
+        update star_nft_compose_prize
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="composeId != null">compose_id = #{composeId},</if>
+            <if test="prizeType != null">prize_type = #{prizeType},</if>
+            <if test="prizeStamp != null">prize_stamp = #{prizeStamp},</if>
+            <if test="prizeProbability != null">prize_probability = #{prizeProbability},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="prizeNumber != null">prize_number = #{prizeNumber},</if>
+            <if test="modifiedAt != null">modified_at = #{modifiedAt},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="currentPrizeNumber != null">current_prize_number = #{currentPrizeNumber},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStarNftComposePrizeById" parameterType="Long">
+        delete from star_nft_compose_prize where id = #{id}
+    </delete>
+
+    <delete id="deleteStarNftComposePrizeByIds" parameterType="String">
+        delete from star_nft_compose_prize where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

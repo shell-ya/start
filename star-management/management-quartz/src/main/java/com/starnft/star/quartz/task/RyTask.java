@@ -32,10 +32,10 @@ public class RyTask
         System.out.println("执行有参方法：" + params);
         String[] split = params.split(",");
 
-        for (int num = 0; num < split.length; num++) {
+        for (int num = 1; num < split.length; num++) {
 
             String trim = split[num].trim();
-            int i = RandomUtil.randomInt(1,3);
+            int i = RandomUtil.randomInt(1,Integer.parseInt(split[0]));
             for (int j = 0; j < i; j++) {
                     RankItemMetaData rankItemMetaData = new RankItemMetaData();
                     rankItemMetaData.setMobile(RandomUtil.randomPhone());

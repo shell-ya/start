@@ -139,8 +139,8 @@ public class StarNftWithdrawApplyServiceImpl implements IStarNftWithdrawApplySer
                     starNftWalletRecordService.updateRecordByRecordSn(starNftWithdrawApply.getWithdrawTradeNo(),StarConstants.Pay_Status.PAY_SUCCESS.name(),loginUser.getUserId().toString());
                 }else {
                     //失败 钱包表冻结金额回退至余额
-                    nftWallet.setFrozen(0);
                     nftWallet.setBalance(nftWallet.getFrozenFee().add(nftWallet.getBalance()));
+                    nftWallet.setFrozen(0);
                     nftWalletService.updateNftWallet(nftWallet);
                     //更新钱包交易记录表
 //                    StarNftWalletRecord starNftWalletRecord = new StarNftWalletRecord();

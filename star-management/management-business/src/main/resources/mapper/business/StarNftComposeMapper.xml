@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.StarNftComposeMapper">
+    
+    <resultMap type="StarNftCompose" id="StarNftComposeResult">
+        <result property="id"    column="id"    />
+        <result property="composeName"    column="compose_name"    />
+        <result property="composeImages"    column="compose_images"    />
+        <result property="startedAt"    column="started_at"    />
+        <result property="endAt"    column="end_at"    />
+        <result property="composeStatus"    column="compose_status"    />
+        <result property="composeRemark"    column="compose_remark"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectStarNftComposeVo">
+        select id, compose_name, compose_images, started_at, end_at, compose_status, compose_remark, is_deleted from star_nft_compose
+    </sql>
+
+    <select id="selectStarNftComposeList" parameterType="StarNftCompose" resultMap="StarNftComposeResult">
+        <include refid="selectStarNftComposeVo"/>
+        <where>  
+            <if test="composeName != null  and composeName != ''"> and compose_name like concat('%', #{composeName}, '%')</if>
+            <if test="composeImages != null  and composeImages != ''"> and compose_images = #{composeImages}</if>
+            <if test="params.beginStartedAt != null and params.beginStartedAt != '' and params.endStartedAt != null and params.endStartedAt != ''"> and started_at between #{params.beginStartedAt} and #{params.endStartedAt}</if>
+            <if test="params.beginEndAt != null and params.beginEndAt != '' and params.endEndAt != null and params.endEndAt != ''"> and end_at between #{params.beginEndAt} and #{params.endEndAt}</if>
+            <if test="composeStatus != null "> and compose_status = #{composeStatus}</if>
+            <if test="isDeleted != null "> and is_deleted = #{isDeleted}</if>
+        </where>
+    </select>
+    
+    <select id="selectStarNftComposeById" parameterType="Long" resultMap="StarNftComposeResult">
+        <include refid="selectStarNftComposeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertStarNftCompose" parameterType="StarNftCompose">
+        insert into star_nft_compose
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="composeName != null and composeName != ''">compose_name,</if>
+            <if test="composeImages != null and composeImages != ''">compose_images,</if>
+            <if test="startedAt != null">started_at,</if>
+            <if test="endAt != null">end_at,</if>
+            <if test="composeStatus != null">compose_status,</if>
+            <if test="composeRemark != null">compose_remark,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="composeName != null and composeName != ''">#{composeName},</if>
+            <if test="composeImages != null and composeImages != ''">#{composeImages},</if>
+            <if test="startedAt != null">#{startedAt},</if>
+            <if test="endAt != null">#{endAt},</if>
+            <if test="composeStatus != null">#{composeStatus},</if>
+            <if test="composeRemark != null">#{composeRemark},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStarNftCompose" parameterType="StarNftCompose">
+        update star_nft_compose
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="composeName != null and composeName != ''">compose_name = #{composeName},</if>
+            <if test="composeImages != null and composeImages != ''">compose_images = #{composeImages},</if>
+            <if test="startedAt != null">started_at = #{startedAt},</if>
+            <if test="endAt != null">end_at = #{endAt},</if>
+            <if test="composeStatus != null">compose_status = #{composeStatus},</if>
+            <if test="composeRemark != null">compose_remark = #{composeRemark},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStarNftComposeById" parameterType="Long">
+        delete from star_nft_compose where id = #{id}
+    </delete>
+
+    <delete id="deleteStarNftComposeByIds" parameterType="String">
+        delete from star_nft_compose where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
