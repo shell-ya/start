@@ -428,15 +428,21 @@ public class UserCoreImpl implements UserCore {
 
     @Override
     public ShareCodeRes shareCodeInfo(Long userId) {
-        EventActivityRes activityRes = eventActivityService.queryEnabledActivity();
+        EventActivityRes activityRes = null;
+        try{
+            activityRes = eventActivityService.queryEnabledActivity();
+        }catch (Exception e){
+            log.info("无开启活动",e);
+        }
         String shareCode = InvitationCodeUtil.gen(userId);
         List<DictionaryVO> url = dictionaryRepository.obtainDictionary("URL");
-
-        return ShareCodeRes.builder()
+        ShareCodeRes build = ShareCodeRes.builder()
                 .sc(shareCode)
-                .at(activityRes.getActivitySign())
                 .url(url.get(0).getDictCode())
                 .build();
+        if (Objects.isNull(activityRes)) return build;
+        build.setAt(activityRes.getActivitySign());
+        return build;
     }
 
     @Override
