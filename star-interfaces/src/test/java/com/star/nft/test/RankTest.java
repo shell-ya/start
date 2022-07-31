@@ -14,6 +14,7 @@ import com.starnft.star.domain.rank.core.rank.model.res.InvitationHistoryItem;
 import com.starnft.star.domain.rank.core.rank.model.res.RankingsItem;
 import com.starnft.star.domain.user.repository.IUserRepository;
 import com.starnft.star.interfaces.StarApplication;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,6 +27,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
 
+@Slf4j
 @SpringBootTest(classes = {StarApplication.class})
 public class RankTest {
     @Resource
@@ -38,6 +40,30 @@ public class RankTest {
 
     @Autowired
     IUserRepository userRepository;
+
+
+    @Resource
+    UserCore userCore;
+
+    @Test
+    public void user(){
+        int num = 1;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 50; i++) {
+            Long userId = RandomUtil.randomLong(9);
+            String phone = RandomUtil.randomPhone();
+            Boolean register = userCore.isRegister(phone);
+            if (register) continue;
+            log.info("account:{},phone:{}",userId,phone);
+            rankService.setUserPhoneMapping("launch_rank",userId.toString(),phone);
+            sb.append(userId.toString()).append(",");
+            num++;
+        }
+        log.info("userIds:{}",sb.toString());
+        log.info("{num:{}",num);
+
+
+    }
     @Test
     public void  setSms() throws Exception {
         HashMap<String, Object> dataMap = new HashMap<>();

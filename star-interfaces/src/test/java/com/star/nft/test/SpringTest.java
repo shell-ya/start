@@ -90,7 +90,7 @@ public class SpringTest {
 
     @Test
     public void goods() {
-        List<SecKillGoods> secKillGoods = themeCore.querySecKillThemes();
+        Set<SecKillGoods> secKillGoods = themeCore.querySecKillThemes();
         secKillGoods.forEach(good -> System.out.println(JSON.toJSONString(good)));
 
     }

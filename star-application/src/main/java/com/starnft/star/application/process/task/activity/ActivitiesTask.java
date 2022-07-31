@@ -66,23 +66,23 @@ public class ActivitiesTask {
      * 4、秒杀结束时间<当前循环的时间区间的开始时间+2小时
      * 5、导入到Redis缓存。使用Hash类型存储
      */
-    @Scheduled(cron = "0/15 * * * * ?")
+//    @Scheduled(cron = "0/15 * * * * ?")
 //    @XxlJob("activitiesTask")
-    public void loadActivities() {
-        //1.查询所有时间区间 2小时一个时区
-        List<Date> dateMenus = DateUtil.getDateMenus(interval);
-
-        for (Date startTime : dateMenus) {
-            String startTimeTrim = DateUtil.date2Str(startTime);
-            String goodsKey = String.format(RedisKey.SECKILL_GOODS_INFO.getKey(), startTimeTrim);
-            Set keys = redisUtil.hashKeys(goodsKey);
-            //执行查询 加载时区内待秒杀商品
-            List<SecKillGoods> secKillGoods = loadGoods(startTime, keys);
-            //加载进缓存
-            cacheGoods(secKillGoods, goodsKey);
-        }
-
-    }
+//    public void loadActivities() {
+//        //1.查询所有时间区间 2小时一个时区
+//        List<Date> dateMenus = DateUtil.getDateMenus(interval);
+//
+//        for (Date startTime : dateMenus) {
+//            String startTimeTrim = DateUtil.date2Str(startTime);
+//            String goodsKey = String.format(RedisKey.SECKILL_GOODS_INFO.getKey(), startTimeTrim);
+//            Set keys = redisUtil.hashKeys(goodsKey);
+//            //执行查询 加载时区内待秒杀商品
+//            List<SecKillGoods> secKillGoods = loadGoods(startTime, keys);
+//            //加载进缓存
+//            cacheGoods(secKillGoods, goodsKey);
+//        }
+//
+//    }
 
     private void cacheGoods(List<SecKillGoods> secKillGoods, String goodsKey) {
         if (secKillGoods == null || secKillGoods.size() == 0) {
