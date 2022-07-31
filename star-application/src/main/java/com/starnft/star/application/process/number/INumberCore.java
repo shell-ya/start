@@ -1,13 +1,17 @@
 package com.starnft.star.application.process.number;
 
 import com.starnft.star.application.process.number.res.ConsignDetailRes;
+import com.starnft.star.common.enums.UserNumberStatusEnum;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.domain.article.model.vo.UserNumbersVO;
 import com.starnft.star.domain.number.model.req.NumberConsignmentCancelRequest;
 import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
 import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
+
+import java.util.List;
 
 /**
  * @author Harlan
@@ -24,5 +28,7 @@ public interface INumberCore {
     Boolean consignmentCancel(NumberConsignmentCancelRequest request);
 
     ConsignDetailRes obtainConsignDetail(Long id);
+
+    List<UserNumbersVO> checkHasNumber(Long uid, Long numberId, UserNumberStatusEnum statusEnum);
 
 }
