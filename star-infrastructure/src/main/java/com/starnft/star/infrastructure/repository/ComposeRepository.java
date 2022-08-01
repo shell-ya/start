@@ -26,22 +26,18 @@ public class ComposeRepository implements IComposeRepository, PageHelperInterfac
     StarNftComposeMapper starNftComposeMapper;
 
     @Override
-    public ResponsePageResult<ComposeRes> queryComposePageByCondition(RequestConditionPage<ComposeReq> conditionPage) {
+    public List<ComposeRes> queryComposePageByCondition(ComposeReq composeReq) {
         StarNftCompose starNftCompose = new StarNftCompose();
-        if (Objects.nonNull(conditionPage.getCondition())) {
-            starNftCompose = BeanColverUtil.colver(conditionPage.getCondition(), StarNftCompose.class);
+        if (Objects.nonNull(composeReq)) {
+            starNftCompose = BeanColverUtil.colver(composeReq, StarNftCompose.class);
         }
         starNftCompose.setIsDeleted(Boolean.FALSE);
-        StarNftCompose finalStarNftCompose = starNftCompose;
-        PageInfo<StarNftCompose> result = PageHelper
-                .startPage(conditionPage.getPage(), conditionPage.getSize())
-                .doSelectPageInfo(() -> {
-                            starNftComposeMapper
-                                    .selectList(new QueryWrapper<StarNftCompose>()
-                                            .setEntity(finalStarNftCompose));
-                        }
-                );
-        List<ComposeRes> collect = result.getList().stream().map(item -> {
+
+        List<StarNftCompose> starNftComposes = starNftComposeMapper
+                .selectList(new QueryWrapper<StarNftCompose>()
+                        .setEntity(starNftCompose));
+
+        return starNftComposes.stream().map(item -> {
             ComposeRes composeRes = new ComposeRes();
             composeRes.setComposeRemark(item.getComposeRemark());
             composeRes.setComposeName(item.getComposeName());
@@ -52,7 +48,7 @@ public class ComposeRepository implements IComposeRepository, PageHelperInterfac
             composeRes.setId(item.getId());
             return composeRes;
         }).collect(Collectors.toList());
-        return listReplace(result,collect);
+
     }
 
     @Override

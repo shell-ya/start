@@ -2,6 +2,8 @@ package com.starnft.star.admin.web.controller.business;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.starnft.star.business.domain.vo.StarNftComposeCategoryVO;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,22 +44,22 @@ public class StarNftComposeCategoryController extends BaseController
     public TableDataInfo list(StarNftComposeCategory starNftComposeCategory)
     {
         startPage();
-        List<StarNftComposeCategory> list = starNftComposeCategoryService.selectStarNftComposeCategoryList(starNftComposeCategory);
+        List<StarNftComposeCategoryVO> list = starNftComposeCategoryService.selectStarNftComposeCategoryList(starNftComposeCategory);
         return getDataTable(list);
     }
 
     /**
      * 导出合成素材列表
      */
-    @PreAuthorize("@ss.hasPermi('business:composecategory:export')")
-    @Log(title = "合成素材", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, StarNftComposeCategory starNftComposeCategory)
-    {
-        List<StarNftComposeCategory> list = starNftComposeCategoryService.selectStarNftComposeCategoryList(starNftComposeCategory);
-        ExcelUtil<StarNftComposeCategory> util = new ExcelUtil<StarNftComposeCategory>(StarNftComposeCategory.class);
-        util.exportExcel(response, list, "合成素材数据");
-    }
+//    @PreAuthorize("@ss.hasPermi('business:composecategory:export')")
+//    @Log(title = "合成素材", businessType = BusinessType.EXPORT)
+//    @PostMapping("/export")
+//    public void export(HttpServletResponse response, StarNftComposeCategory starNftComposeCategory)
+//    {
+//        List<StarNftComposeCategoryVO> list = starNftComposeCategoryService.selectStarNftComposeCategoryList(starNftComposeCategory);
+//        ExcelUtil<StarNftComposeCategory> util = new ExcelUtil<StarNftComposeCategory>(StarNftComposeCategory.class);
+//        util.exportExcel(response, list, "合成素材数据");
+//    }
 
     /**
      * 获取合成素材详细信息

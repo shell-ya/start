@@ -2,6 +2,7 @@ package com.starnft.star.business.service;
 
 import java.util.List;
 import com.starnft.star.business.domain.StarNftComposeCategory;
+import com.starnft.star.business.domain.vo.StarNftComposeCategoryVO;
 
 /**
  * 合成素材Service接口
@@ -17,7 +18,7 @@ public interface IStarNftComposeCategoryService
      * @param id 合成素材主键
      * @return 合成素材
      */
-    public StarNftComposeCategory selectStarNftComposeCategoryById(Long id);
+    public StarNftComposeCategoryVO selectStarNftComposeCategoryById(Long id);
 
     /**
      * 查询合成素材列表
@@ -25,7 +26,7 @@ public interface IStarNftComposeCategoryService
      * @param starNftComposeCategory 合成素材
      * @return 合成素材集合
      */
-    public List<StarNftComposeCategory> selectStarNftComposeCategoryList(StarNftComposeCategory starNftComposeCategory);
+    public List<StarNftComposeCategoryVO> selectStarNftComposeCategoryList(StarNftComposeCategory starNftComposeCategory);
 
     /**
      * 新增合成素材
