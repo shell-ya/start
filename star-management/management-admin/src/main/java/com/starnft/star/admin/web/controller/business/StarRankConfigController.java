@@ -109,9 +109,22 @@ public class StarRankConfigController extends BaseController
     @PreAuthorize("@ss.hasPermi('business:rankconfig:export')")
     @Log(title = "排行榜数据导出", businessType = BusinessType.EXPORT)
     @PostMapping("/exportRank")
-    public void exportRank(HttpServletResponse response, Integer size)
+    public void exportRank(HttpServletResponse response, Integer page, Integer size)
     {
-        List<RankingsItem> launch_rank = rankService.getRankDatasByPage("launch_rank", 1, size);
+        int start = (page - 1) *size;
+        int end = page * size -1;
+        List<RankingsItem> launch_rank = rankService.getRankDatasByPage("launch_rank", start, end);
+        for (RankingsItem item :
+                launch_rank) {
+            int valid = item.getValid().intValue();
+            if (valid >= 25){
+//                long l = item.getArgentum();
+                item.setArgentum(1L);
+            }
+            long cuprum = valid / 5;
+            if (cuprum >= 5L) cuprum = 5L;
+            item.setCuprum(cuprum);
+        }
 //        List<StarRankConfig> list = starRankConfigService.selectStarRankConfigList(starRankConfig);
         ExcelUtil<RankingsItem> util = new ExcelUtil<RankingsItem>(RankingsItem.class);
         util.exportExcel(response, launch_rank, "排行榜数据");
