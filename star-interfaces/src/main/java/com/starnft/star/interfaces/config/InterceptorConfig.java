@@ -36,7 +36,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
         interceptorRegistration.addPathPatterns("/**");
         //不拦截路径
         List<String> irs = new ArrayList<String>();
-        irs.add("/star/v1/login");
         irs.add("/api/*");
         irs.add("/doc.html");
         irs.add("/service-worker.js");
