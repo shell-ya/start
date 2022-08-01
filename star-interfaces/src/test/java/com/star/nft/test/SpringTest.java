@@ -88,12 +88,12 @@ public class SpringTest {
         System.out.println(JSON.toJSONString(orderPayDetailRes));
     }
 
-//    @Test
-//    public void goods() {
-//        List<SecKillGoods> secKillGoods = themeCore.querySecKillThemes();
-//        secKillGoods.forEach(good -> System.out.println(JSON.toJSONString(good)));
-//
-//    }
+    @Test
+    public void goods() {
+        Set<SecKillGoods> secKillGoods = themeCore.querySecKillThemes();
+        secKillGoods.forEach(good -> System.out.println(JSON.toJSONString(good)));
+
+    }
 
     @Test
     public void payment() {

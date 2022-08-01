@@ -91,8 +91,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="concurrent != null and concurrent != ''">concurrent,</if>
  			<if test="status != null and status != ''">status,</if>
  			<if test="remark != null and remark != ''">remark,</if>
- 			<if test="createBy != null and createBy != ''">create_by,</if>
- 			create_time
+ 			<if test="createBy != null and createBy != ''">create_by</if>
  		)values(
  			<if test="jobId != null and jobId != 0">#{jobId},</if>
  			<if test="jobName != null and jobName != ''">#{jobName},</if>
@@ -103,8 +102,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="concurrent != null and concurrent != ''">#{concurrent},</if>
  			<if test="status != null and status != ''">#{status},</if>
  			<if test="remark != null and remark != ''">#{remark},</if>
- 			<if test="createBy != null and createBy != ''">#{createBy},</if>
- 			sysdate()
+ 			<if test="createBy != null and createBy != ''">#{createBy}</if>
  		)
 	</insert>
 

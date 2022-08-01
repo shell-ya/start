@@ -102,7 +102,7 @@ public class MarketTest {
 
     @Test
     public void task(){
-        activitiesTask.loadActivities();
+//        activitiesTask.loadActivities();
     }
 
     @Test

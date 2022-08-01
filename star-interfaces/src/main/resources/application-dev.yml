@@ -30,8 +30,8 @@ spring:
       sql:
         show: true
   redis:
-    host: 124.221.181.84
-    database: 4
+    host: 146.56.248.96
+    database: 8
     port: 16379
     jedis:
       pool:
