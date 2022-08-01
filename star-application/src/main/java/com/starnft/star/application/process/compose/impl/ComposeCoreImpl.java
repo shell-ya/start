@@ -96,6 +96,7 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
 
     @Override
     public Map<Long, List<UserNumbersVO>> composeUserMaterial(UserMaterialReq userMaterialReq) {
+        Assert.notNull(userMaterialReq.getUserId(),()->new StarException("userId 为空"));
         Long categoryId = userMaterialReq.getCategoryId();
         ComposeCategoryRes composeCategoryRes = composeService.composeCategoryByCategoryId(categoryId);
         List<ComposeMaterialDTO> composeMaterials = JSONUtil.toList(composeCategoryRes.getComposeMaterial(), ComposeMaterialDTO.class);
