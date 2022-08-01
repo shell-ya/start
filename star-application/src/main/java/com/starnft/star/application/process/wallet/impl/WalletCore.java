@@ -279,13 +279,13 @@ public class WalletCore implements IWalletCore {
     }
 
     @Override
-    public Boolean queryTxBatch(Integer hours) {
+    public Boolean queryTxBatch(CheckBatchReq batchReq) {
 
         try {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
             calendar.set(Calendar.HOUR,
-                    calendar.get(Calendar.HOUR) - hours);
+                    calendar.get(Calendar.HOUR) - batchReq.getHours());
             //查找最近时间区间订单
             TransactionRecordQueryReq req = new TransactionRecordQueryReq();
             req.setStartDate(calendar.getTime());
@@ -297,7 +297,7 @@ public class WalletCore implements IWalletCore {
             integers.add(1);
             req.setTransactionType(integers);
             req.setPage(1);
-            req.setSize(2000);
+            req.setSize(batchReq.getSize());
             req.setPayStatus(StarConstants.Pay_Status.PAY_ING.name());
             ResponsePageResult<WalletRecordVO> walletRecordVOResponsePageResult =
                     walletService.queryTransactionRecord(req);
