@@ -1,16 +1,21 @@
 package com.starnft.star.admin.web.controller.business;
 
+import com.google.common.collect.Lists;
+import com.starnft.star.business.domain.StarNftThemeNumber;
 import com.starnft.star.business.domain.StarRankConfig;
+import com.starnft.star.business.domain.dto.AirdropRecordDto;
+import com.starnft.star.business.domain.dto.RecordItem;
 import com.starnft.star.business.domain.vo.RankData;
 import com.starnft.star.business.service.IStarRankConfigService;
+import com.starnft.star.business.service.impl.StarNftThemeNumberServiceImpl;
 import com.starnft.star.business.support.rank.core.IRankService;
-import com.starnft.star.business.support.rank.model.RankItemMetaData;
 import com.starnft.star.business.support.rank.model.RankingsItem;
 import com.starnft.star.common.annotation.Log;
 import com.starnft.star.common.core.controller.BaseController;
 import com.starnft.star.common.core.domain.AjaxResult;
 import com.starnft.star.common.core.page.TableDataInfo;
 import com.starnft.star.common.enums.BusinessType;
+import com.starnft.star.common.utils.JsonUtil;
 import com.starnft.star.common.utils.poi.ExcelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,6 +43,8 @@ public class StarRankConfigController extends BaseController
     private IStarRankConfigService starRankConfigService;
     @Resource
     private IRankService rankService;
+    @Resource
+    private StarNftThemeNumberServiceImpl numberService;
     /**
      * 查询排行榜列表
      */
@@ -146,6 +153,118 @@ public class StarRankConfigController extends BaseController
         data = data.stream().sorted(Comparator.comparing(RankData::getRank, Comparator.nullsLast(Comparator.reverseOrder()))).collect(Collectors.toList());
         return data;
     }
+
+    @PostMapping("/getAirpordJson")
+    public AjaxResult getAirprodJson( Integer page, Integer size,Long seriesId,Long seriesThemeId){
+        //左节点
+        int rightIndex = 0;
+        //右节点
+        int leftIndex = 0;
+        List<Long> starNftThemeNumbers = numberService.selectThemeNumberOwberByIsNull(seriesThemeId);
+        List<AirdropRecordDto> airdropRecordDtos = new ArrayList<>();
+        for (Integer account :
+                airdripUser) {
+
+            AirdropRecordDto dto = new AirdropRecordDto();
+            dto.setAirdropType(0);
+            dto.setUserId(Long.valueOf(account));
+            RecordItem recordItem = new RecordItem();
+            recordItem.setSeriesId(seriesId);
+            recordItem.setSeriesThemeInfoId(seriesThemeId);
+            recordItem.setSeriesThemeId(starNftThemeNumbers.subList(rightIndex,rightIndex + 1 ));
+            rightIndex  += 1;
+            dto.setRecordItems(Lists.newArrayList(recordItem));
+            airdropRecordDtos.add(dto);
+        }
+        String s = JsonUtil.obj2Json(airdropRecordDtos);
+
+        return AjaxResult.success(s);
+
+
+
+        //左节点
+//        int rightIndex = 0;
+//        //右节点
+//        int leftIndex = 0;
+//        List<AirdropRecordDto> airdropRecordDtos = new ArrayList<>();
+//        int start = (page - 1) *size;
+//        int end = page * size -1;
+//        List<RankingsItem> launch_rank = rankService.getRankDatasByPage("launch_rank", start, end);
+//        for (RankingsItem item :
+//                launch_rank) {
+//            if (userIds.contains(item.getAccount().intValue())) continue;
+//            int valid = item.getValid().intValue();
+//            int cuprum = valid / 5;
+//            if (cuprum >= 5L) cuprum = 5;
+////            item.setCuprum(cuprum);
+//            AirdropRecordDto dto = new AirdropRecordDto();
+//            dto.setAirdropType(0);
+//            dto.setUserId(item.getAccount());
+//            RecordItem recordItem = new RecordItem();
+//            recordItem.setSeriesId(seriesId);
+//            recordItem.setSeriesThemeInfoId(seriesThemeId);
+//            recordItem.setSeriesThemeId(starNftThemeNumbers.subList(rightIndex,rightIndex + cuprum ));
+//            rightIndex  += cuprum;
+//            dto.setRecordItems(Lists.newArrayList(recordItem));
+//            airdropRecordDtos.add(dto);
+//        }
+//
+//        String s = JsonUtil.obj2Json(airdropRecordDtos);
+//
+//        return AjaxResult.success(s);
+
+    }
+
+    public static final List<Integer> userIds = Lists.newArrayList(184540276,766467607,495103605,431536597,529230007,922099233,918777703,292418826,266805775,851592036,472171155,672975576,346929293,658330706,381617169,174264051,338496426,403542645,377834770,578861304,447303927,391640513,989572091,493433098,148169107,432517536,876702588,793256162,181502750,330796421,452774569,718693278,264335057,252030894,547013759,373621681,165794866,515860835,155778869,175814560,997041809,366120090,933470544,409275553,865651772,667897821,872893274,428526577,644455309,181552651,597870172,634592075,590125918,606698869,545637723,989816429,263993058,650944791,454843988,264979312,902710638,692456505,183548497,463946671,649095306,699608949,120013018,817424238,553840705,108621845,278773741,683815194,509285166,318362587,384604477,850468258,896070028,410539691,494370089,985316524,492688609,945286912,806770984,888906822,997925786,982137965,209977811,596819888,616188149,476391938,317157052,682480857,555724883,400869178,139887177,510360684,589739161,143057963,749465383,289568071);
+
+    public static final List<Integer> airdripUser = Lists.newArrayList(                245635743,
+            219048153,
+            792419099,
+            847153753,
+            302483830,
+            108122511,
+            143339371,
+            662608017,
+            676214902,
+            627234862,
+            797725136,
+            755485495,
+            173543241,
+            554657155,
+            671749056,
+            534529413,
+            936805191,
+            511395049,
+            717924506,
+            931943139,
+            786172067,
+            836508943,
+            177704908,
+            499793312,
+            692568176,
+            980681836,
+            673322647,
+            148563197,
+            241136640,
+            452676101,
+            539465209,
+            738163357,
+            657995072,
+            354646070,
+            915512099,
+            309503360,
+            571629646,
+            145940619,
+            910303581,
+            840412313,
+            788013220,
+            854428508,
+            583729301,
+            492130051,
+            527908660,
+            924013949,
+            593523698,
+            516003045);
 
 
 }

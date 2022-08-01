@@ -179,4 +179,8 @@ public class StarNftThemeNumberServiceImpl implements IStarNftThemeNumberService
     public List<StarNftThemeNumber> selectStarNftThemeNumberByIds(Collection ids) {
         return starNftThemeNumberMapper.selectStarNftThemeNumberByIds(ids);
     }
+
+    public List<Long> selectThemeNumberOwberByIsNull(Long id){
+        return starNftThemeNumberMapper.selectOwberBy(id);
+    }
 }

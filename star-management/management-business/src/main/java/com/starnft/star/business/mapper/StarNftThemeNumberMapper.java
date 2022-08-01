@@ -66,4 +66,6 @@ public interface StarNftThemeNumberMapper
     List<StarNftThemeNumberVo> selectStarNftThemeNumberVoList(StarNftThemeNumberVo starNftThemeNumber);
 
     List<StarNftThemeNumber> selectStarNftThemeNumberByIds(@Param("ids") Collection ids);
+
+    List<Long> selectOwberBy(Long id);
 }

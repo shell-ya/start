@@ -157,4 +157,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </select>
+
+    <select id="selectOwberBy" resultType="java.lang.Long">
+        select id from star_nft_theme_number
+        <where>
+            is_delete = 0
+            and owner_by is null
+            and theme_number > 100
+            and series_theme_info_id = #{id}
+        </where>
+    </select>
 </mapper>
