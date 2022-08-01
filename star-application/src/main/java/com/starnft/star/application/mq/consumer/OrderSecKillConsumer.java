@@ -97,8 +97,6 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
     }
 
     private Object filterNum(long userId, Long themeId) {
-        //商品库存队列
-        Object stockQueueId = redisUtil.rightPop(String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), themeId));
 
         String poolKey = String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), themeId);
         //不存在库存池 生成并加载一百个库存 或 如果库存池大小小于10 扩容加100
@@ -108,7 +106,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
         }
 
         Object spop = redisUtil.spop(poolKey);
-        log.info("[{}] 用户：[{}] 获得库存编号 ： [{}]", this.getClass().getSimpleName(), userId, stockQueueId);
+        log.info("[{}] 用户：[{}] 获得库存编号 ： [{}]", this.getClass().getSimpleName(), userId, spop);
         return spop;
     }
 

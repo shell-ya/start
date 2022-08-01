@@ -104,4 +104,7 @@ public class TiChainFactory {
         return HttpUtil.post(chainConfiguration.getGateway().concat(uri), JSONUtil.toJsonStr(json), 5000);
     }
 
+//    public static void main(String[] args) {
+//
+//    }
 }

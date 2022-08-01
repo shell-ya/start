@@ -1,6 +1,7 @@
 package com.starnft.star.application.process.number.impl;
 
 import cn.hutool.core.date.DateUtil;
+import com.google.common.collect.Lists;
 import com.starnft.star.application.process.number.INumberCore;
 import com.starnft.star.application.process.number.res.ConsignDetailRes;
 import com.starnft.star.common.constant.RedisKey;
@@ -35,10 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 
 /**
@@ -191,6 +189,11 @@ public class NumberCoreImpl implements INumberCore {
     private UserNumbersVO checkNumberOwner(Long uid, Long numberId, UserNumberStatusEnum statusEnum) {
         UserNumbersVO userNumberInfo = this.userThemeService.queryUserNumberInfo(uid, numberId, statusEnum);
         Assert.notNull(userNumberInfo, () -> new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "你不是该藏品的拥有者 无法进行相关操作"));
+        return userNumberInfo;
+    }
+
+    public  List<UserNumbersVO> checkHasNumber(Long uid, Long themeId, UserNumberStatusEnum statusEnum) {
+        List<UserNumbersVO> userNumberInfo = this.userThemeService.queryUserArticleNumberInfoByThemeIds(uid, Lists.newArrayList(themeId), statusEnum);
         return userNumberInfo;
     }
 

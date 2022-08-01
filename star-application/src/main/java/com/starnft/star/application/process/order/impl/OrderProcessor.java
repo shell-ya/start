@@ -5,7 +5,6 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONUtil;
 import com.starnft.star.application.mq.producer.activity.ActivityEventProducer;
 import com.starnft.star.application.mq.producer.order.OrderProducer;
-//import com.starnft.star.application.mq.producer.rebates.RebatesProducer;
 import com.starnft.star.application.mq.producer.wallet.WalletProducer;
 import com.starnft.star.application.process.event.model.ActivityEventReq;
 import com.starnft.star.application.process.event.model.BuyActivityEventReq;
@@ -20,6 +19,8 @@ import com.starnft.star.application.process.order.model.req.OrderPayReq;
 import com.starnft.star.application.process.order.model.res.OrderGrabRes;
 import com.starnft.star.application.process.order.model.res.OrderGrabStatus;
 import com.starnft.star.application.process.order.model.res.OrderPayDetailRes;
+import com.starnft.star.application.process.order.white.rule.IWhiteRule;
+import com.starnft.star.application.process.order.white.rule.WhiteRuleContext;
 import com.starnft.star.application.process.rebates.model.RebatesMessage;
 import com.starnft.star.common.Result;
 import com.starnft.star.common.ResultCode;
@@ -83,6 +84,8 @@ public class OrderProcessor implements IOrderProcessor {
     private final ActivityEventProducer activityProducer;
 //    private final RebatesProducer rebatesProducer;
 
+    private final WhiteRuleContext whiteRuleContext;
+
     @Override
     public OrderGrabRes orderGrab(OrderGrabReq orderGrabReq) {
 
@@ -94,6 +97,10 @@ public class OrderProcessor implements IOrderProcessor {
                 throw new StarException(StarError.ORDER_DONT_SELL_ERROR);
             }
         }
+
+        //是否白名单
+        Boolean isWhite = whiteValidation(orderGrabReq.getUserId(), orderGrabReq.getThemeId());
+
         // 恶意下单校验
         Object record = redisUtil.get(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), orderGrabReq.getUserId()));
         if (record != null) {
@@ -115,7 +122,16 @@ public class OrderProcessor implements IOrderProcessor {
             throw new StarException(StarError.GOODS_NOT_FOUND);
         }
         // 商品售卖时间验证
-        if (DateUtil.date().before(goods.getStartTime())) {
+        if (!isWhite && DateUtil.date().before(goods.getStartTime())) {
+            throw new StarException(StarError.GOODS_DO_NOT_START_ERROR);
+        }
+
+        //白名单购买时间
+        Calendar instance = Calendar.getInstance();
+        instance.setTime(goods.getStartTime());
+        instance.add(Calendar.HOUR, -1);
+        Date whiteTime = instance.getTime();
+        if (DateUtil.date().before(whiteTime)) {
             throw new StarException(StarError.GOODS_DO_NOT_START_ERROR);
         }
 
@@ -154,6 +170,14 @@ public class OrderProcessor implements IOrderProcessor {
         } finally {
             walletService.threadClear();
         }
+    }
+
+    private Boolean whiteValidation(Long userId, Long themeId) {
+        IWhiteRule iWhiteRule = whiteRuleContext.obtainWhiteRule(String.valueOf(themeId));
+        if (iWhiteRule == null) {
+            return false;
+        }
+        return iWhiteRule.verifyRule(userId, themeId);
     }
 
     @Override
