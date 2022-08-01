@@ -57,7 +57,7 @@ public class StarUtils {
         return money.setScale(2, BigDecimal.ROUND_HALF_DOWN).toString();
     }
 
-    public static void main(String[] args) {
-        System.out.println(StarUtils.getSHA256Str("654321"));
-    }
+//    public static void main(String[] args) {
+//        System.out.println(StarUtils.getSHA256Str("654321"));
+//    }
 }

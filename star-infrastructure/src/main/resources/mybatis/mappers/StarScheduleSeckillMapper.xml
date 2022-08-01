@@ -68,6 +68,7 @@
         </set>
         where
         spu_id = #{themeId}
+        and version = #{version}
     </update>
 
     <!-- 批量新增或按主键更新数据 -->

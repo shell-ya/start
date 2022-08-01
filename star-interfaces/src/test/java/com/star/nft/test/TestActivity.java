@@ -17,9 +17,11 @@ import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.utils.InvitationCodeUtil;
+import com.starnft.star.common.utils.RandomUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
 import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
 import com.starnft.star.domain.rank.core.rank.model.res.Rankings;
+import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.interfaces.StarApplication;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -28,9 +30,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @SpringBootTest(classes = {StarApplication.class})
 @Slf4j

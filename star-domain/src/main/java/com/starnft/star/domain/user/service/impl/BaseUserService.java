@@ -75,7 +75,7 @@ public class BaseUserService {
             String key = String.format(RedisKey.REDIS_USER_TOKEN.getKey(), accountId);
             String tokenRes = String.valueOf(redisTemplate.opsForValue().get(key));
             if (StringUtils.isNotBlank(tokenRes) && !"null".equals(tokenRes)) {
-                redisTemplate.expire(tokenRes, 7, TimeUnit.DAYS);
+                redisTemplate.expire(key, 7, TimeUnit.DAYS);
                 return new UserInfo().setAccount(Long.valueOf(accountId)).setPhone(phone);
             }
         }

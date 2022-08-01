@@ -8,7 +8,7 @@ public class PublishGoodsReq {
     private String userKey;
     private String name;      //	专题名称	字符串	是
     private Integer pieceCount;   //	NFR份数[1-10000]	整型	是
-    private String[] productIds;  //	商家数字商品ID数组，可以是有意义的产品编号，每一个NFT一个	字符串数组	否
+    private String[] productIds;  //	商家数字商品ID数组，可以是有意义的产品编号，每一个NFT一字符串数组	否
     private String author;     //	作者	字符串	否
     private String feature;      //作品特征、版权说明等，每一次铸造都会上链，内容不宜过多。	字符串	否
     private Integer baseTokenId; //自定义

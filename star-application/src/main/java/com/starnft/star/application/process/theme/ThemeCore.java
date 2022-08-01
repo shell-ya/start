@@ -7,6 +7,7 @@ import com.starnft.star.domain.theme.model.res.ThemeRes;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 
 import java.util.List;
+import java.util.Set;
 
 public interface ThemeCore {
     List<ThemeRes> queryThemesBySeriesId(Long seriesId);
@@ -15,5 +16,5 @@ public interface ThemeCore {
 
     ThemeDetailRes queryThemeDetail(Long id);
 
-    List<SecKillGoods> querySecKillThemes();
+    Set<SecKillGoods> querySecKillThemes();
 }

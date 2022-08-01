@@ -2,6 +2,7 @@ package com.starnft.star.business.support.rank.core;
 
 import com.starnft.star.business.support.rank.model.RankDefinition;
 import com.starnft.star.business.support.rank.model.RankItemMetaData;
+import com.starnft.star.business.support.rank.model.RankingsItem;
 
 import java.util.List;
 
@@ -99,7 +100,7 @@ public interface IRankService {
      * @param id 数据提供者的id
      * @return 对应id玩家的排行名次，没有或查询失败返回-1
      */
-    public int getRankNum(String rankName,int id);
+    public Long getRankNum(String rankName,Integer id);
     /**
      * 根据id查询一个玩家的排行数据
      * @param rankName 排行的名字
@@ -128,7 +129,7 @@ public interface IRankService {
      * @param pageSize 每一页的大小
      * @return {@code RankData}
      */
-    public List<RankItemMetaData> getRankDatasByPage(String rankName, int page, int pageSize);
+//    public List<RankItemMetaData> getRankDatasByPage(String rankName, int page, int pageSize);
     /**
      * 获取用户及其前后几个用户的排行数据
      * @param rankName 排行的名字
@@ -138,4 +139,6 @@ public interface IRankService {
      * @return {@code RankData}
      */
     public List<RankItemMetaData> getRankDatasAroundId(String rankName, int id, int beforeNum, int afterNum);
+
+    public List<RankingsItem> getRankDatasByPage(String rankName, int page, int pageSize);
 }
