@@ -7,6 +7,7 @@ import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.domain.compose.model.req.ComposeManageReq;
 import com.starnft.star.domain.compose.model.req.ComposeReq;
 import com.starnft.star.domain.compose.service.IComposeService;
+import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import com.starnft.star.interfaces.interceptor.UserResolverInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,9 +26,10 @@ public class ComposeController {
     final IComposeCore composeCore;
 
     @ApiOperation("合成列表")
+    @TokenIgnore
     @PostMapping("list")
-    public RopResponse list(@RequestBody  RequestConditionPage<ComposeReq> reqRequestConditionPage) {
-        return RopResponse.success(composeService.composeList(reqRequestConditionPage));
+    public RopResponse list(@RequestBody  ComposeReq composeReq) {
+        return RopResponse.success(composeService.composeList(composeReq));
     }
 
     @ApiOperation("合成详情")

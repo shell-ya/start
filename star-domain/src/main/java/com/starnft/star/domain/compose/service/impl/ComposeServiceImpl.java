@@ -26,8 +26,8 @@ public class ComposeServiceImpl  implements IComposeService {
     @Resource
     IComposePrizeRepository composePrizeRepository;
     @Override
-    public ResponsePageResult<ComposeRes> composeList(RequestConditionPage<ComposeReq> conditionPage) {
-        return iComposeRepository.queryComposePageByCondition(conditionPage);
+    public List<ComposeRes> composeList(ComposeReq composeReq) {
+        return iComposeRepository.queryComposePageByCondition(composeReq);
     }
 
     @Override

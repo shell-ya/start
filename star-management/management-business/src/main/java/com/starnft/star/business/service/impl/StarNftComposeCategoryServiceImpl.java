@@ -1,6 +1,13 @@
 package com.starnft.star.business.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import cn.hutool.json.JSONUtil;
+import com.starnft.star.business.domain.vo.ComposeMaterial;
+import com.starnft.star.business.domain.vo.StarNftComposeCategoryVO;
+import com.starnft.star.common.utils.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.starnft.star.business.mapper.StarNftComposeCategoryMapper;
@@ -18,7 +25,6 @@ public class StarNftComposeCategoryServiceImpl implements IStarNftComposeCategor
 {
     @Autowired
     private StarNftComposeCategoryMapper starNftComposeCategoryMapper;
-
     /**
      * 查询合成素材
      * 
@@ -26,21 +32,43 @@ public class StarNftComposeCategoryServiceImpl implements IStarNftComposeCategor
      * @return 合成素材
      */
     @Override
-    public StarNftComposeCategory selectStarNftComposeCategoryById(Long id)
+    public StarNftComposeCategoryVO selectStarNftComposeCategoryById(Long id)
     {
-        return starNftComposeCategoryMapper.selectStarNftComposeCategoryById(id);
+        StarNftComposeCategory starNftComposeCategory = starNftComposeCategoryMapper.selectStarNftComposeCategoryById(id);
+        StarNftComposeCategoryVO starNftComposeCategoryVO = getStarNftComposeCategoryVO(starNftComposeCategory);
+        return starNftComposeCategoryVO;
     }
 
     /**
      * 查询合成素材列表
      * 
-     * @param starNftComposeCategory 合成素材
+     *
      * @return 合成素材
      */
     @Override
-    public List<StarNftComposeCategory> selectStarNftComposeCategoryList(StarNftComposeCategory starNftComposeCategory)
+    public List<StarNftComposeCategoryVO> selectStarNftComposeCategoryList(StarNftComposeCategory nftComposeCategory)
     {
-        return starNftComposeCategoryMapper.selectStarNftComposeCategoryList(starNftComposeCategory);
+        List<StarNftComposeCategory> starNftComposeCategories = starNftComposeCategoryMapper.selectStarNftComposeCategoryList(nftComposeCategory);
+        List<StarNftComposeCategoryVO> collect = starNftComposeCategories.stream().map(starNftComposeCategory -> {
+            StarNftComposeCategoryVO starNftComposeCategoryVO = getStarNftComposeCategoryVO(starNftComposeCategory);
+            return starNftComposeCategoryVO;
+        }).collect(Collectors.toList());
+        return collect;
+
+    }
+
+    @NotNull
+    private StarNftComposeCategoryVO getStarNftComposeCategoryVO(StarNftComposeCategory starNftComposeCategory) {
+        StarNftComposeCategoryVO starNftComposeCategoryVO = new StarNftComposeCategoryVO();
+        starNftComposeCategoryVO.setComposeId(starNftComposeCategory.getComposeId());
+        starNftComposeCategoryVO.setComposeScopeNumber(starNftComposeCategory.getComposeScopeNumber());
+        starNftComposeCategoryVO.setId(starNftComposeCategory.getId());
+        starNftComposeCategoryVO.setIsScore(starNftComposeCategory.getIsScore());
+        starNftComposeCategoryVO.setComposeScopeType(starNftComposeCategory.getComposeScopeType());
+        if (StringUtils.isNotBlank(starNftComposeCategory.getComposeMaterial())){
+            starNftComposeCategoryVO.setComposeMaterial(JSONUtil.toList(starNftComposeCategory.getComposeMaterial(), ComposeMaterial.class));
+        }
+        return starNftComposeCategoryVO;
     }
 
     /**
