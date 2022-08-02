@@ -234,13 +234,15 @@ public class OrderProcessor implements IOrderProcessor {
                     activityProducer.sendScopeMessage(createEventReq(orderPayReq));
 //                    rebatesProducer.sendRebatesMessage(createRebates(orderPayReq));
                     //todo 后面去掉
-                    Long times = 0L;
-                    synchronized (this) {
-                        redisUtil.hincr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L);
-                        times = redisUtil.hdecr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L);
-                    }
-                    if (redisUtil.hdecr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L) <= 0) {
-                        redisUtil.hdel(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()));
+                    if (!orderPayReq.getThemeId().equals(1002285892654821376L)) {
+                        Long times = 0L;
+                        synchronized (this) {
+                            redisUtil.hincr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L);
+                            times = redisUtil.hdecr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L);
+                        }
+                        if (redisUtil.hdecr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L) <= 0) {
+                            redisUtil.hdel(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()));
+                        }
                     }
                     return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn());
                 }
