@@ -173,6 +173,11 @@ public enum RedisKey {
      */
     SECKILL_GOODS_NOT_ONSELL(511, StarConstants.SERVICE_NAME.concat(".seckill:notonsell:%s"), -1L, TimeUnit.MINUTES),
 
+    /**
+     * 优先购次数
+     */
+    SECKILL_GOODS_PRIORITY_TIMES(512, StarConstants.SERVICE_NAME.concat(".seckill:priority:shoufa"), -1L, TimeUnit.MINUTES),
+
     //======================================= sec kill goods end   =======================================
 
     /**
