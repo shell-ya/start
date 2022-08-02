@@ -107,7 +107,7 @@
         WHERE u.user_id = #{uid}
         AND u.`status` = #{statusEnum.code}
         AND u.is_delete = 0
-        <foreach collection="themeIds" item="id" open="AND u.series_theme_info_id  in(" separator="," close=")">
+        <foreach collection="themeIds" item="id" open="AND u.series_theme_id  in(" separator="," close=")">
             #{id}
         </foreach>
     </select>

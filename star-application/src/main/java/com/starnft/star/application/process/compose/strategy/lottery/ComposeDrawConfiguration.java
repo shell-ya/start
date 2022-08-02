@@ -12,7 +12,7 @@ public class ComposeDrawConfiguration {
     @Resource
     RedisTemplate redisTemplate;
     public Integer getComposeDraw(){
-        Integer composeDrawStrategy = (Integer) redisTemplate.opsForValue().get(RedisKey.COMPOSE_DRAW_STRATEGY);
+        Integer composeDrawStrategy = (Integer) redisTemplate.opsForValue().get(RedisKey.COMPOSE_DRAW_STRATEGY.getKey());
         return Optional.ofNullable(composeDrawStrategy).orElse(1);
     }
 

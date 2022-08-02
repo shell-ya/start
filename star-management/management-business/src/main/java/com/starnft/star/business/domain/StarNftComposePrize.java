@@ -18,7 +18,6 @@ public class StarNftComposePrize extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** $column.columnComment */
     private Long id;
 
     /** 合成id */
@@ -45,9 +44,13 @@ public class StarNftComposePrize extends BaseEntity
     private BigDecimal prizeNumber;
 
     /** 修改时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "结束时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date modifiedAt;
 
     /** 创建时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Excel(name = "结束时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date createdAt;
 
     /** 当前奖品数量 */

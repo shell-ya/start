@@ -96,6 +96,7 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
 
     @Override
     public Map<Long, List<UserNumbersVO>> composeUserMaterial(UserMaterialReq userMaterialReq) {
+        Assert.notNull(userMaterialReq.getUserId(),()->new StarException("userId 为空"));
         Long categoryId = userMaterialReq.getCategoryId();
         ComposeCategoryRes composeCategoryRes = composeService.composeCategoryByCategoryId(categoryId);
         List<ComposeMaterialDTO> composeMaterials = JSONUtil.toList(composeCategoryRes.getComposeMaterial(), ComposeMaterialDTO.class);
@@ -110,6 +111,7 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
     public ComposeManageRes composeManage(ComposeManageReq composeManageReq) {
         ComposeCategoryRes composeCategoryRes = composeService.composeCategoryByCategoryId(composeManageReq.getCategoryId());
         //积分判断操作
+        Assert.isTrue(composeCategoryRes.getComposeId().equals(composeManageReq.getComposeId()),()->new StarException("请选择正确的合成类目"));
         if (composeCategoryRes.getIsScore()) {
             ScoreDTO subScoreDTO = getScoreDTO(composeManageReq, composeCategoryRes);
             iScopeCore.userScopeManageSub(subScoreDTO);
