@@ -146,6 +146,11 @@ public class OrderService implements IOrderService {
     }
 
     @Override
+    public List<OrderVO> queryToPayOrder(Long userId) {
+        return this.orderRepository.queryToPayOrder(userId);
+    }
+
+    @Override
     public List<OrderVO> queryAllSuccessOrder() {
          return orderRepository.queryAllSuccessByTheme("998977713737334784");
 //        return BeanColverUtil.colverList(orderVOS, OrderListRes.class);
