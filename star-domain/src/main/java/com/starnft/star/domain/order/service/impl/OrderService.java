@@ -112,7 +112,8 @@ public class OrderService implements IOrderService {
                 redisUtil.hdel(String.format(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), orderVO.getSeriesThemeInfoId()), String.valueOf(uid));
                 //清理排队信息
                 log.info("[{}] 取消订单清除购买限制 uid = [{}]", this.getClass().getSimpleName(), uid);
-                redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(uid));
+                String key = String.format(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), orderVO.getSeriesThemeInfoId());
+                redisUtil.hdel(key, String.valueOf(uid));
             } else if (orderType.equals(StarConstants.OrderType.MARKET_GOODS)) {
                 redisLockUtils.unlock(String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), orderVO.getSeriesThemeId()));
             }
@@ -152,7 +153,7 @@ public class OrderService implements IOrderService {
 
     @Override
     public List<OrderVO> queryAllSuccessOrder() {
-         return orderRepository.queryAllSuccessByTheme("998977713737334784");
+        return orderRepository.queryAllSuccessByTheme("998977713737334784");
 //        return BeanColverUtil.colverList(orderVOS, OrderListRes.class);
     }
 
