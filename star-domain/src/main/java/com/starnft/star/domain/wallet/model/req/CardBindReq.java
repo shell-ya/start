@@ -55,7 +55,7 @@ public class CardBindReq implements Serializable {
      */
     @NotBlank(message = "银行预留电话不能为空")
     @ApiModelProperty(value = "银行预留电话", required = true)
-    @Pattern(regexp = "0?(13|14|15|18|17)[0-9]{9}", message = "手机号格式错误")
+    @Pattern(regexp = "^1(3\\d|4[5-9]|5[0-35-9]|6[2567]|7[0-8]|8\\d|9[0-35-9])\\d{8}$", message = "手机号格式错误")
     private String phone;
 
     /**
