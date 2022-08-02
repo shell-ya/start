@@ -96,7 +96,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
 
     }
 
-    private Object filterNum(long userId, Long themeId) {
+    private synchronized Object filterNum(long userId, Long themeId) {
 
         String poolKey = String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), themeId);
         //不存在库存池 生成并加载一百个库存 或 如果库存池大小小于10 扩容加100
