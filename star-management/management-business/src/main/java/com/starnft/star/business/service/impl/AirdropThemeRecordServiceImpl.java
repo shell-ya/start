@@ -9,18 +9,18 @@ import com.starnft.star.business.mapper.AirdropThemeRecordMapper;
 import com.starnft.star.business.mapper.StarNftThemeNumberMapper;
 import com.starnft.star.business.mapper.StarNftUserThemeMapper;
 import com.starnft.star.business.service.IAirdropThemeRecordService;
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.utils.SnowflakeWorker;
+import com.starnft.star.common.utils.redis.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -35,6 +35,16 @@ public class AirdropThemeRecordServiceImpl implements IAirdropThemeRecordService
     private StarNftThemeNumberMapper themeNumberMapper;
     @Resource
     private StarNftUserThemeMapper userThemeMapper;
+    @Resource
+    RedisUtil redisUtil;
+    private final HashMap<Long,Integer> priorityTheme = new HashMap<>();
+
+    @PostConstruct
+    private void initPriority(){
+        priorityTheme.put(1000489186785472512L,3);
+        priorityTheme.put(1000490621916909568L,2);
+        priorityTheme.put(1000491126767976448L,1);
+    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -44,6 +54,11 @@ public class AirdropThemeRecordServiceImpl implements IAirdropThemeRecordService
             boolean airdropSuccess = createAirdropRecord(record);
             boolean numberSuccess = updateThemeNumber(record);
             boolean userTheme = createUserTheme(record);
+
+            Integer orDefault = priorityTheme.get(record.getSeriesThemeInfoId());
+            if (Objects.nonNull(orDefault)){
+                redisUtil.hincr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(),record.getUserId().toString(),orDefault);
+            }
             return airdropSuccess & numberSuccess & userTheme;
         }catch (Exception e){
             log.error("空投异常",e);
