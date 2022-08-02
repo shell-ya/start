@@ -16,4 +16,7 @@ public class ComposeCategoryRes implements Serializable {
     private Integer composeScopeType;
 
     private Integer composeScopeNumber;
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long composeId;
+
 }
