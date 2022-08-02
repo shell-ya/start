@@ -12,7 +12,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import java.io.Serializable;
 
 /**
  * redis配置
@@ -91,5 +94,35 @@ public class RedisConfig extends CachingConfigurerSupport
 
         template.afterPropertiesSet();
         return template;
+    }
+
+
+    /**
+     * template 相关配置
+     *
+     * @param factory RedisConnectionFactory
+     * @return RedisTemplate
+     */
+    @Bean("AirdropRedisTemplate")
+    public RedisTemplate<String, Serializable> airdropRedisTemplate(RedisConnectionFactory factory) {
+
+
+//
+//        return template;
+        //创建 redisTemplate 模版
+        RedisTemplate<String, Serializable> redisTemplate = new RedisTemplate<>();
+
+        //设置 value 的转化格式和 key 的转化格式
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+
+        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+//        redisTemplate.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
+//        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+//        redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        //关联 redisConnectionFactory
+        redisTemplate.setConnectionFactory(factory);
+
+        return redisTemplate;
+
     }
 }

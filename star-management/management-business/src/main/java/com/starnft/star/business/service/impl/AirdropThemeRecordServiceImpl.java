@@ -57,7 +57,7 @@ public class AirdropThemeRecordServiceImpl implements IAirdropThemeRecordService
 
             Integer orDefault = priorityTheme.get(record.getSeriesThemeInfoId());
             if (Objects.nonNull(orDefault)){
-                redisUtil.hincr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(),record.getUserId().toString(),orDefault);
+                redisUtil.hincr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(),record.getUserId().toString(),Long.valueOf(orDefault));
             }
             return airdropSuccess & numberSuccess & userTheme;
         }catch (Exception e){
