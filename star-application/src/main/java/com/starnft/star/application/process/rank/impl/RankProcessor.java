@@ -93,7 +93,10 @@ public class RankProcessor implements IRankProcessor {
         RankDefinition rankDefinition = allRank.stream().filter(item -> item.getStartTime().before(new Date()))
                 .filter(item -> item.getEndTime().after(new Date())).findAny().orElse(null);
 
-        if (Objects.isNull(rankDefinition)) throw new StarException(StarError.NOT_FOUND_ACTIVITY);
+        if (Objects.isNull(rankDefinition)){
+            rankDefinition = new RankDefinition();
+            rankDefinition.setRankName("launch_rank");
+        }
 
         return rankDefinition;
     }

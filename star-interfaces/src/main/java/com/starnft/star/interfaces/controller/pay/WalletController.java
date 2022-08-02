@@ -58,10 +58,10 @@ public class WalletController {
 
 
     @ApiOperation("异常批量最终查单")
-    @PostMapping("/recharge/checkbatch/{num}")
+    @PostMapping("/recharge/checkbatch/")
     @TokenIgnore
-    public RopResponse<Boolean> checkBatch(@PathVariable Integer num) {
-        return RopResponse.success(this.walletCore.queryTxBatch(num));
+    public RopResponse<Boolean> checkBatch(@RequestBody CheckBatchReq req) {
+        return RopResponse.success(this.walletCore.queryTxBatch(req));
     }
 
     @ApiOperation("充值结果查询 轮训")

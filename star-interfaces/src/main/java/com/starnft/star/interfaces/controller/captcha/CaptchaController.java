@@ -3,6 +3,7 @@ package com.starnft.star.interfaces.controller.captcha;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.domain.captcha.model.req.ImageCaptchaCheckReq;
 import com.starnft.star.domain.captcha.model.req.ImageCaptchaGenReq;
+import com.starnft.star.domain.captcha.model.req.NetEaseMatchingReq;
 import com.starnft.star.domain.captcha.model.vo.StarImageCaptchaVO;
 import com.starnft.star.domain.captcha.service.ICaptchaService;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class CaptchaController {
     private final ICaptchaService captchaService;
+
     @ApiOperation("生成验证码")
     @GetMapping("/generate")
     @TokenIgnore
@@ -37,6 +39,14 @@ public class CaptchaController {
     @TokenIgnore
     public RopResponse<String> checkCaptcha(@Validated @RequestBody ImageCaptchaCheckReq req) {
         String matching = this.captchaService.matching(req);
+        return RopResponse.success(matching);
+    }
+
+    @ApiOperation("网易验证码二次校验")
+    @PostMapping("/check/netease")
+    @TokenIgnore
+    public RopResponse<String> checkNetEaseCaptcha(@Validated @RequestBody NetEaseMatchingReq req) {
+        String matching = this.captchaService.matchingNetEase(req);
         return RopResponse.success(matching);
     }
 }

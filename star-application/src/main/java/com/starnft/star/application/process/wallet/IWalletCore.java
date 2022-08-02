@@ -6,6 +6,7 @@ import com.starnft.star.application.process.wallet.res.RechargeReqResult;
 import com.starnft.star.application.process.wallet.res.TransactionRecord;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.wallet.model.req.CardBindReq;
+import com.starnft.star.domain.wallet.model.req.CheckBatchReq;
 import com.starnft.star.domain.wallet.model.req.TxResultReq;
 import com.starnft.star.domain.wallet.model.req.WithDrawReq;
 import com.starnft.star.domain.wallet.model.res.CardBindResult;
@@ -33,7 +34,7 @@ public interface IWalletCore {
     //查询充值交易状态db
     TxResultRes queryTxResult(TxResultReq txResultReq);
 
-    Boolean queryTxBatch(Integer hours);
+    Boolean queryTxBatch(CheckBatchReq req);
 
     //查询银行卡信息
     List<CardBindResult> obtainCardBinds(Long uid);
