@@ -1,26 +1,26 @@
 package com.starnft.star.application.process.order.white.rule;
 
-import cn.hutool.core.collection.CollectionUtil;
-import com.google.common.collect.ImmutableList;
-import com.starnft.star.common.enums.UserNumberStatusEnum;
-import com.starnft.star.domain.article.model.vo.UserNumbersVO;
+import com.starnft.star.common.constant.RedisKey;
+import com.starnft.star.domain.component.RedisUtil;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import javax.annotation.Resource;
 
 @Service("worldCreationWhiteRule")
 public class WorldCreationWhiteRule extends AbstractWhiteRule {
-
-    private final ImmutableList<Long> shouldHave =
-            ImmutableList.of(1000489186785472512L, 1000490621916909568L, 1000491126767976448L);
+    @Resource
+    RedisUtil redisUtil;
 
     @Override
     public boolean verifyRule(Long uid, Long themeId) {
-        for (Long sh : shouldHave) {
-            List<UserNumbersVO> userNumbersVOS = numberCore.checkHasNumber(uid, sh, UserNumberStatusEnum.PURCHASED);
-            if (CollectionUtil.isNotEmpty(userNumbersVOS)) {
-                return true;
-            }
+        Long times = 0L;
+        synchronized (this) {
+            redisUtil.hincr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(uid), 1L);
+            times = redisUtil.hdecr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(uid), 1L);
+        }
+
+        if (times > 0L) {
+            return true;
         }
         return false;
     }

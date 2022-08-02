@@ -144,7 +144,7 @@ public enum RedisKey {
     /**
      * 记录用户下单次数
      */
-    SECKILL_ORDER_REPETITION_TIMES(504, StarConstants.SERVICE_NAME.concat(".seckill:ordered.times"), -1L, TimeUnit.HOURS),
+    SECKILL_ORDER_REPETITION_TIMES(504, StarConstants.SERVICE_NAME.concat(".seckill:ordered.times:%s"), -1L, TimeUnit.HOURS),
 
     /**
      * 用户订单 hash
@@ -199,16 +199,16 @@ public enum RedisKey {
     RANK_VALID_USER(604, StarConstants.SERVICE_NAME.concat(".rank:%s:valid:user:%s"), 3L, TimeUnit.HOURS),
     RANK_USER_MAPPING(605, StarConstants.SERVICE_NAME.concat(".rank:%s:mapping"), 3L, TimeUnit.HOURS),
 
-    SCOPE_USER_MAPPING(606,StarConstants.SERVICE_NAME.concat(".scope.user:%s"),3L,TimeUnit.HOURS),
+    SCOPE_USER_MAPPING(606, StarConstants.SERVICE_NAME.concat(".scope.user:%s"), 3L, TimeUnit.HOURS),
 
-    RANK_STORE(602,StarConstants.SERVICE_NAME.concat(".rank:%s:store"),3L, TimeUnit.HOURS),
-    RANK_EXTEND(603,StarConstants.SERVICE_NAME.concat(".rank:%s:extend"),3L, TimeUnit.HOURS),
+    RANK_STORE(602, StarConstants.SERVICE_NAME.concat(".rank:%s:store"), 3L, TimeUnit.HOURS),
+    RANK_EXTEND(603, StarConstants.SERVICE_NAME.concat(".rank:%s:extend"), 3L, TimeUnit.HOURS),
     //合成数字锁
     COMPOSE_DRAW_STRATEGY(701, StarConstants.SERVICE_NAME.concat(".compose:draw:strategy"), 3L, TimeUnit.HOURS),
-    COMPOSE_NUMBER_LOCK(702,StarConstants.SERVICE_NAME.concat(".compose:number:%s"),3L, TimeUnit.MINUTES)
+    COMPOSE_NUMBER_LOCK(702, StarConstants.SERVICE_NAME.concat(".compose:number:%s"), 3L, TimeUnit.MINUTES),
 
-    ;
-        /**
+    IP_REQUEST_TIMES(111, StarConstants.SERVICE_NAME.concat(".ip:times"), 30L, TimeUnit.SECONDS);
+    /**
      * 排行榜
      */
 

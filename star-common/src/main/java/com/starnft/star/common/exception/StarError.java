@@ -96,7 +96,7 @@ public enum StarError {
     NOT_FOUND_ACTIVITY("1000054", "当前无开启活动"),
     GOODS_IS_TRANSACTION("1000055", "藏品正在交易中，请选择其他藏品"),
 
-
+    ORDER_DONT_PAY_ERROR("100057", "当前已存在待支付订单，请先支付！"),
     //################# 道具  #################
     PROP_CAN_NOT_BUY("4000001", "道具不可购买"),
     PROP_CAN_BUY_OVERFLOW("4000002", "超出可购买数量"),
