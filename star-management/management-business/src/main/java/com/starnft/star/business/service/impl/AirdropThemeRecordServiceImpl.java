@@ -105,7 +105,7 @@ public class AirdropThemeRecordServiceImpl implements IAirdropThemeRecordService
         starNftThemeNumber.setSeriesThemeInfoId(record.getSeriesThemeInfoId());
         starNftThemeNumber.setId(record.getSeriesThemeId());
         starNftThemeNumber.setOwnerBy(record.getUserId().toString());
-        starNftThemeNumber.setStatus(0);
+        starNftThemeNumber.setStatus(1);
         return themeNumberMapper.updateStarNftThemeNumber(starNftThemeNumber) == 1;
     }
 
