@@ -63,7 +63,7 @@ public class UserThemeRepository implements IUserThemeRepository, PageHelperInte
 
     @Override
     public List<UserNumbersVO> queryUserArticleNumberInfoByNumberIds(Long uid, List<Long> numbersIds, UserNumberStatusEnum statusEnum) {
-        return this.starNftUserThemeMapper.queryUserArticleNumberInfoByThemeIds(uid, numbersIds, statusEnum);
+        return this.starNftUserThemeMapper.queryUserArticleNumberInfoByNumberIds(uid, numbersIds, statusEnum);
     }
 
     @Override

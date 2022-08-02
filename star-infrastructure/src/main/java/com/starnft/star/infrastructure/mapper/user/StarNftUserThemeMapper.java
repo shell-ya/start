@@ -25,4 +25,5 @@ public interface StarNftUserThemeMapper extends BaseMapper<StarNftUserTheme> {
     boolean updateUserThemeMapping(UserThemeMappingVO updateThemeMappingVo);
 
     List<UserNumbersVO> queryUserArticleNumberInfoByThemeIds(@Param("uid") Long uid, @Param("themeIds")List<Long> themeIds, @Param("statusEnum") UserNumberStatusEnum statusEnum);
+    List<UserNumbersVO> queryUserArticleNumberInfoByNumberIds(@Param("uid") Long uid, @Param("numberIds")List<Long> themeIds, @Param("statusEnum") UserNumberStatusEnum statusEnum);
 }

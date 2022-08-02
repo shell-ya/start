@@ -22,4 +22,5 @@ public class NumberUpdateDTO implements Serializable {
     private Long numberId;
     private BigDecimal price;
     private NumberStatusEnum status;
+
 }
