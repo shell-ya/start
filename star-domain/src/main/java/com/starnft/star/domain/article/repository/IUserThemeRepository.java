@@ -7,7 +7,6 @@ import com.starnft.star.domain.article.model.req.UserHaveSeriesReq;
 import com.starnft.star.domain.article.model.req.UserHaveThemeReq;
 import com.starnft.star.domain.article.model.vo.UserNumbersVO;
 import com.starnft.star.domain.article.model.vo.UserSeriesVO;
-import com.starnft.star.domain.article.model.vo.UserThemeDetailVo;
 import com.starnft.star.domain.article.model.vo.UserThemeVO;
 
 import java.util.List;
@@ -20,9 +19,10 @@ public interface IUserThemeRepository {
     ResponsePageResult<UserNumbersVO> queryUserArticleNumberInfo(UserHaveNumbersReq userHaveNumbersReq);
 
     List<UserNumbersVO> queryUserArticleNumberInfoByThemeIds(Long uid, List<Long> themeIds, UserNumberStatusEnum statusEnum);
-     List<UserNumbersVO> queryUserArticleNumberInfoByNumberIds(Long uid, List<Long> numbersIds, UserNumberStatusEnum statusEnum);
 
-    UserNumbersVO queryUserNumberInfo(Long uid, Long numberId,UserNumberStatusEnum statusEnum) ;
+    List<UserNumbersVO> queryUserArticleNumberInfoByNumberIds(Long uid, List<Long> numbersIds, UserNumberStatusEnum statusEnum);
+
+    UserNumbersVO queryUserNumberInfo(Long uid, Long numberId, UserNumberStatusEnum statusEnum);
 
     Boolean modifyUserNumberStatus(Long uid, Long numberId,UserNumberStatusEnum beforeStatusEnum, UserNumberStatusEnum statusEnum);
     Boolean modifyUserBatchNumberStatus(Long uid, List<Long> numberId,UserNumberStatusEnum beforeStatusEnum, UserNumberStatusEnum statusEnum);
