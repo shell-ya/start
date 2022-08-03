@@ -69,6 +69,8 @@ public class ActivitiesTask {
 //    @Scheduled(cron = "0/15 * * * * ?")
     @XxlJob("activitiesTask")
     public void loadActivities() {
+
+        log.info("########### 秒杀商品扫描开始 ###########");
         //1.查询所有时间区间 2小时一个时区
         List<Date> dateMenus = DateUtil.getDateMenus(interval);
 
@@ -82,6 +84,7 @@ public class ActivitiesTask {
             cacheGoods(secKillGoods, goodsKey);
         }
 
+        log.info("########### 秒杀商品扫描结束 ###########");
     }
 
     private void cacheGoods(List<SecKillGoods> secKillGoods, String goodsKey) {
