@@ -20,6 +20,7 @@ import com.xxl.job.core.handler.annotation.XxlJob;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -36,7 +37,7 @@ public class ActivitiesTask {
     private static String strDateFormat = "yyyy-MM-dd HH:mm:ss";
     private static SimpleDateFormat sdf = new SimpleDateFormat(strDateFormat);
     //每个商品秒杀间隔
-    private static final int interval = 2;
+    private static final int interval = 1;
 
     @Resource
     private RedisUtil redisUtil;
@@ -66,8 +67,8 @@ public class ActivitiesTask {
      * 4、秒杀结束时间<当前循环的时间区间的开始时间+2小时
      * 5、导入到Redis缓存。使用Hash类型存储
      */
-//    @Scheduled(cron = "0/15 * * * * ?")
-    @XxlJob("activitiesTask")
+    @Scheduled(cron = "0/15 * * * * ?")
+//    @XxlJob("activitiesTask")
     public void loadActivities() {
 
         log.info("########### 秒杀商品扫描开始 ###########");
@@ -95,13 +96,13 @@ public class ActivitiesTask {
             if (isSuccess) {
                 //[themeId,themeId,themeId] 将商品剩余库存放到Redis，解决并发超卖问题
                 Long[] ids = pushIds(secKillGood.getStock(), secKillGood.getThemeId());
-                String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), secKillGood.getThemeId());
+                String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), secKillGood.getThemeId(),secKillGood.getTime());
                 //创建库存队列
                 redisUtil.addToListLeft(stockKey, RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTime(), RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTimeUnit(), ids);
                 ids = null;
                 System.gc();
                 //设置库存量
-                redisUtil.hashIncr(RedisKey.SECKILL_GOODS_STOCK_NUMBER.getKey(), String.valueOf(secKillGood.getThemeId()), secKillGood.getStock());
+                redisUtil.hashIncr(RedisKey.SECKILL_GOODS_STOCK_NUMBER.getKey(), String.format("%s-time-%s",secKillGood.getThemeId(),secKillGood.getTime()), secKillGood.getStock());
 
                 log.info("当前时间: " + sdf.format(DateUtil.getDaDate()));
                 log.info("加载商品 themeId:[{}] , seriesId:[{}] , themeName:[{}] , stock:[{}] time:[{}-{}]",

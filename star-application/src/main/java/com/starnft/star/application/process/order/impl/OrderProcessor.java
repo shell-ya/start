@@ -144,8 +144,8 @@ public class OrderProcessor implements IOrderProcessor {
         }
 
         //库存验证
-        String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), orderGrabReq.getThemeId());
-        String poolKey = String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), orderGrabReq.getThemeId());
+        String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), orderGrabReq.getThemeId(),orderGrabReq.getTime());
+        String poolKey = String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), orderGrabReq.getThemeId(),orderGrabReq.getTime());
         long stock = redisUtil.lGetListSize(stockKey);
         long poolStock = redisUtil.sGetSetSize(poolKey);
         String key = String.format(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), orderGrabReq.getThemeId());

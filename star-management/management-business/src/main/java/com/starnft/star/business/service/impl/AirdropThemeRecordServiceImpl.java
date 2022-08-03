@@ -188,6 +188,7 @@ public class AirdropThemeRecordServiceImpl implements IAirdropThemeRecordService
                             //随机编号池
                             boolean pool = redisUtil.sHasKey(String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), themeInfo.getId()), themeNumber);
                             //秒杀编号队列
+                            // TODO: 2022/8/3 秒杀库存
                             List<Serializable> list = redisUtil.lGet(String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), themeInfo.getId()), 0, -1);
                             boolean queue = list.contains(themeNumber);
                             StarNftThemeNumber starNftThemeNumber = themeNumberMapper.selectOwnerIsNull(item.getSeriesThemeInfoId(), themeNumber);

@@ -57,7 +57,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
         Long themeId = message.getGoods().getThemeId();
         SecKillGoods goods = message.getGoods();
 
-        Object stockQueueId = filterNum(userId, themeId);
+        Object stockQueueId = filterNum(userId, themeId,time);
 
         if (stockQueueId == null) {
             log.error("队列轮空 uid: [{}] goods : [{}]", userId, goods);
@@ -97,13 +97,13 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
 
     }
 
-    private synchronized Object filterNum(long userId, Long themeId) {
+    private synchronized Object filterNum(long userId, Long themeId,String time) {
 
-        String poolKey = String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), themeId);
+        String poolKey = String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), themeId,time);
         //不存在库存池 生成并加载一百个库存 或 如果库存池大小小于10 扩容加100
         boolean exists = redisUtil.hasKey(poolKey);
         if (!exists || redisUtil.sGetSetSize(poolKey) <= 10) {
-            supplyPool(themeId, poolKey);
+            supplyPool(themeId, poolKey,time);
         }
 
         Object spop = redisUtil.spop(poolKey);
@@ -111,9 +111,9 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
         return spop;
     }
 
-    private void supplyPool(Long themeId, String poolKey) {
+    private void supplyPool(Long themeId, String poolKey,String time) {
         for (int i = 0; i < 100; i++) {
-            Object number = redisUtil.rightPop(String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), themeId));
+            Object number = redisUtil.rightPop(String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), themeId,time));
             if (number == null) {
                 continue;
             }
@@ -123,7 +123,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
     }
 
     private void stockSubtract(long userId, String time, Long themeId, SecKillGoods goods) {
-        Long currStock = redisUtil.hincr(RedisKey.SECKILL_GOODS_STOCK_NUMBER.getKey(), String.valueOf(themeId), -1L);
+        Long currStock = redisUtil.hincr(RedisKey.SECKILL_GOODS_STOCK_NUMBER.getKey(), String.format("%s-time-%s",themeId,time), -1L);
         log.info("商品id:[{}] , 消费该库存user为: [{}], 当前库存为:[{}]", themeId, userId, currStock);
 
         goods.setStock(currStock.intValue());
@@ -169,6 +169,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
                 .status(0)
                 .createdAt(new Date())
                 .expire(180L)
+                .remark(message.getTime()) //暂时存储秒杀时间戳
                 .orderType(StarConstants.OrderType.PUBLISH_GOODS.getName())
                 .build();
         //创建订单

@@ -694,7 +694,7 @@ public class DateUtil {
         List<Date> dates = new ArrayList<Date>();
         //循环12次
         Date date = toDayStartHour(getDaDate()); //凌晨
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 24; i++) {
             //每次递增2小时,将每次递增的时间存入到List<Date>集合中
             dates.add(addDateHour(date, i * interval));
         }

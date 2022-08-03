@@ -130,12 +130,12 @@ public enum RedisKey {
     /**
      * 秒杀商品库存队列
      */
-    SECKILL_GOODS_STOCK_QUEUE(502, StarConstants.SERVICE_NAME.concat(".seckill:stock.queue:%s"), -1L, TimeUnit.HOURS),
+    SECKILL_GOODS_STOCK_QUEUE(502, StarConstants.SERVICE_NAME.concat(".seckill:stock.queue:%s:time:%s"), -1L, TimeUnit.HOURS),
 
     /**
      * 秒杀商品随机池
      */
-    SECKILL_GOODS_STOCK_POOL(510, StarConstants.SERVICE_NAME.concat(".seckill:stock.cheat:%s"), -1L, TimeUnit.HOURS),
+    SECKILL_GOODS_STOCK_POOL(510, StarConstants.SERVICE_NAME.concat(".seckill:stock.cheat:%s:time:%s"), -1L, TimeUnit.HOURS),
     /**
      * 秒杀商品库存数量
      */

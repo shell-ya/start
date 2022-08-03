@@ -104,10 +104,10 @@ public class OrderService implements IOrderService {
             logTimes(uid);
             if (orderType.equals(StarConstants.OrderType.PUBLISH_GOODS)) {
                 //库存重新加到队列
-                redisUtil.addToListLeft(String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), orderVO.getSeriesThemeInfoId()),
+                redisUtil.addToListLeft(String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), orderVO.getSeriesThemeInfoId(),orderVO.getRemark()),
                         -1L, RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTimeUnit(), themeNumber);
                 //回滚库存
-                redisUtil.hashIncr(RedisKey.SECKILL_GOODS_STOCK_NUMBER.getKey(), String.valueOf(orderVO.getSeriesThemeInfoId()), 1);
+                redisUtil.hashIncr(RedisKey.SECKILL_GOODS_STOCK_NUMBER.getKey(), String.format("%s-time-%s",orderVO.getSeriesThemeInfoId(),orderVO.getRemark()), 1);
                 //清理用户订单缓存
                 redisUtil.hdel(String.format(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), orderVO.getSeriesThemeInfoId()), String.valueOf(uid));
                 //清理排队信息
