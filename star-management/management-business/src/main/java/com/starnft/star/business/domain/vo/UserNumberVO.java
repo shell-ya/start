@@ -13,7 +13,7 @@ public class UserNumberVO  implements Serializable {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
     private Integer status;
-
+    @JsonSerialize(using = ToStringSerializer.class)
     private String userId;
 
     private Integer source;

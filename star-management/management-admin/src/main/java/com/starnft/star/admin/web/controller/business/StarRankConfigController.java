@@ -1,16 +1,21 @@
 package com.starnft.star.admin.web.controller.business;
 
+import com.google.common.collect.Lists;
+import com.starnft.star.business.domain.StarNftThemeNumber;
 import com.starnft.star.business.domain.StarRankConfig;
+import com.starnft.star.business.domain.dto.AirdropRecordDto;
+import com.starnft.star.business.domain.dto.RecordItem;
 import com.starnft.star.business.domain.vo.RankData;
 import com.starnft.star.business.service.IStarRankConfigService;
+import com.starnft.star.business.service.impl.StarNftThemeNumberServiceImpl;
 import com.starnft.star.business.support.rank.core.IRankService;
-import com.starnft.star.business.support.rank.model.RankItemMetaData;
 import com.starnft.star.business.support.rank.model.RankingsItem;
 import com.starnft.star.common.annotation.Log;
 import com.starnft.star.common.core.controller.BaseController;
 import com.starnft.star.common.core.domain.AjaxResult;
 import com.starnft.star.common.core.page.TableDataInfo;
 import com.starnft.star.common.enums.BusinessType;
+import com.starnft.star.common.utils.JsonUtil;
 import com.starnft.star.common.utils.poi.ExcelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,6 +43,8 @@ public class StarRankConfigController extends BaseController
     private IStarRankConfigService starRankConfigService;
     @Resource
     private IRankService rankService;
+    @Resource
+    private StarNftThemeNumberServiceImpl numberService;
     /**
      * 查询排行榜列表
      */
@@ -109,9 +116,22 @@ public class StarRankConfigController extends BaseController
     @PreAuthorize("@ss.hasPermi('business:rankconfig:export')")
     @Log(title = "排行榜数据导出", businessType = BusinessType.EXPORT)
     @PostMapping("/exportRank")
-    public void exportRank(HttpServletResponse response, Integer size)
+    public void exportRank(HttpServletResponse response, Integer page, Integer size)
     {
-        List<RankingsItem> launch_rank = rankService.getRankDatasByPage("launch_rank", 1, size);
+        int start = (page - 1) *size;
+        int end = page * size -1;
+        List<RankingsItem> launch_rank = rankService.getRankDatasByPage("launch_rank", start, end);
+        for (RankingsItem item :
+                launch_rank) {
+            int valid = item.getValid().intValue();
+            if (valid >= 25){
+//                long l = item.getArgentum();
+                item.setArgentum(1L);
+            }
+            long cuprum = valid / 5;
+            if (cuprum >= 5L) cuprum = 5L;
+            item.setCuprum(cuprum);
+        }
 //        List<StarRankConfig> list = starRankConfigService.selectStarRankConfigList(starRankConfig);
         ExcelUtil<RankingsItem> util = new ExcelUtil<RankingsItem>(RankingsItem.class);
         util.exportExcel(response, launch_rank, "排行榜数据");

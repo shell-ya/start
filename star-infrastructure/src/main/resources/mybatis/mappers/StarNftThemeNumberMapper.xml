@@ -45,6 +45,35 @@
           AND a.is_delete = 0
     </select>
 
+    <select id="getNumberListByThemeInfo" resultType="com.starnft.star.domain.number.model.vo.NumberVO">
+        SELECT a.id id,
+               a.theme_number number,
+               a.price price,
+               a.status status,
+               b.series_id,
+               b.id theme_id,
+               b.theme_name theme_name,
+               b.theme_pic theme_pic,
+               b.theme_type type
+        FROM star_nft_theme_number a
+                     INNER JOIN star_nft_theme_info b ON a.series_theme_info_id = b.id
+        <where>
+        <if test="themeType != null and themeType != ''">
+            b.theme_type = #{themeType}
+        </if>
+        <if test="seriesId != null and seriesId != ''">
+            AND b.series_id = #{seriesId}
+        </if>
+        <if test="themeId != null and themeId != ''">
+            AND b.id = #{themeId}
+        </if>
+        AND a.is_delete = 0
+        AND a.owner_by is null
+        AND a.status=0
+        AND b.is_delete = 0
+        </where>
+    </select>
+
     <select id="selectConsignThemeNumberDetail" resultType="com.starnft.star.domain.number.model.vo.ThemeNumberVo">
         SELECT a.id           number_id,
                a.theme_number theme_number,

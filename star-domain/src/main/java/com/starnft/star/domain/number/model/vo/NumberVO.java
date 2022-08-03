@@ -27,6 +27,9 @@ public class NumberVO implements Serializable {
     @ApiModelProperty("主题id")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long themeId;
+    @ApiModelProperty("系列id")
+    @JsonSerialize(using = ToStringSerializer.class)
+    private Long seriesId;
     @ApiModelProperty("发行数量")
     private Integer issuedQty;
     @ApiModelProperty("商品名称")

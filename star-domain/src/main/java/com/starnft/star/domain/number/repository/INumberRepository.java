@@ -1,10 +1,7 @@
 package com.starnft.star.domain.number.repository;
 
 import com.starnft.star.common.page.ResponsePageResult;
-import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
-import com.starnft.star.domain.number.model.dto.NumberCirculationDTO;
-import com.starnft.star.domain.number.model.dto.NumberQueryDTO;
-import com.starnft.star.domain.number.model.dto.NumberUpdateDTO;
+import com.starnft.star.domain.number.model.dto.*;
 import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
@@ -21,6 +18,7 @@ public interface INumberRepository {
     ResponsePageResult<NumberVO> listNumber(NumberQueryDTO param);
 
     Boolean modifyNumberInfo(NumberUpdateDTO param);
+    Boolean modifyBatchNumberInfo(NumberBatchUpdateDTO param);
 
     Boolean saveNumberCirculationRecord(NumberCirculationAddDTO numberCirculation);
     Boolean saveBatchNumberCirculationRecord(List<NumberCirculationAddDTO> numberCirculation);
@@ -40,4 +38,6 @@ public interface INumberRepository {
     boolean updateUserNumberMapping(UserThemeMappingVO updateThemeMappingVo);
 
     List<Integer> loadNotSellNumberNumCollection(Long themeId);
+
+    List<NumberVO>  getNumberListByThemeInfoId(NumberQueryDTO numberQueryDTO);
 }

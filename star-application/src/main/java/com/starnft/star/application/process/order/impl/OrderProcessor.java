@@ -90,9 +90,9 @@ public class OrderProcessor implements IOrderProcessor {
     public OrderGrabRes orderGrab(OrderGrabReq orderGrabReq) {
 
         //待支付订单判断
-//        if (havingOrder(orderGrabReq.getUserId())) {
-//            throw new StarException(StarError.ORDER_DONT_PAY_ERROR);
-//        }
+        if (havingOrder(orderGrabReq.getUserId())) {
+            throw new StarException(StarError.ORDER_DONT_PAY_ERROR);
+        }
 
         //是否可购买验证
         List<Serializable> notOnSellList = redisUtil.lGet(RedisKey.SECKILL_GOODS_NOT_ONSELL.getKey(), 0, -1);
@@ -105,6 +105,8 @@ public class OrderProcessor implements IOrderProcessor {
 
         //是否白名单
         Boolean isWhite = whiteValidation(orderGrabReq.getUserId(), orderGrabReq.getThemeId());
+
+        log.info("uid [{}] themeId [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId());
 
         // 恶意下单校验
         Object record = redisUtil.get(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), orderGrabReq.getUserId()));
@@ -128,6 +130,7 @@ public class OrderProcessor implements IOrderProcessor {
         }
         // 商品售卖时间验证
         if (!isWhite && DateUtil.date().before(goods.getStartTime())) {
+            log.info("是白名单么[{}]", isWhite);
             throw new StarException(StarError.GOODS_DO_NOT_START_ERROR);
         }
 
@@ -141,8 +144,8 @@ public class OrderProcessor implements IOrderProcessor {
         }
 
         //库存验证
-        String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), orderGrabReq.getThemeId());
-        String poolKey = String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), orderGrabReq.getThemeId());
+        String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), orderGrabReq.getThemeId(),orderGrabReq.getTime());
+        String poolKey = String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), orderGrabReq.getThemeId(),orderGrabReq.getTime());
         long stock = redisUtil.lGetListSize(stockKey);
         long poolStock = redisUtil.sGetSetSize(poolKey);
         String key = String.format(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), orderGrabReq.getThemeId());
@@ -156,11 +159,11 @@ public class OrderProcessor implements IOrderProcessor {
             //校验余额
             walletService.balanceVerify(orderGrabReq.getUserId(), goods.getSecCost());
             //用户下单次数验证 防重复下单
-            Long userOrderedCount = redisUtil.hincr(key, String.valueOf(orderGrabReq.getUserId()), 1L);
-            if (userOrderedCount > 1) {
-                log.error("防重复下单 uid: [{}] themeId : [{}] count : [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), userOrderedCount);
-                throw new StarException(StarError.ORDER_REPETITION);
-            }
+//            Long userOrderedCount = redisUtil.hincr(key, String.valueOf(orderGrabReq.getUserId()), 1L);
+//            if (userOrderedCount > 1) {
+//                log.error("防重复下单 uid: [{}] themeId : [{}] count : [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), userOrderedCount);
+//                throw new StarException(StarError.ORDER_REPETITION);
+//            }
 
             //排队中状态
             redisUtil.hset(String.format(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), orderGrabReq.getThemeId()),

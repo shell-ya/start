@@ -59,8 +59,19 @@ public class AirdropController extends BaseController {
     }
 
     @PostMapping(value = "/airdropList")
-    public AjaxResult listTheme(@RequestBody List<AirdropRecordDto> records)
+    public AjaxResult airdropList(@RequestBody List<AirdropRecordDto> records)
     {
         return AjaxResult.success(airdropThemeRecordService.addUserAirdropList(records));
     }
+
+    @PostMapping(value = "/zhuayuliu")
+    public AjaxResult zhuyuliu(@RequestBody AirdropRecordDto dto){
+        return AjaxResult.success(airdropThemeRecordService.zhuyuliu(dto));
+    }
+
+    @PostMapping(value = "/randomDrop")
+    public AjaxResult randomDrop(@RequestBody List<AirdropRecordDto> dtoList){
+        return AjaxResult.success(airdropThemeRecordService.airdropProcess(dtoList));
+    }
+
 }

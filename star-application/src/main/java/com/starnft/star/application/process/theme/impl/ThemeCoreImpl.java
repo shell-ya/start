@@ -95,7 +95,7 @@ public class ThemeCoreImpl implements ThemeCore {
 
         List<@Nullable SecKillGoods> nonStock = goodsList.stream()
                 .filter(Objects::nonNull).filter(goods -> goods.getStock() <= 0)
-                .sorted(Comparator.comparing(SecKillGoods::getStartTime).reversed()).collect(Collectors.toList());
+                .sorted(Comparator.comparing(SecKillGoods::getEndTime).reversed()).collect(Collectors.toList());
 
         Set<@Nullable SecKillGoods> results = new LinkedHashSet<>();
         results.addAll(noNoneStock);
@@ -106,11 +106,16 @@ public class ThemeCoreImpl implements ThemeCore {
 
     //更新展示库存量
     private SecKillGoods verifyStock(SecKillGoods secKillGoods) {
-        String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), secKillGoods.getThemeId());
+        String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), secKillGoods.getThemeId(),secKillGoods.getTime());
         long stock = redisUtil.lGetListSize(stockKey);
+        if (0L == stock){
+            secKillGoods.setSellOut(true);
+        }
         if (secKillGoods.getStock() != stock) {
             secKillGoods.setStock((int) stock);
         }
+        secKillGoods.setStock(0);
+        secKillGoods.setGoodsNum(0);
         return secKillGoods;
     }
 

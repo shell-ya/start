@@ -10,7 +10,7 @@ import com.starnft.star.domain.compose.model.res.ComposeRes;
 import java.util.List;
 
 public interface IComposeService {
-    ResponsePageResult<ComposeRes> composeList(RequestConditionPage<ComposeReq> reqRequestConditionPage);
+    List<ComposeRes> composeList(ComposeReq composeReq);
 
     ComposeRes composeDetails(Long id);
     public List<ComposeCategoryRes> composeCategory(Long id);

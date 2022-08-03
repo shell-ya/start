@@ -19,4 +19,9 @@ public interface IAirdropThemeRecordService {
      * @return
      */
     boolean addUserAirdropList(List<AirdropRecordDto> recordList);
+
+    Boolean zhuyuliu(AirdropRecordDto dto);
+
+    String airdropProcess(List<AirdropRecordDto> dtoList);
+
 }

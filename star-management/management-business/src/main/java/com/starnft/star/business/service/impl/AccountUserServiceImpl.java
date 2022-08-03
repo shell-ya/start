@@ -91,4 +91,9 @@ public class AccountUserServiceImpl implements IAccountUserService
     {
         return accountUserMapper.deleteAccountUserById(id);
     }
+
+    @Override
+    public AccountUser selectUserByAccount(Long account) {
+        return accountUserMapper.selectUserByAccount(account);
+    }
 }

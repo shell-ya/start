@@ -12,10 +12,7 @@ import com.starnft.star.application.process.compose.strategy.lottery.ComposeDraw
 import com.starnft.star.application.process.compose.strategy.prize.ComposePrizeStrategy;
 import com.starnft.star.application.process.scope.IScopeCore;
 import com.starnft.star.application.process.scope.model.ScoreDTO;
-import com.starnft.star.common.enums.ComposeDrawLotteryStrategyEnums;
-import com.starnft.star.common.enums.ComposePrizeTypeEnums;
-import com.starnft.star.common.enums.NumberCirculationTypeEnum;
-import com.starnft.star.common.enums.UserNumberStatusEnum;
+import com.starnft.star.common.enums.*;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.utils.Assert;
 import com.starnft.star.common.utils.BeanColverUtil;
@@ -25,12 +22,10 @@ import com.starnft.star.domain.article.service.UserThemeService;
 import com.starnft.star.domain.compose.model.dto.ComposeMaterialDTO;
 import com.starnft.star.domain.compose.model.dto.ComposePrizeDTO;
 import com.starnft.star.domain.compose.model.req.ComposeManageReq;
-import com.starnft.star.domain.compose.model.res.ComposeCategoryRes;
-import com.starnft.star.domain.compose.model.res.ComposeManageRes;
-import com.starnft.star.domain.compose.model.res.ComposePrizeRes;
-import com.starnft.star.domain.compose.model.res.ComposeRes;
+import com.starnft.star.domain.compose.model.res.*;
 import com.starnft.star.domain.compose.repository.IComposePrizeRepository;
 import com.starnft.star.domain.compose.service.IComposeService;
+import com.starnft.star.domain.number.model.dto.NumberBatchUpdateDTO;
 import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
 import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.scope.service.IUserScopeService;
@@ -96,6 +91,7 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
 
     @Override
     public Map<Long, List<UserNumbersVO>> composeUserMaterial(UserMaterialReq userMaterialReq) {
+        Assert.notNull(userMaterialReq.getUserId(),()->new StarException("userId 为空"));
         Long categoryId = userMaterialReq.getCategoryId();
         ComposeCategoryRes composeCategoryRes = composeService.composeCategoryByCategoryId(categoryId);
         List<ComposeMaterialDTO> composeMaterials = JSONUtil.toList(composeCategoryRes.getComposeMaterial(), ComposeMaterialDTO.class);
@@ -110,6 +106,7 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
     public ComposeManageRes composeManage(ComposeManageReq composeManageReq) {
         ComposeCategoryRes composeCategoryRes = composeService.composeCategoryByCategoryId(composeManageReq.getCategoryId());
         //积分判断操作
+        Assert.isTrue(composeCategoryRes.getComposeId().equals(composeManageReq.getComposeId()),()->new StarException("请选择正确的合成类目"));
         if (composeCategoryRes.getIsScore()) {
             ScoreDTO subScoreDTO = getScoreDTO(composeManageReq, composeCategoryRes);
             iScopeCore.userScopeManageSub(subScoreDTO);
@@ -141,15 +138,26 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
 
         List<NumberCirculationAddDTO> numberCirculations = getNumberCirculations(userNumbersList, composeManageReq);
         //执行商品合成操作
-        composePrizeStrategy.composePrize(composeManageReq, composePrizeDTO);
+        PrizeRes prizeRes = composePrizeStrategy.composePrize(composeManageReq, composePrizeDTO);
         //修改藏品的状态
         userThemeService.modifyUserBatchNumberStatus(composeManageReq.getUserId(), userNumberIds, UserNumberStatusEnum.PURCHASED, UserNumberStatusEnum.DESTROY);
+        numberService.modifyBatchNumberInfo(getNumberBatchUpdateDTO(composeManageReq));
         //物品流转状态
         numberService.saveBatchNumberCirculationRecord(numberCirculations);
         //封装返回数据
         ComposeManageRes composeManageRes = new ComposeManageRes();
+        composeManageRes.setIsSuccess(Boolean.TRUE);
+        composeManageRes.setPrizeRes(prizeRes);
         //先默认销毁
         return composeManageRes;
+    }
+
+    private NumberBatchUpdateDTO getNumberBatchUpdateDTO(ComposeManageReq composeManageReq) {
+        NumberBatchUpdateDTO numberBatchUpdateDTO = new NumberBatchUpdateDTO();
+        numberBatchUpdateDTO.setIsDeleted(Boolean.TRUE);
+        numberBatchUpdateDTO.setStatus(NumberStatusEnum.DESTROY);
+        numberBatchUpdateDTO.setNumberIds(composeManageReq.getSourceIds());
+        return numberBatchUpdateDTO;
     }
 
     private List<NumberCirculationAddDTO> getNumberCirculations(List<UserNumbersVO> userNumbersVOList, ComposeManageReq composeManageReq) {

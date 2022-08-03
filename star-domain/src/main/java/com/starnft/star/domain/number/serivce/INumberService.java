@@ -2,7 +2,9 @@ package com.starnft.star.domain.number.serivce;
 
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.domain.number.model.dto.NumberBatchUpdateDTO;
 import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
+import com.starnft.star.domain.number.model.dto.NumberQueryDTO;
 import com.starnft.star.domain.number.model.dto.NumberUpdateDTO;
 import com.starnft.star.domain.number.model.req.HandoverReq;
 import com.starnft.star.domain.number.model.req.NumberQueryRequest;
@@ -22,6 +24,7 @@ public interface INumberService {
     ResponsePageResult<NumberVO> listNumber(RequestConditionPage<NumberQueryRequest> request);
 
     ThemeNumberVo getConsignNumberDetail(Long id);
+    List<NumberVO> getNumberListByThemeInfoId(NumberQueryDTO numberQueryDTO);
 
     //查询对应编号藏品信息
     ThemeNumberVo queryNumberExist(Integer themeNumber, Long themeId);
@@ -34,6 +37,7 @@ public interface INumberService {
 
 
     Boolean modifyNumberInfo(NumberUpdateDTO param);
+    Boolean modifyBatchNumberInfo(NumberBatchUpdateDTO param);
 
     boolean createUserNumberMapping(UserThemeMappingVO userThemeMappingVO);
     Boolean saveNumberCirculationRecord(NumberCirculationAddDTO numberCirculation);

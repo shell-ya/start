@@ -33,8 +33,8 @@ public class TiChainServerTest {
     @Test
     public  void usercreate(){
         CreateAccountReq createAccountReq = new CreateAccountReq();
-        createAccountReq.setUserId("666");
-        String userKey = SecureUtil.sha1("666".concat("dasdasd"));
+        createAccountReq.setUserId("951029971223");
+        String userKey = SecureUtil.sha1("951029971223".concat("lywc"));
         createAccountReq.setUserKey(userKey);
         System.out.println(userKey);
         CreateAccountRes account = tiChainServer.createAccount(createAccountReq);
@@ -46,21 +46,21 @@ public class TiChainServerTest {
         Map<String,Object> map=new HashMap<>();
 
         List<String> ids=new ArrayList<>();
-        int nums=10;
-        long prifix=202207300000L;
+        int nums=800;
+        long prifix=202208010000L;
         for (int i = 1; i <= nums; i++) {
             ids.add(String.format("%s",prifix+i));
         }
-        map.put("images","https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1659005019651_ca518707.png");
+        map.put("images","https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1659439484617_372c158e.png");
         PublishGoodsReq publishGoodsReq = new PublishGoodsReq();
-        publishGoodsReq.setUserId("3");
-        String userKey = SecureUtil.sha1("3".concat("dasdasd"));
+        publishGoodsReq.setUserId("951029971223");
+        String userKey = SecureUtil.sha1("951029971223".concat("lywc"));
         publishGoodsReq.setUserKey(userKey);
         publishGoodsReq.setAuthor("链元文创");
         publishGoodsReq.setProductIds(ids.toArray(new String[ids.size()]));
-        publishGoodsReq.setPieceCount(10);
-        publishGoodsReq.setInitPrice("199.9");
-        publishGoodsReq.setName("链元文创-创世爪爪座");
+        publishGoodsReq.setPieceCount(nums);
+        publishGoodsReq.setInitPrice("49.9");
+        publishGoodsReq.setName("链元文创-Pluviophile 首发-金牛座");
         publishGoodsReq.setFeature(JSONUtil.toJsonStr(map));
         PublishGoodsRes createAccountRes = tiChainServer.publishGoods(publishGoodsReq);
         System.out.println(createAccountRes);

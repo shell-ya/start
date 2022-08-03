@@ -21,6 +21,9 @@ public interface AccountUserMapper
      */
     public AccountUser selectAccountUserById(Long id);
 
+
+    public AccountUser selectUserByAccount(Long account);
+
     /**
      * 查询用户列表
      *

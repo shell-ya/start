@@ -157,4 +157,46 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </select>
+
+    <select id="selectOwberBy" resultType="java.lang.Long">
+        select id from star_nft_theme_number
+        <where>
+            is_delete = 0
+            and owner_by is null
+            and theme_number > 100
+            and series_theme_info_id = #{id}
+        </where>
+    </select>
+
+    <select id="selectOwnerIsNull" resultType="com.starnft.star.business.domain.StarNftThemeNumber">
+        <include refid="selectStarNftThemeNumberVo"/>
+        where   series_theme_info_id = #{seriesThemeInfoId}
+                and theme_number = #{themeNumber}
+                and owner_by is null
+    </select>
+
+    <select id="selectOwberIsNullAndNumberInterval" resultType="java.lang.Long">
+        select id from star_nft_theme_number
+        where series_theme_info_id = #{seriesThemeInfoId}
+        and    (theme_number BETWEEN 1  and 10
+            or theme_number BETWEEN 21  and 30
+            or theme_number BETWEEN 61  and 70
+            or theme_number BETWEEN 71  and 80
+            or theme_number BETWEEN 101  and 110
+            or theme_number BETWEEN 141  and 160
+            or theme_number BETWEEN 181  and 200
+            or theme_number BETWEEN 211  and 220
+            or theme_number BETWEEN 451  and 470
+            or theme_number BETWEEN 491  and 500
+            or theme_number BETWEEN 521  and 540
+            or theme_number BETWEEN 601  and 610
+            or theme_number BETWEEN 631  and 650
+            or theme_number BETWEEN 661  and 670
+            or theme_number BETWEEN 681  and 690
+            or theme_number BETWEEN 721  and 740
+            or theme_number BETWEEN 761  and 770
+            or theme_number BETWEEN 781  and 790
+            )
+        and owner_by is null
+    </select>
 </mapper>

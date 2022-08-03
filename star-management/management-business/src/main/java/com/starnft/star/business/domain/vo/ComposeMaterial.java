@@ -5,14 +5,10 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 @Data
-public class UserThemeVO {
+public class ComposeMaterial {
     @JsonSerialize(using = ToStringSerializer.class)
     private Long  themeId;
     private String themeName;
     private String themeImages;
-    private Integer types;
-    @JsonSerialize(using = ToStringSerializer.class)
-    private String  userId;
-    private Integer nums;
-    private Integer status;
+    private Integer number;
 }
