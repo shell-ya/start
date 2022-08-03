@@ -108,4 +108,11 @@ public class OrderController {
         return RopResponse.success(this.orderProcessor.dataCheck(Long.parseLong(themeId),keySecret));
     }
 
+    @PostMapping("/priority/times")
+    @TokenIgnore
+    @ApiOperation("用户优先购次数")
+    public RopResponse<Integer> priorityTimes(@RequestParam String userId) {
+        return RopResponse.success(this.orderProcessor.priorityTimes(Long.parseLong(userId)));
+    }
+
 }

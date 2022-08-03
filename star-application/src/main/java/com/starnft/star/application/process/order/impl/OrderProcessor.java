@@ -89,6 +89,11 @@ public class OrderProcessor implements IOrderProcessor {
     @Override
     public OrderGrabRes orderGrab(OrderGrabReq orderGrabReq) {
 
+        //待支付订单判断
+//        if (havingOrder(orderGrabReq.getUserId())) {
+//            throw new StarException(StarError.ORDER_DONT_PAY_ERROR);
+//        }
+
         //是否可购买验证
         List<Serializable> notOnSellList = redisUtil.lGet(RedisKey.SECKILL_GOODS_NOT_ONSELL.getKey(), 0, -1);
         for (Serializable serializable : notOnSellList) {
@@ -140,8 +145,9 @@ public class OrderProcessor implements IOrderProcessor {
         String poolKey = String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), orderGrabReq.getThemeId());
         long stock = redisUtil.lGetListSize(stockKey);
         long poolStock = redisUtil.sGetSetSize(poolKey);
+        String key = String.format(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), orderGrabReq.getThemeId());
         if ((stock + poolStock) <= 0) {
-            redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUserId()));
+            redisUtil.hdel(key, String.valueOf(orderGrabReq.getUserId()));
             log.error("库存不足 themeId: [{}] Time : [{}] stock : [{}]", orderGrabReq.getThemeId(), orderGrabReq.getTime(), stock);
             throw new StarException(StarError.STOCK_EMPTY_ERROR);
         }
@@ -149,9 +155,8 @@ public class OrderProcessor implements IOrderProcessor {
         try {
             //校验余额
             walletService.balanceVerify(orderGrabReq.getUserId(), goods.getSecCost());
-
             //用户下单次数验证 防重复下单
-            Long userOrderedCount = redisUtil.hincr(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(orderGrabReq.getUserId()), 1L);
+            Long userOrderedCount = redisUtil.hincr(key, String.valueOf(orderGrabReq.getUserId()), 1L);
             if (userOrderedCount > 1) {
                 log.error("防重复下单 uid: [{}] themeId : [{}] count : [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), userOrderedCount);
                 throw new StarException(StarError.ORDER_REPETITION);
@@ -228,6 +233,17 @@ public class OrderProcessor implements IOrderProcessor {
                     }
                     activityProducer.sendScopeMessage(createEventReq(orderPayReq));
 //                    rebatesProducer.sendRebatesMessage(createRebates(orderPayReq));
+                    //todo 后面去掉
+                    if (!orderPayReq.getThemeId().equals(1002285892654821376L)) {
+                        Long times = 0L;
+                        synchronized (this) {
+                            redisUtil.hincr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L);
+                            times = redisUtil.hdecr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L);
+                        }
+                        if (redisUtil.hdecr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L) <= 0) {
+                            redisUtil.hdel(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()));
+                        }
+                    }
                     return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn());
                 }
                 throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "订单处理异常！");
@@ -411,7 +427,8 @@ public class OrderProcessor implements IOrderProcessor {
                 List<OrderVO> orders = orderService.queryOrderByUidNSpu(uid, themeId);
                 if (times > 1 && CollectionUtil.isEmpty(orders)) {
                     log.info("[{}] 取消订单清除购买限制 uid = [{}]", this.getClass().getSimpleName(), uid);
-                    redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(uid));
+
+                    redisUtil.hdel(redisKey, String.valueOf(uid));
                 }
 
                 List<OrderVO> collect = orders.stream()
@@ -420,7 +437,7 @@ public class OrderProcessor implements IOrderProcessor {
 
                 if (times > 1 && CollectionUtil.isEmpty(collect)) {
                     log.info("[{}] 取消订单清除购买限制 uid = [{}]", this.getClass().getSimpleName(), uid);
-                    redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(uid));
+                    redisUtil.hdel(redisKey, String.valueOf(uid));
                 }
             } catch (Exception e) {
                 log.error("class： [{}],method: [{}] 异常", this.getClass().getSimpleName(), "dataCheck", e);
@@ -429,6 +446,23 @@ public class OrderProcessor implements IOrderProcessor {
 
         }
         return Boolean.TRUE;
+    }
+
+    @Override
+    public Boolean havingOrder(Long userId) {
+        return orderService.queryToPayOrder(userId).size() > 0;
+    }
+
+    @Override
+    public Integer priorityTimes(Long userId) {
+
+        Long times = 0L;
+        synchronized (this) {
+            redisUtil.hincr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(userId), 1L);
+            times = redisUtil.hdecr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(userId), 1L);
+        }
+
+        return times.intValue();
     }
 
     private OrderListRes buildOrderResp(ThemeNumberVo numberDetail, Long userId, String orderSn, Long id) {

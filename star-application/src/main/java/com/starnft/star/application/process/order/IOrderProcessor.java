@@ -35,4 +35,9 @@ public interface IOrderProcessor {
 
 
     Boolean dataCheck(Long themeId, String keySecret);
+
+    //查询用户当前是否有未支付订单
+    Boolean havingOrder(Long userId);
+
+    Integer priorityTimes(Long userId);
 }

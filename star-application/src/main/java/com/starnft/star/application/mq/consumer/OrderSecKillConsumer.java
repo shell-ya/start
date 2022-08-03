@@ -61,8 +61,9 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
 
         if (stockQueueId == null) {
             log.error("队列轮空 uid: [{}] goods : [{}]", userId, goods);
+            String key = String.format(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), themeId);
             //清理排队信息
-            redisUtil.hdel(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(userId));
+            redisUtil.hdel(key, String.valueOf(userId));
             //抢单失败
             redisUtil.hset(String.format(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), themeId),
                     String.valueOf(userId), JSONUtil.toJsonStr(new OrderGrabStatus(userId, -1, null, time)));
@@ -96,7 +97,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
 
     }
 
-    private Object filterNum(long userId, Long themeId) {
+    private synchronized Object filterNum(long userId, Long themeId) {
 
         String poolKey = String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), themeId);
         //不存在库存池 生成并加载一百个库存 或 如果库存池大小小于10 扩容加100

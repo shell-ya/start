@@ -1,7 +1,6 @@
 package com.starnft.star.domain.order.repository;
 
 import com.starnft.star.common.page.ResponsePageResult;
-import com.starnft.star.domain.order.model.res.OrderListRes;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 
 import java.util.List;
@@ -28,4 +27,6 @@ public interface IOrderRepository {
     List<OrderVO> queryOrdersByUidNSpu(Long uid, Long themeId);
 
     List<OrderVO> queryAllSuccessByTheme(String themeInfoId);
+
+    List<OrderVO> queryToPayOrder(Long userId);
 }
