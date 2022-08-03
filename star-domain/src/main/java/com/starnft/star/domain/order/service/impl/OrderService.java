@@ -1,5 +1,6 @@
 package com.starnft.star.domain.order.service.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.starnft.star.common.Result;
 import com.starnft.star.common.ResultCode;
 import com.starnft.star.common.constant.RedisKey;
@@ -99,15 +100,20 @@ public class OrderService implements IOrderService {
         }
         //更新订单状态
         Result result = orderStateHandler.payCancel(uid, orderSn, StarConstants.ORDER_STATE.WAIT_PAY);
+
+        String userOrderMapping = String.format(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), orderVO.getSeriesThemeInfoId());
+        String orderInfo = (String) redisUtil.hget(userOrderMapping, String.valueOf(uid));
+        OrderVO orderCache = JSONUtil.toBean(orderInfo, OrderVO.class);
+
         if (result.getCode().equals(ResultCode.SUCCESS.getCode())) {
             //记录取消订单次数
             logTimes(uid);
             if (orderType.equals(StarConstants.OrderType.PUBLISH_GOODS)) {
                 //库存重新加到队列
-                redisUtil.addToListLeft(String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), orderVO.getSeriesThemeInfoId(),orderVO.getRemark()),
+                redisUtil.addToListLeft(String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), orderVO.getSeriesThemeInfoId(), orderVO.getRemark()),
                         -1L, RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTimeUnit(), themeNumber);
                 //回滚库存
-                redisUtil.hashIncr(RedisKey.SECKILL_GOODS_STOCK_NUMBER.getKey(), String.format("%s-time-%s",orderVO.getSeriesThemeInfoId(),orderVO.getRemark()), 1);
+                redisUtil.hashIncr(RedisKey.SECKILL_GOODS_STOCK_NUMBER.getKey(), String.format("%s-time-%s", orderVO.getSeriesThemeInfoId(), orderCache.getRemark()), 1);
                 //清理用户订单缓存
                 redisUtil.hdel(String.format(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), orderVO.getSeriesThemeInfoId()), String.valueOf(uid));
                 //清理排队信息
