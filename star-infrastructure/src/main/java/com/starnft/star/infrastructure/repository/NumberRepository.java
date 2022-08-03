@@ -9,10 +9,7 @@ import com.starnft.star.common.enums.NumberCirculationTypeEnum;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
-import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
-import com.starnft.star.domain.number.model.dto.NumberCirculationDTO;
-import com.starnft.star.domain.number.model.dto.NumberQueryDTO;
-import com.starnft.star.domain.number.model.dto.NumberUpdateDTO;
+import com.starnft.star.domain.number.model.dto.*;
 import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
@@ -28,10 +25,7 @@ import com.starnft.star.infrastructure.mapper.user.StarNftUserThemeMapper;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
@@ -97,6 +91,19 @@ public class NumberRepository implements INumberRepository {
                         .updateAt(new Date())
                         .updateBy(String.valueOf(param.getUid()))
                         .build()) == 1;
+    }
+
+    @Override
+    public Boolean modifyBatchNumberInfo(NumberBatchUpdateDTO param) {
+        LambdaQueryWrapper<StarNftThemeNumber> wrapper = new LambdaQueryWrapper<StarNftThemeNumber>()
+                .in(StarNftThemeNumber::getId, param.getNumberIds());
+        StarNftThemeNumber starNftThemeNumber = new StarNftThemeNumber();
+        starNftThemeNumber.setStatus(param.getStatus().getCode());
+        starNftThemeNumber.setIsDelete(param.getIsDeleted());
+        starNftThemeNumber.setPrice(param.getPrice());
+        Optional.ofNullable(param.getUid()).ifPresent((item)->{starNftThemeNumber.setOwnerBy(item.toString());});
+
+        return this.starNftThemeNumberMapper.update(starNftThemeNumber,wrapper )==param.getNumberIds().size();
     }
 
     @Override
@@ -205,10 +212,19 @@ public class NumberRepository implements INumberRepository {
         return starNftThemeNumbers.stream().map(po -> po.getThemeNumber().intValue()).collect(Collectors.toList());
     }
 
+    @Override
+    public List<NumberVO> getNumberListByThemeInfoId(NumberQueryDTO numberQueryDTO) {
+
+        List<NumberVO> numberListByThemeInfo = this.starNftThemeNumberMapper.getNumberListByThemeInfo(numberQueryDTO);
+        return numberListByThemeInfo;
+
+    }
+
     private ThemeNumberVo copyToVO(StarNftThemeNumber starNftThemeNumber) {
         ThemeNumberVo themeNumberVo = BeanColverUtil.colver(starNftThemeNumber, ThemeNumberVo.class);
         themeNumberVo.setNumberId(starNftThemeNumber.getId());
         themeNumberVo.setThemeInfoId(starNftThemeNumber.getSeriesThemeInfoId());
+
         return themeNumberVo;
     }
 }

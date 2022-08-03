@@ -72,7 +72,6 @@ public class ActivitiesTask {
     public void loadActivities() {
         //1.查询所有时间区间 2小时一个时区
         List<Date> dateMenus = DateUtil.getDateMenus(interval);
-
         for (Date startTime : dateMenus) {
             String startTimeTrim = DateUtil.date2Str(startTime);
             String goodsKey = String.format(RedisKey.SECKILL_GOODS_INFO.getKey(), startTimeTrim);

@@ -10,6 +10,7 @@ import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.Assert;
 import com.starnft.star.domain.number.model.OrderByEnum;
+import com.starnft.star.domain.number.model.dto.NumberBatchUpdateDTO;
 import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
 import com.starnft.star.domain.number.model.dto.NumberQueryDTO;
 import com.starnft.star.domain.number.model.dto.NumberUpdateDTO;
@@ -78,6 +79,11 @@ public class NumberServiceImpl implements INumberService {
     }
 
     @Override
+    public List<NumberVO> getNumberListByThemeInfoId(NumberQueryDTO numberQueryDTO) {
+        return this.numberRepository.getNumberListByThemeInfoId(numberQueryDTO);
+    }
+
+    @Override
     public ThemeNumberVo queryNumberExist(Integer themeNumber, Long themeId) {
         return this.numberRepository.queryNumberExist(themeNumber, themeId);
     }
@@ -130,6 +136,11 @@ public class NumberServiceImpl implements INumberService {
     @Override
     public Boolean modifyNumberInfo(NumberUpdateDTO param) {
         return this.numberRepository.modifyNumberInfo(param);
+    }
+
+    @Override
+    public Boolean modifyBatchNumberInfo(NumberBatchUpdateDTO param) {
+        return this.numberRepository.modifyBatchNumberInfo(param);
     }
 
     @Override

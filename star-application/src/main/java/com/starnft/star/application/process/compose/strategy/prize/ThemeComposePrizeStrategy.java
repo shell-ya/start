@@ -1,28 +1,25 @@
 package com.starnft.star.application.process.compose.strategy.prize;
 
-import cn.hutool.json.JSONUtil;
+import com.starnft.star.domain.compose.model.res.PrizeRes;
 import com.starnft.star.common.constant.RedisKey;
-import com.starnft.star.common.enums.NumberCirculationTypeEnum;
+import com.starnft.star.common.enums.PrizeEnum;
 import com.starnft.star.common.enums.UserNumberStatusEnum;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.utils.Assert;
-import com.starnft.star.domain.article.model.vo.UserNumbersVO;
-import com.starnft.star.domain.article.service.UserThemeService;
+import com.starnft.star.common.utils.RandomUtil;
 import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.compose.model.dto.ComposePrizeDTO;
 import com.starnft.star.domain.compose.model.req.ComposeManageReq;
-import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
-import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
+import com.starnft.star.domain.number.model.dto.NumberQueryDTO;
+import com.starnft.star.domain.number.model.vo.NumberVO;
 import com.starnft.star.domain.number.model.vo.UserThemeMappingVO;
 import com.starnft.star.domain.number.serivce.INumberService;
-import com.starnft.star.domain.theme.repository.IThemeRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component("themeComposePrizeStrategy")
 @Slf4j
@@ -31,30 +28,46 @@ public class ThemeComposePrizeStrategy implements ComposePrizeStrategy {
     INumberService iNumberService;
     @Resource
     RedisLockUtils redisLockUtils;
-    @Resource
-    INumberService numberService;
+//    @Resource
+//    INumberService numberService;
 
 
 
     @Override
-    public void composePrize( ComposeManageReq composeManageReq, ComposePrizeDTO composePrizeDTO) {
+    public PrizeRes composePrize(ComposeManageReq composeManageReq, ComposePrizeDTO composePrizeDTO) {
         log.info("合成进入主题合成策略");
         log.info("合成进入主题标记为:{}", composePrizeDTO.getPrizeStamp());
-        ThemeNumberVo themeNumberVo = iNumberService.queryRandomThemeNumber(Long.parseLong(composePrizeDTO.getPrizeStamp()));
-        Boolean lock = redisLockUtils.lock(String.format(RedisKey.COMPOSE_NUMBER_LOCK.getKey(), themeNumberVo.getNumberId()), RedisKey.COMPOSE_NUMBER_LOCK.getTime());
+        NumberQueryDTO numberQueryDTO = new NumberQueryDTO();
+        numberQueryDTO.setThemeId(Long.parseLong(composePrizeDTO.getPrizeStamp()));
+        List<NumberVO> themeNumberArrays = iNumberService.getNumberListByThemeInfoId(numberQueryDTO);
+        Assert.isTrue(!themeNumberArrays.isEmpty(), () -> new StarException("合成人数过多，请稍后再试～"));
+        int randomInt = RandomUtil.randomInt(0, themeNumberArrays.size());
+        NumberVO themeNumberVo = themeNumberArrays.get(randomInt);
+        Boolean lock = redisLockUtils.lock(String.format(RedisKey.COMPOSE_NUMBER_LOCK.getKey(), themeNumberVo.getId()), RedisKey.COMPOSE_NUMBER_LOCK.getTime());
         Assert.isTrue(lock, () -> new StarException("合成人数过多，请稍后再试～"));
         //物品派发
-        numberService.createUserNumberMapping(getUserThemeMappingVO(composeManageReq, themeNumberVo));
+        iNumberService.createUserNumberMapping(getUserThemeMappingVO(composeManageReq, themeNumberVo));
+        redisLockUtils.unlock(String.format(RedisKey.COMPOSE_NUMBER_LOCK.getKey(), themeNumberVo.getId()));
+        PrizeRes prizeRes = new PrizeRes();
+        prizeRes.setPrizeType(PrizeEnum.THEME.getCode());
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("id",themeNumberVo.getId());
+        map.put("themeId",themeNumberVo.getThemeId());
+        map.put("pic",themeNumberVo.getThemePic());
+        map.put("name",themeNumberVo.getThemeName());
+        map.put("number",themeNumberVo.getNumber());
+        prizeRes.setParams(map);
+         return  prizeRes;
     }
 
-    private UserThemeMappingVO getUserThemeMappingVO(ComposeManageReq composeManageReq, ThemeNumberVo themeNumberVo) {
+    private UserThemeMappingVO getUserThemeMappingVO(ComposeManageReq composeManageReq, NumberVO themeNumberVo) {
         UserThemeMappingVO userThemeMappingVO = new UserThemeMappingVO();
         userThemeMappingVO.setUserId(String.valueOf(composeManageReq.getUserId()));
-        userThemeMappingVO.setSeriesThemeId(themeNumberVo.getNumberId());
+        userThemeMappingVO.setSeriesThemeId(themeNumberVo.getId());
         userThemeMappingVO.setStatus(UserNumberStatusEnum.PURCHASED.getCode());
-        userThemeMappingVO.setSource(themeNumberVo.getThemeType());
+        userThemeMappingVO.setSource(themeNumberVo.getType());
         userThemeMappingVO.setSeriesId(themeNumberVo.getSeriesId());
-        userThemeMappingVO.setSeriesThemeInfoId(themeNumberVo.getThemeInfoId());
+        userThemeMappingVO.setSeriesThemeInfoId(themeNumberVo.getThemeId());
         return userThemeMappingVO;
     }
 

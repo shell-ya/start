@@ -1,8 +1,10 @@
 package com.starnft.star.domain.number.model.dto;
 
 import com.starnft.star.common.page.RequestPage;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
@@ -14,6 +16,8 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 public class NumberQueryDTO extends RequestPage implements Serializable {
     private Integer themeType;
     private String orderBy;
