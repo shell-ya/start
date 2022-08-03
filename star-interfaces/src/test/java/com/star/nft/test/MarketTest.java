@@ -128,4 +128,9 @@ public class MarketTest {
         OrderListRes orderListRes = orderProcessor.obtainSecKillOrder(orderGrabReq);
         log.info("order:{}",orderListRes.toString());
     }
+
+    @Test
+    public void number(){
+        numberCore.putNumber(1004108446601228288L,"2022080317","2022080318",288,100);
+    }
 }

@@ -31,4 +31,5 @@ public interface INumberCore {
 
     List<UserNumbersVO> checkHasNumber(Long uid, Long numberId, UserNumberStatusEnum statusEnum);
 
+    void putNumber(long themeId,String time1,String time2,int stock1,int stock2);
 }

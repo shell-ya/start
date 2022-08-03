@@ -67,8 +67,8 @@ public class ActivitiesTask {
      * 4、秒杀结束时间<当前循环的时间区间的开始时间+2小时
      * 5、导入到Redis缓存。使用Hash类型存储
      */
-    @Scheduled(cron = "0/15 * * * * ?")
-//    @XxlJob("activitiesTask")
+//    @Scheduled(cron = "0/15 * * * * ?")
+    @XxlJob("activitiesTask")
     public void loadActivities() {
 
         log.info("########### 秒杀商品扫描开始 ###########");
