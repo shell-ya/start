@@ -36,6 +36,9 @@ public class WhiteRuleContext {
 //        //收发白羊
 //        loadRuleClass("1002287375767941120", "worldCreationWhiteRule");
         loadRuleClass("1002287375767941120", "worldCreationWhiteRule");
+        loadRuleClass("1004108446601228288", "worldCreationWhiteRule");
+        loadRuleClass("1004369822256463872", "worldCreationWhiteRule");
+        loadRuleClass("1004370545875394560", "worldCreationWhiteRule");
     }
 
 
