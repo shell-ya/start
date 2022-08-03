@@ -1,18 +1,18 @@
 package com.starnft.star.business.service.impl;
 
-import com.starnft.star.business.domain.AirdropThemeRecord;
-import com.starnft.star.business.domain.StarNftThemeNumber;
-import com.starnft.star.business.domain.StarNftUserTheme;
+import com.google.common.collect.Lists;
+import com.starnft.star.business.domain.*;
 import com.starnft.star.business.domain.dto.AirdropRecordDto;
 import com.starnft.star.business.domain.dto.RecordItem;
-import com.starnft.star.business.mapper.AirdropThemeRecordMapper;
-import com.starnft.star.business.mapper.StarNftThemeNumberMapper;
-import com.starnft.star.business.mapper.StarNftUserThemeMapper;
+import com.starnft.star.business.mapper.*;
 import com.starnft.star.business.service.IAirdropThemeRecordService;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.common.exception.ServiceException;
 import com.starnft.star.common.exception.StarException;
+import com.starnft.star.common.utils.RandomUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
+import com.starnft.star.common.utils.StringUtils;
 import com.starnft.star.common.utils.redis.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.io.Serializable;
+import java.lang.reflect.Executable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -36,7 +38,12 @@ public class AirdropThemeRecordServiceImpl implements IAirdropThemeRecordService
     @Resource
     private StarNftUserThemeMapper userThemeMapper;
     @Resource
+    private AccountUserMapper accountUserMapper;
+    @Resource
     RedisUtil redisUtil;
+    @Resource
+    private StarNftThemeInfoMapper themeInfoMapper;
+
     private final HashMap<Long,Integer> priorityTheme = new HashMap<>();
 
     @PostConstruct
@@ -62,7 +69,7 @@ public class AirdropThemeRecordServiceImpl implements IAirdropThemeRecordService
             return airdropSuccess & numberSuccess & userTheme;
         }catch (Exception e){
             log.error("空投异常",e);
-            throw new StarException();
+            throw new StarException(e.getLocalizedMessage());
         }
     }
 
@@ -140,7 +147,111 @@ public class AirdropThemeRecordServiceImpl implements IAirdropThemeRecordService
      * 单个用户 多个藏品
      * 多个用户 多个藏品
      */
-    public void airdropProcess(AirdropRecordDto airdropRecordDto){
+    @Override
+    public String airdropProcess(List<AirdropRecordDto> dtoList){
 
+        if (StringUtils.isNull(dtoList) || dtoList.size() == 0)
+        {
+            throw new ServiceException("空投数据不能为空！");
+        }
+        int successNum = 0;
+        int failureNum = 0;
+        StringBuilder successMsg = new StringBuilder();
+        StringBuilder failureMsg = new StringBuilder();
+
+
+
+        for (AirdropRecordDto dto :
+                dtoList) {
+            try{
+                //验证用户是否存在
+                AccountUser accountUser = accountUserMapper.selectUserByAccount(dto.getUserId());
+                if (Objects.isNull(accountUser)){
+                    failureNum++;
+                    failureMsg.append("<br/>用户").append(dto.getUserId()).append("不存在");
+                    continue;
+                }
+                //验证要空投的主题是否存在
+                List<RecordItem> recordItems = dto.getRecordItems();
+                for (RecordItem item : recordItems) {
+                    StarNftThemeInfo themeInfo = themeInfoMapper.selectStarNftThemeInfoById(item.getSeriesThemeInfoId());
+                    if (Objects.isNull(themeInfo)){
+                        failureNum++;
+                        failureMsg.append("<br/>主题").append(item.getSeriesThemeId()).append("不存在");
+                    }
+                    Long themeNumber = null;
+                    //发送空投数量为0 从数据库中选出一个所属人为空的藏品
+                    if (0 == item.getSeriesThemeId().size() || Objects.isNull(item.getSeriesThemeId())){
+                        themeNumber = (long) RandomUtil.randomInt(0, themeInfo.getPublishNumber().intValue());
+                        while (true){
+                            //检查redis中有此编号 命中换下一个
+                            //随机编号池
+                            boolean pool = redisUtil.sHasKey(String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), themeInfo.getId()), themeNumber);
+                            //秒杀编号队列
+                            List<Serializable> list = redisUtil.lGet(String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), themeInfo.getId()), 0, -1);
+                            boolean queue = list.contains(themeNumber);
+                            StarNftThemeNumber starNftThemeNumber = themeNumberMapper.selectOwnerIsNull(item.getSeriesThemeInfoId(), themeNumber);
+                            if (queue || pool || Objects.isNull(starNftThemeNumber)){
+                                themeNumber = (long) RandomUtil.randomInt(0, themeInfo.getPublishNumber().intValue());
+                            }else {
+                                break;
+                            }
+                            //去数据库查询该编号所属人是否为空
+                        }
+                        item.setSeriesThemeId(Lists.newArrayList(themeNumber));
+                    }else {
+                        throw new StarException("空投随机编号不传藏品id seriesThemeId");
+                    }
+                    AirdropThemeRecord airdropThemeRecord = createAirdropThemeRecord(dto.getUserId(), dto.getAirdropType(), item.getSeriesId(), item.getSeriesThemeInfoId(), themeNumber);
+                    try{
+                        addUserAirdrop(airdropThemeRecord);
+                        successNum++;
+                        successMsg.append("<br/>用户").append(dto.getUserId()).append("空投编号").append(themeNumber).append("成功");
+                    }catch (Exception e){
+                        failureNum++;
+                        failureMsg.append("<br/>用户").append(dto.getUserId()).append("空投失败");
+                    }
+                    // TODO: 2022/8/3
+//                    else {
+//                        //验证要空投的藏品所属人是否为空
+//                        //验证空投藏品在缓存中
+//
+//                    }
+
+                }
+
+            }catch (Exception e){
+                failureMsg.insert(0, "很抱歉，导入失败！共 " + failureNum + " 条");
+                successMsg.insert(0, "导入成功！共 " + successNum + " 条");
+                log.error("空投失败",e);
+                successMsg.append(failureMsg);
+                return successMsg.toString();
+            }
+        }
+
+        if (failureNum > 0){
+            successMsg.append(failureMsg);
+        }
+
+        return successMsg.toString();
+    }
+
+    @Override
+    public Boolean zhuyuliu(AirdropRecordDto dto){
+        List<AirdropThemeRecord> airdropThemeRecords = new ArrayList<>();
+        //查询预留编号id
+        List<RecordItem> recordItems = dto.getRecordItems();
+        for (RecordItem item :
+                recordItems) {
+            List<Long> numbers = themeNumberMapper.selectOwberIsNullAndNumberInterval(item.getSeriesThemeInfoId());
+            if (240!=numbers.size()) throw new StarException("查询回编号共+"+numbers.size() +"数量不足240条 请检查数据");
+            item.setSeriesThemeId(numbers);
+            List<AirdropThemeRecord> recordList = item.getSeriesThemeId().stream().map(number -> createAirdropThemeRecord(dto.getUserId(), dto.getAirdropType(), item.getSeriesId(), item.getSeriesThemeInfoId(), number)).collect(Collectors.toList());
+            airdropThemeRecords.addAll(recordList);
+        }
+        long successNum = airdropThemeRecords.stream().map(this::addUserAirdrop).filter(Boolean.TRUE::equals).count();
+//        long successNum = recordList.stream().map(this::addUserAirdrop).filter(Boolean.TRUE::equals).count();
+//
+        return successNum == airdropThemeRecords.size();
     }
 }

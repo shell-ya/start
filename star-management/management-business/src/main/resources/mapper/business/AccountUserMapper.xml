@@ -211,4 +211,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         UNION
         select count(account) as num FROM account_user_9
     </select>
+
+    <select id="selectUserByAccount" resultMap="AccountUserResult">
+        <include refid="selectAccountUserVo"/>
+        where account = #{account}
+    </select>
 </mapper>

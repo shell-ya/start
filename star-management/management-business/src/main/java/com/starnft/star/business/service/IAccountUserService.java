@@ -59,4 +59,6 @@ public interface IAccountUserService
      * @return 结果
      */
     public int deleteAccountUserById(Long id);
+
+    public AccountUser selectUserByAccount(Long account);
 }
