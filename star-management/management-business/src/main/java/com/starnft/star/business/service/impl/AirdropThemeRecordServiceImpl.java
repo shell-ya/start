@@ -263,7 +263,7 @@ public class AirdropThemeRecordServiceImpl implements IAirdropThemeRecordService
         for (RecordItem item :
                 recordItems) {
             List<Long> numbers = themeNumberMapper.selectOwberIsNullAndNumberInterval(item.getSeriesThemeInfoId());
-            if (240!=numbers.size()) throw new StarException("查询回编号共+"+numbers.size() +"数量不足240条 请检查数据");
+            if (241!=numbers.size()) throw new StarException("查询回编号共+"+numbers.size() +"数量不足240条 请检查数据");
             item.setSeriesThemeId(numbers);
             List<AirdropThemeRecord> recordList = item.getSeriesThemeId().stream().map(number -> createAirdropThemeRecord(dto.getUserId(), dto.getAirdropType(), item.getSeriesId(), item.getSeriesThemeInfoId(), number)).collect(Collectors.toList());
             airdropThemeRecords.addAll(recordList);
