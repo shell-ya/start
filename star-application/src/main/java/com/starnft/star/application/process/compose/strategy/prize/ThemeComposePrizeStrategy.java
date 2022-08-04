@@ -28,10 +28,6 @@ public class ThemeComposePrizeStrategy implements ComposePrizeStrategy {
     INumberService iNumberService;
     @Resource
     RedisLockUtils redisLockUtils;
-//    @Resource
-//    INumberService numberService;
-
-
 
     @Override
     public PrizeRes composePrize(ComposeManageReq composeManageReq, ComposePrizeDTO composePrizeDTO) {

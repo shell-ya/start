@@ -9,6 +9,7 @@ import com.starnft.star.domain.article.model.vo.UserNumbersVO;
 import com.starnft.star.domain.article.model.vo.UserSeriesVO;
 import com.starnft.star.domain.article.model.vo.UserThemeDetailVo;
 import com.starnft.star.domain.article.model.vo.UserThemeVO;
+import com.starnft.star.domain.compose.model.dto.ComposeUserArticleNumberDTO;
 import com.starnft.star.domain.number.model.vo.UserThemeMappingVO;
 import com.starnft.star.infrastructure.entity.user.StarNftUserTheme;
 import org.apache.ibatis.annotations.Mapper;
@@ -26,4 +27,7 @@ public interface StarNftUserThemeMapper extends BaseMapper<StarNftUserTheme> {
 
     List<UserNumbersVO> queryUserArticleNumberInfoByThemeIds(@Param("uid") Long uid, @Param("themeIds")List<Long> themeIds, @Param("statusEnum") UserNumberStatusEnum statusEnum);
     List<UserNumbersVO> queryUserArticleNumberInfoByNumberIds(@Param("uid") Long uid, @Param("numberIds")List<Long> themeIds, @Param("statusEnum") UserNumberStatusEnum statusEnum);
+
+    List<ComposeUserArticleNumberDTO> queryComposeUserArticleNumberInfoByNumberIds(@Param("userId") Long userId, @Param("sourceIds")List<Long> sourceIds,@Param("statusEnum")  UserNumberStatusEnum purchased);
+
 }
