@@ -1,5 +1,6 @@
 package com.starnft.star.business.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.starnft.star.business.domain.StarNftThemeNumber;
 import com.starnft.star.business.domain.vo.StarNftThemeNumberVo;
 import org.apache.ibatis.annotations.Param;
@@ -13,7 +14,7 @@ import java.util.List;
  * @author shellya
  * @date 2022-06-03
  */
-public interface StarNftThemeNumberMapper
+public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
 {
     /**
      * 查询主题编号
