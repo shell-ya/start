@@ -21,9 +21,12 @@ import com.starnft.star.domain.article.repository.IUserThemeRepository;
 import com.starnft.star.domain.article.service.UserThemeService;
 import com.starnft.star.domain.compose.model.dto.ComposeMaterialDTO;
 import com.starnft.star.domain.compose.model.dto.ComposePrizeDTO;
+import com.starnft.star.domain.compose.model.dto.ComposeRecordDTO;
+import com.starnft.star.domain.compose.model.dto.ComposeUserArticleNumberDTO;
 import com.starnft.star.domain.compose.model.req.ComposeManageReq;
 import com.starnft.star.domain.compose.model.res.*;
 import com.starnft.star.domain.compose.repository.IComposePrizeRepository;
+import com.starnft.star.domain.compose.service.IComposeManageService;
 import com.starnft.star.domain.compose.service.IComposeService;
 import com.starnft.star.domain.number.model.dto.NumberBatchUpdateDTO;
 import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
@@ -53,6 +56,8 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
 
     @Resource
     private IComposeService composeService;
+    @Resource
+    private IComposeManageService composeManageService;
     @Resource
     private UserThemeService userThemeService;
     @Resource
@@ -91,7 +96,7 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
 
     @Override
     public Map<Long, List<UserNumbersVO>> composeUserMaterial(UserMaterialReq userMaterialReq) {
-        Assert.notNull(userMaterialReq.getUserId(),()->new StarException("userId 为空"));
+        Assert.notNull(userMaterialReq.getUserId(), () -> new StarException("userId 为空"));
         Long categoryId = userMaterialReq.getCategoryId();
         ComposeCategoryRes composeCategoryRes = composeService.composeCategoryByCategoryId(categoryId);
         List<ComposeMaterialDTO> composeMaterials = JSONUtil.toList(composeCategoryRes.getComposeMaterial(), ComposeMaterialDTO.class);
@@ -106,45 +111,47 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
     public ComposeManageRes composeManage(ComposeManageReq composeManageReq) {
         ComposeCategoryRes composeCategoryRes = composeService.composeCategoryByCategoryId(composeManageReq.getCategoryId());
         //积分判断操作
-        Assert.isTrue(composeCategoryRes.getComposeId().equals(composeManageReq.getComposeId()),()->new StarException("请选择正确的合成类目"));
+        Assert.isTrue(composeCategoryRes.getComposeId().equals(composeManageReq.getComposeId()), () -> new StarException("请选择正确的合成类目"));
         if (composeCategoryRes.getIsScore()) {
             ScoreDTO subScoreDTO = getScoreDTO(composeManageReq, composeCategoryRes);
             iScopeCore.userScopeManageSub(subScoreDTO);
         }
         List<ComposeMaterialDTO> composeMaterials = JSONUtil.toList(composeCategoryRes.getComposeMaterial(), ComposeMaterialDTO.class);
-        List<UserNumbersVO> userNumbersList = userThemeService.queryUserArticleNumberInfoByNumberIds(composeManageReq.getUserId(), composeManageReq.getSourceIds(), UserNumberStatusEnum.PURCHASED);
-        Assert.isTrue(composeManageReq.getSourceIds().size() == userNumbersList.size(), () -> new StarException("不能操作非本人物品"));
-        Map<Long, List<UserNumbersVO>> collect = userNumbersList.stream().collect(Collectors.groupingBy(UserNumbersVO::getThemeId));
+        //查询用户是否持有numbers
+        List<ComposeUserArticleNumberDTO> composeUserNumberArrays = composeManageService.queryUserArticleNumberInfoByNumberIds(composeManageReq.getUserId(), composeManageReq.getSourceIds(), UserNumberStatusEnum.PURCHASED);
+        Assert.isTrue(composeManageReq.getSourceIds().size() == composeUserNumberArrays.size(), () -> new StarException("不能操作非本人物品"));
+        Map<Long, List<ComposeUserArticleNumberDTO>> collect = composeUserNumberArrays.stream().collect(Collectors.groupingBy(ComposeUserArticleNumberDTO::getThemeId));
         Map<Long, ComposeMaterialDTO> composeMaterialDTOMap = composeMaterials.stream().collect(Collectors.toMap(ComposeMaterialDTO::getThemeId, Function.identity()));
         checkThemeCounts(collect, composeMaterialDTOMap);
-        //执行合成业务
+        //抽取  合成物品  抽奖
         ComposeDrawLotteryStrategy composeDrawLotteryStrategy = applicationContext
-                .getBean(ComposeDrawLotteryStrategyEnums.getScaleLotteryStrategy(
-                                composeDrawConfiguration.getComposeDraw()).getStrategy(),
-                        ComposeDrawLotteryStrategy.class
+                .getBean(ComposeDrawLotteryStrategyEnums
+                        .getScaleLotteryStrategy(composeDrawConfiguration.getComposeDraw())
+                        .getStrategy(), ComposeDrawLotteryStrategy.class
                 );
-        //获取随机合成参数
+//        //获取随机合成参数
         List<ComposePrizeRes> composePrizeRes = composeService.composePrizeByComposeId(composeManageReq.getComposeId());
         List<ComposePrizeDTO> composePrizeDTOS = BeanColverUtil.colverList(composePrizeRes, ComposePrizeDTO.class);
-        //获得随机的合成物品
+//        //获得随机合成物品
         ComposePrizeDTO composePrizeDTO = composeDrawLotteryStrategy.drawPrize(composePrizeDTOS);
-        //随机合成的处理bean
+//        //随机合成的处理bean
         ComposePrizeStrategy composePrizeStrategy = applicationContext.getBean(ComposePrizeTypeEnums.getComposePrizeType(composePrizeDTO.getPrizeType()).getStrategy(), ComposePrizeStrategy.class);
-
-
-        //下方对素材的处理
+//        //下方对素材的处理
         log.info("销毁的素材id：「{}」", JSONUtil.toJsonStr(composeManageReq.getSourceIds()));
-        List<Long> userNumberIds = userNumbersList.stream().map(item -> item.getNumberId()).collect(Collectors.toList());
+        List<Long> userNumberIds = composeUserNumberArrays.stream().map(item -> item.getNumberId()).collect(Collectors.toList());
 
-        List<NumberCirculationAddDTO> numberCirculations = getNumberCirculations(userNumbersList, composeManageReq);
-        //执行商品合成操作
+        List<NumberCirculationAddDTO> numberCirculations = getNumberCirculations(composeUserNumberArrays, composeManageReq);
+//        //执行商品合成操作
         PrizeRes prizeRes = composePrizeStrategy.composePrize(composeManageReq, composePrizeDTO);
         //修改藏品的状态
-        userThemeService.modifyUserBatchNumberStatus(composeManageReq.getUserId(), userNumberIds, UserNumberStatusEnum.PURCHASED, UserNumberStatusEnum.DESTROY);
-        numberService.modifyBatchNumberInfo(getNumberBatchUpdateDTO(composeManageReq));
+        Boolean modifyStatus = composeManageService.composeModifyUserNumberStatus(composeManageReq.getUserId(), userNumberIds, UserNumberStatusEnum.PURCHASED, UserNumberStatusEnum.DESTROY, NumberStatusEnum.SOLD, NumberStatusEnum.DESTROY, Boolean.TRUE);
         //物品流转状态
-        numberService.saveBatchNumberCirculationRecord(numberCirculations);
-        //封装返回数据
+        Boolean circulationStatus = numberService.saveBatchNumberCirculationRecord(numberCirculations);
+        // 记录保存
+        Boolean recordStatus = composeManageService.saveComposeRecord(getComposeRecordDTO(composeManageReq, composeCategoryRes, composeUserNumberArrays, prizeRes));
+//        //封装返回数据
+
+        Assert.isTrue(modifyStatus && circulationStatus && recordStatus, () -> new StarException("合成失败"));
         ComposeManageRes composeManageRes = new ComposeManageRes();
         composeManageRes.setIsSuccess(Boolean.TRUE);
         composeManageRes.setPrizeRes(prizeRes);
@@ -152,16 +159,22 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
         return composeManageRes;
     }
 
-    private NumberBatchUpdateDTO getNumberBatchUpdateDTO(ComposeManageReq composeManageReq) {
-        NumberBatchUpdateDTO numberBatchUpdateDTO = new NumberBatchUpdateDTO();
-        numberBatchUpdateDTO.setIsDeleted(Boolean.TRUE);
-        numberBatchUpdateDTO.setStatus(NumberStatusEnum.DESTROY);
-        numberBatchUpdateDTO.setNumberIds(composeManageReq.getSourceIds());
-        return numberBatchUpdateDTO;
+    private ComposeRecordDTO getComposeRecordDTO(ComposeManageReq composeManageReq, ComposeCategoryRes composeCategoryRes, List<ComposeUserArticleNumberDTO> composeUserNumberArrays, PrizeRes prizeRes) {
+        ComposeRecordDTO composeRecordDTO = new ComposeRecordDTO();
+        composeRecordDTO.setComposeId(composeManageReq.getComposeId());
+        composeRecordDTO.setCategoryId(composeManageReq.getCategoryId());
+        composeRecordDTO.setPrizeMessage(prizeRes);
+        composeRecordDTO.setUserId(composeManageReq.getUserId());
+        composeRecordDTO.setIsScope(composeCategoryRes.getIsScore());
+        composeRecordDTO.setScopeNumber(composeCategoryRes.getComposeScopeNumber());
+        composeRecordDTO.setPrizeType(prizeRes.getPrizeType());
+        composeRecordDTO.setSource(composeUserNumberArrays);
+        return composeRecordDTO;
     }
 
-    private List<NumberCirculationAddDTO> getNumberCirculations(List<UserNumbersVO> userNumbersVOList, ComposeManageReq composeManageReq) {
-        List<NumberCirculationAddDTO> numberCirculations = userNumbersVOList.stream().map(item -> NumberCirculationAddDTO.builder()
+
+    private List<NumberCirculationAddDTO> getNumberCirculations(List<ComposeUserArticleNumberDTO> composeUserArticleNumberDTOArrays, ComposeManageReq composeManageReq) {
+        List<NumberCirculationAddDTO> numberCirculations = composeUserArticleNumberDTOArrays.stream().map(item -> NumberCirculationAddDTO.builder()
                 .numberId(item.getNumberId())
                 .type(NumberCirculationTypeEnum.CASTING)
                 .uid(composeManageReq.getUserId())
@@ -182,7 +195,7 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
         return subScoreDTO;
     }
 
-    private void checkThemeCounts(Map<Long, List<UserNumbersVO>> collect, Map<Long, ComposeMaterialDTO> composeMaterialDTOMap) {
+    private void checkThemeCounts(Map<Long, List<ComposeUserArticleNumberDTO>> collect, Map<Long, ComposeMaterialDTO> composeMaterialDTOMap) {
         for (Long themeId : collect.keySet()) {
             int size = collect.get(themeId).size();
             ComposeMaterialDTO composeMaterialDTO = composeMaterialDTOMap.get(themeId);
