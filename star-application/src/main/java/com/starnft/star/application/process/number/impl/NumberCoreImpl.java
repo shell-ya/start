@@ -197,4 +197,20 @@ public class NumberCoreImpl implements INumberCore {
         return userNumberInfo;
     }
 
+    @Override
+    public void putNumber(long themeId, String time1, String time2, int stock1, int stock2) {
+        List<Integer> stockNums = this.numberService.loadNotSellNumberNumCollection(themeId);
+        Integer[] integers = stockNums.subList(0, stock1).toArray(new Integer[stock1]);
+        Integer[] integers2 = stockNums.subList(stock1, stock1 + stock2).toArray(new Integer[stock2]);
+
+        String stockKey1 = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), themeId,time1);
+        String stockKey2 = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), themeId,time2);
+        redisUtil.delByKey(stockKey1);
+        redisUtil.addToListLeft(stockKey1, RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTime(), RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTimeUnit(), integers);
+        redisUtil.delByKey(stockKey2);
+        redisUtil.addToListLeft(stockKey2,RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTime(),RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTimeUnit(),integers2);
+
+
+    }
+
 }
