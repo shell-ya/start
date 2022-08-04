@@ -177,10 +177,11 @@ public class AirdropThemeRecordServiceImpl implements IAirdropThemeRecordService
                         failureNum++;
                         failureMsg.append("<br/>主题").append(item.getSeriesThemeId()).append("不存在");
                     }
+                    Long numberId= null;
                     Long themeNumber = null;
                     //发送空投数量为0 从数据库中选出一个所属人为空的藏品
                     if (0 == item.getSeriesThemeId().size() || Objects.isNull(item.getSeriesThemeId())){
-                        themeNumber = (long) RandomUtil.randomInt(0, 400);
+                        themeNumber = (long) RandomUtil.randomInt(0, themeInfo.getPublishNumber().intValue());
                         while (true){
                             //检查redis中有此编号 命中换下一个
                             //模糊匹配keys
@@ -211,6 +212,7 @@ public class AirdropThemeRecordServiceImpl implements IAirdropThemeRecordService
                             if (queue || pool || Objects.isNull(starNftThemeNumber)){
                                 themeNumber = (long) RandomUtil.randomInt(0, themeInfo.getPublishNumber().intValue());
                             }else {
+                                numberId= starNftThemeNumber.getId();
                                 break;
                             }
                             //去数据库查询该编号所属人是否为空
@@ -219,7 +221,7 @@ public class AirdropThemeRecordServiceImpl implements IAirdropThemeRecordService
                     }else {
                         throw new StarException("空投随机编号不传藏品id seriesThemeId");
                     }
-                    AirdropThemeRecord airdropThemeRecord = createAirdropThemeRecord(dto.getUserId(), dto.getAirdropType(), item.getSeriesId(), item.getSeriesThemeInfoId(), themeNumber);
+                    AirdropThemeRecord airdropThemeRecord = createAirdropThemeRecord(dto.getUserId(), dto.getAirdropType(), item.getSeriesId(), item.getSeriesThemeInfoId(), numberId);
                     try{
                         addUserAirdrop(airdropThemeRecord);
                         successNum++;
