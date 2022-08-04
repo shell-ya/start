@@ -14,6 +14,8 @@ import com.starnft.star.application.process.scope.IScopeCore;
 import com.starnft.star.application.process.scope.model.ScoreDTO;
 import com.starnft.star.common.enums.*;
 import com.starnft.star.common.exception.StarException;
+import com.starnft.star.common.page.RequestConditionPage;
+import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.Assert;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.article.model.vo.UserNumbersVO;
@@ -95,15 +97,17 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
     }
 
     @Override
-    public Map<Long, List<UserNumbersVO>> composeUserMaterial(UserMaterialReq userMaterialReq) {
-        Assert.notNull(userMaterialReq.getUserId(), () -> new StarException("userId 为空"));
-        Long categoryId = userMaterialReq.getCategoryId();
+    public ResponsePageResult<UserNumbersVO> composeUserMaterial(Long userId, RequestConditionPage<UserMaterialReq> userMaterialReq) {
+        Assert.notNull(userId, () -> new StarException("userId 为空"));
+        Long categoryId = userMaterialReq.getCondition().getCategoryId();
         ComposeCategoryRes composeCategoryRes = composeService.composeCategoryByCategoryId(categoryId);
         List<ComposeMaterialDTO> composeMaterials = JSONUtil.toList(composeCategoryRes.getComposeMaterial(), ComposeMaterialDTO.class);
         List<Long> themeIds = composeMaterials.stream().map(ComposeMaterialDTO::getThemeId).collect(Collectors.toList());
-        List<UserNumbersVO> userHaveNumbers = userThemeService.queryUserArticleNumberInfoByThemeIds(userMaterialReq.getUserId(), themeIds, UserNumberStatusEnum.PURCHASED);
-        Map<Long, List<UserNumbersVO>> collect = userHaveNumbers.stream().collect(Collectors.groupingBy(UserNumbersVO::getThemeId));
-        return collect;
+        List<Long> filterArray = themeIds.stream().filter(item -> item.equals(userMaterialReq.getCondition().getThemeId())).collect(Collectors.toList());
+          Assert.isTrue(!filterArray.isEmpty(),()->new StarException("所选素材不在合成类目中"));
+        ResponsePageResult<UserNumbersVO> userNumbersVOResponsePageResult = userThemeService.queryUserArticleNumberInfoByThemeIds(userId, filterArray, UserNumberStatusEnum.PURCHASED, userMaterialReq.getPage(), userMaterialReq.getSize());
+        //  Map<Long, List<UserNumbersVO>> collect = userHaveNumbers.stream().collect(Collectors.groupingBy(UserNumbersVO::getThemeId));
+        return userNumbersVOResponsePageResult;
     }
 
     @Override
