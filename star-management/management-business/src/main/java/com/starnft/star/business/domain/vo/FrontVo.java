@@ -14,10 +14,10 @@ import java.math.BigDecimal;
 public class FrontVo {
 
     //    @ApiModelProperty(value = "今日提现总数")
-    private Integer dayWithDrawApplyTotal;
+    private Long dayWithDrawApplyTotal;
 
     //    @ApiModelProperty(value = "昨天提现总数")
-    private Integer toDayWithDrawApplyTotal;
+    private Long toDayWithDrawApplyTotal;
 
     //    @ApiModelProperty(value = "今日提现金额")
     private BigDecimal dayTotalWithdrawMoney;
