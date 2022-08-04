@@ -22,7 +22,7 @@ public interface UserThemeService {
 
     Boolean modifyUserNumberStatus(Long uid, Long numberId,  UserNumberStatusEnum beforeStatusEnum,UserNumberStatusEnum statusEnum);
     Boolean modifyUserBatchNumberStatus(Long uid, List<Long> numberId,  UserNumberStatusEnum beforeStatusEnum,UserNumberStatusEnum statusEnum);
-    List<UserNumbersVO> queryUserArticleNumberInfoByThemeIds(Long uid, List<Long> themeIds, UserNumberStatusEnum statusEnum);
+    ResponsePageResult<UserNumbersVO> queryUserArticleNumberInfoByThemeIds(Long uid, List<Long> themeIds, UserNumberStatusEnum statusEnum,Integer page,Integer size);
 
     List<UserNumbersVO> queryUserArticleNumberInfoByNumberIds(Long uid, List<Long> numberIds, UserNumberStatusEnum statusEnum);
 }

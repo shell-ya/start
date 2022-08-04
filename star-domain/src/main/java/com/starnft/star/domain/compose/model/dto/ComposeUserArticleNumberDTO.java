@@ -15,5 +15,5 @@ public class ComposeUserArticleNumberDTO {
     private Long numberId;
     private Long  themeNumber;
     private BigDecimal price;
-    private Long themeImages;
+    private String  themeImages;
 }

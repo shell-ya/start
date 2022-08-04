@@ -1,5 +1,6 @@
 package com.starnft.star.application.process.compose.model.req;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserMaterialReq implements Serializable {
+    @ApiModelProperty("类目ID")
     private Long  categoryId;
-    private Long  userId;
+    @ApiModelProperty("主题ID")
+    private Long themeId;
 }

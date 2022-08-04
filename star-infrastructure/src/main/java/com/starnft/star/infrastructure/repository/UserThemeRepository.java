@@ -53,8 +53,11 @@ public class UserThemeRepository implements IUserThemeRepository, PageHelperInte
     }
 
     @Override
-    public List<UserNumbersVO> queryUserArticleNumberInfoByThemeIds(Long uid, List<Long> themeIds, UserNumberStatusEnum statusEnum) {
-        return this.starNftUserThemeMapper.queryUserArticleNumberInfoByThemeIds(uid, themeIds, statusEnum);
+    public ResponsePageResult<UserNumbersVO> queryUserArticleNumberInfoByThemeIds(Long uid, List<Long> themeIds, UserNumberStatusEnum statusEnum,Integer page,Integer size) {
+        PageInfo<UserNumbersVO> result = PageHelper.startPage(page, size).doSelectPageInfo(() -> {
+            this.starNftUserThemeMapper.queryUserArticleNumberInfoByThemeIds(uid, themeIds, statusEnum);
+        });
+        return this.listReplace(result, result.getList());
     }
 
 

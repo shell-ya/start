@@ -18,7 +18,7 @@ public interface IUserThemeRepository {
 
     ResponsePageResult<UserNumbersVO> queryUserArticleNumberInfo(UserHaveNumbersReq userHaveNumbersReq);
 
-    List<UserNumbersVO> queryUserArticleNumberInfoByThemeIds(Long uid, List<Long> themeIds, UserNumberStatusEnum statusEnum);
+    ResponsePageResult<UserNumbersVO>queryUserArticleNumberInfoByThemeIds(Long uid, List<Long> themeIds, UserNumberStatusEnum statusEnum,Integer page,Integer size);
 
    List<UserNumbersVO> queryUserArticleNumberInfoByNumberIds(Long uid, List<Long> numbersIds, UserNumberStatusEnum statusEnum);
 

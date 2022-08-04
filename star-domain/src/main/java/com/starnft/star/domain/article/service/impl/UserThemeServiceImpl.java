@@ -55,8 +55,8 @@ public class UserThemeServiceImpl implements UserThemeService {
     }
 
     @Override
-    public List<UserNumbersVO> queryUserArticleNumberInfoByThemeIds(Long uid, List<Long> themeIds, UserNumberStatusEnum statusEnum) {
-        return this.userThemeRepository.queryUserArticleNumberInfoByThemeIds(uid, themeIds, statusEnum);
+    public ResponsePageResult<UserNumbersVO> queryUserArticleNumberInfoByThemeIds(Long uid, List<Long> themeIds, UserNumberStatusEnum statusEnum,Integer page,Integer size) {
+        return this.userThemeRepository.queryUserArticleNumberInfoByThemeIds(uid, themeIds, statusEnum,page,size);
     }
 
     @Override
