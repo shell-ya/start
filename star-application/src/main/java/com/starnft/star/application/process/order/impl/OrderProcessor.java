@@ -159,11 +159,11 @@ public class OrderProcessor implements IOrderProcessor {
             //校验余额
             walletService.balanceVerify(orderGrabReq.getUserId(), goods.getSecCost());
             //用户下单次数验证 防重复下单
-//            Long userOrderedCount = redisUtil.hincr(key, String.valueOf(orderGrabReq.getUserId()), 1L);
-//            if (userOrderedCount > 1) {
-//                log.error("防重复下单 uid: [{}] themeId : [{}] count : [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), userOrderedCount);
-//                throw new StarException(StarError.ORDER_REPETITION);
-//            }
+            Long userOrderedCount = redisUtil.hincr(key, String.valueOf(orderGrabReq.getUserId()), 1L);
+            if (userOrderedCount > 1) {
+                log.error("防重复下单 uid: [{}] themeId : [{}] count : [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), userOrderedCount);
+                throw new StarException(StarError.ORDER_REPETITION);
+            }
 
             //排队中状态
             redisUtil.hset(String.format(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), orderGrabReq.getThemeId()),
@@ -181,7 +181,6 @@ public class OrderProcessor implements IOrderProcessor {
     }
 
     private Boolean whiteValidation(Long userId, Long themeId) {
-        if (userId.equals(338147474L) && themeId.equals(1002285892654821376L) ) return true;
         IWhiteRule iWhiteRule = whiteRuleContext.obtainWhiteRule(String.valueOf(themeId));
         if (iWhiteRule == null) {
             return false;
