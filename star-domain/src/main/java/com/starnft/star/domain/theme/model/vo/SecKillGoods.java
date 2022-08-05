@@ -1,6 +1,7 @@
 package com.starnft.star.domain.theme.model.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
@@ -16,6 +17,7 @@ import java.util.Date;
 public class SecKillGoods implements Serializable {
 
     @ApiModelProperty(name = "库存", notes = "")
+    @JsonIgnore
     private Integer stock;
 
     @ApiModelProperty(name = "发行数量", notes = "")

@@ -63,6 +63,7 @@ public class ThemeCoreImpl implements ThemeCore {
         themeDetailRes.setLssuePrice(themeDetailVO.getLssuePrice());
         themeDetailRes.setPublishNumber(themeDetailVO.getPublishNumber());
         themeDetailRes.setStock(themeDetailVO.getStock());
+//        themeDetailRes.setSellOut(Boolean.TRUE);
         Optional.ofNullable(themeDetailVO.getPublisherId()).ifPresent((item) -> {
             PublisherReq publisherReq = new PublisherReq();
             publisherReq.setPublisherId(item);
@@ -90,11 +91,11 @@ public class ThemeCoreImpl implements ThemeCore {
         }
 
         List<@Nullable SecKillGoods> noNoneStock = goodsList.stream()
-                .filter(Objects::nonNull).filter(goods -> goods.getStock() > 0)
+                .filter(Objects::nonNull).filter(goods -> !goods.getSellOut())
                 .sorted(Comparator.comparing(SecKillGoods::getStartTime)).collect(Collectors.toList());
 
         List<@Nullable SecKillGoods> nonStock = goodsList.stream()
-                .filter(Objects::nonNull).filter(goods -> goods.getStock() <= 0)
+                .filter(Objects::nonNull).filter(goods -> goods.getSellOut())
                 .sorted(Comparator.comparing(SecKillGoods::getEndTime).reversed()).collect(Collectors.toList());
 
         Set<@Nullable SecKillGoods> results = new LinkedHashSet<>();
