@@ -29,7 +29,7 @@ public interface INumberCore {
 
     ConsignDetailRes obtainConsignDetail(Long id);
 
-    List<UserNumbersVO> checkHasNumber(Long uid, Long numberId, UserNumberStatusEnum statusEnum);
+    public  ResponsePageResult<UserNumbersVO> checkHasNumber(Long uid, Long themeId, UserNumberStatusEnum statusEnum,Integer page,Integer size);
 
     void putNumber(long themeId,String time1,String time2,int stock1,int stock2);
 }

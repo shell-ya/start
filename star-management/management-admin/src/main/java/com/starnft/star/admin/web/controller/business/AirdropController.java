@@ -4,6 +4,7 @@ import com.starnft.star.business.domain.AirdropThemeRecord;
 import com.starnft.star.business.domain.StarNftThemeInfo;
 import com.starnft.star.business.domain.StarNftThemeNumber;
 import com.starnft.star.business.domain.dto.AirdropRecordDto;
+import com.starnft.star.business.domain.dto.WithRuleDto;
 import com.starnft.star.business.service.IAirdropThemeRecordService;
 import com.starnft.star.business.service.IStarNftThemeInfoService;
 import com.starnft.star.business.service.IStarNftThemeNumberService;
@@ -11,10 +12,13 @@ import com.starnft.star.business.service.impl.AirdropThemeRecordServiceImpl;
 import com.starnft.star.common.core.controller.BaseController;
 import com.starnft.star.common.core.domain.AjaxResult;
 import com.starnft.star.common.core.page.TableDataInfo;
+import com.starnft.star.common.utils.poi.ExcelUtil;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -73,5 +77,18 @@ public class AirdropController extends BaseController {
     public AjaxResult randomDrop(@RequestBody List<AirdropRecordDto> dtoList){
         return AjaxResult.success(airdropThemeRecordService.airdropProcess(dtoList));
     }
+
+    @PostMapping(value = "/addWhite")
+    public AjaxResult addWhite(@RequestBody List<WithRuleDto> dtos){
+        return AjaxResult.success(airdropThemeRecordService.importWithRule(dtos));
+    }
+
+    @PostMapping(value = "/importWhite")
+    public AjaxResult importWhite(MultipartFile file) throws Exception {
+        ExcelUtil<WithRuleDto> util = new ExcelUtil<WithRuleDto>(WithRuleDto.class);
+        List<WithRuleDto> themeNumberList = util.importExcel(file.getInputStream());
+        return AjaxResult.success(airdropThemeRecordService.importWithRule(themeNumberList));
+    }
+
 
 }

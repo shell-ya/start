@@ -5,6 +5,7 @@ import com.starnft.star.application.process.compose.model.req.UserMaterialReq;
 import com.starnft.star.application.process.compose.model.res.ComposeDetailRes;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.page.RequestConditionPage;
+import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.article.model.vo.UserNumbersVO;
 import com.starnft.star.domain.compose.model.req.ComposeManageReq;
 import com.starnft.star.domain.compose.model.req.ComposeReq;
@@ -43,9 +44,9 @@ public class ComposeController {
     }
 
     @ApiOperation("用户素材列表获取")
-    @PostMapping("/user/material/{id}")
-    public RopResponse<Map<Long, List<UserNumbersVO>>> material(UserResolverInfo userResolverInfo, @PathVariable("id") Long id) {
-        return RopResponse.success(composeCore.composeUserMaterial(new UserMaterialReq(id, userResolverInfo.getUserId())));
+    @PostMapping("/user/material")
+    public RopResponse<ResponsePageResult<UserNumbersVO>> material(UserResolverInfo userResolverInfo, @RequestBody RequestConditionPage<UserMaterialReq>  reqRequestConditionPage) {
+        return RopResponse.success(composeCore.composeUserMaterial(userResolverInfo.getUserId(),reqRequestConditionPage));
     }
     @ApiOperation("合成操作")
     @PostMapping("/manage")

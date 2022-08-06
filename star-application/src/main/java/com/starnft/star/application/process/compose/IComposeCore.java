@@ -3,6 +3,8 @@ package com.starnft.star.application.process.compose;
 import com.starnft.star.application.process.compose.model.req.UserMaterialReq;
 import com.starnft.star.application.process.compose.model.res.ComposeCategoryMaterialRes;
 import com.starnft.star.application.process.compose.model.res.ComposeDetailRes;
+import com.starnft.star.common.page.RequestConditionPage;
+import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.article.model.vo.UserNumbersVO;
 import com.starnft.star.domain.compose.model.req.ComposeManageReq;
 import com.starnft.star.domain.compose.model.res.ComposeManageRes;
@@ -15,7 +17,7 @@ public interface IComposeCore {
 
     ComposeDetailRes composeDetails(Long id);
 
-    Map<Long, List<UserNumbersVO>> composeUserMaterial(UserMaterialReq userMaterialReq);
+    ResponsePageResult<UserNumbersVO> composeUserMaterial(Long userId, RequestConditionPage<UserMaterialReq> userMaterialReq);
 
     ComposeManageRes composeManage(ComposeManageReq composeManageReq);
 

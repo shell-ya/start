@@ -69,54 +69,5 @@ public class ComposeDrawScaleLotteryStrategy implements ComposeDrawLotteryStrate
         return size;
     }
 
-//    public static void main(String[] args) {
-////        List<@Nullable ComposePrizeDTO> prizeDTOS = Lists.newArrayList();
-////        double all = 0;
-////        for (int i = 0; i < 5; i++) {
-////            ComposePrizeDTO composePrizeDTO = new ComposePrizeDTO();
-////            SecureRandom secureRandom = new SecureRandom();
-////            double rate = secureRandom.nextDouble() * (1.0 - 0.001) + 0.01;
-////            all = all + rate;
-////            if (all > 1.0) {
-////                double newRate = 1.0 - all + rate;
-////                composePrizeDTO.setPrizeProbability(BigDecimal.valueOf(newRate).setScale(4, BigDecimal.ROUND_HALF_DOWN));
-////                prizeDTOS.add(composePrizeDTO);
-////                break;
-////            }
-////            composePrizeDTO.setPrizeProbability(BigDecimal.valueOf(rate).setScale(4, BigDecimal.ROUND_HALF_DOWN));
-////            prizeDTOS.add(composePrizeDTO);
-////        }
-////        BigDecimal zero = BigDecimal.ZERO;
-////        for (ComposePrizeDTO prizeDTO : prizeDTOS) {
-////            zero = zero.add(prizeDTO.getPrizeProbability());
-////            System.out.println(prizeDTO + ": " + zero + "\n");
-////        }
-//
-//        List<@Nullable ComposePrizeDTO> prizeDTOS = Lists.newArrayList();
-//
-//        prizeDTOS.add(ComposePrizeDTO.builder().prizeProbability(new BigDecimal(0.10).setScale(2, BigDecimal.ROUND_HALF_DOWN)).build());
-//        prizeDTOS.add(ComposePrizeDTO.builder().prizeProbability(new BigDecimal(0.12).setScale(2, BigDecimal.ROUND_HALF_DOWN)).build());
-//        prizeDTOS.add(ComposePrizeDTO.builder().prizeProbability(new BigDecimal(0.20).setScale(2, BigDecimal.ROUND_HALF_DOWN)).build());
-//        prizeDTOS.add(ComposePrizeDTO.builder().prizeProbability(new BigDecimal(0.30).setScale(2, BigDecimal.ROUND_HALF_DOWN)).build());
-//        prizeDTOS.add(ComposePrizeDTO.builder().prizeProbability(new BigDecimal(0.38).setScale(2, BigDecimal.ROUND_HALF_DOWN)).build());
-//
-//        Optional<@Nullable ComposePrizeDTO> min = prizeDTOS.stream().min(Comparator.comparing(composePrizeDTO -> composePrizeDTO != null ? composePrizeDTO.getPrizeProbability() : null));
-//        Double minRate = min.get().getPrizeProbability().doubleValue();
-//
-//        double currRate = 0;
-//        int times = 0;
-//        int allTimes = 0;
-//        while (currRate < (minRate - 0.05) || currRate > (minRate + 0.05)) {
-//            ComposeDrawScaleLotteryStrategy composeDrawScaleLotteryStrategy = new ComposeDrawScaleLotteryStrategy();
-//            ComposePrizeDTO composePrizeDTO = composeDrawScaleLotteryStrategy.drawPrize(prizeDTOS);
-//            if (composePrizeDTO.getPrizeProbability().doubleValue() == minRate) {
-//                times++;
-//            }
-//            allTimes++;
-//            if (composePrizeDTO.getPrizeProbability().compareTo(new BigDecimal(minRate)) < 0) {
-//                System.out.println("命中 生成次数 ：" + times + " 总次数： " + allTimes);
-//            }
-//        }
-//
-//    }
+
 }

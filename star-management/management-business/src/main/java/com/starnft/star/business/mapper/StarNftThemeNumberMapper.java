@@ -1,9 +1,11 @@
 package com.starnft.star.business.mapper;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.starnft.star.business.domain.StarNftThemeNumber;
 import com.starnft.star.business.domain.vo.StarNftThemeNumberVo;
 import org.apache.ibatis.annotations.Param;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,7 +15,7 @@ import java.util.List;
  * @author shellya
  * @date 2022-06-03
  */
-public interface StarNftThemeNumberMapper
+public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
 {
     /**
      * 查询主题编号
@@ -69,7 +71,7 @@ public interface StarNftThemeNumberMapper
 
     List<Long> selectOwberBy(Long id);
 
-    StarNftThemeNumber selectOwnerIsNull(Long seriesThemeInfoId,Long themeNumber);
+    StarNftThemeNumber selectOwnerIsNull(Long seriesThemeInfoId, Long themeNumber, List<Serializable> redisNumberList);
 
     List<Long> selectOwberIsNullAndNumberInterval(Long seriesThemeInfoId);
 }

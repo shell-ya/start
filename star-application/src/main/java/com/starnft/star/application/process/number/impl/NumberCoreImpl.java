@@ -191,10 +191,10 @@ public class NumberCoreImpl implements INumberCore {
         Assert.notNull(userNumberInfo, () -> new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "你不是该藏品的拥有者 无法进行相关操作"));
         return userNumberInfo;
     }
+@Override
+    public  ResponsePageResult<UserNumbersVO> checkHasNumber(Long uid, Long themeId, UserNumberStatusEnum statusEnum,Integer page,Integer size) {
+        return this.userThemeService.queryUserArticleNumberInfoByThemeIds(uid, Lists.newArrayList(themeId), statusEnum,page,size);
 
-    public  List<UserNumbersVO> checkHasNumber(Long uid, Long themeId, UserNumberStatusEnum statusEnum) {
-        List<UserNumbersVO> userNumberInfo = this.userThemeService.queryUserArticleNumberInfoByThemeIds(uid, Lists.newArrayList(themeId), statusEnum);
-        return userNumberInfo;
     }
 
     @Override
