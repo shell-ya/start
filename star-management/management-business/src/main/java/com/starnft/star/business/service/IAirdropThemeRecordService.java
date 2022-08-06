@@ -2,6 +2,7 @@ package com.starnft.star.business.service;
 
 import com.starnft.star.business.domain.AirdropThemeRecord;
 import com.starnft.star.business.domain.dto.AirdropRecordDto;
+import com.starnft.star.business.domain.dto.WithRuleDto;
 
 import java.util.List;
 
@@ -23,5 +24,9 @@ public interface IAirdropThemeRecordService {
     Boolean zhuyuliu(AirdropRecordDto dto);
 
     String airdropProcess(List<AirdropRecordDto> dtoList);
+
+    Long addWithRule(WithRuleDto dto);
+
+    String importWithRule(List<WithRuleDto> dtos);
 
 }

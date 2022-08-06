@@ -5,6 +5,7 @@ import com.starnft.star.business.domain.StarNftThemeNumber;
 import com.starnft.star.business.domain.vo.StarNftThemeNumberVo;
 import org.apache.ibatis.annotations.Param;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
@@ -70,7 +71,7 @@ public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
 
     List<Long> selectOwberBy(Long id);
 
-    StarNftThemeNumber selectOwnerIsNull(Long seriesThemeInfoId,Long themeNumber);
+    StarNftThemeNumber selectOwnerIsNull(Long seriesThemeInfoId, Long themeNumber, List<Serializable> redisNumberList);
 
     List<Long> selectOwberIsNullAndNumberInterval(Long seriesThemeInfoId);
 }
