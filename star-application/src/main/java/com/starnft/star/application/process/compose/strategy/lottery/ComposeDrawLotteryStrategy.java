@@ -6,5 +6,4 @@ import java.util.List;
 
 public interface ComposeDrawLotteryStrategy {
     ComposePrizeDTO drawPrize(List<ComposePrizeDTO> composePrizes);
-//    int draw(List<BigDecimal> scales);
 }

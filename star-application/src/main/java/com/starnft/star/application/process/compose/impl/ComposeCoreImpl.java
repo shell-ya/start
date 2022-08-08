@@ -113,6 +113,9 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
     @Override
     @Transactional
     public ComposeManageRes composeManage(ComposeManageReq composeManageReq) {
+        ComposeRes composeRes = composeService.composeDetails(composeManageReq.getComposeId());
+         Assert.isTrue(composeRes.getComposeStatus().equals(ComposeStatusEnum.Running.getCode()),()->new StarException("合成不在开启状态"));
+
         ComposeCategoryRes composeCategoryRes = composeService.composeCategoryByCategoryId(composeManageReq.getCategoryId());
         //积分判断操作
         Assert.isTrue(composeCategoryRes.getComposeId().equals(composeManageReq.getComposeId()), () -> new StarException("请选择正确的合成类目"));
@@ -154,7 +157,10 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
         // 记录保存
         Boolean recordStatus = composeManageService.saveComposeRecord(getComposeRecordDTO(composeManageReq, composeCategoryRes, composeUserNumberArrays, prizeRes));
 //        //封装返回数据
-
+  log.info("prize:{}",prizeRes);
+  log.info("modifyStatus:{}",modifyStatus);
+  log.info("recordStatus:{}",recordStatus);
+  log.info("circulationStatus:{}",circulationStatus);
         Assert.isTrue(modifyStatus && circulationStatus && recordStatus, () -> new StarException("合成失败"));
         ComposeManageRes composeManageRes = new ComposeManageRes();
         composeManageRes.setIsSuccess(Boolean.TRUE);
