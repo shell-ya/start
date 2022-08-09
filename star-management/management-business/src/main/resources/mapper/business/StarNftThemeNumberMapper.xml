@@ -174,7 +174,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 series_theme_info_id = #{seriesThemeInfoId}
                 and theme_number = #{themeNumber}
                 and owner_by is null
-            <if test="redisNumberList.size != '0'">
+            <if test="redisNumberList != null and redisNumberList != ''">
                 and theme_number not in
                 <foreach collection="redisNumberList" index="index" item="number" open="(" separator="," close=")">
                     #{number}

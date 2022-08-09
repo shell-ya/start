@@ -1,5 +1,7 @@
 import com.starnft.star.admin.RuoYiApplication;
 import com.starnft.star.business.domain.AirdropThemeRecord;
+import com.starnft.star.business.domain.dto.AirdropRecordDto;
+import com.starnft.star.business.domain.dto.RecordItem;
 import com.starnft.star.business.service.IAirdropThemeRecordService;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.utils.redis.RedisUtil;
@@ -27,6 +29,20 @@ public class AirdropTest {
     public AirdropTest(IAirdropThemeRecordService airdropThemeRecordService, RedisUtil redisUtil) {
         this.airdropThemeRecordService = airdropThemeRecordService;
         this.redisUtil = redisUtil;
+    }
+
+    @Test
+    public void random(){
+        RecordItem item = new RecordItem();
+        item.setSeriesId(4L);
+        item.setSeriesThemeInfoId(1002285892654821376L);
+        item.setSeriesThemeId(Lists.newArrayList());
+        AirdropRecordDto dto = new AirdropRecordDto();
+        dto.setUserId(294592515L);
+        dto.setAirdropType(0);
+        dto.setRecordItems(Lists.newArrayList(item));
+        List<AirdropRecordDto> dtoList = Lists.newArrayList(dto);
+        airdropThemeRecordService.airdropProcess(dtoList);
     }
 
     @Test

@@ -39,6 +39,8 @@ public class WhiteRuleContext {
         loadRuleClass("1004108446601228288", "worldCreationWhiteRule");
         loadRuleClass("1004832935944343552", "worldCreationWhiteRule");
         loadRuleClass("1004370545875394560", "worldCreationWhiteRule");
+        loadRuleClass("1005542994038874112", "worldCreationWhiteRule");
+        loadRuleClass("1006211030410809344", "worldCreationWhiteRule");
     }
 
 

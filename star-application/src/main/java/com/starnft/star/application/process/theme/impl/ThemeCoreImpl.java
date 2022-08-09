@@ -108,8 +108,10 @@ public class ThemeCoreImpl implements ThemeCore {
     //更新展示库存量
     private SecKillGoods verifyStock(SecKillGoods secKillGoods) {
         String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), secKillGoods.getThemeId(),secKillGoods.getTime());
+        String poolKey = String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), secKillGoods.getThemeId(), secKillGoods.getTime());
         long stock = redisUtil.lGetListSize(stockKey);
-        if (0L == stock){
+        long poolStock = redisUtil.sGetSetSize(poolKey);
+        if ((stock + poolStock) <= 0){
             secKillGoods.setSellOut(true);
         }
         if (secKillGoods.getStock() != stock) {
