@@ -60,7 +60,7 @@ public class TiChainServerTest {
         publishGoodsReq.setProductIds(ids.toArray(new String[ids.size()]));
         publishGoodsReq.setPieceCount(nums);
         publishGoodsReq.setInitPrice("49.9");
-        publishGoodsReq.setName("链元文创-Pluviophile 首发-天秤座");
+        publishGoodsReq.setName("链元文创-Pluviophile 首发-水瓶座");
         publishGoodsReq.setFeature(JSONUtil.toJsonStr(map));
         PublishGoodsRes createAccountRes = tiChainServer.publishGoods(publishGoodsReq);
         System.out.println(createAccountRes);

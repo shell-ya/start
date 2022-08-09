@@ -46,8 +46,8 @@ public class MarketTest {
     @Test
     public void consigment() {
         NumberConsignmentRequest numberConsignmentRequest = new NumberConsignmentRequest();
-        numberConsignmentRequest.setUid(305730346L);
-        numberConsignmentRequest.setNumberId(996194503701676032L);
+        numberConsignmentRequest.setUid(294592515L);
+        numberConsignmentRequest.setNumberId(1002368039009771520L);
         numberConsignmentRequest.setPrice(BigDecimal.valueOf(333L));
         Boolean consignment = numberCore.consignment(numberConsignmentRequest);
         assert consignment;
@@ -64,8 +64,8 @@ public class MarketTest {
     @Test
     public void marketOrder() {
         MarketOrderReq marketOrderReq = new MarketOrderReq();
-        marketOrderReq.setUserId(248906830L);
-        marketOrderReq.setNumberId(991119651685904384L);
+        marketOrderReq.setUserId(281850262L);
+        marketOrderReq.setNumberId(1002368039009771520L);
         OrderListRes orderListRes = orderProcessor.marketOrder(marketOrderReq);
         log.info("orderList:{}", orderListRes.toString());
     }
@@ -82,18 +82,19 @@ public class MarketTest {
     @Test
     public void pay() {
         OrderPayReq orderPayReq = new OrderPayReq();
-        orderPayReq.setOrderSn("PG995447946508107776");
-        orderPayReq.setPayAmount("1.9");
-        orderPayReq.setUserId(320266671L);
+        orderPayReq.setOrderSn("TS1006669544812609536");
+        orderPayReq.setPayAmount("133");
+        orderPayReq.setUserId(281850262L);
         orderPayReq.setCategoryType(1);
-        orderPayReq.setNumberId(995368705385082880L);
+        orderPayReq.setNumberId(1002368039009771520L);
         orderPayReq.setChannel("Balance");
 //        orderPayReq.setFromUid(0L);
-        orderPayReq.setSeriesId(5L);
+        orderPayReq.setSeriesId(4L);
         orderPayReq.setFee("0");
-        orderPayReq.setThemeId(995367819184877568L);
-        orderPayReq.setTotalPayAmount("1.9");
+        orderPayReq.setThemeId(1002285892654821376L);
+        orderPayReq.setTotalPayAmount("133");
         orderPayReq.setType(3);
+        orderPayReq.setOwnerId(294592515L);
 //        orderPayReq.setToUid(320266671L);
 //        orderPayReq.setPayToken();
 //        orderPayReq.setOutTradeNo();
@@ -131,6 +132,6 @@ public class MarketTest {
 
     @Test
     public void number(){
-        numberCore.putNumber(1004108446601228288L,"2022080317","2022080318",288,100);
+        numberCore.putNumber(1006211030410809344L,"2022080920","2022080921",200,47);
     }
 }

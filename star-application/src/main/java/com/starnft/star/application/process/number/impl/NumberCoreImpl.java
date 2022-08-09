@@ -205,9 +205,12 @@ public class NumberCoreImpl implements INumberCore {
 
         String stockKey1 = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), themeId,time1);
         String stockKey2 = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), themeId,time2);
+//        redisUtil.hashIncr(RedisKey.SECKILL_GOODS_STOCK_NUMBER.getKey(), String.format("%s-time-%s",themeId,time1), stock1);
         redisUtil.delByKey(stockKey1);
         redisUtil.addToListLeft(stockKey1, RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTime(), RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTimeUnit(), integers);
+//
         redisUtil.delByKey(stockKey2);
+//        redisUtil.hashIncr(RedisKey.SECKILL_GOODS_STOCK_NUMBER.getKey(), String.format("%s-time-%s",themeId,time2), stock2);
         redisUtil.addToListLeft(stockKey2,RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTime(),RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTimeUnit(),integers2);
 
 
