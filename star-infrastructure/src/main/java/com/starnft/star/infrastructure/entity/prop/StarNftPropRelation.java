@@ -35,6 +35,11 @@ public class StarNftPropRelation extends BaseEntity implements Serializable {
     @ApiModelProperty(name = "道具数量", notes = "")
     private Integer propCounts;
     /**
+     * 道具名称
+     */
+    @ApiModelProperty(name = "道具名称", notes = "")
+    private String propName;
+    /**
      * 过期时间
      */
     @ApiModelProperty(name = "过期时间", notes = "")
@@ -85,6 +90,14 @@ public class StarNftPropRelation extends BaseEntity implements Serializable {
 
     public void setPropCounts(Integer propCounts) {
         this.propCounts = propCounts;
+    }
+
+    public String getPropName() {
+        return propName;
+    }
+
+    public void setPropName(String propName) {
+        this.propName = propName;
     }
 
     public Date getExpire() {

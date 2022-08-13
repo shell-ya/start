@@ -5,6 +5,7 @@ import com.starnft.star.business.domain.*;
 import com.starnft.star.business.domain.dto.AirdropRecordDto;
 import com.starnft.star.business.domain.dto.RecordItem;
 import com.starnft.star.business.domain.dto.WithRuleDto;
+import com.starnft.star.business.domain.vo.RandomAirdrop;
 import com.starnft.star.business.mapper.*;
 import com.starnft.star.business.service.IAirdropThemeRecordService;
 import com.starnft.star.common.constant.RedisKey;
@@ -181,7 +182,7 @@ public class AirdropThemeRecordServiceImpl implements IAirdropThemeRecordService
                     Long numberId= null;
                     Long themeNumber = null;
 
-                    ArrayList<Serializable> redisNumberList = new ArrayList<>();
+                    List<Serializable> redisNumberList = Lists.newArrayList();
                     //检查redis中有此编号 命中换下一个
                     //模糊匹配keys
 //                            boolean pool = false;
@@ -210,12 +211,15 @@ public class AirdropThemeRecordServiceImpl implements IAirdropThemeRecordService
                     }
                     //发送空投数量为0 从数据库中选出一个所属人为空的藏品
                     if (0 == item.getSeriesThemeId().size() || Objects.isNull(item.getSeriesThemeId())){
-
+//                        redisNumberList.add(172L);
                         themeNumber = (long) RandomUtil.randomInt(0, themeInfo.getPublishNumber().intValue());
                         while (true){
                             //秒杀编号队列
                             // TODO: 2022/8/3 秒杀库存
-                            StarNftThemeNumber starNftThemeNumber = themeNumberMapper.selectOwnerIsNull(item.getSeriesThemeInfoId(), themeNumber,redisNumberList);
+
+                            RandomAirdrop randomAirdrop = new RandomAirdrop(item.getSeriesThemeInfoId(), themeNumber, redisNumberList);
+                            if (redisNumberList.size() == 0) randomAirdrop.setRedisNumberList(null);
+                            StarNftThemeNumber starNftThemeNumber = themeNumberMapper.selectOwnerIsNull(randomAirdrop);
                             if (Objects.isNull(starNftThemeNumber)){
                                 themeNumber = (long) RandomUtil.randomInt(0, themeInfo.getPublishNumber().intValue());
                             }else {

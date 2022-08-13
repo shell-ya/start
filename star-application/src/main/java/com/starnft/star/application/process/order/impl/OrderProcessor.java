@@ -144,8 +144,8 @@ public class OrderProcessor implements IOrderProcessor {
         }
 
         //库存验证
-        String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), orderGrabReq.getThemeId(),orderGrabReq.getTime());
-        String poolKey = String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), orderGrabReq.getThemeId(),orderGrabReq.getTime());
+        String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), orderGrabReq.getThemeId(), orderGrabReq.getTime());
+        String poolKey = String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), orderGrabReq.getThemeId(), orderGrabReq.getTime());
         long stock = redisUtil.lGetListSize(stockKey);
         long poolStock = redisUtil.sGetSetSize(poolKey);
         String key = String.format(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), orderGrabReq.getThemeId());
@@ -159,11 +159,13 @@ public class OrderProcessor implements IOrderProcessor {
             //校验余额
             walletService.balanceVerify(orderGrabReq.getUserId(), goods.getSecCost());
             //用户下单次数验证 防重复下单
-//            Long userOrderedCount = redisUtil.hincr(key, String.valueOf(orderGrabReq.getUserId()), 1L);
-//            if (userOrderedCount > 1) {
-//                log.error("防重复下单 uid: [{}] themeId : [{}] count : [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), userOrderedCount);
-//                throw new StarException(StarError.ORDER_REPETITION);
-//            }
+            if (orderGrabReq.getThemeId().equals(1002285892654821376L)){
+                Long userOrderedCount = redisUtil.hincr(key, String.valueOf(orderGrabReq.getUserId()), 1L);
+                if (userOrderedCount > 1) {
+                    log.error("防重复下单 uid: [{}] themeId : [{}] count : [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), userOrderedCount);
+                    throw new StarException(StarError.ORDER_REPETITION);
+                }
+            }
 
             //排队中状态
             redisUtil.hset(String.format(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), orderGrabReq.getThemeId()),
@@ -238,13 +240,20 @@ public class OrderProcessor implements IOrderProcessor {
 //                    rebatesProducer.sendRebatesMessage(createRebates(orderPayReq));
                     //todo 后面去掉
                     if (!orderPayReq.getThemeId().equals(1002285892654821376L)) {
-                        Long times = 0L;
-                        synchronized (this) {
-                            redisUtil.hincr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L);
-                            times = redisUtil.hdecr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L);
-                        }
-                        if (redisUtil.hdecr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L) <= 0) {
-                            redisUtil.hdel(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()));
+                        String userOrderMapping = String.format(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), orderPayReq.getThemeId());
+                        String orderInfo = (String) redisUtil.hget(userOrderMapping, String.valueOf(orderPayReq.getUserId()));
+                        OrderVO orderCache = JSONUtil.toBean(orderInfo, OrderVO.class);
+                        String startTime = orderCache.getRemark();
+                        String startTimeTrim = com.starnft.star.common.utils.DateUtil.date2Str(new Date());
+                        if (Long.parseLong(startTime) > Long.parseLong(startTimeTrim)) {
+                            Long times = 0L;
+                            synchronized (this) {
+                                redisUtil.hincr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L);
+                                times = redisUtil.hdecr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L);
+                            }
+                            if (redisUtil.hdecr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L) <= 0) {
+                                redisUtil.hdel(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()));
+                            }
                         }
                     }
                     return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn());

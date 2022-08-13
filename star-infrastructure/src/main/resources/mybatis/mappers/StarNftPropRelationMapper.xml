@@ -15,11 +15,12 @@
         <result property="propIcon" column="prop_icon" jdbcType="VARCHAR"/>
         <result property="propLevel" column="prop_level" jdbcType="INTEGER"/>
         <result property="propType" column="prop_type" jdbcType="INTEGER"/>
+        <result property="propName" column="prop_name" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="items">
         id
-        ,is_deleted,created_at,created_by,modified_at,modified_by,uid,prop_id,prop_counts,expire,prop_icon,prop_level,prop_type
+        ,is_deleted,created_at,created_by,modified_at,modified_by,uid,prop_id,prop_counts,expire,prop_icon,prop_level,prop_type,propName
     </sql>
 
     <sql id="condition">
