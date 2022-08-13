@@ -19,6 +19,13 @@ public class PropsListRes implements Serializable {
      */
     @ApiModelProperty(name = "道具数量", notes = "")
     private Integer propCounts;
+
+    /**
+     * 道具名称
+     */
+    @ApiModelProperty(name = "道具名称", notes = "")
+    private String propName;
+
     /**
      * 过期时间
      */
