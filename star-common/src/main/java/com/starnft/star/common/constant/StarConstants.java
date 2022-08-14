@@ -491,10 +491,10 @@ public class StarConstants {
 
     public enum PropsLevel {
 
-        NORMAL(1, "普通"),
-        BOUTIQUE(2, "精品"),
-        BEST(3, "极品"),
-        LEGEND(4, "传说"),
+        NORMAL(1, "N"),
+        BOUTIQUE(2, "R"),
+        BEST(3, "SR"),
+        LEGEND(4, "SSR"),
         ;
         private Integer code;
         private String desc;

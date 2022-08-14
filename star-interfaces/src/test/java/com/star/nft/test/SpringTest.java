@@ -11,8 +11,10 @@ import com.starnft.star.application.process.order.IOrderProcessor;
 import com.starnft.star.application.process.order.model.req.OrderPayReq;
 import com.starnft.star.application.process.order.model.res.OrderPayDetailRes;
 import com.starnft.star.application.process.theme.ThemeCore;
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.template.FreeMakerTemplateHelper;
+import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.payment.config.container.PayConf;
 import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.payment.router.IPaymentRouter;
@@ -52,13 +54,22 @@ public class SpringTest {
     final WalletService walletService;
     final ThemeCore themeCore;
 
+    final RedisUtil redisUtil;
     final IOrderProcessor orderProcessor;
 
     @Test
     void redisTest() {
-//        for (int i = 0; i < 3; i++) {
-//            redisUtil.hincr(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), String.valueOf(633353683L), 1L);
-//        }
+        Map<Object, Object> before = redisUtil.hmget(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey());
+        Map<Object, Object> after = redisUtil.hmget("star-service.seckill:priority:shoufa2");
+
+        for (Map.Entry<Object, Object> objectObjectEntry : before.entrySet()) {
+            after.entrySet().forEach(entry -> {
+                if (objectObjectEntry.getKey().equals(entry.getKey()) && !objectObjectEntry.getValue().equals(entry.getValue())) {
+                    log.info("before uid:[{}] times : [{}], after uid:[{}] times :[{}]",
+                            objectObjectEntry.getKey(), objectObjectEntry.getValue(), entry.getKey(), entry.getValue());
+                }
+            });
+        }
     }
 
     @Test
