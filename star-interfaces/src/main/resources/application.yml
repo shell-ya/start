@@ -24,6 +24,7 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     cache-enabled: true
     log-impl: com.starnft.star.interfaces.config.StdOutImpl
+    default-statement-timeout: 3000
 swagger:
     packages: com.starnft.star
     enabled: true

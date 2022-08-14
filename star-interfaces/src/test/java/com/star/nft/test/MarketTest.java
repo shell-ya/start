@@ -7,6 +7,7 @@ import com.starnft.star.application.process.order.model.req.OrderCancelReq;
 import com.starnft.star.application.process.order.model.req.OrderGrabReq;
 import com.starnft.star.application.process.order.model.req.OrderPayReq;
 import com.starnft.star.application.process.order.model.res.OrderGrabRes;
+import com.starnft.star.application.process.order.white.rule.WhiteRuleContext;
 import com.starnft.star.application.process.task.activity.ActivitiesTask;
 import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.number.model.req.NumberConsignmentCancelRequest;
@@ -43,12 +44,19 @@ public class MarketTest {
 
     final IUserService userService;
 
+    final WhiteRuleContext whiteRuleContext;
+
+    @Test
+    public void whihte(){
+        whiteRuleContext.loadRuleClass("1006594638578057216","worldCreationWhiteRule");
+    }
+
     @Test
     public void consigment() {
         NumberConsignmentRequest numberConsignmentRequest = new NumberConsignmentRequest();
         numberConsignmentRequest.setUid(294592515L);
-        numberConsignmentRequest.setNumberId(1002368039009771520L);
-        numberConsignmentRequest.setPrice(BigDecimal.valueOf(333L));
+        numberConsignmentRequest.setNumberId(1006212009283489792L);
+        numberConsignmentRequest.setPrice(BigDecimal.valueOf(123L));
         Boolean consignment = numberCore.consignment(numberConsignmentRequest);
         assert consignment;
     }
@@ -65,7 +73,7 @@ public class MarketTest {
     public void marketOrder() {
         MarketOrderReq marketOrderReq = new MarketOrderReq();
         marketOrderReq.setUserId(281850262L);
-        marketOrderReq.setNumberId(1002368039009771520L);
+        marketOrderReq.setNumberId(1006212009283489792L);
         OrderListRes orderListRes = orderProcessor.marketOrder(marketOrderReq);
         log.info("orderList:{}", orderListRes.toString());
     }
@@ -82,17 +90,17 @@ public class MarketTest {
     @Test
     public void pay() {
         OrderPayReq orderPayReq = new OrderPayReq();
-        orderPayReq.setOrderSn("TS1006669544812609536");
-        orderPayReq.setPayAmount("133");
+        orderPayReq.setOrderSn("TS1006694650746142720");
+        orderPayReq.setPayAmount("123");
         orderPayReq.setUserId(281850262L);
         orderPayReq.setCategoryType(1);
-        orderPayReq.setNumberId(1002368039009771520L);
+        orderPayReq.setNumberId(1006212009283489792L);
         orderPayReq.setChannel("Balance");
 //        orderPayReq.setFromUid(0L);
         orderPayReq.setSeriesId(4L);
         orderPayReq.setFee("0");
         orderPayReq.setThemeId(1002285892654821376L);
-        orderPayReq.setTotalPayAmount("133");
+        orderPayReq.setTotalPayAmount("123");
         orderPayReq.setType(3);
         orderPayReq.setOwnerId(294592515L);
 //        orderPayReq.setToUid(320266671L);
@@ -132,6 +140,7 @@ public class MarketTest {
 
     @Test
     public void number(){
-        numberCore.putNumber(1006211030410809344L,"2022080920","2022080921",200,47);
+
+        numberCore.putNumber(1006594638578057216L,"2022081120","2022081121",200,48);
     }
 }

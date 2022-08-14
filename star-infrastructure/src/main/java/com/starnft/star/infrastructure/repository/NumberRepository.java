@@ -186,6 +186,7 @@ public class NumberRepository implements INumberRepository {
         userTheme.setCreateAt(new Date());
         userTheme.setSource(userThemeMappingVO.getSource());
         userTheme.setCreateBy(userThemeMappingVO.getUserId());
+        userTheme.setPreTaxPrice(userThemeMappingVO.getPreTaxPrice());
         userTheme.setIsDelete(Boolean.FALSE);
         return this.starNftUserThemeMapper.insert(userTheme) == 1;
     }

@@ -129,7 +129,7 @@ public class NumberServiceImpl implements INumberService {
         userThemeMappingVO.setSeriesId(handoverReq.getSeriesId());
         userThemeMappingVO.setSeriesThemeInfoId(handoverReq.getThemeId());
         userThemeMappingVO.setSeriesThemeId(handoverReq.getNumberId());
-//        userThemeMappingVO.setPreTaxPrice(handoverReq.getPreMoney());
+        userThemeMappingVO.setPreTaxPrice(handoverReq.getPreMoney());
         return userThemeMappingVO;
     }
 
@@ -166,6 +166,7 @@ public class NumberServiceImpl implements INumberService {
         userThemeMappingVO.setSource(handoverReq.getCategoryType());
         userThemeMappingVO.setSeriesId(handoverReq.getSeriesId());
         userThemeMappingVO.setSeriesThemeInfoId(handoverReq.getThemeId());
+        userThemeMappingVO.setPreTaxPrice(handoverReq.getPreMoney());
         return userThemeMappingVO;
     }
 

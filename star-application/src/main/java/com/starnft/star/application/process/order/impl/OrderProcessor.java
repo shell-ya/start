@@ -207,13 +207,19 @@ public class OrderProcessor implements IOrderProcessor {
     @Override
     public OrderPayDetailRes orderPay(OrderPayReq orderPayReq) {
         //验证支付凭证
-        userService.assertPayPwdCheckSuccess(orderPayReq.getUserId(), orderPayReq.getPayToken());
+//        userService.assertPayPwdCheckSuccess(orderPayReq.getUserId(), orderPayReq.getPayToken());
         //规则验证
         walletService.balanceVerify(orderPayReq.getUserId(), new BigDecimal(orderPayReq.getPayAmount()));
 
         //市场订单参数手续费计算
         if (orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
             calculateFee(orderPayReq);
+        }
+
+        if (orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())
+        && (Objects.isNull(orderPayReq.getOwnerId()) || 0L == orderPayReq.getOwnerId())
+        ) {
+            throw new StarException(StarError.ORDER_STATUS_ERROR,"请确认藏品拥有者id正确性");
         }
 
         String lockKey = String.format(RedisKey.SECKILL_ORDER_TRANSACTION.getKey(), orderPayReq.getOrderSn());
@@ -382,7 +388,7 @@ public class OrderProcessor implements IOrderProcessor {
                     //发送延时队列
                     orderProducer.marketOrderRollback(new MarketOrderStatus(marketOrderReq.getUserId(), 0, orderSn));
 //                    return new OrderListRes(id,orderSn, 0, StarError.SUCCESS_000000.getErrorMessage(), lockTimes);
-                    return buildOrderResp(numberDetail, marketOrderReq.getUserId(), orderSn, id);
+                    return buildOrderResp(lockTimes,numberDetail, marketOrderReq.getUserId(), orderSn, id);
                 }
             } catch (Exception e) {
                 log.error("创建订单异常: userId: [{}] , themeNumberId: [{}] , context: [{}]", marketOrderReq.getUserId(), marketOrderReq.getNumberId(), numberDetail);
@@ -468,7 +474,7 @@ public class OrderProcessor implements IOrderProcessor {
         return times.intValue();
     }
 
-    private OrderListRes buildOrderResp(ThemeNumberVo numberDetail, Long userId, String orderSn, Long id) {
+    private OrderListRes buildOrderResp(Long lockTime,ThemeNumberVo numberDetail, Long userId, String orderSn, Long id) {
         OrderListRes res = new OrderListRes();
         res.setId(id);
         res.setOrderSn(orderSn);
@@ -484,7 +490,7 @@ public class OrderProcessor implements IOrderProcessor {
         res.setThemeNumber(numberDetail.getThemeNumber());
         res.setStatus(0);
         res.setCreatedAt(new Date());
-        res.setExpire(180L);
+        res.setExpire(lockTime);
         res.setOrderType(StarConstants.OrderType.MARKET_GOODS.getName());
         return res;
     }

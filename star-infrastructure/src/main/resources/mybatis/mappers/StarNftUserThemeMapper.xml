@@ -70,6 +70,7 @@
                n.id                   AS number_id,
                n.theme_number         AS theme_number,
                u.series_theme_info_id AS theme_id,
+               n.price                AS star_price,
                u.pre_tax_price        AS price,
                t.theme_pic            AS theme_images
         FROM star_nft_user_theme u
@@ -84,7 +85,8 @@
 
     <update id="updateUserThemeMapping">
         UPDATE star_nft_user_theme
-        SET status = #{status}
+        SET status = #{status},
+            pre_tax_price = #{preTaxPrice}
         WHERE series_id = #{seriesId}
           AND series_theme_info_id = #{seriesThemeInfoId}
           AND series_theme_id = #{seriesThemeId}

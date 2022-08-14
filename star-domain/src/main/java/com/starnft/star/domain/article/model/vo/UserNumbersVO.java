@@ -32,6 +32,8 @@ public class UserNumbersVO {
     private String themeName;
     @ApiModelProperty("主题图片")
     private String themeImages;
+    @ApiModelProperty("买入价格")
+    private BigDecimal starPrice;
     @ApiModelProperty("购买价格")
     private BigDecimal price;
     @ApiModelProperty("状态")
