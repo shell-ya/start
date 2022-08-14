@@ -9,6 +9,7 @@ import com.starnft.star.domain.article.model.vo.UserNumbersVO;
 import com.starnft.star.domain.article.model.vo.UserSeriesVO;
 import com.starnft.star.domain.article.model.vo.UserThemeVO;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface UserThemeService {
@@ -20,7 +21,7 @@ public interface UserThemeService {
 
     UserNumbersVO queryUserNumberInfo(Long uid, Long numberId,UserNumberStatusEnum statusEnum);
 
-    Boolean modifyUserNumberStatus(Long uid, Long numberId,  UserNumberStatusEnum beforeStatusEnum,UserNumberStatusEnum statusEnum);
+    Boolean modifyUserNumberStatus(Long uid, Long numberId, BigDecimal price, UserNumberStatusEnum beforeStatusEnum, UserNumberStatusEnum statusEnum);
     Boolean modifyUserBatchNumberStatus(Long uid, List<Long> numberId,  UserNumberStatusEnum beforeStatusEnum,UserNumberStatusEnum statusEnum);
     ResponsePageResult<UserNumbersVO> queryUserArticleNumberInfoByThemeIds(Long uid, List<Long> themeIds, UserNumberStatusEnum statusEnum,Integer page,Integer size);
 

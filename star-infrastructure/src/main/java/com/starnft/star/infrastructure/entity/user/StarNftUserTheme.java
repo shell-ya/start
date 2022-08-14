@@ -102,6 +102,22 @@ public class StarNftUserTheme implements Serializable {
     @ApiModelProperty(value = "税后价格")
     private BigDecimal afterTaxPrice;
 
+
+    /**
+     * 买入价格
+     */
+    @TableField(value = "buy_price")
+    @ApiModelProperty(value = "买入价格")
+    private BigDecimal buyPrice;
+
+
+    /**
+     * 卖出价格
+     */
+    @TableField(value = "sell_price")
+    @ApiModelProperty(value = "卖出价格")
+    private BigDecimal sellPrice;
+
     /**
      * 创建时间
      */

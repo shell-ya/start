@@ -79,4 +79,17 @@ public class UserThemeMappingVO implements Serializable {
     @ApiModelProperty(value = "税后价格")
     private BigDecimal afterTaxPrice;
 
+    /**
+     * 买入价格
+     */
+    @ApiModelProperty(value = "买入价格")
+    private BigDecimal buyPrice;
+
+
+    /**
+     * 卖出价格
+     */
+    @ApiModelProperty(value = "卖出价格")
+    private BigDecimal sellPrice;
+
 }

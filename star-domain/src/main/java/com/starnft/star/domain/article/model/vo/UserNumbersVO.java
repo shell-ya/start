@@ -33,7 +33,9 @@ public class UserNumbersVO {
     @ApiModelProperty("主题图片")
     private String themeImages;
     @ApiModelProperty("买入价格")
-    private BigDecimal starPrice;
+    private BigDecimal buyPrice;
+    @ApiModelProperty("买出价格")
+    private BigDecimal sellPrice;
     @ApiModelProperty("购买价格")
     private BigDecimal price;
     @ApiModelProperty("状态")

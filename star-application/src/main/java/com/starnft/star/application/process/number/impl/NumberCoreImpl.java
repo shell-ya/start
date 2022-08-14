@@ -121,7 +121,7 @@ public class NumberCoreImpl implements INumberCore {
                             .afterPrice(request.getPrice())
                             .build());
             // 修改用户藏品状态
-            Boolean updUserNumberBool = userThemeService.modifyUserNumberStatus(uid, request.getNumberId(), UserNumberStatusEnum.PURCHASED, UserNumberStatusEnum.ON_CONSIGNMENT);
+            Boolean updUserNumberBool = userThemeService.modifyUserNumberStatus(uid, request.getNumberId(),request.getPrice(), UserNumberStatusEnum.PURCHASED, UserNumberStatusEnum.ON_CONSIGNMENT);
 
             return updBool && saveBool && updUserNumberBool;
         });
@@ -159,7 +159,7 @@ public class NumberCoreImpl implements INumberCore {
                             .build());
 
             // 还原用户藏品状态
-            Boolean updUserNumberBool = this.userThemeService.modifyUserNumberStatus(uid, request.getNumberId(), UserNumberStatusEnum.ON_CONSIGNMENT, UserNumberStatusEnum.PURCHASED);
+            Boolean updUserNumberBool = this.userThemeService.modifyUserNumberStatus(uid, request.getNumberId(),null, UserNumberStatusEnum.ON_CONSIGNMENT, UserNumberStatusEnum.PURCHASED);
 
             return updBool && saveBool && updUserNumberBool;
         });

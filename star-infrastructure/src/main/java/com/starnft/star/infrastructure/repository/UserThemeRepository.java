@@ -19,6 +19,7 @@ import com.starnft.star.infrastructure.tools.PageHelperInterface;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -84,9 +85,10 @@ public class UserThemeRepository implements IUserThemeRepository, PageHelperInte
     }
 
     @Override
-    public Boolean modifyUserNumberStatus(Long uid, Long numberId, UserNumberStatusEnum beforeStatusEnum, UserNumberStatusEnum statusEnum) {
+    public Boolean modifyUserNumberStatus(Long uid, Long numberId, BigDecimal price, UserNumberStatusEnum beforeStatusEnum, UserNumberStatusEnum statusEnum) {
         return this.starNftUserThemeMapper.update(StarNftUserTheme.builder()
                         .status(statusEnum.getCode())
+                        .sellPrice(price)
                         .updateAt(new Date())
                         .updateBy(String.valueOf(uid))
                         .build(),

@@ -14,6 +14,7 @@ import com.starnft.star.domain.component.RedisUtil;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -45,8 +46,8 @@ public class UserThemeServiceImpl implements UserThemeService {
     }
 
     @Override
-    public Boolean modifyUserNumberStatus(Long uid, Long numberId, UserNumberStatusEnum beforeStatusEnum, UserNumberStatusEnum statusEnum) {
-        return this.userThemeRepository.modifyUserNumberStatus(uid, numberId, beforeStatusEnum, statusEnum);
+    public Boolean modifyUserNumberStatus(Long uid, Long numberId, BigDecimal price, UserNumberStatusEnum beforeStatusEnum, UserNumberStatusEnum statusEnum) {
+        return this.userThemeRepository.modifyUserNumberStatus(uid, numberId, price,beforeStatusEnum, statusEnum);
     }
 
     @Override
