@@ -43,4 +43,5 @@ public interface INumberService {
     Boolean saveNumberCirculationRecord(NumberCirculationAddDTO numberCirculation);
     Boolean saveBatchNumberCirculationRecord(List<NumberCirculationAddDTO> numberCirculation);
 
+    Boolean modifyNumberOwnerBy(Long id, Long userId, Integer code);
 }
