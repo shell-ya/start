@@ -207,7 +207,10 @@ public enum RedisKey {
     COMPOSE_DRAW_STRATEGY(701, StarConstants.SERVICE_NAME.concat(".compose:draw:strategy"), 3L, TimeUnit.HOURS),
     COMPOSE_NUMBER_LOCK(702, StarConstants.SERVICE_NAME.concat(".compose:number:%s"), 3L, TimeUnit.MINUTES),
 
+    GOLD_COMPOSE(703,StarConstants.SERVICE_NAME.concat("compose.gold:permi:%s"),3L,TimeUnit.HOURS),
+    GOLD_COMPOSE_SUCCESS(704,StarConstants.SERVICE_NAME.concat("compose.gold:success:%s"),3L,TimeUnit.HOURS),
     IP_REQUEST_TIMES(111, StarConstants.SERVICE_NAME.concat(".ip:times"), 30L, TimeUnit.SECONDS);
+
     /**
      * 排行榜
      */

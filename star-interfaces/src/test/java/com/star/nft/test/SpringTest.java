@@ -30,6 +30,7 @@ import com.starnft.star.interfaces.StarApplication;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.util.Lists;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -195,5 +196,29 @@ public class SpringTest {
         messageSender.send("STAR-NOTICE:unread", Optional.ofNullable(NotificationVO.builder()
                 .toUid("10001").title("标题")
                 .intro("简介").sendTime(new Date()).content("内容").build()));
+    }
+
+    @Test
+    public void componse(){
+        ArrayList<Long> longs = Lists.newArrayList(
+                915512099L,
+                294592515L,
+                336673887L,
+                177704908L,
+                747556896L,
+                551997115L,
+                654232977L,
+                696700174L,
+                189879367L,
+                166745224L,
+                884363953L,
+                673887355L,
+                574112667L
+        );
+        for (Long id :
+                longs) {
+            redisUtil.sSet(String.format(RedisKey.GOLD_COMPOSE.getKey(),"2"),id);
+        }
+
     }
 }
