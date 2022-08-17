@@ -51,7 +51,7 @@ public enum StarError {
     BALANCE_NOT_ENOUGH("300001", "余额不足"),
     BALANCE_PAY_ERROR("300012", "余额支付失败"),
 
-
+    THIRD_PLAT_SELL("400001","该藏品在第三方平台售出，请下架"),
     COS_ERROR("500001", "cos异常"),
     MESSAGE_TOPIC_NOT_FOUND("400001", "TopicConstants 未找到相应topic,请检查配置"),
     PERSISTENT_FAIL("200002", "数据保存失败"),

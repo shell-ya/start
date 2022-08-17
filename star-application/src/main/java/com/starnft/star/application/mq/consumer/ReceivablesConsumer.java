@@ -32,22 +32,27 @@ public class ReceivablesConsumer implements RocketMQListener<WalletPayRequest> {
 
     @Override
     public void onMessage(WalletPayRequest payRequest) {
-        log.info("市场订单：{},交易成功添加卖方余额 消息实体:{}", payRequest.getOrderSn(), payRequest);
-        walletService.balanceVerify(payRequest.getUserId(), payRequest.getPayAmount());
-        //计算手续费
-        ReceivablesCalculateResult calculateResult = walletService.ReceivablesMoneyCalculate(new CalculateReq(payRequest.getPayAmount(), payRequest.getChannel()));
-        log.info("市场订单：{}，买方支付金额：{},卖方收款金额:{},交易手续费：{},版权费:{}", payRequest.getOrderSn(), payRequest.getPayAmount(),
-                calculateResult.getCalculated(), calculateResult.getServiceMoney(), calculateResult.getCopyrightMoney());
-        Supplier<Result> feeSupplier = () -> {
-            boolean isSuccess = walletService.feeProcess(payRequest.getOrderSn(), calculateResult.getServiceMoney().add(calculateResult.getCopyrightMoney()));
-            return isSuccess ? Result.buildSuccessResult() : Result.buildErrorResult("修改交易记录手续费失败");
-        };
-        payRequest.setPayAmount(new BigDecimal(calculateResult.getCalculated()));
-        payRequest.setDoModifyRecord(feeSupplier);
-        WalletPayResult walletPayResult = walletService.doWalletPay(payRequest);
-        if (!(ResultCode.SUCCESS.getCode().equals(walletPayResult.getStatus()))) {
-            log.error("修改余额失败：{}", payRequest);
-            throw new RuntimeException("修改余额失败");
+        try{
+            log.info("市场订单：{},交易成功添加卖方余额 消息实体:{}", payRequest.getOrderSn(), payRequest);
+            walletService.balanceVerify(0L,payRequest.getPayAmount());
+//        walletService.balanceVerify(payRequest.getFromUid(), payRequest.getPayAmount());
+            //计算手续费
+            ReceivablesCalculateResult calculateResult = walletService.ReceivablesMoneyCalculate(new CalculateReq(payRequest.getPayAmount(), payRequest.getChannel()));
+            log.info("市场订单：{}，买方支付金额：{},卖方收款金额:{},交易手续费：{},版权费:{}", payRequest.getOrderSn(), payRequest.getPayAmount(),
+                    calculateResult.getCalculated(), calculateResult.getServiceMoney(), calculateResult.getCopyrightMoney());
+            Supplier<Result> feeSupplier = () -> {
+                boolean isSuccess = walletService.feeProcess(payRequest.getOrderSn(), calculateResult.getServiceMoney().add(calculateResult.getCopyrightMoney()));
+                return isSuccess ? Result.buildSuccessResult() : Result.buildErrorResult("修改交易记录手续费失败");
+            };
+            payRequest.setPayAmount(calculateResult.getCalculated());
+            payRequest.setDoModifyRecord(feeSupplier);
+            WalletPayResult walletPayResult = walletService.doWalletPay(payRequest);
+            if (!(ResultCode.SUCCESS.getCode().equals(walletPayResult.getStatus()))) {
+                log.error("修改余额失败：{}", payRequest);
+                throw new RuntimeException("修改余额失败");
+            }
+        }finally {
+            walletService.threadClear();
         }
     }
 }

@@ -40,4 +40,6 @@ public interface INumberRepository {
     List<Integer> loadNotSellNumberNumCollection(Long themeId);
 
     List<NumberVO>  getNumberListByThemeInfoId(NumberQueryDTO numberQueryDTO);
+
+    Boolean thirdPlatSelling(Long userId,Long seriesThemeId);
 }

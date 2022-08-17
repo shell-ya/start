@@ -185,4 +185,9 @@ public class NumberServiceImpl implements INumberService {
         return null;
     }
 
+    @Override
+    public Boolean queryThirdPlatSell(Long userId,Long seriesThemeId){
+        return numberRepository.thirdPlatSelling(userId,seriesThemeId);
+    }
+
 }

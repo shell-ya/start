@@ -315,7 +315,7 @@ public class OrderProcessor implements IOrderProcessor {
         walletPayRequest.setTotalPayAmount(new BigDecimal(orderPayReq.getTotalPayAmount()));
 //        walletPayRequest.setFee(new BigDecimal(orderPayReq.getFee()));
 //        walletPayRequest.setTotalPayAmount(new BigDecimal(orderPayReq.getTotalPayAmount()));
-        walletPayRequest.setPayAmount(payAmount.signum() == -1 ? payAmount : payAmount.negate());
+        walletPayRequest.setPayAmount(payAmount.signum() == -1 ? payAmount.negate() : payAmount);
         walletPayRequest.setFromUid(orderPayReq.getUserId());
         walletPayRequest.setToUid(orderPayReq.getOwnerId());
         walletPayRequest.setUserId(orderPayReq.getOwnerId());
