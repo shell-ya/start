@@ -43,6 +43,7 @@ import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.service.IOrderService;
 import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
 import com.starnft.star.domain.order.service.stateflow.impl.OrderStateHandler;
+import com.starnft.star.domain.rank.core.rank.core.IRankService;
 import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.domain.theme.service.ThemeService;
@@ -56,6 +57,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.validation.annotation.Validated;
+import org.web3j.utils.Strings;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -83,7 +86,7 @@ public class OrderProcessor implements IOrderProcessor {
     private final WalletProducer walletProducer;
     private final ActivityEventProducer activityProducer;
 //    private final RebatesProducer rebatesProducer;
-
+    private final IRankService rankService;
     private final WhiteRuleContext whiteRuleContext;
 
     @Override
@@ -149,6 +152,7 @@ public class OrderProcessor implements IOrderProcessor {
         long stock = redisUtil.lGetListSize(stockKey);
         long poolStock = redisUtil.sGetSetSize(poolKey);
         String key = String.format(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), orderGrabReq.getThemeId());
+        String buyNumKey = String.format(RedisKey.SECKILL_BUY_GOODS_NUMBER.getKey(),orderGrabReq.getThemeId());
         if ((stock + poolStock) <= 0) {
             redisUtil.hdel(key, String.valueOf(orderGrabReq.getUserId()));
             log.error("库存不足 themeId: [{}] Time : [{}] stock : [{}]", orderGrabReq.getThemeId(), orderGrabReq.getTime(), stock);
@@ -162,6 +166,16 @@ public class OrderProcessor implements IOrderProcessor {
             if (orderGrabReq.getThemeId().equals(1002285892654821376L)){
                 Long userOrderedCount = redisUtil.hincr(key, String.valueOf(orderGrabReq.getUserId()), 1L);
                 if (userOrderedCount > 1) {
+                    log.error("防重复下单 uid: [{}] themeId : [{}] count : [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), userOrderedCount);
+                    throw new StarException(StarError.ORDER_REPETITION);
+                }
+            }
+
+            if (orderGrabReq.getThemeId().equals(1009469098485923840L)){
+
+                Long userOrderedCount = redisUtil.hincr(buyNumKey, String.valueOf(orderGrabReq.getUserId()), 1L);
+                redisUtil.hdecr(buyNumKey, String.valueOf(orderGrabReq.getUserId()), 1L);
+                if (userOrderedCount > 10) {
                     log.error("防重复下单 uid: [{}] themeId : [{}] count : [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), userOrderedCount);
                     throw new StarException(StarError.ORDER_REPETITION);
                 }
@@ -207,9 +221,9 @@ public class OrderProcessor implements IOrderProcessor {
     }
 
     @Override
-    public OrderPayDetailRes orderPay(OrderPayReq orderPayReq) {
+    public OrderPayDetailRes orderPay(@Validated OrderPayReq orderPayReq) {
         //验证支付凭证
-//        userService.assertPayPwdCheckSuccess(orderPayReq.getUserId(), orderPayReq.getPayToken());
+        userService.assertPayPwdCheckSuccess(orderPayReq.getUserId(), orderPayReq.getPayToken());
         //规则验证
         walletService.balanceVerify(orderPayReq.getUserId(), new BigDecimal(orderPayReq.getPayAmount()));
 
@@ -219,7 +233,7 @@ public class OrderProcessor implements IOrderProcessor {
         }
 
         if (orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())
-        && (Objects.isNull(orderPayReq.getOwnerId()) || 0L == orderPayReq.getOwnerId())
+        && (Objects.isNull(orderPayReq.getOwnerId()) || 0L == Long.parseLong(orderPayReq.getOwnerId()))
         ) {
             throw new StarException(StarError.ORDER_STATUS_ERROR,"请确认藏品拥有者id正确性");
         }
@@ -238,6 +252,9 @@ public class OrderProcessor implements IOrderProcessor {
                     return ResultCode.SUCCESS.getCode().equals(walletPayResult.getStatus()) && ResultCode.SUCCESS.getCode().equals(result.getCode()) && handover;
                 });
                 if (isSuccess) {
+
+                    redisUtil.hincr(String.format(RedisKey.SECKILL_BUY_GOODS_NUMBER.getKey(),orderPayReq.getThemeId()), String.valueOf(orderPayReq.getUserId()), 1L);
+
                     //市场订单交易成功 更新卖家余额
                     if (orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
                         walletProducer.receivablesCallback(createTranReq(orderPayReq));
@@ -245,7 +262,7 @@ public class OrderProcessor implements IOrderProcessor {
                     activityProducer.sendScopeMessage(createEventReq(orderPayReq));
 //                    rebatesProducer.sendRebatesMessage(createRebates(orderPayReq));
                     //todo 后面去掉
-                    if (!orderPayReq.getThemeId().equals(1002285892654821376L)) {
+                    if (!orderPayReq.getThemeId().equals(1002285892654821376L) || !orderPayReq.getThemeId().equals(1009469098485923840L)) {
                         String userOrderMapping = String.format(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), orderPayReq.getThemeId());
                         String orderInfo = (String) redisUtil.hget(userOrderMapping, String.valueOf(orderPayReq.getUserId()));
                         OrderVO orderCache = JSONUtil.toBean(orderInfo, OrderVO.class);
@@ -317,8 +334,8 @@ public class OrderProcessor implements IOrderProcessor {
 //        walletPayRequest.setTotalPayAmount(new BigDecimal(orderPayReq.getTotalPayAmount()));
         walletPayRequest.setPayAmount(payAmount.signum() == -1 ? payAmount.negate() : payAmount);
         walletPayRequest.setFromUid(orderPayReq.getUserId());
-        walletPayRequest.setToUid(orderPayReq.getOwnerId());
-        walletPayRequest.setUserId(orderPayReq.getOwnerId());
+        walletPayRequest.setToUid(Long.parseLong(orderPayReq.getOwnerId()));
+        walletPayRequest.setUserId(Long.parseLong(orderPayReq.getOwnerId()));
         walletPayRequest.setType(StarConstants.Transaction_Type.Sell.getCode());
 
         return walletPayRequest;
@@ -327,7 +344,7 @@ public class OrderProcessor implements IOrderProcessor {
     private HandoverReq buildHandOverReq(OrderPayReq orderPayReq) {
         HandoverReq handoverReq = new HandoverReq();
         handoverReq.setUid(orderPayReq.getUserId());
-        handoverReq.setFromUid(orderPayReq.getOwnerId());// TODO: 2022/6/23 publish id
+        handoverReq.setFromUid(Long.parseLong(orderPayReq.getOwnerId()));// TODO: 2022/6/23 publish id
         handoverReq.setToUid(orderPayReq.getUserId());
         handoverReq.setPreMoney(new BigDecimal(orderPayReq.getPayAmount()));
         handoverReq.setCurrMoney(new BigDecimal(orderPayReq.getPayAmount()));
@@ -351,7 +368,7 @@ public class OrderProcessor implements IOrderProcessor {
         walletPayRequest.setTotalPayAmount(new BigDecimal(orderPayReq.getTotalPayAmount()));
         walletPayRequest.setPayAmount(payAmount.signum() == -1 ? payAmount : payAmount.negate());
         walletPayRequest.setFromUid(orderPayReq.getUserId());
-        walletPayRequest.setToUid(orderPayReq.getOwnerId());
+        walletPayRequest.setToUid(Long.parseLong(orderPayReq.getOwnerId()));
         return walletPayRequest;
     }
 

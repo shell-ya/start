@@ -95,7 +95,7 @@ public class RankProcessor implements IRankProcessor {
 
         if (Objects.isNull(rankDefinition)){
             rankDefinition = new RankDefinition();
-            rankDefinition.setRankName("launch_rank");
+            rankDefinition.setRankName("m_launch_rank");
         }
 
         return rankDefinition;

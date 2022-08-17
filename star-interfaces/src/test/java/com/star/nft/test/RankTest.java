@@ -4,6 +4,8 @@ import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.json.JSONUtil;
 import com.starnft.star.application.process.user.UserCore;
+import com.starnft.star.application.process.user.req.UserGatheringInfoReq;
+import com.starnft.star.application.process.user.res.UserGatheringInfoRes;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.template.TemplateHelper;
 import com.starnft.star.common.utils.RandomUtil;
@@ -22,6 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
+import org.web3j.utils.Strings;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -44,6 +47,29 @@ public class RankTest {
 
     @Resource
     UserCore userCore;
+
+    @Test
+    public void getBuy(){
+        Long m_launch_rank = rankService.getBuyNum("m_launch_rank", Long.parseLong("229978589"));
+    }
+
+
+    @Test
+    public void getRank(){
+        List<RankingsItem> m_launch_rnak = rankService.getRankDatasByPage("m_launch_rank", 0, 300);
+        for (RankingsItem item :
+                m_launch_rnak) {
+            if (Strings.isEmpty(item.getPhone())) {
+                    UserGatheringInfoRes userGatheringInfoRes = userCore.ObtainUserGatheringInfo(new UserGatheringInfoReq(item.getAccount()));
+                    rankService.setUserPhoneMapping("m_launch_rank",item.getAccount().toString(),userGatheringInfoRes.getPhone());
+                }
+            }
+    }
+
+    @Test
+    public void putBuyNum(){
+        rankService.putBuyNum("m_launch",787521075L);
+    }
 
     @Test
     public void user(){

@@ -158,6 +158,11 @@ public class NumberServiceImpl implements INumberService {
         return this.numberRepository.saveBatchNumberCirculationRecord(numberCirculation);
     }
 
+    @Override
+    public Boolean modifyNumberOwnerBy(Long id, Long userId, Integer code) {
+       return this.numberRepository.modifyNumberStatus(id,userId,code);
+    }
+
     private UserThemeMappingVO createMapping(HandoverReq handoverReq) {
         UserThemeMappingVO userThemeMappingVO = new UserThemeMappingVO();
         userThemeMappingVO.setUserId(String.valueOf(handoverReq.getUid()));

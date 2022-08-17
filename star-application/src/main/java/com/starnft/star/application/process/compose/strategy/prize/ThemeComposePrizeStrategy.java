@@ -1,5 +1,6 @@
 package com.starnft.star.application.process.compose.strategy.prize;
 
+import com.starnft.star.common.enums.NumberStatusEnum;
 import com.starnft.star.domain.compose.model.res.PrizeRes;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.enums.PrizeEnum;
@@ -42,6 +43,7 @@ public class ThemeComposePrizeStrategy implements ComposePrizeStrategy {
         Boolean lock = redisLockUtils.lock(String.format(RedisKey.COMPOSE_NUMBER_LOCK.getKey(), themeNumberVo.getId()), RedisKey.COMPOSE_NUMBER_LOCK.getTime());
         Assert.isTrue(lock, () -> new StarException("合成人数过多，请稍后再试～"));
         //物品派发
+        iNumberService.modifyNumberOwnerBy(themeNumberVo.getId(),composeManageReq.getUserId(), NumberStatusEnum.SOLD.getCode());
         iNumberService.createUserNumberMapping(getUserThemeMappingVO(composeManageReq, themeNumberVo));
         redisLockUtils.unlock(String.format(RedisKey.COMPOSE_NUMBER_LOCK.getKey(), themeNumberVo.getId()));
         PrizeRes prizeRes = new PrizeRes();

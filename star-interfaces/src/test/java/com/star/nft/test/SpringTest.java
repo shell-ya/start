@@ -15,6 +15,9 @@ import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.template.FreeMakerTemplateHelper;
 import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.order.repository.BuyNum;
+import com.starnft.star.domain.order.repository.IOrderRepository;
+import com.starnft.star.domain.order.service.impl.OrderService;
 import com.starnft.star.domain.payment.config.container.PayConf;
 import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.payment.router.IPaymentRouter;
@@ -34,7 +37,9 @@ import org.assertj.core.util.Lists;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -55,8 +60,24 @@ public class SpringTest {
     final WalletService walletService;
     final ThemeCore themeCore;
 
+    final IOrderRepository orderRepository;
+    final OrderService orderService;
+
     final RedisUtil redisUtil;
     final IOrderProcessor orderProcessor;
+
+    @Test
+    public void add(){
+        String buyNumKey = String.format(RedisKey.SECKILL_BUY_GOODS_NUMBER.getKey(),1009469098485923840L);
+        List<BuyNum> buyNums = orderRepository.queryBuyNum();
+        for (BuyNum num :
+                buyNums) {
+
+            redisUtil.hincr(buyNumKey, String.valueOf(num.getUserId()), num.getCount());
+        }
+//        redisUtil.hincr(buyNumKey, String.valueOf(294592515L), 9L);
+//        redisUtil.hincr(buyNumKey, String.valueOf(861596178L), 9L);
+    }
 
     @Test
     void redisTest() {
