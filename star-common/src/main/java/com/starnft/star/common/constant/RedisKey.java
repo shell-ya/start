@@ -147,6 +147,12 @@ public enum RedisKey {
     SECKILL_ORDER_REPETITION_TIMES(504, StarConstants.SERVICE_NAME.concat(".seckill:ordered.times:%s"), -1L, TimeUnit.HOURS),
 
     /**
+     * 买入藏品数量
+     */
+
+    SECKILL_BUY_GOODS_NUMBER(555,StarConstants.SERVICE_NAME.concat(".seckill:goods.num:%s"),-1L,TimeUnit.HOURS),
+
+    /**
      * 用户订单 hash
      */
     SECKILL_ORDER_USER_MAPPING(505, StarConstants.SERVICE_NAME.concat(".seckill:ordered.mapping:%s"), -1L, TimeUnit.HOURS),

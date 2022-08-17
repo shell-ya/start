@@ -58,6 +58,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
+import org.web3j.utils.Strings;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -151,7 +152,7 @@ public class OrderProcessor implements IOrderProcessor {
         long stock = redisUtil.lGetListSize(stockKey);
         long poolStock = redisUtil.sGetSetSize(poolKey);
         String key = String.format(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), orderGrabReq.getThemeId());
-//        String buyNum = String.format(RedisKey.RANK_BUT_NUM.getKey(),"m_launch_rank");
+        String buyNumKey = String.format(RedisKey.SECKILL_BUY_GOODS_NUMBER.getKey(),orderGrabReq.getThemeId());
         if ((stock + poolStock) <= 0) {
             redisUtil.hdel(key, String.valueOf(orderGrabReq.getUserId()));
             log.error("库存不足 themeId: [{}] Time : [{}] stock : [{}]", orderGrabReq.getThemeId(), orderGrabReq.getTime(), stock);
@@ -171,9 +172,9 @@ public class OrderProcessor implements IOrderProcessor {
             }
 
             if (orderGrabReq.getThemeId().equals(1009469098485923840L)){
-//                rankService.getBuyNum("m_launch_rank", orderGrabReq.getUserId());
-//                Object hget = redisUtil.hget(buyNum, orderGrabReq.getUserId().toString());
-                Long userOrderedCount = rankService.getBuyNum("m_launch_rank", orderGrabReq.getUserId());
+
+                Long userOrderedCount = redisUtil.hincr(buyNumKey, String.valueOf(orderGrabReq.getUserId()), 1L);
+                redisUtil.hdecr(buyNumKey, String.valueOf(orderGrabReq.getUserId()), 1L);
                 if (userOrderedCount > 10) {
                     log.error("防重复下单 uid: [{}] themeId : [{}] count : [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), userOrderedCount);
                     throw new StarException(StarError.ORDER_REPETITION);
@@ -251,6 +252,9 @@ public class OrderProcessor implements IOrderProcessor {
                     return ResultCode.SUCCESS.getCode().equals(walletPayResult.getStatus()) && ResultCode.SUCCESS.getCode().equals(result.getCode()) && handover;
                 });
                 if (isSuccess) {
+
+                    redisUtil.hincr(String.format(RedisKey.SECKILL_BUY_GOODS_NUMBER.getKey(),orderPayReq.getThemeId()), String.valueOf(orderPayReq.getUserId()), 1L);
+
                     //市场订单交易成功 更新卖家余额
                     if (orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
                         walletProducer.receivablesCallback(createTranReq(orderPayReq));

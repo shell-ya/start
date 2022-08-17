@@ -11,6 +11,7 @@ import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.order.model.vo.OrderVO;
+import com.starnft.star.domain.order.repository.BuyNum;
 import com.starnft.star.domain.order.repository.IOrderRepository;
 import com.starnft.star.infrastructure.entity.order.StarNftOrder;
 import com.starnft.star.infrastructure.mapper.order.StarNftOrderMapper;
@@ -172,6 +173,12 @@ public class OrderRepository implements IOrderRepository {
         List<StarNftOrder> starNftOrders = starNftOrderMapper.selectList(new LambdaQueryWrapper<StarNftOrder>().eq(Objects.nonNull(userId), StarNftOrder::getUserId, userId)
                 .eq(StarNftOrder::getStatus, StarConstants.ORDER_STATE.WAIT_PAY.getCode()));
         return BeanColverUtil.colverList(starNftOrders, OrderVO.class);
+    }
+
+    @Override
+    public List<BuyNum> queryBuyNum() {
+
+        return this.starNftOrderMapper.queryBuyNum();
     }
 
     private StarNftOrder queryOrder(Long uid, String orderSn) {
