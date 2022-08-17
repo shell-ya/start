@@ -102,6 +102,11 @@ public class RankServiceImpl implements IRankService {
     }
 
     @Override
+    public Long getBuyNum(String rankName,Long userId){
+        return Long.parseLong((String) redisTemplate.opsForHash().get(String.format(RedisKey.RANK_BUT_NUM.getKey(),rankName),userId.toString()));
+    }
+
+    @Override
     public long[] put(String rankName, int id, long... value) {
         return new long[0];
     }
@@ -206,7 +211,8 @@ public class RankServiceImpl implements IRankService {
             if (validKeys.contains(totalEntry.getKey())){
                 item.setValid(2);
             }
-            item.setBuyNum( Long.valueOf((String) redisTemplate.opsForHash().get(String.format(RedisKey.RANK_BUT_NUM.getKey(),rankName), item.getAccount())));
+            Object buyNum = redisTemplate.opsForHash().get(String.format(RedisKey.RANK_BUT_NUM.getKey(), rankName), item.getAccount());
+            item.setBuyNum(Objects.isNull(buyNum) ? 0 : Long.parseLong((String) buyNum));
 
             items.add(item);
         }

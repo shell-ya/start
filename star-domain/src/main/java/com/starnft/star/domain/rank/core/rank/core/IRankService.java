@@ -47,6 +47,8 @@ public interface IRankService {
     public Double validPut(String rankName, String  key, double value, RankItemMetaData rankItemMetaData);
 
     public Long putBuyNum(String rankName, Long  userId);
+
+    public Long getBuyNum(String rankName,Long userId);
     /**
      * 设置一个数据，如果该id存在，替换为当前数据
      * @param rankName 排行的名字

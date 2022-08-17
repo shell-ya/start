@@ -102,7 +102,7 @@ public class MarketTest {
         orderPayReq.setThemeId(1002285892654821376L);
         orderPayReq.setTotalPayAmount("123");
         orderPayReq.setType(3);
-        orderPayReq.setOwnerId(294592515L);
+//        orderPayReq.setOwnerId(294592515L);
 //        orderPayReq.setToUid(320266671L);
 //        orderPayReq.setPayToken();
 //        orderPayReq.setOutTradeNo();
