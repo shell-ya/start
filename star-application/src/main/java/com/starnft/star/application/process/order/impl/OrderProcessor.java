@@ -167,6 +167,14 @@ public class OrderProcessor implements IOrderProcessor {
                 }
             }
 
+            if (orderGrabReq.getThemeId().equals(1008402319553220608L)){
+                Long userOrderedCount = redisUtil.hincr(key, String.valueOf(orderGrabReq.getUserId()), 1L);
+                if (userOrderedCount > 10) {
+                    log.error("防重复下单 uid: [{}] themeId : [{}] count : [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), userOrderedCount);
+                    throw new StarException(StarError.ORDER_REPETITION);
+                }
+            }
+
             //排队中状态
             redisUtil.hset(String.format(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), orderGrabReq.getThemeId()),
                     String.valueOf(orderGrabReq.getUserId()), JSONUtil.toJsonStr(new OrderGrabStatus(orderGrabReq.getUserId(), 0, null, orderGrabReq.getTime())));
@@ -245,7 +253,7 @@ public class OrderProcessor implements IOrderProcessor {
                     activityProducer.sendScopeMessage(createEventReq(orderPayReq));
 //                    rebatesProducer.sendRebatesMessage(createRebates(orderPayReq));
                     //todo 后面去掉
-                    if (!orderPayReq.getThemeId().equals(1002285892654821376L)) {
+                    if (!orderPayReq.getThemeId().equals(1002285892654821376L) || !orderPayReq.getThemeId().equals(1008402319553220608L)) {
                         String userOrderMapping = String.format(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), orderPayReq.getThemeId());
                         String orderInfo = (String) redisUtil.hget(userOrderMapping, String.valueOf(orderPayReq.getUserId()));
                         OrderVO orderCache = JSONUtil.toBean(orderInfo, OrderVO.class);

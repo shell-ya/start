@@ -1,11 +1,8 @@
 package com.starnft.star.domain.rank.core.rank.core;
 
-import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
 import com.starnft.star.domain.rank.core.rank.model.RankItemMetaData;
 import com.starnft.star.domain.rank.core.rank.model.res.InvitationHistoryItem;
-import com.starnft.star.domain.rank.core.rank.model.res.InvitationItem;
-import com.starnft.star.domain.rank.core.rank.model.res.Rankings;
 import com.starnft.star.domain.rank.core.rank.model.res.RankingsItem;
 
 import java.util.List;
@@ -48,6 +45,8 @@ public interface IRankService {
      */
     public Double put(String rankName, String  key, double value, RankItemMetaData rankItemMetaData);
     public Double validPut(String rankName, String  key, double value, RankItemMetaData rankItemMetaData);
+
+    public Long putBuyNum(String rankName, Long  userId);
     /**
      * 设置一个数据，如果该id存在，替换为当前数据
      * @param rankName 排行的名字

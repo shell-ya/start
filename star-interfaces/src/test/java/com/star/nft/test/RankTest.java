@@ -46,6 +46,11 @@ public class RankTest {
     UserCore userCore;
 
     @Test
+    public void putBuyNum(){
+        rankService.putBuyNum("m_launch",787521075L);
+    }
+
+    @Test
     public void user(){
         int num = 1;
         StringBuilder sb = new StringBuilder();

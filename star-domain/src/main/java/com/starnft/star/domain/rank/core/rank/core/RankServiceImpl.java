@@ -5,22 +5,18 @@ import com.google.common.collect.Lists;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
-import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
 import com.starnft.star.domain.rank.core.rank.model.RankItemMetaData;
 import com.starnft.star.domain.rank.core.rank.model.res.InvitationHistoryItem;
-import com.starnft.star.domain.rank.core.rank.model.res.InvitationItem;
-import com.starnft.star.domain.rank.core.rank.model.res.Rankings;
 import com.starnft.star.domain.rank.core.rank.model.res.RankingsItem;
 import com.starnft.star.domain.user.service.IUserService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.ListUtils;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -32,6 +28,11 @@ public class RankServiceImpl implements IRankService {
     @Autowired
     @Qualifier("RankRedisTemplate")
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    @Qualifier("redisTemplate")
+    private RedisTemplate serializableRedisTemplate;
+
     @Autowired
     private IUserService iUserService;
     @Override
@@ -86,13 +87,18 @@ public class RankServiceImpl implements IRankService {
 
         Boolean isSetSuccess = redisTemplate.opsForHash().putIfAbsent(String.format(RedisKey.RANK_VALID_USER.getKey(), rankName, key), rankItemMetaData.getChildrenId().toString(), JSONUtil.toJsonStr(rankItemMetaData));
         Double result=null;
-        if (isSetSuccess) {
+//        if (isSetSuccess) {
             result = redisTemplate.opsForZSet().incrementScore(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), key, value);
-        }
+//        }
 
 
         //总榜单
         return result;
+    }
+
+    @Override
+    public Long putBuyNum(String rankName, Long userId) {
+        return redisTemplate.opsForHash().increment(String.format(RedisKey.RANK_BUT_NUM.getKey(),rankName),userId.toString(),1L);
     }
 
     @Override
@@ -154,18 +160,18 @@ public class RankServiceImpl implements IRankService {
     @Override
     public List<RankingsItem> getRankDatasByPage(String rankName, int page, int pageSize) {
 
-        Set set = redisTemplate.opsForZSet().reverseRange(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), page, pageSize );
-            if (Objects.isNull(set)) return null;
+        Set<ZSetOperations.TypedTuple<String>> set = redisTemplate.opsForZSet().reverseRangeWithScores(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), page, pageSize);
+        if (Objects.isNull(set)) return null;
 
         List<RankingsItem> items = Lists.newArrayList();
-        for (Object userId :
+        for (ZSetOperations.TypedTuple userId :
                 set) {
             RankingsItem rankingsItem = new RankingsItem();
 //            rankingsItem.setAccount(Long.valueOf((String) userId));
-            rankingsItem.setTotal(redisTemplate.opsForHash().size(String.format(RedisKey.RANK_TOTAL_USER.getKey(),rankName,userId)));
-            rankingsItem.setValid(redisTemplate.opsForHash().size(String.format(RedisKey.RANK_VALID_USER.getKey(),rankName,userId)));
-            rankingsItem.setPhone((String) redisTemplate.opsForHash().get(String.format(RedisKey.RANK_USER_MAPPING.getKey(), rankName), userId));
-            rankingsItem.setAccount(Long.valueOf(userId.toString()));
+//            rankingsItem.setTotal(redisTemplate.opsForHash().size(String.format(RedisKey.RANK_TOTAL_USER.getKey(),rankName,userId)));
+            rankingsItem.setValid(userId.getScore().longValue() - 1L);
+            rankingsItem.setPhone((String) redisTemplate.opsForHash().get(String.format(RedisKey.RANK_USER_MAPPING.getKey(), rankName), userId.getValue()));
+            rankingsItem.setAccount(Long.valueOf((String) userId.getValue()));
             items.add(rankingsItem);
         }
 
@@ -200,6 +206,8 @@ public class RankServiceImpl implements IRankService {
             if (validKeys.contains(totalEntry.getKey())){
                 item.setValid(2);
             }
+            item.setBuyNum( Long.valueOf((String) redisTemplate.opsForHash().get(String.format(RedisKey.RANK_BUT_NUM.getKey(),rankName), item.getAccount())));
+
             items.add(item);
         }
 
