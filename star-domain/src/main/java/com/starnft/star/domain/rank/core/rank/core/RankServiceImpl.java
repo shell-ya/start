@@ -18,6 +18,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
+import org.web3j.utils.Strings;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -103,7 +104,11 @@ public class RankServiceImpl implements IRankService {
 
     @Override
     public Long getBuyNum(String rankName,Long userId){
-        return Long.parseLong((String) redisTemplate.opsForHash().get(String.format(RedisKey.RANK_BUT_NUM.getKey(),rankName),userId.toString()));
+        String value = (String) redisTemplate.opsForHash().get(String.format(RedisKey.RANK_BUT_NUM.getKey(),rankName),userId.toString());
+
+        if (Strings.isEmpty(value)) value = "1";
+
+        return Long.parseLong(value);
     }
 
     @Override

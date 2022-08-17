@@ -50,7 +50,7 @@ public class RankTest {
 
     @Test
     public void getBuy(){
-        Long m_launch_rank = rankService.getBuyNum("m_launch_rank", Long.parseLong("571629646"));
+        Long m_launch_rank = rankService.getBuyNum("m_launch_rank", Long.parseLong("00000000000000"));
     }
 
 
