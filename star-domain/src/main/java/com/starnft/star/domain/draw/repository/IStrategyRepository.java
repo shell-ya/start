@@ -35,7 +35,7 @@ public interface IStrategyRepository {
     List<String> queryNoStockStrategyAwardList(Long strategyId);
 
     /**
-     * 扣减库存
+     * 扣减库存 todo modify operation to redis
      * @param strategyId 策略ID
      * @param awardId    奖品ID
      * @return           扣减结果

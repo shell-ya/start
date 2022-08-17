@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * @description: 必中奖策略抽奖，排掉已经中奖的概率，重新计算中奖范围
@@ -61,6 +62,11 @@ public class EntiretyRateRandomDrawAlgorithm extends BaseAlgorithm {
 
         // 返回中奖结果
         return awardId;
+    }
+
+    @Override
+    public String boundMoving(Long strategyId, String awardId, BiFunction<Long, String, Boolean> deductStock) {
+        throw new RuntimeException("该策略无次操作！");
     }
 
 }

@@ -1,7 +1,9 @@
 package com.starnft.star.domain.draw.service.draw;
 
 
+import com.starnft.star.domain.activity.model.vo.DrawActivityVO;
 import com.starnft.star.domain.draw.model.req.DrawReq;
+import com.starnft.star.domain.draw.model.req.PartakeReq;
 import com.starnft.star.domain.draw.model.res.DrawResult;
 
 /**
@@ -15,5 +17,8 @@ public interface IDrawExec {
      * @return    中奖结果
      */
     DrawResult doDrawExec(DrawReq req);
+
+
+    DrawActivityVO getDrawActivity(PartakeReq partakeReq);
 
 }

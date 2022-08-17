@@ -717,6 +717,16 @@ public class DateUtil {
         return dateMenus;
     }
 
+    public static void main(String[] args) {
+        List<Date> dateMenus = getDateMenus(1);
+
+        for (Date dateMenu : dateMenus) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATETIME_FORMATTER);
+            System.out.println(simpleDateFormat.format(dateMenu));
+        }
+//        Date date = toDayStartHour(new Date());
+//        System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date));
+    }
 
     /***
      * 获取指定日期的凌晨

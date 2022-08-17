@@ -3,6 +3,7 @@ package com.starnft.star.domain.draw.service.algorithm;
 import com.starnft.star.domain.draw.model.vo.AwardRateVO;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * @description: 抽奖算法接口
@@ -29,22 +30,31 @@ public interface IDrawAlgorithm {
      * @param strategyMode      抽奖策略模式
      * @param awardRateInfoList 奖品概率配置集合 「值示例：AwardRateInfo.awardRate = 0.04」
      */
-    void initRateTuple(Long strategyId,Integer strategyMode, List<AwardRateVO> awardRateInfoList);
+    void initRateTuple(Long strategyId, Integer strategyMode, List<AwardRateVO> awardRateInfoList);
 
     /**
      * 判断是否已经，做了数据初始化
-     * @param strategyId    策略ID
-     * @return              判断结果
+     *
+     * @param strategyId 策略ID
+     * @return 判断结果
      */
-     boolean isExist(Long strategyId);
+    boolean isExist(Long strategyId);
 
     /**
      * SecureRandom 生成随机数，索引到对应的奖品信息返回结果
      *
-     * @param strategyId        策略ID
-     * @param excludeAwardIds   排除掉已经不能作为抽奖的奖品ID，留给风控和空库存使用
-     * @return                  中奖结果
+     * @param strategyId      策略ID
+     * @param excludeAwardIds 排除掉已经不能作为抽奖的奖品ID，留给风控和空库存使用
+     * @return 中奖结果
      */
     String randomDraw(Long strategyId, List<String> excludeAwardIds);
+
+    /**
+     * 奖品库存不足轮空 向下自动偏移
+     * @param strategyId
+     * @param awardId
+     * @return
+     */
+    String boundMoving(Long strategyId, String awardId, BiFunction<Long,String,Boolean> deductStock);
 
 }

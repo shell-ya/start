@@ -6,6 +6,7 @@ import com.starnft.star.domain.draw.service.algorithm.BaseAlgorithm;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.function.BiFunction;
 
 /**
  * @description: 单项随机概率抽奖，抽到一个已经排掉的奖品则未中奖
@@ -34,6 +35,11 @@ public class SingleRateRandomDrawAlgorithm extends BaseAlgorithm {
         }
 
         return awardId;
+    }
+
+    @Override
+    public String boundMoving(Long strategyId, String awardId, BiFunction<Long, String, Boolean> deductStock) {
+        throw new RuntimeException("该策略无次操作！");
     }
 
 }

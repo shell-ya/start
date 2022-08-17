@@ -681,7 +681,9 @@ public class StarConstants {
         /**
          * 总体概率：如果A奖品抽空后，B和C奖品的概率按照 3:5 均分，相当于B奖品中奖概率由 0.3 升为 0.375
          */
-        ENTIRETY(2, "总体概率");
+        ENTIRETY(2, "总体概率"),
+
+        BLANKOFFSET(3, "奖品为空偏移概率");
 
         private Integer code;
         private String info;
