@@ -3,10 +3,7 @@ package com.starnft.star.domain.number.repository;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.number.model.dto.*;
 import com.starnft.star.domain.number.model.req.NumberReq;
-import com.starnft.star.domain.number.model.vo.NumberDetailVO;
-import com.starnft.star.domain.number.model.vo.NumberVO;
-import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
-import com.starnft.star.domain.number.model.vo.UserThemeMappingVO;
+import com.starnft.star.domain.number.model.vo.*;
 
 import java.util.List;
 
