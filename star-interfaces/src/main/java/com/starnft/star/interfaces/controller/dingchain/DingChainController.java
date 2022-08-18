@@ -35,9 +35,9 @@ public class DingChainController {
         return iNumberService.getNumberDingList();
     }
 
-    @RequestMapping("price")
-    @TokenIgnore
-    public Boolean price(@RequestParam("price") BigDecimal price){
-        return iNumberService.managePrice(price);
-    }
+//    @RequestMapping("price")
+//    @TokenIgnore
+//    public Boolean price(@RequestParam("price") BigDecimal price){
+//        return iNumberService.managePrice(price);
+//    }
 }
