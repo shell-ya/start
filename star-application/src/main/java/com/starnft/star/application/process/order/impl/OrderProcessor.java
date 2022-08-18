@@ -3,6 +3,7 @@ package com.starnft.star.application.process.order.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONUtil;
+import com.google.common.collect.Lists;
 import com.starnft.star.application.mq.producer.activity.ActivityEventProducer;
 import com.starnft.star.application.mq.producer.order.OrderProducer;
 import com.starnft.star.application.mq.producer.wallet.WalletProducer;
@@ -60,6 +61,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.web3j.utils.Strings;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
@@ -392,6 +394,32 @@ public class OrderProcessor implements IOrderProcessor {
 
     @Override
     public OrderListRes marketOrder(MarketOrderReq marketOrderReq) {
+
+
+        ArrayList<Long> objects = Lists.newArrayList();
+        objects.add(799041013L);
+        objects.add(214502860L);
+        objects.add(336673887L);
+        objects.add(899131914L);
+        objects.add(915512099L);
+        objects.add(546998827L);
+        objects.add(306868603L);
+        objects.add(788013220L);
+        if (!objects.contains(marketOrderReq.getUserId())){
+            // 恶意下单校验
+            Object record = redisUtil.get(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), marketOrderReq.getUserId()));
+            if (record != null) {
+                log.error("恶意下单校验 uid: [{}] record: [{}]", marketOrderReq.getUserId(), record);
+                throw new StarException(StarError.ORDER_CANCEL_TIMES_OVERFLOW);
+            }
+
+            Integer breakTimes = (Integer) redisUtil.get(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), marketOrderReq.getUserId()));
+            if (Objects.nonNull(breakTimes) && breakTimes >= 3) {
+                redisUtil.set(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), marketOrderReq.getUserId()), marketOrderReq.getUserId(), RedisKey.ORDER_BREAK_RECORD.getTime());
+                log.error("恶意下单校验 uid: [{}] breakTimes: [{}]", marketOrderReq.getUserId(), breakTimes);
+                throw new StarException(StarError.ORDER_CANCEL_TIMES_OVERFLOW);
+            }
+        }
 
         //待支付订单判断
         if (havingOrder(marketOrderReq.getUserId())) {
