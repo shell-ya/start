@@ -263,23 +263,23 @@ public class OrderProcessor implements IOrderProcessor {
                     }
 //                    rebatesProducer.sendRebatesMessage(createRebates(orderPayReq));
                     //todo 后面去掉
-                    if (!orderPayReq.getThemeId().equals(1002285892654821376L) || !orderPayReq.getThemeId().equals(1009469098485923840L)) {
-                        String userOrderMapping = String.format(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), orderPayReq.getThemeId());
-                        String orderInfo = (String) redisUtil.hget(userOrderMapping, String.valueOf(orderPayReq.getUserId()));
-                        OrderVO orderCache = JSONUtil.toBean(orderInfo, OrderVO.class);
-                        String startTime = orderCache.getRemark();
-                        String startTimeTrim = com.starnft.star.common.utils.DateUtil.date2Str(new Date());
-                        if (Long.parseLong(startTime) > Long.parseLong(startTimeTrim)) {
-                            Long times = 0L;
-                            synchronized (this) {
-                                redisUtil.hincr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L);
-                                times = redisUtil.hdecr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L);
-                            }
-                            if (redisUtil.hdecr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L) <= 0) {
-                                redisUtil.hdel(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()));
-                            }
-                        }
-                    }
+//                    if (!orderPayReq.getThemeId().equals(1002285892654821376L) || !orderPayReq.getThemeId().equals(1009469098485923840L)) {
+//                        String userOrderMapping = String.format(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), orderPayReq.getThemeId());
+//                        String orderInfo = (String) redisUtil.hget(userOrderMapping, String.valueOf(orderPayReq.getUserId()));
+//                        OrderVO orderCache = JSONUtil.toBean(orderInfo, OrderVO.class);
+//                        String startTime = orderCache.getRemark();
+//                        String startTimeTrim = com.starnft.star.common.utils.DateUtil.date2Str(new Date());
+//                        if (Long.parseLong(startTime) > Long.parseLong(startTimeTrim)) {
+//                            Long times = 0L;
+//                            synchronized (this) {
+//                                redisUtil.hincr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L);
+//                                times = redisUtil.hdecr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L);
+//                            }
+//                            if (redisUtil.hdecr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L) <= 0) {
+//                                redisUtil.hdel(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()));
+//                            }
+//                        }
+//                    }
                     return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn());
                 }
                 throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "订单处理异常！");
