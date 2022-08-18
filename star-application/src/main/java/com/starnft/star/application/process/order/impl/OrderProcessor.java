@@ -393,6 +393,12 @@ public class OrderProcessor implements IOrderProcessor {
     @Override
     public OrderListRes marketOrder(MarketOrderReq marketOrderReq) {
 
+        //待支付订单判断
+        if (havingOrder(marketOrderReq.getUserId())) {
+            throw new StarException(StarError.ORDER_DONT_PAY_ERROR);
+        }
+
+
         ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(marketOrderReq.getNumberId());
         //禁止购买自己售出商品
         if (marketOrderReq.getUserId().equals(numberDetail.getOwnerBy()))

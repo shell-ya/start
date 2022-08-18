@@ -53,6 +53,7 @@ public class OrderPayReq implements Serializable {
     private String channel;
 
     @ApiModelProperty(value = "支付密码校验凭证")
+    @NotBlank(message = "payToken could not be null")
     private String payToken;
 
 
