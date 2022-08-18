@@ -258,8 +258,9 @@ public class OrderProcessor implements IOrderProcessor {
                     //市场订单交易成功 更新卖家余额
                     if (orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
                         walletProducer.receivablesCallback(createTranReq(orderPayReq));
+                    }else {
+                        activityProducer.sendScopeMessage(createEventReq(orderPayReq));
                     }
-                    activityProducer.sendScopeMessage(createEventReq(orderPayReq));
 //                    rebatesProducer.sendRebatesMessage(createRebates(orderPayReq));
                     //todo 后面去掉
                     if (!orderPayReq.getThemeId().equals(1002285892654821376L) || !orderPayReq.getThemeId().equals(1009469098485923840L)) {

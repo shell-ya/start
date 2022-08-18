@@ -2,6 +2,8 @@ package com.starnft.star.application.mq.consumer;
 
 import com.starnft.star.common.Result;
 import com.starnft.star.common.ResultCode;
+import com.starnft.star.common.constant.RedisKey;
+import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.wallet.model.req.CalculateReq;
 import com.starnft.star.domain.wallet.model.req.TransReq;
 import com.starnft.star.domain.wallet.model.req.WalletPayRequest;
@@ -29,11 +31,17 @@ import java.util.function.Supplier;
 public class ReceivablesConsumer implements RocketMQListener<WalletPayRequest> {
 
     final WalletService walletService;
+    final RedisUtil redisUtil;
 
     @Override
     public void onMessage(WalletPayRequest payRequest) {
         try{
             log.info("市场订单：{},交易成功添加卖方余额 消息实体:{}", payRequest.getOrderSn(), payRequest);
+            Long processed = redisUtil.hincr(RedisKey.MARKET_RECEIVABLES.getKey(), payRequest.getOrderSn(), 1L);
+            if (processed > 1){
+                log.info("该订单:{}已处理",payRequest.getOrderSn());
+                return;
+            }
             walletService.balanceVerify(0L,payRequest.getPayAmount());
 //        walletService.balanceVerify(payRequest.getFromUid(), payRequest.getPayAmount());
             //计算手续费
@@ -51,6 +59,7 @@ public class ReceivablesConsumer implements RocketMQListener<WalletPayRequest> {
                 log.error("修改余额失败：{}", payRequest);
                 throw new RuntimeException("修改余额失败");
             }
+            redisUtil.hincr(RedisKey.MARKET_RECEIVABLES.getKey(),payRequest.getOrderSn(),1L);
         }finally {
             walletService.threadClear();
         }

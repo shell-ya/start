@@ -190,6 +190,7 @@ public enum RedisKey {
      * 市场交易锁
      */
     MARKET_ORDER_TRANSACTION(508, StarConstants.SERVICE_NAME.concat(".market:transaction:%s"), 3L, TimeUnit.MINUTES),
+    MARKET_RECEIVABLES(509,StarConstants.SERVICE_NAME.concat(".market:receivables"),3L,TimeUnit.HOURS),
     /**
      * 排行榜列表
      */
