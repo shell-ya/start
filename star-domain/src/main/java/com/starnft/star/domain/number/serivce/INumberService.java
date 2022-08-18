@@ -47,5 +47,5 @@ public interface INumberService {
 
     Boolean modifyNumberOwnerBy(Long id, Long userId, Integer code);
 
-    Boolean managePrice(BigDecimal price);
+//    Boolean managePrice(BigDecimal price);
 }

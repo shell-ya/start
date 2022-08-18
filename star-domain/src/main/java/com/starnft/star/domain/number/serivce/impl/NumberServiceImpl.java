@@ -1,5 +1,6 @@
 package com.starnft.star.domain.number.serivce.impl;
 
+import cn.hutool.json.JSONUtil;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.enums.NumberCirculationTypeEnum;
@@ -30,6 +31,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -168,20 +170,23 @@ public class NumberServiceImpl implements INumberService {
        return this.numberRepository.modifyNumberStatus(id,userId,code);
     }
 
-    @Override
-    public Boolean managePrice(BigDecimal price) {
-        redisTemplate.opsForValue().set(RedisKey.DING_PRICE_MANAGE.getKey(),price);
-        return null;
-    }
+//    @Override
+//    public Boolean managePrice(BigDecimal price) {
+//        redisTemplate.opsForValue().set(RedisKey.DING_PRICE_MANAGE.getKey(),price);
+//        return null;
+//    }
 
 
     @Override
     public List<NumberDingVO> getNumberDingList() {
-        List<NumberDingVO> numberDingList = this.numberRepository.getNumberDingList();
+
         Object redisManage = redisTemplate.opsForValue().get(RedisKey.DING_PRICE_MANAGE.getKey());
-        BigDecimal o = (BigDecimal) Optional.ofNullable(redisManage).orElse(BigDecimal.ZERO);
-        return numberDingList.stream().peek(item->item.setPrice(item.getPrice().subtract(o)))
-                .collect(Collectors.toList());
+        if (Objects.nonNull(redisManage)){
+            return JSONUtil.toList(redisManage.toString(),NumberDingVO.class);
+        }
+        List<NumberDingVO> numberDingList = this.numberRepository.getNumberDingList();
+        redisTemplate.opsForValue().set(RedisKey.DING_PRICE_MANAGE.getKey(),JSONUtil.toJsonStr(numberDingList));
+        return numberDingList;
     }
     private UserThemeMappingVO createMapping(HandoverReq handoverReq) {
         UserThemeMappingVO userThemeMappingVO = new UserThemeMappingVO();
