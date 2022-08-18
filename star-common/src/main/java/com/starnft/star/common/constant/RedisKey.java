@@ -216,12 +216,15 @@ public enum RedisKey {
 
     GOLD_COMPOSE(703,StarConstants.SERVICE_NAME.concat("compose.gold:permi:%s"),3L,TimeUnit.HOURS),
     GOLD_COMPOSE_SUCCESS(704,StarConstants.SERVICE_NAME.concat("compose.gold:success:%s"),3L,TimeUnit.HOURS),
-    IP_REQUEST_TIMES(111, StarConstants.SERVICE_NAME.concat(".ip:times"), 30L, TimeUnit.SECONDS);
+    IP_REQUEST_TIMES(111, StarConstants.SERVICE_NAME.concat(".ip:times"), 30L, TimeUnit.SECONDS),
 
     /**
      * 排行榜
      */
+//定链价格操作
+    DING_PRICE_MANAGE(111, StarConstants.SERVICE_NAME.concat(".ding:price:manage"), 30L, TimeUnit.SECONDS),
 
+    ;
 
     private Integer code;
 

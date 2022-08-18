@@ -1,5 +1,6 @@
 package com.starnft.star.domain.number.serivce.impl;
 
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.enums.NumberCirculationTypeEnum;
 import com.starnft.star.common.enums.SortTypeEnum;
@@ -9,6 +10,8 @@ import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.Assert;
+import com.starnft.star.common.utils.RandomUtil;
+import com.starnft.star.domain.bulletin.IBulletinService;
 import com.starnft.star.domain.number.model.OrderByEnum;
 import com.starnft.star.domain.number.model.dto.NumberBatchUpdateDTO;
 import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
@@ -20,12 +23,15 @@ import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.*;
 import com.starnft.star.domain.number.repository.INumberRepository;
 import com.starnft.star.domain.number.serivce.INumberService;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class NumberServiceImpl implements INumberService {
@@ -34,6 +40,8 @@ public class NumberServiceImpl implements INumberService {
 
     @Resource
     TransactionTemplate template;
+    @Resource
+    RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public ResponsePageResult<NumberVO> queryThemeNumber(NumberReq numberReq) {
@@ -160,12 +168,21 @@ public class NumberServiceImpl implements INumberService {
        return this.numberRepository.modifyNumberStatus(id,userId,code);
     }
 
+    @Override
+    public Boolean managePrice(BigDecimal price) {
+        redisTemplate.opsForValue().set(RedisKey.DING_PRICE_MANAGE.getKey(),price);
+        return null;
+    }
+
 
     @Override
     public List<NumberDingVO> getNumberDingList() {
-        return this.numberRepository.getNumberDingList();
+        List<NumberDingVO> numberDingList = this.numberRepository.getNumberDingList();
+        Object redisManage = redisTemplate.opsForValue().get(RedisKey.DING_PRICE_MANAGE.getKey());
+        BigDecimal o = (BigDecimal) Optional.ofNullable(redisManage).orElse(BigDecimal.ZERO);
+        return numberDingList.stream().peek(item->item.setPrice(item.getPrice().subtract(o)))
+                .collect(Collectors.toList());
     }
-
     private UserThemeMappingVO createMapping(HandoverReq handoverReq) {
         UserThemeMappingVO userThemeMappingVO = new UserThemeMappingVO();
         userThemeMappingVO.setUserId(String.valueOf(handoverReq.getUid()));

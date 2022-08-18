@@ -11,6 +11,7 @@ import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface INumberService {
@@ -45,4 +46,6 @@ public interface INumberService {
     public List<NumberDingVO> getNumberDingList();
 
     Boolean modifyNumberOwnerBy(Long id, Long userId, Integer code);
+
+    Boolean managePrice(BigDecimal price);
 }
