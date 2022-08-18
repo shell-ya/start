@@ -1,20 +1,20 @@
 package com.starnft.star.infrastructure.repository;
 
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.activity.model.vo.ActivityVO;
 import com.starnft.star.domain.activity.model.vo.DrawActivityVO;
+import com.starnft.star.domain.activity.model.vo.DrawOrderVO;
 import com.starnft.star.domain.activity.repository.IActivityRepository;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.draw.model.req.PartakeReq;
 import com.starnft.star.infrastructure.entity.activity.StarScheduleSeckill;
 import com.starnft.star.infrastructure.entity.draw.Activity;
+import com.starnft.star.infrastructure.entity.draw.UserStrategyExport;
 import com.starnft.star.infrastructure.mapper.activity.StarScheduleSeckillMapper;
-import com.starnft.star.infrastructure.mapper.draw.IActivityDao;
-import com.starnft.star.infrastructure.mapper.draw.IAwardDao;
-import com.starnft.star.infrastructure.mapper.draw.IStrategyDao;
-import com.starnft.star.infrastructure.mapper.draw.IStrategyDetailDao;
+import com.starnft.star.infrastructure.mapper.draw.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -38,6 +38,9 @@ public class ActivityRepository implements IActivityRepository {
     private IStrategyDao strategyDao;
     @Resource
     private IStrategyDetailDao strategyDetailDao;
+
+    @Resource
+    private IUserStrategyExportDao userStrategyExportDao;
 
     @Resource
     private RedisUtil redisUtil;
@@ -72,6 +75,27 @@ public class ActivityRepository implements IActivityRepository {
         }
         // 删除分布式锁 Key
         redisUtil.del(tokenKey);
+    }
+
+    @Override
+    public void saveUserStrategyExport(DrawOrderVO drawOrder) {
+        UserStrategyExport userStrategyExport = new UserStrategyExport();
+        userStrategyExport.setuId(drawOrder.getuId());
+        userStrategyExport.setActivityId(drawOrder.getActivityId());
+        userStrategyExport.setOrderId(drawOrder.getOrderId());
+        userStrategyExport.setStrategyId(drawOrder.getStrategyId());
+        userStrategyExport.setStrategyMode(drawOrder.getStrategyMode());
+        userStrategyExport.setGrantType(drawOrder.getGrantType());
+        userStrategyExport.setGrantDate(drawOrder.getGrantDate());
+        userStrategyExport.setGrantState(drawOrder.getGrantState());
+        userStrategyExport.setAwardId(drawOrder.getAwardId());
+        userStrategyExport.setAwardType(drawOrder.getAwardType());
+        userStrategyExport.setAwardName(drawOrder.getAwardName());
+        userStrategyExport.setAwardContent(drawOrder.getAwardContent());
+        userStrategyExport.setUuid(String.valueOf(drawOrder.getTakeId()));
+        userStrategyExport.setMqState(StarConstants.MQState.INIT.getCode());
+
+        userStrategyExportDao.insert(userStrategyExport);
     }
 
     @Override

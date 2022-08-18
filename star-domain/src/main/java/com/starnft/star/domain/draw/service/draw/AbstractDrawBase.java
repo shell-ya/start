@@ -1,7 +1,9 @@
 package com.starnft.star.domain.draw.service.draw;
 
+import com.starnft.star.common.Result;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.activity.model.vo.DrawActivityVO;
+import com.starnft.star.domain.activity.model.vo.DrawOrderVO;
 import com.starnft.star.domain.draw.model.aggregates.StrategyRich;
 import com.starnft.star.domain.draw.model.req.DrawReq;
 import com.starnft.star.domain.draw.model.req.PartakeReq;
@@ -35,8 +37,6 @@ public abstract class AbstractDrawBase extends DrawStrategySupport implements ID
 
         // 4. 执行抽奖算法
         String awardId = this.drawAlgorithm(req.getStrategyId(), drawAlgorithmGroup.get(strategy.getStrategyMode()), excludeAwardIds);
-
-        //
 
         // 5. 包装中奖结果
         return buildDrawResult(req.getuId(), req.getStrategyId(), awardId, strategy);
@@ -116,4 +116,8 @@ public abstract class AbstractDrawBase extends DrawStrategySupport implements ID
         return new DrawResult(uId, strategyId, StarConstants.DrawState.SUCCESS.getCode(), drawAwardInfo);
     }
 
+    @Override
+    public Result recordDrawOrder(DrawOrderVO drawOrder) {
+        return super.recordDrawOrder(drawOrder);
+    }
 }

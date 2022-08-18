@@ -48,21 +48,30 @@ public class StarConstants {
      * 主题详细信息缓存名字
      */
     public static final String THEME_DETAIL_CACHE_NAME = ".theme.detail.cache";
-    /** 轮播图缓存名字 */
+    /**
+     * 轮播图缓存名字
+     */
     public static final String BANNER_CACHE_NAME = ".banner.cache";
-    /** 排行榜缓存名字 */
+    public static final String DING_CACHE_NAME = ".ding.cache";
+    /**
+     * 排行榜缓存名字
+     */
     public static final String RANK_CACHE_NAME = ".rank.cache";
-    /** 公告缓存名字 */
+    /**
+     * 公告缓存名字
+     */
     public static final String BULLETIN_LIST_CACHE_NAME = ".bulletin.list.cache";
-    /** 公告详情缓存名字 */
+    /**
+     * 公告详情缓存名字
+     */
     public static final String BULLETIN_CACHE_NAME = ".bulletin.cache";
 
     public enum RankTypes {
         Consumption(2L, "积分"),
         Acquisition(1L, "拉新");
-        private final  Long value;
+        private final Long value;
 
-        private final  String desc;
+        private final String desc;
 
         RankTypes(Long value, String desc) {
             this.value = value;
@@ -72,7 +81,8 @@ public class StarConstants {
         public Long getValue() {
             return value;
         }
-        public String  getDesc() {
+
+        public String getDesc() {
             return desc;
         }
     }
@@ -349,20 +359,21 @@ public class StarConstants {
             return prefix;
         }
     }
-    public static class  EventStatus {
 
-      public static   final Integer EVENT_STATUS_OPEN =1;
-      public static  final  Integer EVENT_STATUS_CLOSE =0;
+    public static class EventStatus {
+
+        public static final Integer EVENT_STATUS_OPEN = 1;
+        public static final Integer EVENT_STATUS_CLOSE = 0;
     }
 
-    public  enum   EventSign {
+    public enum EventSign {
 
         Register("register"),
         Buy("buy");
         private final String sign;
 
         EventSign(String sign) {
-            this.sign=sign;
+            this.sign = sign;
         }
 
         public String getSign() {
@@ -371,18 +382,19 @@ public class StarConstants {
 
         public static EventSign getEventSign(String sign) {
             for (EventSign value : values()) {
-                if (value.getSign().equals(sign)){
+                if (value.getSign().equals(sign)) {
                     return value;
                 }
             }
-            return  null;
+            return null;
         }
     }
-    public enum   ActivityType {
+
+    public enum ActivityType {
         Scope(2, "积分活动"),
         Rank(1, "排行版活动");
-        private final Integer  value;
-        private final String   desc;
+        private final Integer value;
+        private final String desc;
 
         ActivityType(Integer value, String desc) {
             this.value = value;
@@ -397,18 +409,18 @@ public class StarConstants {
             return desc;
         }
     }
-    public static class  ScopeMold {
 
-        public static   final Integer UP =1;
-        public static  final  Integer DOWN =0;
+    public static class ScopeMold {
+
+        public static final Integer UP = 1;
+        public static final Integer DOWN = 0;
     }
 
-    public enum userThemeStatus{
+    public enum userThemeStatus {
 
-        PURCHASED(0,"已购买"),
-        PENDING(1,"挂售中"),
-        SOLD(2,"已售出")
-        ;
+        PURCHASED(0, "已购买"),
+        PENDING(1, "挂售中"),
+        SOLD(2, "已售出");
         private Integer code;
         private String desc;
 
@@ -434,25 +446,30 @@ public class StarConstants {
         }
     }
 
-    public enum themeResaleEnum{
-        NOT_RESALE(0,"不可转售"),
-        RESALE(1,"可转售"),
+    public enum themeResaleEnum {
+        NOT_RESALE(0, "不可转售"),
+        RESALE(1, "可转售"),
         ;
         private Integer code;
         private String desc;
+
         themeResaleEnum(int code, String desc) {
             this.code = code;
             this.desc = desc;
         }
+
         public Integer getCode() {
             return code;
         }
+
         public void setCode(Integer code) {
             this.code = code;
         }
+
         public String getDesc() {
             return desc;
         }
+
         public void setDesc(String desc) {
             this.desc = desc;
         }
@@ -619,13 +636,13 @@ public class StarConstants {
     }
 
     /**
-     * 奖品类型（1:文字描述、2:兑换码、3:优惠券、4:实物奖品）
+     * 奖品类型（1:藏品、2:兑换码、3:优惠券、4:实物奖品 5:道具 6:原石）
      */
     public enum AwardType {
         /**
          * 文字描述
          */
-        DESC(1, "文字描述"),
+        NFT(1, "藏品"),
         /**
          * 兑换码
          */
@@ -637,7 +654,17 @@ public class StarConstants {
         /**
          * 实物奖品
          */
-        PhysicalGoods(4, "实物奖品");
+        PhysicalGoods(4, "实物奖品"),
+        /**
+         * 道具
+         */
+        PropsAward(5, "道具"),
+        /**
+         * 元石
+         */
+        Yuan(6,"元石")
+
+        ;
 
         private Integer code;
         private String info;
@@ -709,5 +736,77 @@ public class StarConstants {
             this.info = info;
         }
     }
+
+
+
+    /**
+     * 消息发送状态（0未发送、1发送成功、2发送失败）
+     */
+    public enum MQState {
+        INIT(0, "初始"),
+        COMPLETE(1, "完成"),
+        FAIL(2, "失败");
+
+        private Integer code;
+        private String info;
+
+        MQState(Integer code, String info) {
+            this.code = code;
+            this.info = info;
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public void setCode(Integer code) {
+            this.code = code;
+        }
+
+        public String getInfo() {
+            return info;
+        }
+
+        public void setInfo(String info) {
+            this.info = info;
+        }
+    }
+
+
+    /**
+     * 发奖状态 0初始、1完成、2失败
+     */
+    public enum GrantState {
+
+        INIT(0, "初始"),
+        COMPLETE(1, "完成"),
+        FAIL(2, "失败");
+
+        private Integer code;
+        private String info;
+
+        GrantState(Integer code, String info) {
+            this.code = code;
+            this.info = info;
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public void setCode(Integer code) {
+            this.code = code;
+        }
+
+        public String getInfo() {
+            return info;
+        }
+
+        public void setInfo(String info) {
+            this.info = info;
+        }
+    }
+
+
 
 }

@@ -2,13 +2,16 @@ package com.starnft.star.domain.draw.service.draw.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.domain.draw.annotation.Strategy;
 import com.starnft.star.domain.draw.service.algorithm.IDrawAlgorithm;
 import com.starnft.star.domain.draw.service.draw.AbstractDrawBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @description: 抽奖过程方法实现
@@ -40,8 +43,9 @@ public class DrawExecImpl extends AbstractDrawBase {
          * 注意：通常数据库直接锁行记录的方式并不能支撑较大体量的并发，但此种方式需要了解，因为在分库分表下的正常数据流量下的个人数据记录中，是可以使用行级锁的，因为他只影响到自己的记录，不会影响到其他人
          */
         boolean isSuccess = strategyRepository.deductStock(strategyId, awardId);
-
-        if (!isSuccess && strategyId.intValue() == StarConstants.StrategyMode.BLANKOFFSET.getCode()) {
+        Strategy annotation = AnnotationUtils.findAnnotation(drawAlgorithm.getClass(), Strategy.class);
+        StarConstants.StrategyMode value = (StarConstants.StrategyMode) AnnotationUtils.getValue(annotation, "strategyMode");
+        if (!isSuccess && Objects.equals(value.getCode(), StarConstants.StrategyMode.BLANKOFFSET.getCode())) {
             return drawAlgorithm.boundMoving(strategyId, awardId, (sid, aid) -> strategyRepository.deductStock(sid, aid));
         }
 

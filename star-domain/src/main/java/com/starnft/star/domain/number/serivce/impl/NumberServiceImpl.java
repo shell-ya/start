@@ -170,12 +170,6 @@ public class NumberServiceImpl implements INumberService {
        return this.numberRepository.modifyNumberStatus(id,userId,code);
     }
 
-//    @Override
-//    public Boolean managePrice(BigDecimal price) {
-//        redisTemplate.opsForValue().set(RedisKey.DING_PRICE_MANAGE.getKey(),price);
-//        return null;
-//    }
-
 
     @Override
     public List<NumberDingVO> getNumberDingList() {
@@ -188,6 +182,7 @@ public class NumberServiceImpl implements INumberService {
         redisTemplate.opsForValue().set(RedisKey.DING_PRICE_MANAGE.getKey(),JSONUtil.toJsonStr(numberDingList));
         return numberDingList;
     }
+
     private UserThemeMappingVO createMapping(HandoverReq handoverReq) {
         UserThemeMappingVO userThemeMappingVO = new UserThemeMappingVO();
         userThemeMappingVO.setUserId(String.valueOf(handoverReq.getUid()));

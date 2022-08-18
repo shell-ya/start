@@ -2,6 +2,7 @@ package com.starnft.star.domain.activity.repository;
 
 import com.starnft.star.domain.activity.model.vo.ActivityVO;
 import com.starnft.star.domain.activity.model.vo.DrawActivityVO;
+import com.starnft.star.domain.activity.model.vo.DrawOrderVO;
 import com.starnft.star.domain.draw.model.req.PartakeReq;
 
 import java.util.List;
@@ -41,4 +42,10 @@ public interface IActivityRepository {
      */
     void recoverActivityCacheStockByRedis(Long activityId, String tokenKey, String code);
 
+    /**
+     * 保存抽奖信息
+     *
+     * @param drawOrder 中奖单
+     */
+    void saveUserStrategyExport(DrawOrderVO drawOrder);
 }

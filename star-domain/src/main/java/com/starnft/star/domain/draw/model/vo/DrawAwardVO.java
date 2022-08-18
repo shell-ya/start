@@ -24,9 +24,9 @@ public class DrawAwardVO {
     private String awardId;
 
     /**
-     * 奖品类型（1:藏品、2:元石、3:实物奖品）
+     * 奖品类型（1:藏品、2:兑换码、3:优惠券、4:实物奖品 5:道具 6:原石）
      */
-    @ApiModelProperty(value = "奖品类型（1:藏品、2:元石、3:实物奖品）")
+    @ApiModelProperty(value = "奖品类型（1:藏品、2:兑换码、3:优惠券、4:实物奖品 5:道具 6:原石）")
     private Integer awardType;
 
     /**

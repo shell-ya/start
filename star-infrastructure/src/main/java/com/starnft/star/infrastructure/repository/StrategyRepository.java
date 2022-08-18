@@ -31,6 +31,9 @@ public class StrategyRepository implements IStrategyRepository {
     @Resource
     private IStrategyDetailDao strategyDetailDao;
 
+
+
+
     @Resource
     private IAwardDao awardDao;
 

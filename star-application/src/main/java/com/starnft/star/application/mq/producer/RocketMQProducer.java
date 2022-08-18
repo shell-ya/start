@@ -80,6 +80,8 @@ public class RocketMQProducer implements IMessageSender {
                 public void onSuccess(SendResult sendResult) {
                     String msgId = sendResult.getMsgId();
                     SendStatus sendStatus = sendResult.getSendStatus();
+                    //消息记录落盘
+                    boolean isSuccess = writeLog(topic, JSONObject.toJSONString(msg), String.valueOf(msgId), StarConstants.NORMAL_STATUS.FAILURE.name());
                     //如果成功执行的操作
                     operationIfSuccess.accept(sendResult);
                     if (log.isDebugEnabled()) {

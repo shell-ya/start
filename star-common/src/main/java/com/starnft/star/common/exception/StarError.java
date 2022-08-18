@@ -103,6 +103,8 @@ public enum StarError {
     //################# ===  #################
     COMPOSE_PRIZE_EXIST("10000068","超出合成次数或不具备合成名额"),
     BULLETIN_NOT_FOUND("50000001", "公告不存在"),
+
+    BLIND_STOCK_IS_NULL("60000001", "盲盒库存为空！"),
     ;
 
     private String NS = "";

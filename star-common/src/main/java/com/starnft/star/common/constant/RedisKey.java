@@ -217,11 +217,9 @@ public enum RedisKey {
     GOLD_COMPOSE_SUCCESS(704,StarConstants.SERVICE_NAME.concat("compose.gold:success:%s"),3L,TimeUnit.HOURS),
     IP_REQUEST_TIMES(111, StarConstants.SERVICE_NAME.concat(".ip:times"), 30L, TimeUnit.SECONDS),
 
-//    IP_REQUEST_TIMES(111, StarConstants.SERVICE_NAME.concat(".ip:times"), 30L, TimeUnit.SECONDS),
-//
-//    //######################################  draw cache key ######################################
-//
-//    DRAW_AWARD_STOCK_MAPPING(800, StarConstants.SERVICE_NAME.concat(":draw.award.stock.strategy:%s"), -1L, TimeUnit.SECONDS);
+    //######################################  draw cache key ######################################
+
+    DRAW_AWARD_STOCK_MAPPING(800, StarConstants.SERVICE_NAME.concat(":draw.award.stock.strategy:%s"), -1L, TimeUnit.SECONDS);
 
     /**
      * 排行榜

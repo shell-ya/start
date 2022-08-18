@@ -1,6 +1,8 @@
 package com.starnft.star.domain.draw.service.algorithm.impl;
 
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.common.exception.StarError;
+import com.starnft.star.common.exception.StarException;
 import com.starnft.star.domain.draw.annotation.Strategy;
 import com.starnft.star.domain.draw.model.vo.AwardRateVO;
 import com.starnft.star.domain.draw.service.algorithm.BaseAlgorithm;
@@ -51,9 +53,6 @@ public class BlindBoxRateRandomDrawAlgorithm extends BaseAlgorithm {
         List<AwardRateVO> awardRateVOS = awardRateInfoMap.get(strategyId);
         List<AwardRateVO> sorted = awardRateVOS.stream().sorted(Comparator.comparing(AwardRateVO::getAwardRate)).collect(Collectors.toList());
 
-        //最低概率奖品id
-        String headAwardId = sorted.get(0).getAwardId();
-
         //找到当前无库存奖品索引
         int currAwardIndex = -1;
         for (int i = 0; i < sorted.size(); i++) {
@@ -79,12 +78,12 @@ public class BlindBoxRateRandomDrawAlgorithm extends BaseAlgorithm {
         }
 
         // 全部库存耗尽 抛出异常
-        return null;
+        throw new StarException(StarError.BLIND_STOCK_IS_NULL);
     }
 
 
     private static int getRateStandards(double minRate) {
-        int size = 10;
+        int size = 1;
         while (minRate < 1.0d) {
             minRate = minRate * 10;
             size = size * 10;
