@@ -422,9 +422,9 @@ public class OrderProcessor implements IOrderProcessor {
         }
 
         //待支付订单判断
-        if (havingOrder(marketOrderReq.getUserId())) {
-            throw new StarException(StarError.ORDER_DONT_PAY_ERROR);
-        }
+//        if (havingOrder(marketOrderReq.getUserId())) {
+//            throw new StarException(StarError.ORDER_DONT_PAY_ERROR);
+//        }
 
 
         ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(marketOrderReq.getNumberId());
