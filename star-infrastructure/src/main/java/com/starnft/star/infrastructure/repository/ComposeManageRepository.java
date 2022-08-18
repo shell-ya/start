@@ -9,6 +9,7 @@ import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.compose.model.dto.ComposeRecordDTO;
 import com.starnft.star.domain.compose.model.dto.ComposeUserArticleNumberDTO;
 import com.starnft.star.domain.compose.repository.IComposeManageRepository;
+import com.starnft.star.domain.number.model.vo.NumberDingVO;
 import com.starnft.star.infrastructure.entity.compose.StarNftComposeRecord;
 import com.starnft.star.infrastructure.entity.number.StarNftThemeNumber;
 import com.starnft.star.infrastructure.entity.user.StarNftUserTheme;
@@ -70,4 +71,5 @@ public class ComposeManageRepository implements IComposeManageRepository {
         starNftComposeRecord.setId(composeRecord.getId());
        return starNftComposeRecordMapper.insert(starNftComposeRecord)>=1;
     }
+
 }
