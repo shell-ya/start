@@ -14,8 +14,10 @@ import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.*;
 import com.starnft.star.domain.number.repository.INumberRepository;
 import com.starnft.star.infrastructure.entity.number.StarNftNumberCirculationHist;
+import com.starnft.star.infrastructure.entity.number.StarNftShelvesRecord;
 import com.starnft.star.infrastructure.entity.number.StarNftThemeNumber;
 import com.starnft.star.infrastructure.entity.user.StarNftUserTheme;
+import com.starnft.star.infrastructure.mapper.number.StarNFtShelvesRecordMapper;
 import com.starnft.star.infrastructure.mapper.number.StarNftNumberCirculationHistMapper;
 import com.starnft.star.infrastructure.mapper.number.StarNftThemeNumberMapper;
 import com.starnft.star.infrastructure.mapper.user.StarNftUserThemeMapper;
@@ -33,6 +35,8 @@ public class NumberRepository implements INumberRepository {
     StarNftNumberCirculationHistMapper starNftNumberCirculationHistMapper;
     @Resource
     StarNftUserThemeMapper starNftUserThemeMapper;
+    @Resource
+    StarNFtShelvesRecordMapper shelvesRecordMapper;
 
     @Override
     public ResponsePageResult<NumberVO> queryNumber(NumberReq numberReq) {
@@ -216,6 +220,17 @@ public class NumberRepository implements INumberRepository {
         List<NumberVO> numberListByThemeInfo = this.starNftThemeNumberMapper.getNumberListByThemeInfo(numberQueryDTO);
         return numberListByThemeInfo;
 
+    }
+
+    @Override
+    public Boolean thirdPlatSelling(Long userId, Long seriesThemeId) {
+        LambdaQueryWrapper<StarNftShelvesRecord> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(StarNftShelvesRecord::getUserId,userId);
+        wrapper.eq(StarNftShelvesRecord::getSeriesThemeId,seriesThemeId);
+        wrapper.eq(StarNftShelvesRecord::getStatus,0);
+        wrapper.eq(StarNftShelvesRecord::getIsDeleted,Boolean.FALSE);
+        StarNftShelvesRecord starNftShelvesRecord = this.shelvesRecordMapper.selectOne(wrapper);
+        return Objects.nonNull(starNftShelvesRecord);
     }
 
     @Override

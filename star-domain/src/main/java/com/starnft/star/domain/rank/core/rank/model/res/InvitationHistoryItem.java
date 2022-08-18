@@ -26,6 +26,8 @@ public class InvitationHistoryItem {
     private String account;
     @ApiModelProperty(value = "是否有效  0(未实名) 1（已经实名）2（有效邀请")
     private Integer valid;
+    @ApiModelProperty(value = "买入次数")
+    private Long buyNum;
     @ApiModelProperty(value = "邀请时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private Date invitationTime;

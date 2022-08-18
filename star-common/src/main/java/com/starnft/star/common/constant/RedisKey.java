@@ -147,6 +147,12 @@ public enum RedisKey {
     SECKILL_ORDER_REPETITION_TIMES(504, StarConstants.SERVICE_NAME.concat(".seckill:ordered.times:%s"), -1L, TimeUnit.HOURS),
 
     /**
+     * 买入藏品数量
+     */
+
+    SECKILL_BUY_GOODS_NUMBER(555,StarConstants.SERVICE_NAME.concat(".seckill:goods.num:%s"),-1L,TimeUnit.HOURS),
+
+    /**
      * 用户订单 hash
      */
     SECKILL_ORDER_USER_MAPPING(505, StarConstants.SERVICE_NAME.concat(".seckill:ordered.mapping:%s"), -1L, TimeUnit.HOURS),
@@ -184,6 +190,7 @@ public enum RedisKey {
      * 市场交易锁
      */
     MARKET_ORDER_TRANSACTION(508, StarConstants.SERVICE_NAME.concat(".market:transaction:%s"), 3L, TimeUnit.MINUTES),
+    MARKET_RECEIVABLES(509,StarConstants.SERVICE_NAME.concat(".market:receivables"),3L,TimeUnit.HOURS),
     /**
      * 排行榜列表
      */
@@ -198,7 +205,7 @@ public enum RedisKey {
     //个人有效邀请
     RANK_VALID_USER(604, StarConstants.SERVICE_NAME.concat(".rank:%s:valid:user:%s"), 3L, TimeUnit.HOURS),
     RANK_USER_MAPPING(605, StarConstants.SERVICE_NAME.concat(".rank:%s:mapping"), 3L, TimeUnit.HOURS),
-
+    RANK_BUT_NUM(607,StarConstants.SERVICE_NAME.concat(".rank:num:%s"),3L,TimeUnit.HOURS),
     SCOPE_USER_MAPPING(606, StarConstants.SERVICE_NAME.concat(".scope.user:%s"), 3L, TimeUnit.HOURS),
 
     RANK_STORE(602, StarConstants.SERVICE_NAME.concat(".rank:%s:store"), 3L, TimeUnit.HOURS),
@@ -207,7 +214,10 @@ public enum RedisKey {
     COMPOSE_DRAW_STRATEGY(701, StarConstants.SERVICE_NAME.concat(".compose:draw:strategy"), 3L, TimeUnit.HOURS),
     COMPOSE_NUMBER_LOCK(702, StarConstants.SERVICE_NAME.concat(".compose:number:%s"), 3L, TimeUnit.MINUTES),
 
+    GOLD_COMPOSE(703,StarConstants.SERVICE_NAME.concat("compose.gold:permi:%s"),3L,TimeUnit.HOURS),
+    GOLD_COMPOSE_SUCCESS(704,StarConstants.SERVICE_NAME.concat("compose.gold:success:%s"),3L,TimeUnit.HOURS),
     IP_REQUEST_TIMES(111, StarConstants.SERVICE_NAME.concat(".ip:times"), 30L, TimeUnit.SECONDS);
+
     /**
      * 排行榜
      */

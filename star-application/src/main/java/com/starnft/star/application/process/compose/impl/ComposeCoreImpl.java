@@ -12,7 +12,9 @@ import com.starnft.star.application.process.compose.strategy.lottery.ComposeDraw
 import com.starnft.star.application.process.compose.strategy.prize.ComposePrizeStrategy;
 import com.starnft.star.application.process.scope.IScopeCore;
 import com.starnft.star.application.process.scope.model.ScoreDTO;
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.enums.*;
+import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
@@ -21,6 +23,7 @@ import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.article.model.vo.UserNumbersVO;
 import com.starnft.star.domain.article.repository.IUserThemeRepository;
 import com.starnft.star.domain.article.service.UserThemeService;
+import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.compose.model.dto.ComposeMaterialDTO;
 import com.starnft.star.domain.compose.model.dto.ComposePrizeDTO;
 import com.starnft.star.domain.compose.model.dto.ComposeRecordDTO;
@@ -68,6 +71,10 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
     private ComposeDrawConfiguration composeDrawConfiguration;
     @Resource
     INumberService numberService;
+
+    @Resource
+    RedisUtil redisUtil;
+
     ApplicationContext applicationContext;
 
     @Override
@@ -115,6 +122,15 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
     public ComposeManageRes composeManage(ComposeManageReq composeManageReq) {
         ComposeRes composeRes = composeService.composeDetails(composeManageReq.getComposeId());
          Assert.isTrue(composeRes.getComposeStatus().equals(ComposeStatusEnum.Running.getCode()),()->new StarException("合成不在开启状态"));
+
+         //true可执行
+        boolean canCompose = redisUtil.sHasKey(String.format(RedisKey.GOLD_COMPOSE.getKey(),composeManageReq.getComposeId()), composeManageReq.getUserId());
+        //true 不可执行
+        boolean composeSuccess = redisUtil.sHasKey(String.format(RedisKey.GOLD_COMPOSE_SUCCESS.getKey(),composeManageReq.getComposeId()), composeManageReq.getUserId());
+
+        if (canCompose == false|| composeSuccess){
+            throw new StarException(StarError.COMPOSE_PRIZE_EXIST);
+        }
 
         ComposeCategoryRes composeCategoryRes = composeService.composeCategoryByCategoryId(composeManageReq.getCategoryId());
         //积分判断操作
@@ -165,6 +181,9 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
         ComposeManageRes composeManageRes = new ComposeManageRes();
         composeManageRes.setIsSuccess(Boolean.TRUE);
         composeManageRes.setPrizeRes(prizeRes);
+
+        redisUtil.sSet(String.format(RedisKey.GOLD_COMPOSE_SUCCESS.getKey(),composeManageReq.getComposeId()),composeManageReq.getUserId());
+
         //先默认销毁
         return composeManageRes;
     }

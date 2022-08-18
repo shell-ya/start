@@ -155,6 +155,11 @@ public class NumberServiceImpl implements INumberService {
         return this.numberRepository.saveBatchNumberCirculationRecord(numberCirculation);
     }
 
+    @Override
+    public Boolean modifyNumberOwnerBy(Long id, Long userId, Integer code) {
+       return this.numberRepository.modifyNumberStatus(id,userId,code);
+    }
+
 
     @Override
     public List<NumberDingVO> getNumberDingList() {
@@ -186,6 +191,11 @@ public class NumberServiceImpl implements INumberService {
             }
         }
         return null;
+    }
+
+    @Override
+    public Boolean queryThirdPlatSell(Long userId,Long seriesThemeId){
+        return numberRepository.thirdPlatSelling(userId,seriesThemeId);
     }
 
 }

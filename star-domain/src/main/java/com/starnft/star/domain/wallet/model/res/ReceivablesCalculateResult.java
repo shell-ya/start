@@ -13,7 +13,7 @@ public class ReceivablesCalculateResult implements Serializable {
     /**
      *  计算后金额
      */
-    private String calculated;
+    private BigDecimal calculated;
     /**
      * 交易费率
      */

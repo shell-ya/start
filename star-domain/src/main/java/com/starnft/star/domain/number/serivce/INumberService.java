@@ -36,10 +36,13 @@ public interface INumberService {
     Boolean modifyNumberInfo(NumberUpdateDTO param);
     Boolean modifyBatchNumberInfo(NumberBatchUpdateDTO param);
 
+    Boolean queryThirdPlatSell(Long userId,Long seriesThemeId);
+
     boolean createUserNumberMapping(UserThemeMappingVO userThemeMappingVO);
     Boolean saveNumberCirculationRecord(NumberCirculationAddDTO numberCirculation);
     Boolean saveBatchNumberCirculationRecord(List<NumberCirculationAddDTO> numberCirculation);
 
     public List<NumberDingVO> getNumberDingList();
 
+    Boolean modifyNumberOwnerBy(Long id, Long userId, Integer code);
 }

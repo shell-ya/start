@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Data
@@ -14,7 +15,8 @@ public class OrderPayReq implements Serializable {
     private Long userId;
 
     @ApiModelProperty(value = "商品拥有者id 发行产品有厂商ID 该字段传厂商id")
-    private Long ownerId;
+    @NotBlank(message = "oid could not be null")
+    private String ownerId;
 
     @ApiModelProperty(value = "系列id")
     private Long seriesId;
@@ -51,6 +53,7 @@ public class OrderPayReq implements Serializable {
     private String channel;
 
     @ApiModelProperty(value = "支付密码校验凭证")
+    @NotBlank(message = "payToken could not be null")
     private String payToken;
 
 

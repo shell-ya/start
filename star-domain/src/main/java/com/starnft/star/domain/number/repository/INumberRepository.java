@@ -3,7 +3,10 @@ package com.starnft.star.domain.number.repository;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.number.model.dto.*;
 import com.starnft.star.domain.number.model.req.NumberReq;
-import com.starnft.star.domain.number.model.vo.*;
+import com.starnft.star.domain.number.model.vo.NumberDetailVO;
+import com.starnft.star.domain.number.model.vo.NumberVO;
+import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
+import com.starnft.star.domain.number.model.vo.UserThemeMappingVO;
 
 import java.util.List;
 
@@ -37,6 +40,8 @@ public interface INumberRepository {
     List<Integer> loadNotSellNumberNumCollection(Long themeId);
 
     List<NumberVO>  getNumberListByThemeInfoId(NumberQueryDTO numberQueryDTO);
+
+    Boolean thirdPlatSelling(Long userId,Long seriesThemeId);
 
     public List<NumberDingVO> getNumberDingList();
 }

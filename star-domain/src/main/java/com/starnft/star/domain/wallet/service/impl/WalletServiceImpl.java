@@ -87,6 +87,12 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public void balanceVerify(Long uid, BigDecimal money) {
+
+        if (0L == uid){
+            isVerified.set(Boolean.TRUE);
+            return;
+        }
+
         WalletResult walletResult = queryWalletInfo(new WalletInfoReq(uid));
         if (walletResult.getBalance().compareTo(money.abs()) < 0) {
             throw new StarException(StarError.BALANCE_NOT_ENOUGH);
@@ -582,7 +588,7 @@ public class WalletServiceImpl implements WalletService {
         NumberFormat number = NumberFormat.getNumberInstance();
         number.setMaximumFractionDigits(3);
         percent.setMaximumFractionDigits(4);
-        return new ReceivablesCalculateResult(number.format(calculated.setScale(2, BigDecimal.ROUND_HALF_DOWN)), percent.format(config.getServiceRate()),
+        return new ReceivablesCalculateResult(calculated, percent.format(config.getServiceRate()),
                 percent.format(config.getCopyrightRate()), transRate, copyrightRate);
 
     }

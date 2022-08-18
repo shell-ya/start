@@ -29,4 +29,6 @@ public interface IOrderRepository {
     List<OrderVO> queryAllSuccessByTheme(String themeInfoId);
 
     List<OrderVO> queryToPayOrder(Long userId);
+
+    List<BuyNum> queryBuyNum();
 }

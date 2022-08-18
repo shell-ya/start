@@ -88,6 +88,12 @@ public class NumberCoreImpl implements INumberCore {
         // 校验是否拥有该藏品
         UserNumbersVO userNumbers = this.checkNumberOwner(uid, request.getNumberId(), UserNumberStatusEnum.PURCHASED);
 
+        //校验是否在第三方平台挂售
+        if (numberService.queryThirdPlatSell(uid,request.getNumberId())){
+            throw new StarException(StarError.THIRD_PLAT_SELL);
+        }
+
+
         //  校验是否到藏品市场开放时间
         ThemeDetailVO themeDetailVO = themeService.queryThemeDetail(userNumbers.getThemeId());
         if (DateUtil.date().before(themeDetailVO.getMarketOpenDate())) {

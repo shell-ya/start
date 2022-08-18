@@ -75,7 +75,11 @@ public class RankBuyActionState implements  IRankActionState {
             log.info("查询不到信息");
             return;
         }
+        //加排行榜分数
         iRankService.validPut(rankName, parent.toString(),number.doubleValue(),rankItemMetaData);
+        iRankService.putBuyNum(rankName,rankItemMetaData.getChildrenId());
+        //加购买次数
+//        iRankService.putBuyNum(rankName,rankItemMetaData);
         ScoreDTO addScoreDTO = compensationScope(parent, rankItemMetaData.getChildrenId());
         if (Objects.isNull(addScoreDTO)){
             log.info("已处理被邀请人积分");
@@ -114,7 +118,7 @@ public class RankBuyActionState implements  IRankActionState {
 
         ScoreDTO addScoreDTO = new ScoreDTO();
 
-        addScoreDTO.setScope(new BigDecimal(300));
+        addScoreDTO.setScope(new BigDecimal(100));
         addScoreDTO.setScopeType(0);
         addScoreDTO.setUserId(parent);
         addScoreDTO.setTemplate("拉新活动-邀请获得%s元石");
