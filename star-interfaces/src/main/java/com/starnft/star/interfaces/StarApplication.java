@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @Configurable
 @MapperScan("com.starnft.star.infrastructure.mapper")
 @ComponentScan(basePackages = {"com.starnft.star"})
-
 public class StarApplication {
 
     public static void main(String[] args) {

@@ -155,4 +155,9 @@
         AND a.status=0
         AND a.id >= t2.id ORDER BY a.id LIMIT 1;
     </select>
+
+    <select id="getNumbers2Ding" resultType="NumberDingVO">
+
+        SELECT MIN(price) as price,i.theme_name as `name`,i.theme_pic as image from star_nft_theme_number as n   LEFT JOIN star_nft_theme_info as i on i.id=series_theme_info_id WHERE n.`status`=2 and n.is_delete=0 GROUP BY series_theme_info_id
+    </select>
 </mapper>

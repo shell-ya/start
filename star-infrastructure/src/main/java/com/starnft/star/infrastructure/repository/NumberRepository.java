@@ -11,10 +11,7 @@ import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
 import com.starnft.star.domain.number.model.dto.*;
 import com.starnft.star.domain.number.model.req.NumberReq;
-import com.starnft.star.domain.number.model.vo.NumberDetailVO;
-import com.starnft.star.domain.number.model.vo.NumberVO;
-import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
-import com.starnft.star.domain.number.model.vo.UserThemeMappingVO;
+import com.starnft.star.domain.number.model.vo.*;
 import com.starnft.star.domain.number.repository.INumberRepository;
 import com.starnft.star.infrastructure.entity.number.StarNftNumberCirculationHist;
 import com.starnft.star.infrastructure.entity.number.StarNftShelvesRecord;
@@ -234,6 +231,11 @@ public class NumberRepository implements INumberRepository {
         wrapper.eq(StarNftShelvesRecord::getIsDeleted,Boolean.FALSE);
         StarNftShelvesRecord starNftShelvesRecord = this.shelvesRecordMapper.selectOne(wrapper);
         return Objects.nonNull(starNftShelvesRecord);
+    }
+
+    @Override
+    public List<NumberDingVO> getNumberDingList() {
+        return this.starNftThemeNumberMapper.getNumbers2Ding();
     }
 
     private ThemeNumberVo copyToVO(StarNftThemeNumber starNftThemeNumber) {

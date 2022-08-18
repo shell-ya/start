@@ -17,10 +17,7 @@ import com.starnft.star.domain.number.model.dto.NumberUpdateDTO;
 import com.starnft.star.domain.number.model.req.HandoverReq;
 import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.req.NumberReq;
-import com.starnft.star.domain.number.model.vo.NumberDetailVO;
-import com.starnft.star.domain.number.model.vo.NumberVO;
-import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
-import com.starnft.star.domain.number.model.vo.UserThemeMappingVO;
+import com.starnft.star.domain.number.model.vo.*;
 import com.starnft.star.domain.number.repository.INumberRepository;
 import com.starnft.star.domain.number.serivce.INumberService;
 import org.springframework.stereotype.Service;
@@ -161,6 +158,12 @@ public class NumberServiceImpl implements INumberService {
     @Override
     public Boolean modifyNumberOwnerBy(Long id, Long userId, Integer code) {
        return this.numberRepository.modifyNumberStatus(id,userId,code);
+    }
+
+
+    @Override
+    public List<NumberDingVO> getNumberDingList() {
+        return this.numberRepository.getNumberDingList();
     }
 
     private UserThemeMappingVO createMapping(HandoverReq handoverReq) {
