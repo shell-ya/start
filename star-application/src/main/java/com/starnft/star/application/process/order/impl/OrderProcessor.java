@@ -58,6 +58,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
+import org.web3j.utils.Strings;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -391,6 +392,38 @@ public class OrderProcessor implements IOrderProcessor {
 
     @Override
     public OrderListRes marketOrder(MarketOrderReq marketOrderReq) {
+
+
+        ArrayList<Long> objects = Lists.newArrayList();
+        objects.add(799041013L);
+        objects.add(214502860L);
+        objects.add(336673887L);
+        objects.add(899131914L);
+        objects.add(915512099L);
+        objects.add(546998827L);
+        objects.add(306868603L);
+        objects.add(788013220L);
+        if (!objects.contains(marketOrderReq.getUserId())){
+            // 恶意下单校验
+            Object record = redisUtil.get(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), marketOrderReq.getUserId()));
+            if (record != null) {
+                log.error("恶意下单校验 uid: [{}] record: [{}]", marketOrderReq.getUserId(), record);
+                throw new StarException(StarError.ORDER_CANCEL_TIMES_OVERFLOW);
+            }
+
+            Integer breakTimes = (Integer) redisUtil.get(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), marketOrderReq.getUserId()));
+            if (Objects.nonNull(breakTimes) && breakTimes >= 3) {
+                redisUtil.set(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), marketOrderReq.getUserId()), marketOrderReq.getUserId(), RedisKey.ORDER_BREAK_RECORD.getTime());
+                log.error("恶意下单校验 uid: [{}] breakTimes: [{}]", marketOrderReq.getUserId(), breakTimes);
+                throw new StarException(StarError.ORDER_CANCEL_TIMES_OVERFLOW);
+            }
+        }
+
+        //待支付订单判断
+//        if (havingOrder(marketOrderReq.getUserId())) {
+//            throw new StarException(StarError.ORDER_DONT_PAY_ERROR);
+//        }
+
 
         ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(marketOrderReq.getNumberId());
         //禁止购买自己售出商品
