@@ -17,6 +17,8 @@ public interface INumberRepository {
     Boolean modifyNumberInfo(NumberUpdateDTO param);
     Boolean modifyBatchNumberInfo(NumberBatchUpdateDTO param);
 
+    Boolean comsumeNumber(Long userId,Long numberId);
+
     Boolean saveNumberCirculationRecord(NumberCirculationAddDTO numberCirculation);
     Boolean saveBatchNumberCirculationRecord(List<NumberCirculationAddDTO> numberCirculation);
 
@@ -35,6 +37,7 @@ public interface INumberRepository {
     boolean updateUserNumberMapping(UserThemeMappingVO updateThemeMappingVo);
 
     List<Integer> loadNotSellNumberNumCollection(Long themeId);
+    List<NumberVO> loadNotSellNumberCollection(Long themeId);
 
     List<NumberVO>  getNumberListByThemeInfoId(NumberQueryDTO numberQueryDTO);
 

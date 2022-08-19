@@ -134,7 +134,7 @@ jetcache:
 xxl:
   job:
     admin:
-      addresses: http://124.221.181.84:8889/xxl-job-admin
+      addresses: http://146.56.248.96:8889/xxl-job-admin
     executor:
       ### 执行器AppName [选填]：执行器心跳注册分组依据；为空则关闭自动注册
       appname: nft-star-schedule

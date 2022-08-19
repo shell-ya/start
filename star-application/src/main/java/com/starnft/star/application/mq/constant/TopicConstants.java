@@ -22,6 +22,9 @@ public enum TopicConstants {
     WALLER_RECEIVABLES_DESTINATION("STAR-RECEIVABLES:%s","callback"),
     //返利(元石) topic & tag
     PAY_REBATES_DESTINATION("STAR-REBATES:%s","pay"),
+
+    //抽奖发奖 topic & tag
+    AWARD_DELIVERY("STAR-DRAW-AWARD:%s","delivery"),
     ;
 
     private String format;

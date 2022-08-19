@@ -2,9 +2,11 @@ package com.starnft.star.domain.draw.service.draw;
 
 import com.starnft.star.common.Result;
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.activity.model.vo.DrawActivityVO;
 import com.starnft.star.domain.activity.model.vo.DrawOrderVO;
 import com.starnft.star.domain.draw.model.aggregates.StrategyRich;
+import com.starnft.star.domain.draw.model.req.DrawAwardExportsReq;
 import com.starnft.star.domain.draw.model.req.DrawReq;
 import com.starnft.star.domain.draw.model.req.PartakeReq;
 import com.starnft.star.domain.draw.model.res.DrawResult;
@@ -107,7 +109,7 @@ public abstract class AbstractDrawBase extends DrawStrategySupport implements ID
         }
 
         AwardBriefVO award = super.queryAwardInfoByAwardId(awardId);
-        DrawAwardVO drawAwardInfo = new DrawAwardVO(uId, award.getAwardId(), award.getAwardType(), award.getAwardName(), "todo", award.getAwardContent());
+        DrawAwardVO drawAwardInfo = new DrawAwardVO(uId, award.getAwardId(), award.getAwardType(), award.getAwardName(), award.getAwardCategoryId(), award.getAwardCount(), "todo", award.getAwardContent());
         drawAwardInfo.setStrategyMode(strategy.getStrategyMode());
         drawAwardInfo.setGrantType(strategy.getGrantType());
         drawAwardInfo.setGrantDate(strategy.getGrantDate());
@@ -119,5 +121,21 @@ public abstract class AbstractDrawBase extends DrawStrategySupport implements ID
     @Override
     public Result recordDrawOrder(DrawOrderVO drawOrder) {
         return super.recordDrawOrder(drawOrder);
+    }
+
+    @Override
+    public void updateInvoiceMqState(String uId, Long orderId, Integer mqState) {
+        super.updateInvoiceMqState(uId, orderId, mqState);
+    }
+
+
+    @Override
+    public void updateUserAwardState(String uId, Long orderId, String awardId, Integer grantState) {
+        super.updateUserAwardState(uId, orderId, awardId, grantState);
+    }
+
+    @Override
+    public ResponsePageResult<DrawAwardExportVO> queryDrawRecords(DrawAwardExportsReq req) {
+        return super.queryDrawRecords(req);
     }
 }

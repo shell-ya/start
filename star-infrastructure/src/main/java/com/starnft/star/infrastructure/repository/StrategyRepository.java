@@ -32,8 +32,6 @@ public class StrategyRepository implements IStrategyRepository {
     private IStrategyDetailDao strategyDetailDao;
 
 
-
-
     @Resource
     private IAwardDao awardDao;
 
@@ -82,6 +80,8 @@ public class StrategyRepository implements IStrategyRepository {
         awardBriefVO.setAwardType(award.getAwardType());
         awardBriefVO.setAwardName(award.getAwardName());
         awardBriefVO.setAwardContent(award.getAwardContent());
+        awardBriefVO.setAwardCount(award.getAwardCount());
+        awardBriefVO.setAwardCategoryId(award.getAwardCategoryId());
 
         return awardBriefVO;
     }

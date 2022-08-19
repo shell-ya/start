@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-@RocketMQMessageListener(topic = "${consumer.topic.recharge}", consumerGroup = "${consumer.group.recharge}", selectorExpression = "callback")
+@RocketMQMessageListener(topic = "${consumer.topic.drawaward}", consumerGroup = "${consumer.group.recharge}", selectorExpression = "callback")
 public class RechargeConsumer implements RocketMQListener<PayCheckRes> {
 
     private Logger log = LoggerFactory.getLogger(RechargeConsumer.class);

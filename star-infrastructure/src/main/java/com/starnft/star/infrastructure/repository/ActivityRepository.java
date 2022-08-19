@@ -1,15 +1,20 @@
 package com.starnft.star.infrastructure.repository;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
+import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.activity.model.vo.ActivityVO;
 import com.starnft.star.domain.activity.model.vo.DrawActivityVO;
 import com.starnft.star.domain.activity.model.vo.DrawOrderVO;
 import com.starnft.star.domain.activity.repository.IActivityRepository;
 import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.draw.model.req.DrawAwardExportsReq;
 import com.starnft.star.domain.draw.model.req.PartakeReq;
+import com.starnft.star.domain.draw.model.vo.DrawAwardExportVO;
 import com.starnft.star.infrastructure.entity.activity.StarScheduleSeckill;
 import com.starnft.star.infrastructure.entity.draw.Activity;
 import com.starnft.star.infrastructure.entity.draw.UserStrategyExport;
@@ -22,6 +27,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class ActivityRepository implements IActivityRepository {
@@ -97,6 +103,38 @@ public class ActivityRepository implements IActivityRepository {
 
         userStrategyExportDao.insert(userStrategyExport);
     }
+
+    @Override
+    public void updateInvoiceMqState(String uId, Long orderId, Integer mqState) {
+        UserStrategyExport userStrategyExport = new UserStrategyExport();
+        userStrategyExport.setuId(uId);
+        userStrategyExport.setOrderId(orderId);
+        userStrategyExport.setMqState(mqState);
+        userStrategyExportDao.updateInvoiceMqState(userStrategyExport);
+    }
+
+    @Override
+    public void updateUserAwardState(String uId, Long orderId, String awardId, Integer grantState) {
+        UserStrategyExport userStrategyExport = new UserStrategyExport();
+        userStrategyExport.setuId(uId);
+        userStrategyExport.setOrderId(orderId);
+        userStrategyExport.setAwardId(awardId);
+        userStrategyExport.setGrantState(grantState);
+        userStrategyExportDao.updateUserAwardState(userStrategyExport);
+    }
+
+    @Override
+    public ResponsePageResult<DrawAwardExportVO> queryUserStrategyExportByUId(DrawAwardExportsReq exportVO) {
+        PageInfo<UserStrategyExport> drawAwardExportVOPageInfo = PageHelper.startPage(exportVO.getPage(), exportVO.getSize())
+                .doSelectPageInfo(() -> userStrategyExportDao.queryUserStrategyExportByUId(exportVO.getUId()));
+
+        return new ResponsePageResult<DrawAwardExportVO>(drawAwardExportVOPageInfo.getList()
+                .stream()
+                .map(po -> BeanColverUtil.colver(po, DrawAwardExportVO.class))
+                .collect(Collectors.toList()),
+                exportVO.getPage(), exportVO.getSize(), drawAwardExportVOPageInfo.getTotal());
+    }
+
 
     @Override
     public List<ActivityVO> obtainActivities(String startTime, String endTime, List<String> keys) {

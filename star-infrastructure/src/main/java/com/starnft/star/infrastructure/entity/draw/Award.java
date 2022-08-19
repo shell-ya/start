@@ -25,6 +25,12 @@ public class Award {
     /** 奖品内容「描述、奖品码、sku」 */
     private String awardContent;
 
+    /** 奖品分类id */
+    private Long awardCategoryId;
+
+    /** 奖品数量 */
+    private Integer awardCount;
+
     /** 创建时间 */
     private Date createTime;
 
@@ -69,6 +75,22 @@ public class Award {
 
     public void setAwardContent(String awardContent) {
         this.awardContent = awardContent;
+    }
+
+    public Long getAwardCategoryId() {
+        return awardCategoryId;
+    }
+
+    public void setAwardCategoryId(Long awardCategoryId) {
+        this.awardCategoryId = awardCategoryId;
+    }
+
+    public Integer getAwardCount() {
+        return awardCount;
+    }
+
+    public void setAwardCount(Integer awardCount) {
+        this.awardCount = awardCount;
     }
 
     public Date getCreateTime() {

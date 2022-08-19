@@ -1,12 +1,15 @@
 package com.starnft.star.domain.draw.service.draw;
 
 import com.starnft.star.common.Result;
+import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.activity.model.vo.DrawActivityVO;
 import com.starnft.star.domain.activity.model.vo.DrawOrderVO;
 import com.starnft.star.domain.activity.repository.IActivityRepository;
 import com.starnft.star.domain.draw.model.aggregates.StrategyRich;
+import com.starnft.star.domain.draw.model.req.DrawAwardExportsReq;
 import com.starnft.star.domain.draw.model.req.PartakeReq;
 import com.starnft.star.domain.draw.model.vo.AwardBriefVO;
+import com.starnft.star.domain.draw.model.vo.DrawAwardExportVO;
 import com.starnft.star.domain.draw.repository.IStrategyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -21,7 +24,6 @@ public class DrawStrategySupport extends DrawConfig {
 
     @Resource
     protected IStrategyRepository strategyRepository;
-
 
     @Resource
     protected IActivityRepository activityRepository;
@@ -55,7 +57,6 @@ public class DrawStrategySupport extends DrawConfig {
     }
 
     public Result recordDrawOrder(DrawOrderVO drawOrder) {
-        activityRepository.saveUserStrategyExport(drawOrder);
         return transactionTemplate.execute(status -> {
             try {
                 activityRepository.saveUserStrategyExport(drawOrder);
@@ -66,6 +67,21 @@ public class DrawStrategySupport extends DrawConfig {
             }
             return Result.buildSuccessResult();
         });
+    }
+
+
+    public void updateInvoiceMqState(String uId, Long orderId, Integer mqState) {
+        activityRepository.updateInvoiceMqState(uId, orderId, mqState);
+    }
+
+
+    public void updateUserAwardState(String uId, Long orderId, String awardId, Integer grantState) {
+        activityRepository.updateUserAwardState(uId, orderId, awardId, grantState);
+    }
+
+
+    public ResponsePageResult<DrawAwardExportVO> queryDrawRecords(DrawAwardExportsReq req) {
+        return activityRepository.queryUserStrategyExportByUId(req);
     }
 
 }

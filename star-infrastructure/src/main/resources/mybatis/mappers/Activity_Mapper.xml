@@ -20,7 +20,7 @@
     </resultMap>
 
     <insert id="insert" parameterType="com.starnft.star.infrastructure.entity.draw.Activity">
-        INSERT INTO activity
+        INSERT INTO draw_activity
         (activity_id, activity_name, activity_desc, begin_date_time, end_date_time,
          stock_count, stock_surplus_count, take_count, strategy_id, state, creator, create_time, update_time)
         VALUES (#{activityId}, #{activityName}, #{activityDesc}, #{beginDateTime}, #{endDateTime},
@@ -28,7 +28,7 @@
     </insert>
 
     <update id="alterState" parameterType="com.starnft.star.domain.draw.model.vo.AlterStateVO">
-        UPDATE activity
+        UPDATE draw_activity
         SET state = #{afterState}
         WHERE activity_id = #{activityId}
           AND state = #{beforeState}
@@ -48,12 +48,12 @@
                creator,
                create_time,
                update_time
-        FROM activity
+        FROM draw_activity
         WHERE activity_id = #{activityId}
     </select>
 
     <update id="subtractionActivityStock" parameterType="java.lang.Long">
-        UPDATE activity
+        UPDATE draw_activity
         SET stock_surplus_count = stock_surplus_count - 1
         WHERE activity_id = #{activityId}
           AND stock_surplus_count > 0
@@ -61,14 +61,14 @@
 
     <select id="scanToDoActivityList" parameterType="java.lang.Long" resultMap="activityMap">
         SELECT activity_id, activity_name, begin_date_time, end_date_time, state, creator
-        FROM activity
+        FROM draw_activity
         WHERE id >= #{id}
           AND state in (4, 5)
         ORDER BY ID ASC LIMIT 10
     </select>
 
     <update id="updateActivityStock" parameterType="com.starnft.star.infrastructure.entity.draw.Activity">
-        UPDATE activity
+        UPDATE draw_activity
         SET stock_surplus_count = #{stockSurplusCount}
         WHERE activity_id = #{activityId}
           AND stock_surplus_count > #{stockSurplusCount}

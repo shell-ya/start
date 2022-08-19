@@ -22,6 +22,7 @@ import com.starnft.star.infrastructure.mapper.number.StarNftNumberCirculationHis
 import com.starnft.star.infrastructure.mapper.number.StarNftThemeNumberMapper;
 import com.starnft.star.infrastructure.mapper.user.StarNftUserThemeMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -37,6 +38,9 @@ public class NumberRepository implements INumberRepository {
     StarNftUserThemeMapper starNftUserThemeMapper;
     @Resource
     StarNFtShelvesRecordMapper shelvesRecordMapper;
+
+    @Resource
+    TransactionTemplate template;
 
     @Override
     public ResponsePageResult<NumberVO> queryNumber(NumberReq numberReq) {
@@ -102,9 +106,27 @@ public class NumberRepository implements INumberRepository {
         starNftThemeNumber.setStatus(param.getStatus().getCode());
         starNftThemeNumber.setIsDelete(param.getIsDeleted());
         starNftThemeNumber.setPrice(param.getPrice());
-        Optional.ofNullable(param.getUid()).ifPresent((item)->{starNftThemeNumber.setOwnerBy(item.toString());});
+        Optional.ofNullable(param.getUid()).ifPresent((item) -> {
+            starNftThemeNumber.setOwnerBy(item.toString());
+        });
 
-        return this.starNftThemeNumberMapper.update(starNftThemeNumber,wrapper )==param.getNumberIds().size();
+        return this.starNftThemeNumberMapper.update(starNftThemeNumber, wrapper) == param.getNumberIds().size();
+    }
+
+    @Override
+    public Boolean comsumeNumber(Long userId, Long numberId) {
+        return template.execute(status -> {
+            LambdaQueryWrapper<StarNftThemeNumber> queryWrapper = new LambdaQueryWrapper<>();
+            StarNftThemeNumber starNftThemeNumber = new StarNftThemeNumber();
+            starNftThemeNumber.setOwnerBy("-1");
+            int isSuccess = starNftThemeNumberMapper.update(starNftThemeNumber, queryWrapper.eq(StarNftThemeNumber::getId, numberId));
+            LambdaQueryWrapper<StarNftUserTheme> utqueryWrapper = new LambdaQueryWrapper<>();
+            StarNftUserTheme starNftUserTheme = new StarNftUserTheme();
+            starNftUserTheme.setIsDelete(Boolean.TRUE);
+            int update1 = starNftUserThemeMapper.update(starNftUserTheme,
+                    utqueryWrapper.eq(StarNftUserTheme::getSeriesThemeId, numberId).eq(StarNftUserTheme::getUserId, userId));
+            return isSuccess + update1 == 2;
+        });
     }
 
     @Override
@@ -215,6 +237,16 @@ public class NumberRepository implements INumberRepository {
     }
 
     @Override
+    public List<NumberVO> loadNotSellNumberCollection(Long themeId) {
+        List<StarNftThemeNumber> starNftThemeNumbers = this.starNftThemeNumberMapper.selectList(
+                new LambdaQueryWrapper<StarNftThemeNumber>()
+                        .eq(Objects.nonNull(themeId), StarNftThemeNumber::getSeriesThemeInfoId, themeId)
+                        .isNull(StarNftThemeNumber::getOwnerBy));
+
+        return BeanColverUtil.colverList(starNftThemeNumbers, NumberVO.class);
+    }
+
+    @Override
     public List<NumberVO> getNumberListByThemeInfoId(NumberQueryDTO numberQueryDTO) {
 
         List<NumberVO> numberListByThemeInfo = this.starNftThemeNumberMapper.getNumberListByThemeInfo(numberQueryDTO);
@@ -225,10 +257,10 @@ public class NumberRepository implements INumberRepository {
     @Override
     public Boolean thirdPlatSelling(Long userId, Long seriesThemeId) {
         LambdaQueryWrapper<StarNftShelvesRecord> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(StarNftShelvesRecord::getUserId,userId);
-        wrapper.eq(StarNftShelvesRecord::getSeriesThemeId,seriesThemeId);
-        wrapper.eq(StarNftShelvesRecord::getStatus,0);
-        wrapper.eq(StarNftShelvesRecord::getIsDeleted,Boolean.FALSE);
+        wrapper.eq(StarNftShelvesRecord::getUserId, userId);
+        wrapper.eq(StarNftShelvesRecord::getSeriesThemeId, seriesThemeId);
+        wrapper.eq(StarNftShelvesRecord::getStatus, 0);
+        wrapper.eq(StarNftShelvesRecord::getIsDeleted, Boolean.FALSE);
         StarNftShelvesRecord starNftShelvesRecord = this.shelvesRecordMapper.selectOne(wrapper);
         return Objects.nonNull(starNftShelvesRecord);
     }
