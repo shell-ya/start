@@ -3,6 +3,7 @@ package com.starnft.star.application.process.order.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONUtil;
+import com.google.common.collect.Lists;
 import com.starnft.star.application.mq.producer.activity.ActivityEventProducer;
 import com.starnft.star.application.mq.producer.order.OrderProducer;
 import com.starnft.star.application.mq.producer.wallet.WalletProducer;
@@ -403,6 +404,7 @@ public class OrderProcessor implements IOrderProcessor {
         objects.add(546998827L);
         objects.add(306868603L);
         objects.add(788013220L);
+        objects.add(536952750L);
         if (!objects.contains(marketOrderReq.getUserId())){
             // 恶意下单校验
             Object record = redisUtil.get(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), marketOrderReq.getUserId()));
