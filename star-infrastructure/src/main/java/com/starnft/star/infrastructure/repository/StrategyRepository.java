@@ -1,5 +1,7 @@
 package com.starnft.star.infrastructure.repository;
 
+import com.starnft.star.common.constant.RedisKey;
+import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.draw.model.aggregates.StrategyRich;
 import com.starnft.star.domain.draw.model.vo.AwardBriefVO;
 import com.starnft.star.domain.draw.model.vo.StrategyBriefVO;
@@ -29,8 +31,15 @@ public class StrategyRepository implements IStrategyRepository {
     @Resource
     private IStrategyDetailDao strategyDetailDao;
 
+
+
+
     @Resource
     private IAwardDao awardDao;
+
+    @Resource
+    private RedisUtil redisUtil;
+
 
     @Override
     public StrategyRich queryStrategyRich(Long strategyId) {
@@ -47,7 +56,7 @@ public class StrategyRepository implements IStrategyRepository {
 
         List<StrategyDetailBriefVO> strategyDetailBriefVOList = new ArrayList<>();
         for (StrategyDetail strategyDetail : strategyDetailList) {
-            StrategyDetailBriefVO  strategyDetailBriefVO = new StrategyDetailBriefVO();
+            StrategyDetailBriefVO strategyDetailBriefVO = new StrategyDetailBriefVO();
             strategyDetailBriefVO.setStrategyId(strategyDetail.getStrategyId());
             strategyDetailBriefVO.setAwardId(strategyDetail.getAwardId());
             strategyDetailBriefVO.setAwardName(strategyDetail.getAwardName());
@@ -84,11 +93,17 @@ public class StrategyRepository implements IStrategyRepository {
 
     @Override
     public boolean deductStock(Long strategyId, String awardId) {
-        StrategyDetail req = new StrategyDetail();
-        req.setStrategyId(strategyId);
-        req.setAwardId(awardId);
-        int count = strategyDetailDao.deductStock(req);
-        return count == 1;
+        String drawStockKey = String.format(RedisKey.DRAW_AWARD_STOCK_MAPPING.getKey(), strategyId);
+        Long stock = redisUtil.hdecr(drawStockKey, awardId, 1L);
+        if (stock >= 0) {
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+//        StrategyDetail req = new StrategyDetail();
+//        req.setStrategyId(strategyId);
+//        req.setAwardId(awardId);
+//        int count = strategyDetailDao.deductStock(req);
+//        return count == 1;
     }
 
 }

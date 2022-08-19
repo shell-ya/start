@@ -58,7 +58,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
-import org.web3j.utils.Strings;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -392,12 +391,6 @@ public class OrderProcessor implements IOrderProcessor {
 
     @Override
     public OrderListRes marketOrder(MarketOrderReq marketOrderReq) {
-
-        //待支付订单判断
-        if (havingOrder(marketOrderReq.getUserId())) {
-            throw new StarException(StarError.ORDER_DONT_PAY_ERROR);
-        }
-
 
         ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(marketOrderReq.getNumberId());
         //禁止购买自己售出商品
