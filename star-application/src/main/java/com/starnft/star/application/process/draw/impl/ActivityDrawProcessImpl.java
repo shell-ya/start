@@ -4,6 +4,7 @@ import com.starnft.star.application.mq.IMessageSender;
 import com.starnft.star.application.process.draw.IActivityDrawProcess;
 import com.starnft.star.application.process.draw.req.DrawProcessReq;
 import com.starnft.star.application.process.draw.res.DrawProcessResult;
+import com.starnft.star.application.process.draw.vo.DrawConsumeVO;
 import com.starnft.star.common.Result;
 import com.starnft.star.common.ResultCode;
 import com.starnft.star.common.constant.StarConstants;
@@ -15,6 +16,7 @@ import com.starnft.star.domain.draw.model.req.PartakeReq;
 import com.starnft.star.domain.draw.model.res.DrawResult;
 import com.starnft.star.domain.draw.model.vo.DrawAwardVO;
 import com.starnft.star.domain.draw.service.draw.IDrawExec;
+import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.support.ids.IIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,11 +42,20 @@ public class ActivityDrawProcessImpl implements IActivityDrawProcess {
     @Resource
     private IMessageSender messageSender;
 
+    @Resource
+    private INumberService iNumberService;
+
 
     @Override
     public DrawProcessResult doDrawProcess(DrawProcessReq req) {
-        // 1. 领取活动
+
+        // 0. 领取活动
         DrawActivityVO drawActivity = drawExec.getDrawActivity(new PartakeReq(req.getuId(), req.getActivityId()));
+        drawActivity.setConsumeItemId(drawActivity.getActivityId());
+
+        // 1. 挂售状态判断
+        isOnSell(req, drawActivity);
+
         // 2. 执行抽奖
         DrawResult drawResult = drawExec.doDrawExec(new DrawReq(req.getuId(), drawActivity.getStrategyId()));
         if (StarConstants.DrawState.FAIL.getCode().equals(drawResult.getDrawState())) {
@@ -60,11 +71,30 @@ public class ActivityDrawProcessImpl implements IActivityDrawProcess {
         }
 
         // 4. 消耗抽奖物品
-
+        Boolean isSuccess = comsumeItem(new DrawConsumeVO(req.getNumber(), drawAwardVO, drawActivity));
         // 5. 发送MQ，触发发奖流程
 //        messageSender.send();
         // 6. 返回结果
         return new DrawProcessResult(StarError.SUCCESS_000000.getErrorCode(), "", drawAwardVO);
+    }
+
+    private void isOnSell(DrawProcessReq req, DrawActivityVO drawActivity) {
+        if (drawActivity.getCanSell() == 1) {
+            Boolean isOnTSell = iNumberService.queryThirdPlatSell(Long.parseLong(req.getuId()), Long.parseLong(req.getNumberId()));
+
+
+        }
+
+    }
+
+    private Boolean comsumeItem(DrawConsumeVO drawConsumeVO) {
+
+        // TODO: 2022/8/18  drawConsumeVO.getDrawActivityVO() 增加消耗数量配置
+
+        // TODO: 2022/8/18 策略设计 不同抽奖活动消耗不同标的
+
+
+        return null;
     }
 
     private DrawOrderVO buildDrawOrderVO(DrawProcessReq req, Long strategyId, Long takeId, DrawAwardVO drawAwardVO) {

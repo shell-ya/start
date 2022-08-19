@@ -11,8 +11,6 @@ import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.Assert;
-import com.starnft.star.common.utils.RandomUtil;
-import com.starnft.star.domain.bulletin.IBulletinService;
 import com.starnft.star.domain.number.model.OrderByEnum;
 import com.starnft.star.domain.number.model.dto.NumberBatchUpdateDTO;
 import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
@@ -29,11 +27,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class NumberServiceImpl implements INumberService {
@@ -179,7 +176,7 @@ public class NumberServiceImpl implements INumberService {
             return JSONUtil.toList(redisManage.toString(),NumberDingVO.class);
         }
         List<NumberDingVO> numberDingList = this.numberRepository.getNumberDingList();
-        redisTemplate.opsForValue().set(RedisKey.DING_PRICE_MANAGE.getKey(),JSONUtil.toJsonStr(numberDingList));
+        redisTemplate.opsForValue().set(RedisKey.DING_PRICE_MANAGE.getKey(),JSONUtil.toJsonStr(numberDingList),RedisKey.DING_PRICE_MANAGE.getTime(), TimeUnit.SECONDS);
         return numberDingList;
     }
 

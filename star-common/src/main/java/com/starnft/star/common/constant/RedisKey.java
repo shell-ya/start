@@ -190,6 +190,9 @@ public enum RedisKey {
      * 市场交易锁
      */
     MARKET_ORDER_TRANSACTION(508, StarConstants.SERVICE_NAME.concat(".market:transaction:%s"), 3L, TimeUnit.MINUTES),
+
+    MARKET_RECEIVABLES(509,StarConstants.SERVICE_NAME.concat(".market:receivables"),3L,TimeUnit.HOURS),
+
     /**
      * 排行榜列表
      */
@@ -219,13 +222,13 @@ public enum RedisKey {
 
     //######################################  draw cache key ######################################
 
-    DRAW_AWARD_STOCK_MAPPING(800, StarConstants.SERVICE_NAME.concat(":draw.award.stock.strategy:%s"), -1L, TimeUnit.SECONDS);
+    DRAW_AWARD_STOCK_MAPPING(800, StarConstants.SERVICE_NAME.concat(":draw.award.stock.strategy:%s"), -1L, TimeUnit.SECONDS),
 
     /**
      * 排行榜
      */
 //定链价格操作
-    DING_PRICE_MANAGE(111, StarConstants.SERVICE_NAME.concat(".ding:price:manage"), 30L, TimeUnit.SECONDS),
+    DING_PRICE_MANAGE(111, StarConstants.SERVICE_NAME.concat(".ding:price:manage"), 60L, TimeUnit.SECONDS),
 
     ;
 

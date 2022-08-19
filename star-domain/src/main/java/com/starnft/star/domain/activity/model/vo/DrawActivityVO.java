@@ -19,6 +19,16 @@ public class DrawActivityVO {
     private Long activityId;
 
     /**
+     * 消耗品id
+     */
+    private Long consumeItemId;
+
+    /**
+     * 消耗品是否能寄售
+     */
+    private Integer canSell = 1;
+
+    /**
      * 活动名称
      */
     private String activityName;
