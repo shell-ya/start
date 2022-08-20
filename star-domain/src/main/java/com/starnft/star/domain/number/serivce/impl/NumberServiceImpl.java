@@ -61,6 +61,17 @@ public class NumberServiceImpl implements INumberService {
     }
 
     @Override
+    public Boolean isOwner(Long userId, Long themeId, Long numberId) {
+
+        return numberRepository.isOwner(userId, themeId, numberId);
+    }
+
+    @Override
+    public Integer isOnSell(Long userId, Long themeId, Long numberId) {
+        return numberRepository.isOnSell(userId, themeId, numberId);
+    }
+
+    @Override
     public ResponsePageResult<NumberVO> listNumber(RequestConditionPage<NumberQueryRequest> request) {
         NumberQueryRequest condition = Optional.ofNullable(request.getCondition()).orElse(new NumberQueryRequest());
         return this.numberRepository.listNumber(

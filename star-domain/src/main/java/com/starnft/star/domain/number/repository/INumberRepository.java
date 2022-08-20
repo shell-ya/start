@@ -19,6 +19,11 @@ public interface INumberRepository {
 
     Boolean comsumeNumber(Long userId,Long numberId);
 
+
+    Boolean isOwner(Long userId, Long themeId, Long numberId);
+
+    Integer isOnSell(Long userId, Long themeId, Long numberId);
+
     Boolean saveNumberCirculationRecord(NumberCirculationAddDTO numberCirculation);
     Boolean saveBatchNumberCirculationRecord(List<NumberCirculationAddDTO> numberCirculation);
 

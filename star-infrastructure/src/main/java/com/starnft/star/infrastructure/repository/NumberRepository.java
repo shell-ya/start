@@ -130,6 +130,31 @@ public class NumberRepository implements INumberRepository {
     }
 
     @Override
+    public Boolean isOwner(Long userId, Long themeId, Long numberId) {
+        StarNftThemeNumber starNftThemeNumber = getStarNftThemeNumber(userId, themeId, numberId);
+
+        return starNftThemeNumber != null;
+    }
+
+    private StarNftThemeNumber getStarNftThemeNumber(Long userId, Long themeId, Long numberId) {
+        LambdaQueryWrapper<StarNftThemeNumber> queryWrapper = new LambdaQueryWrapper<>();
+
+        StarNftThemeNumber starNftThemeNumber = starNftThemeNumberMapper.selectOne(queryWrapper.eq(StarNftThemeNumber::getId, numberId)
+                .eq(StarNftThemeNumber::getSeriesThemeInfoId, themeId)
+                .eq(StarNftThemeNumber::getOwnerBy, userId));
+        return starNftThemeNumber;
+    }
+
+    @Override
+    public Integer isOnSell(Long userId, Long themeId, Long numberId) {
+        StarNftThemeNumber starNftThemeNumber = getStarNftThemeNumber(userId, themeId, numberId);
+        if (starNftThemeNumber != null) {
+            return starNftThemeNumber.getStatus();
+        }
+        return -1;
+    }
+
+    @Override
     public Boolean saveNumberCirculationRecord(NumberCirculationAddDTO numberCirculation) {
         return this.starNftNumberCirculationHistMapper.insert(
                 StarNftNumberCirculationHist.builder()

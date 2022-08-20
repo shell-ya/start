@@ -20,6 +20,10 @@ public interface INumberService {
 
     Boolean comsumeNumber(Long userId, Long numberId);
 
+    Boolean isOwner(Long userId, Long themeId, Long numberId);
+
+    Integer isOnSell(Long userId, Long themeId, Long numberId);
+
     ResponsePageResult<NumberVO> listNumber(RequestConditionPage<NumberQueryRequest> request);
 
     ThemeNumberVo getConsignNumberDetail(Long id);
