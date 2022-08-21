@@ -16,6 +16,7 @@ public enum UserNumberStatusEnum {
     ON_CONSIGNMENT(1, "寄售中"),
 
     SOLD(2, "已出售"),
+    GIVEND(4, "已转赠"),
 
     DESTROY(3,"已销毁");
 

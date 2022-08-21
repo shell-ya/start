@@ -232,7 +232,9 @@ public enum RedisKey {
      */
 //定链价格操作
     DING_PRICE_MANAGE(111, StarConstants.SERVICE_NAME.concat(".ding:price:manage"), 60L, TimeUnit.SECONDS),
-
+    GIVEN_MANAGE_CONFIG(222, StarConstants.SERVICE_NAME.concat(".given:manage:config"), 60L, TimeUnit.SECONDS),
+    GIVEN_MANAGE_BIT_CONFIG(333, StarConstants.SERVICE_NAME.concat(".given:manage:bit:%s"), 60L, TimeUnit.SECONDS),
+//
     ;
 
     private Integer code;
