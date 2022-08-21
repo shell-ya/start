@@ -193,6 +193,10 @@
             AND
             w_id = #{wId}
         </if>
+        <if test="wId != null and wId != ''">
+            AND
+            balance >= 0
+        </if>
         <if test="version != null">
             AND
             version = #{version}

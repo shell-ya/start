@@ -2,7 +2,10 @@ package com.starnft.star.interfaces.controller.draw;
 
 import com.starnft.star.application.process.draw.IActivityDrawProcess;
 import com.starnft.star.application.process.draw.req.DrawProcessReq;
+import com.starnft.star.application.process.limit.ICurrentLimiter;
 import com.starnft.star.common.RopResponse;
+import com.starnft.star.common.exception.StarError;
+import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.draw.model.req.DrawAwardExportsReq;
 import com.starnft.star.domain.draw.model.vo.DrawAwardExportVO;
@@ -28,11 +31,17 @@ public class DrawController {
 
     final IDrawExec drawExec;
 
+    final ICurrentLimiter currentLimiter;
+
     @ApiOperation("执行抽奖")
     @PostMapping("/dodraw")
     public RopResponse<DrawAwardVO> list(@RequestBody DrawProcessReq drawReq) {
-        drawReq.setuId(String.valueOf(UserContext.getUserId().getUserId()));
-        return RopResponse.success(activityDrawProcess.doDrawProcess(drawReq).getDrawAwardVO());
+        if (!currentLimiter.tryAcquire()) {
+            throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
+        }
+        throw new StarException(StarError.SYSTEM_ERROR, "开放时间请关注官方公告");
+//        drawReq.setuId(String.valueOf(UserContext.getUserId().getUserId()));
+//        return RopResponse.success(activityDrawProcess.doDrawProcess(drawReq).getDrawAwardVO());
     }
 
 

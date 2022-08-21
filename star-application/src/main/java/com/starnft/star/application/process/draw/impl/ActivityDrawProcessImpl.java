@@ -16,6 +16,7 @@ import com.starnft.star.common.exception.StarException;
 import com.starnft.star.domain.activity.model.vo.DrawActivityVO;
 import com.starnft.star.domain.activity.model.vo.DrawOrderVO;
 import com.starnft.star.domain.component.RedisLockUtils;
+import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.draw.model.req.DrawReq;
 import com.starnft.star.domain.draw.model.req.PartakeReq;
 import com.starnft.star.domain.draw.model.res.DrawResult;
@@ -56,11 +57,17 @@ public class ActivityDrawProcessImpl implements IActivityDrawProcess {
     @Resource
     private RedisLockUtils redisLockUtils;
 
+    @Resource
+    private RedisUtil redisUtil;
+
 
     @Override
     public DrawProcessResult doDrawProcess(DrawProcessReq req) {
 
-        String lockKey = String.format(RedisKey.SECKILL_ORDER_TRANSACTION.getKey(), req.getNumberId());
+        String lockKey = String.format(RedisKey.DRAW_AWARD_OPEN_LOCK.getKey(), req.getNumberId());
+        if (redisUtil.hasKey(RedisLockUtils.REDIS_LOCK_PREFIX + lockKey)) {
+            throw new StarException(StarError.SYSTEM_ERROR, "请勿重复开启");
+        }
         try {
             Boolean lock = redisLockUtils.lock(lockKey, RedisKey.DRAW_AWARD_OPEN_LOCK.getTime());
             if (lock) {

@@ -5,7 +5,6 @@ import com.starnft.star.common.ResultCode;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.wallet.model.req.CalculateReq;
-import com.starnft.star.domain.wallet.model.req.TransReq;
 import com.starnft.star.domain.wallet.model.req.WalletPayRequest;
 import com.starnft.star.domain.wallet.model.res.ReceivablesCalculateResult;
 import com.starnft.star.domain.wallet.model.res.WalletPayResult;
@@ -17,7 +16,6 @@ import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.function.Supplier;
 
 /**
@@ -35,14 +33,14 @@ public class ReceivablesConsumer implements RocketMQListener<WalletPayRequest> {
 
     @Override
     public void onMessage(WalletPayRequest payRequest) {
-        try{
+        try {
             log.info("市场订单：{},交易成功添加卖方余额 消息实体:{}", payRequest.getOrderSn(), payRequest);
             Long processed = redisUtil.hincr(RedisKey.MARKET_RECEIVABLES.getKey(), payRequest.getOrderSn(), 1L);
-            if (processed > 1){
-                log.info("该订单:{}已处理",payRequest.getOrderSn());
+            if (processed > 1) {
+                log.info("该订单:{}已处理", payRequest.getOrderSn());
                 return;
             }
-            walletService.balanceVerify(0L,payRequest.getPayAmount());
+            walletService.balanceVerify(0L, payRequest.getPayAmount());
 //        walletService.balanceVerify(payRequest.getFromUid(), payRequest.getPayAmount());
             //计算手续费
             ReceivablesCalculateResult calculateResult = walletService.ReceivablesMoneyCalculate(new CalculateReq(payRequest.getPayAmount(), payRequest.getChannel()));
@@ -59,8 +57,8 @@ public class ReceivablesConsumer implements RocketMQListener<WalletPayRequest> {
                 log.error("修改余额失败：{}", payRequest);
                 throw new RuntimeException("修改余额失败");
             }
-            redisUtil.hincr(RedisKey.MARKET_RECEIVABLES.getKey(),payRequest.getOrderSn(),1L);
-        }finally {
+            redisUtil.hincr(RedisKey.MARKET_RECEIVABLES.getKey(), payRequest.getOrderSn(), 1L);
+        } finally {
             walletService.threadClear();
         }
     }

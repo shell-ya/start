@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CurrentLimiter implements ICurrentLimiter {
 
-    private final RateLimiter rateLimiter = RateLimiter.create(2000);
+    private final RateLimiter rateLimiter = RateLimiter.create(1000);
 
     @Override
     public boolean tryAcquire() {
