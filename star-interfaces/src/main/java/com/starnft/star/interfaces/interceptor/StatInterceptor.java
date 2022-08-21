@@ -1,8 +1,10 @@
 package com.starnft.star.interfaces.interceptor;
 
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
+import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.domain.user.service.impl.BaseUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
@@ -29,6 +32,9 @@ public class StatInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired
     BaseUserService baseUserService;
+
+    @Resource
+    RedisUtil redisUtil;
 
     /**
      * pre sin controller
@@ -78,6 +84,10 @@ public class StatInterceptor extends HandlerInterceptorAdapter {
             throw new StarException(StarError.TOKEN_NOT_EXISTS_ERROR);
         } else {
             UserInfo userInfo = this.baseUserService.checkTokenAndReturnUserId(token);
+            Boolean isBlack = redisUtil.getTemplate().opsForSet().isMember(RedisKey.BLACK_MEMBERS, userInfo.getAccount());
+            if (isBlack) {
+                throw new StarException(StarError.SYSTEM_ERROR, "您由于非法操作被列入黑名单，请联系客服解决！");
+            }
             UserContext.setUserResolverInfo(UserResolverInfo.builder().userId(userInfo.getAccount()).phone(userInfo.getPhone()).build());
         }
 

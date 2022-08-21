@@ -235,9 +235,9 @@ public enum RedisKey {
 
     VISIT_TIMES_MAPPING(1111, StarConstants.SERVICE_NAME.concat(".visit.times.mapping:%s"), 5L, TimeUnit.SECONDS),
 
-    DANGER_LIST_RECORD(1112, StarConstants.SERVICE_NAME.concat(".visit.danger.list"), 5L, TimeUnit.SECONDS)
+    DANGER_LIST_RECORD(1112, StarConstants.SERVICE_NAME.concat(".visit.danger.list"), 5L, TimeUnit.SECONDS),
 
-
+    BLACK_MEMBERS(1113, StarConstants.SERVICE_NAME.concat(".black.list"), 5L, TimeUnit.SECONDS)
 
     ,
     ;
