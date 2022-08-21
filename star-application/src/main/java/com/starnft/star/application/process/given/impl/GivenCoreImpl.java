@@ -7,6 +7,7 @@ import com.starnft.star.common.enums.NumberStatusEnum;
 import com.starnft.star.common.enums.UserNumberStatusEnum;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.utils.Assert;
+import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.article.model.vo.UserNumbersVO;
 import com.starnft.star.domain.article.service.UserThemeService;
 import com.starnft.star.domain.given.model.req.GivenMangeReq;
@@ -14,6 +15,7 @@ import com.starnft.star.domain.number.model.vo.UserThemeMappingVO;
 import com.starnft.star.domain.number.repository.INumberRepository;
 import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.user.model.vo.UserInfo;
+import com.starnft.star.domain.user.model.vo.UserInfoVO;
 import com.starnft.star.domain.user.service.IUserService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -40,14 +42,18 @@ public class GivenCoreImpl implements IGivenCore {
     public Boolean giving(Long userId, GivenMangeReq givenMangeReq) {
         Boolean isGiving = redisTemplate.opsForSet().isMember(RedisKey.GIVEN_MANAGE_CONFIG.getKey(), givenMangeReq.getThemeId());
         Boolean giving = redisTemplate.opsForValue().getBit(String.format(RedisKey.GIVEN_MANAGE_BIT_CONFIG.getKey(), givenMangeReq.getThemeId()), userId);
-        Assert.isFalse(giving, () -> new StarException("转赠次数已用完"));
         Assert.isTrue(isGiving, () -> new StarException("藏品不可转赠"));
+        Assert.isFalse(giving, () -> new StarException("转赠次数已用完"));
         UserInfo userInfo = iUserService.queryUserByMobile(givenMangeReq.getMobile());
+        UserInfoVO userInfoVO = iUserService.queryUserInfo(userId);
         Assert.notNull(userInfo, () -> new StarException("用户不存在"));
+        String payPwd = StarUtils.getSHA256Str(givenMangeReq.getPayPassword());
+        Assert.isTrue(userInfoVO.getPlyPassword().equals(payPwd),()->new StarException("支付密码错误"));
         UserNumbersVO userNumbersVO = userThemeService.queryUserNumberInfo(userId, givenMangeReq.getNumberId(), UserNumberStatusEnum.PURCHASED);
         Assert.notNull(userNumbersVO, () -> new StarException("藏品不存在，请选择正确的藏品信息"));
         Boolean owner = iNumberService.isOwner(userId, givenMangeReq.getThemeId(), givenMangeReq.getNumberId());
         Assert.isTrue(owner, () -> new StarException("藏品不存在，请选择正确的藏品信息"));
+
         //修改持有状态
         UserThemeMappingVO userThemeMappingVO = getUserThemeMappingVO(userId, givenMangeReq, userInfo, userNumbersVO);
         Boolean isSuccess = template.execute(status -> {
