@@ -56,6 +56,22 @@ public class NumberServiceImpl implements INumberService {
     }
 
     @Override
+    public Boolean comsumeNumber(Long userId, Long numberId) {
+        return numberRepository.comsumeNumber(userId, numberId);
+    }
+
+    @Override
+    public Boolean isOwner(Long userId, Long themeId, Long numberId) {
+
+        return numberRepository.isOwner(userId, themeId, numberId);
+    }
+
+    @Override
+    public Integer isOnSell(Long userId, Long themeId, Long numberId) {
+        return numberRepository.isOnSell(userId, themeId, numberId);
+    }
+
+    @Override
     public ResponsePageResult<NumberVO> listNumber(RequestConditionPage<NumberQueryRequest> request) {
         NumberQueryRequest condition = Optional.ofNullable(request.getCondition()).orElse(new NumberQueryRequest());
         return this.numberRepository.listNumber(
@@ -101,6 +117,12 @@ public class NumberServiceImpl implements INumberService {
     public List<Integer> loadNotSellNumberNumCollection(Long themeId) {
         return this.numberRepository.loadNotSellNumberNumCollection(themeId);
     }
+
+    @Override
+    public List<NumberVO> loadNotSellNumberCollection(Long themeId) {
+        return this.numberRepository.loadNotSellNumberCollection(themeId);
+    }
+
 
     @Override
     public boolean handover(HandoverReq handoverReq) {
@@ -149,7 +171,7 @@ public class NumberServiceImpl implements INumberService {
 
     @Override
     public boolean createUserNumberMapping(UserThemeMappingVO userThemeMappingVO) {
-     return    this.numberRepository.createUserNumberMapping(userThemeMappingVO);
+        return this.numberRepository.createUserNumberMapping(userThemeMappingVO);
     }
 
     @Override
@@ -164,7 +186,7 @@ public class NumberServiceImpl implements INumberService {
 
     @Override
     public Boolean modifyNumberOwnerBy(Long id, Long userId, Integer code) {
-       return this.numberRepository.modifyNumberStatus(id,userId,code);
+        return this.numberRepository.modifyNumberStatus(id, userId, code);
     }
 
 
@@ -172,11 +194,11 @@ public class NumberServiceImpl implements INumberService {
     public List<NumberDingVO> getNumberDingList() {
 
         Object redisManage = redisTemplate.opsForValue().get(RedisKey.DING_PRICE_MANAGE.getKey());
-        if (Objects.nonNull(redisManage)){
-            return JSONUtil.toList(redisManage.toString(),NumberDingVO.class);
+        if (Objects.nonNull(redisManage)) {
+            return JSONUtil.toList(redisManage.toString(), NumberDingVO.class);
         }
         List<NumberDingVO> numberDingList = this.numberRepository.getNumberDingList();
-        redisTemplate.opsForValue().set(RedisKey.DING_PRICE_MANAGE.getKey(),JSONUtil.toJsonStr(numberDingList),RedisKey.DING_PRICE_MANAGE.getTime(), TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(RedisKey.DING_PRICE_MANAGE.getKey(), JSONUtil.toJsonStr(numberDingList), RedisKey.DING_PRICE_MANAGE.getTime(), TimeUnit.SECONDS);
         return numberDingList;
     }
 
@@ -208,8 +230,8 @@ public class NumberServiceImpl implements INumberService {
     }
 
     @Override
-    public Boolean queryThirdPlatSell(Long userId,Long seriesThemeId){
-        return numberRepository.thirdPlatSelling(userId,seriesThemeId);
+    public Boolean queryThirdPlatSell(Long userId, Long seriesThemeId) {
+        return numberRepository.thirdPlatSelling(userId, seriesThemeId);
     }
 
 }

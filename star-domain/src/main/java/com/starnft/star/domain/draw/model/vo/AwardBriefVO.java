@@ -17,6 +17,12 @@ public class AwardBriefVO {
     /** 奖品内容「描述、奖品码、sku」 */
     private String awardContent;
 
+    /** 奖品分类id */
+    private Long awardCategoryId;
+
+    /** 奖品数量 */
+    private Integer awardCount;
+
     public String getAwardId() {
         return awardId;
     }
@@ -49,6 +55,22 @@ public class AwardBriefVO {
         this.awardContent = awardContent;
     }
 
+    public Long getAwardCategoryId() {
+        return awardCategoryId;
+    }
+
+    public void setAwardCategoryId(Long awardCategoryId) {
+        this.awardCategoryId = awardCategoryId;
+    }
+
+    public Integer getAwardCount() {
+        return awardCount;
+    }
+
+    public void setAwardCount(Integer awardCount) {
+        this.awardCount = awardCount;
+    }
+
     @Override
     public String toString() {
         return "AwardBriefVO{" +
@@ -56,7 +78,8 @@ public class AwardBriefVO {
                 ", awardType=" + awardType +
                 ", awardName='" + awardName + '\'' +
                 ", awardContent='" + awardContent + '\'' +
+                ", awardCategoryId=" + awardCategoryId +
+                ", awardCount=" + awardCount +
                 '}';
     }
-
 }

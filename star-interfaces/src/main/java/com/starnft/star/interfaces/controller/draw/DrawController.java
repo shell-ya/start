@@ -1,8 +1,13 @@
 package com.starnft.star.interfaces.controller.draw;
 
+import com.starnft.star.application.process.draw.IActivityDrawProcess;
+import com.starnft.star.application.process.draw.req.DrawProcessReq;
 import com.starnft.star.common.RopResponse;
-import com.starnft.star.domain.draw.model.req.DrawReq;
+import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.domain.draw.model.req.DrawAwardExportsReq;
+import com.starnft.star.domain.draw.model.vo.DrawAwardExportVO;
 import com.starnft.star.domain.draw.model.vo.DrawAwardVO;
+import com.starnft.star.domain.draw.service.draw.IDrawExec;
 import com.starnft.star.interfaces.interceptor.UserContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -19,24 +24,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/draw")
 public class DrawController {
 
+    final IActivityDrawProcess activityDrawProcess;
+
+    final IDrawExec drawExec;
+
     @ApiOperation("执行抽奖")
     @PostMapping("/dodraw")
-    public RopResponse<DrawAwardVO> list(@RequestBody DrawReq drawReq) {
-        return RopResponse.success(mockResult(UserContext.getUserId().getUserId()));
+    public RopResponse<DrawAwardVO> list(@RequestBody DrawProcessReq drawReq) {
+        drawReq.setuId(String.valueOf(UserContext.getUserId().getUserId()));
+        return RopResponse.success(activityDrawProcess.doDrawProcess(drawReq).getDrawAwardVO());
     }
 
-    private DrawAwardVO mockResult(Long userId) {
-        DrawAwardVO drawAwardVO = new DrawAwardVO();
-        drawAwardVO.setuId(String.valueOf(userId));
-        drawAwardVO.setAwardId("100001");
-        drawAwardVO.setAwardContent("1000积分");
-        drawAwardVO.setAwardName("1000积分");
-        drawAwardVO.setAwardType(1);
-        drawAwardVO.setStrategyMode(1);
-        drawAwardVO.setGrantType(1);
-        drawAwardVO.setAwardPic("https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1660463323376_661af3ec.png");
 
-        return drawAwardVO;
-
+    @ApiOperation("抽奖记录")
+    @PostMapping("/record")
+    public RopResponse<ResponsePageResult<DrawAwardExportVO>> queryDrawRecord(@RequestBody DrawAwardExportsReq req) {
+        req.setUId(String.valueOf(UserContext.getUserId().getUserId()));
+        return RopResponse.success(drawExec.queryDrawRecords(req));
     }
+
 }

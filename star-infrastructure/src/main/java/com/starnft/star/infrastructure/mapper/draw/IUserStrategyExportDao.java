@@ -22,7 +22,7 @@ public interface IUserStrategyExportDao {
      * @param uId 用户ID
      * @return 用户策略
      */
-    UserStrategyExport queryUserStrategyExportByUId(String uId);
+    List<UserStrategyExport> queryUserStrategyExportByUId(String uId);
 
     /**
      * 更新发奖状态
@@ -37,7 +37,7 @@ public interface IUserStrategyExportDao {
     void updateInvoiceMqState(UserStrategyExport userStrategyExport);
 
     /**
-     * 扫描发货单 MQ 状态，把未发送 MQ 的单子扫描出来，做补偿
+     * 扫描发货单 MQ 状态，把未发送 MQ 的单子扫描出来，做补偿 // TODO: 2022/8/19
      *
      * @return 发货单
      */

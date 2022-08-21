@@ -33,7 +33,7 @@ public class ScopeRecordRepository implements IScopeRecordRepository, PageHelper
         PageInfo<StarNftScopeRecord> repository = PageHelper.startPage(queryScoreRecordReq.getPage(), queryScoreRecordReq.getSize()).doSelectPageInfo(() -> {
             starNftScopeRecordMapper.selectList(new QueryWrapper<StarNftScopeRecord>()
                     .eq(StarNftScopeRecord.COL_USER_ID, queryScoreRecordReq.getUserId())
-                    .orderByDesc(StarNftScopeRecord.COL_ID)
+                    .orderByDesc(StarNftScopeRecord.COL_CREATED_AT)
             );
         });
         List<ScoreRecordRes> collect = repository.getList()
@@ -46,7 +46,7 @@ public class ScopeRecordRepository implements IScopeRecordRepository, PageHelper
                         .remarks(item.getRemarks())
                         .build())
                 .collect(Collectors.toList());
-        return listReplace(repository,collect);
+        return listReplace(repository, collect);
     }
 
     @Override
@@ -61,6 +61,6 @@ public class ScopeRecordRepository implements IScopeRecordRepository, PageHelper
         starNftScopeRecord.setRemarks(scoreRecordReq.getRemarks());
         starNftScopeRecord.setUserId(scoreRecordReq.getUserId());
         starNftScopeRecord.setScopeType(scoreRecordReq.getScopeType());
-         return starNftScopeRecordMapper.insert(starNftScopeRecord)>0?Boolean.TRUE:Boolean.FALSE;
+        return starNftScopeRecordMapper.insert(starNftScopeRecord) > 0 ? Boolean.TRUE : Boolean.FALSE;
     }
 }

@@ -8,12 +8,15 @@
         <result column="award_type" property="awardType"/>
         <result column="award_name" property="awardName"/>
         <result column="award_content" property="awardContent"/>
+        <result column="award_category_id" property="awardCategoryId"/>
+        <result column="award_count" property="awardCount"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <insert id="insertList" parameterType="java.util.List">
-        INSERT INTO activity_award(award_id, award_type, award_name, award_content, create_time, update_time)
+        INSERT INTO activity_award(award_id, award_type, award_name, award_content,award_category_id,award_count,
+        create_time, update_time)
         VALUES
         <foreach collection="list" item="item" index="index" separator=",">
             (
@@ -21,6 +24,8 @@
             #{item.awardType},
             #{item.awardName},
             #{item.awardContent},
+            #{item.awardCategoryId},
+            #{item.awardCount},
             NOW(),
             NOW()
             )
@@ -28,8 +33,13 @@
     </insert>
 
     <select id="queryAwardInfo" parameterType="java.lang.String" resultMap="awardMap">
-        SELECT
-        id, award_id, award_type, award_name, award_content
+        SELECT id,
+               award_id,
+               award_type,
+               award_name,
+               award_content,
+               award_category_id,
+               award_count
         FROM activity_award
         WHERE award_id = #{awardId}
     </select>

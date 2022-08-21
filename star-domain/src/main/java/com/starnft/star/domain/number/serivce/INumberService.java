@@ -11,7 +11,6 @@ import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public interface INumberService {
@@ -19,28 +18,41 @@ public interface INumberService {
 
     NumberDetailVO getNumberDetail(Long id);
 
+    Boolean comsumeNumber(Long userId, Long numberId);
+
+    Boolean isOwner(Long userId, Long themeId, Long numberId);
+
+    Integer isOnSell(Long userId, Long themeId, Long numberId);
+
     ResponsePageResult<NumberVO> listNumber(RequestConditionPage<NumberQueryRequest> request);
 
     ThemeNumberVo getConsignNumberDetail(Long id);
+
     List<NumberVO> getNumberListByThemeInfoId(NumberQueryDTO numberQueryDTO);
 
     //查询对应编号藏品信息
     ThemeNumberVo queryNumberExist(Integer themeNumber, Long themeId);
+
     ThemeNumberVo queryRandomThemeNumber(Long themeId);
 
     List<Integer> loadNotSellNumberNumCollection(Long themeId);
+
+    List<NumberVO> loadNotSellNumberCollection(Long themeId);
 
     //物品转移
     boolean handover(HandoverReq handoverReq);
 
 
     Boolean modifyNumberInfo(NumberUpdateDTO param);
+
     Boolean modifyBatchNumberInfo(NumberBatchUpdateDTO param);
 
-    Boolean queryThirdPlatSell(Long userId,Long seriesThemeId);
+    Boolean queryThirdPlatSell(Long userId, Long seriesThemeId);
 
     boolean createUserNumberMapping(UserThemeMappingVO userThemeMappingVO);
+
     Boolean saveNumberCirculationRecord(NumberCirculationAddDTO numberCirculation);
+
     Boolean saveBatchNumberCirculationRecord(List<NumberCirculationAddDTO> numberCirculation);
 
     public List<NumberDingVO> getNumberDingList();

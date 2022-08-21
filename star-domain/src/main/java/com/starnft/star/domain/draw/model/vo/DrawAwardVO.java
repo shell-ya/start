@@ -41,6 +41,19 @@ public class DrawAwardVO {
     @ApiModelProperty(value = "奖品内容「描述、奖品码、sku」")
     private String awardContent;
 
+
+    /**
+     * 奖品分类id
+     */
+    @ApiModelProperty(value = "奖品分类id ")
+    private Long awardCategoryId;
+
+    /**
+     * 奖品数量
+     */
+    @ApiModelProperty(value = "奖品数量")
+    private Integer awardCount;
+
     /**
      * 奖品图标
      */
@@ -67,10 +80,12 @@ public class DrawAwardVO {
     public DrawAwardVO() {
     }
 
-    public DrawAwardVO(String uId, String awardId, Integer awardType, String awardName, String awardPic, String awardContent) {
+    public DrawAwardVO(String uId, String awardId, Integer awardType, String awardName, Long awardCategoryId, Integer awardCount,  String awardPic, String awardContent) {
         this.uId = uId;
         this.awardId = awardId;
         this.awardType = awardType;
+        this.awardCategoryId = awardCategoryId;
+        this.awardCount = awardCount;
         this.awardPic = awardPic;
         this.awardName = awardName;
         this.awardContent = awardContent;
@@ -102,6 +117,22 @@ public class DrawAwardVO {
 
     public void setAwardType(Integer awardType) {
         this.awardType = awardType;
+    }
+
+    public Long getAwardCategoryId() {
+        return awardCategoryId;
+    }
+
+    public void setAwardCategoryId(Long awardCategoryId) {
+        this.awardCategoryId = awardCategoryId;
+    }
+
+    public Integer getAwardCount() {
+        return awardCount;
+    }
+
+    public void setAwardCount(Integer awardCount) {
+        this.awardCount = awardCount;
     }
 
     public String getAwardPic() {
