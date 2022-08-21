@@ -57,6 +57,7 @@ public class GivenCoreImpl implements IGivenCore {
             return modify && created && update;
         });
       Assert.isTrue(Boolean.TRUE.equals(isSuccess),()->new StarException("转赠失败，请稍后再试"));
+      redisTemplate.opsForValue().setBit(String.format(RedisKey.GIVEN_MANAGE_BIT_CONFIG.getKey(), givenMangeReq.getThemeId()), userId, true);
       return isSuccess;
     }
 
