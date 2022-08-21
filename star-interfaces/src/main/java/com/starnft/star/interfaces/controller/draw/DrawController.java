@@ -4,9 +4,11 @@ import com.starnft.star.application.process.draw.IActivityDrawProcess;
 import com.starnft.star.application.process.draw.req.DrawProcessReq;
 import com.starnft.star.application.process.limit.ICurrentLimiter;
 import com.starnft.star.common.RopResponse;
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.draw.model.req.DrawAwardExportsReq;
 import com.starnft.star.domain.draw.model.vo.DrawAwardExportVO;
 import com.starnft.star.domain.draw.model.vo.DrawAwardVO;
@@ -33,14 +35,25 @@ public class DrawController {
 
     final ICurrentLimiter currentLimiter;
 
+    final RedisUtil redisUtil;
+
     @ApiOperation("执行抽奖")
     @PostMapping("/dodraw")
     public RopResponse<DrawAwardVO> list(@RequestBody DrawProcessReq drawReq) {
+
         if (!currentLimiter.tryAcquire()) {
             throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
         }
+        drawReq.setuId(String.valueOf(UserContext.getUserId().getUserId()));
+        String redisKey = String.format(RedisKey.VISIT_TIMES_MAPPING.getKey(), drawReq.getuId());
+        Long times = redisUtil.incr(redisKey, 1L);
+        redisUtil.expire(redisKey, RedisKey.VISIT_TIMES_MAPPING.getTime());
+        if (times > 5) {
+            redisUtil.hincr(RedisKey.DANGER_LIST_RECORD.getKey(), drawReq.getuId(), 1L);
+            throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
+        }
         throw new StarException(StarError.SYSTEM_ERROR, "开放时间请关注官方公告");
-//        drawReq.setuId(String.valueOf(UserContext.getUserId().getUserId()));
+
 //        return RopResponse.success(activityDrawProcess.doDrawProcess(drawReq).getDrawAwardVO());
     }
 
