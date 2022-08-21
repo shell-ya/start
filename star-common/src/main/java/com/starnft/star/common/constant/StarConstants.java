@@ -29,7 +29,7 @@ public class StarConstants {
     /**
      * 支付密码错误重试机会
      */
-    public static final Integer PAYPWD_RETRY_COUNT = 5;
+    public static final Integer PAYPWD_RETRY_COUNT = 10;
 
     /**
      * token关键字
