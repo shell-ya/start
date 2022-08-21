@@ -12,10 +12,10 @@ public class GivenMangeReq {
     private String mobile;
     @ApiModelProperty("支付密码")
     private String payPassword;
-    @ApiModelProperty("编码ID")
+    @ApiModelProperty("编号ID")
     private Long numberId;
-    @ApiModelProperty("编码ID")
+    @ApiModelProperty("主题ID")
     private Long themeId;
-    @ApiModelProperty("编码ID")
+    @ApiModelProperty("系列ID")
     private Long seriesId;
 }
