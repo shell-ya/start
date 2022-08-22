@@ -52,9 +52,9 @@ public class DrawController {
             redisUtil.hincr(RedisKey.DANGER_LIST_RECORD.getKey(), drawReq.getuId(), 1L);
             throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
         }
-        throw new StarException(StarError.SYSTEM_ERROR, "开放时间请关注官方公告");
+//        throw new StarException(StarError.SYSTEM_ERROR, "开放时间请关注官方公告");
 
-//        return RopResponse.success(activityDrawProcess.doDrawProcess(drawReq).getDrawAwardVO());
+        return RopResponse.success(activityDrawProcess.doDrawProcess(drawReq).getDrawAwardVO());
     }
 
 
