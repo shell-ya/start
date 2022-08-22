@@ -58,7 +58,7 @@ public class GivenCoreImpl implements IGivenCore {
         //修改持有状态
         UserThemeMappingVO userThemeMappingVO = getUserThemeMappingVO(userId, givenMangeReq, userInfo, userNumbersVO);
         Boolean isSuccess = template.execute(status -> {
-            boolean update = iNumberService.modifyNumberOwnerBy(givenMangeReq.getNumberId(), userInfo.getId(), NumberStatusEnum.SOLD.getCode());
+            boolean update = iNumberService.modifyNumberOwnerBy(givenMangeReq.getNumberId(), userInfo.getAccount(), NumberStatusEnum.SOLD.getCode());
             boolean modify = userThemeService.modifyUserNumberStatus(userId, givenMangeReq.getNumberId(), BigDecimal.ZERO, UserNumberStatusEnum.PURCHASED, UserNumberStatusEnum.GIVEND);
             boolean created = this.numberRepository.createUserNumberMapping(userThemeMappingVO);
             return modify && created && update;
