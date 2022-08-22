@@ -41,9 +41,9 @@ public class GivenCoreImpl implements IGivenCore {
     @Override
     public Boolean giving(Long userId, GivenMangeReq givenMangeReq) {
         Boolean isGiving = redisTemplate.opsForSet().isMember(RedisKey.GIVEN_MANAGE_CONFIG.getKey(), givenMangeReq.getThemeId());
-        Boolean giving = redisTemplate.opsForValue().getBit(String.format(RedisKey.GIVEN_MANAGE_BIT_CONFIG.getKey(), givenMangeReq.getThemeId()), userId);
+       // Boolean giving = redisTemplate.opsForValue().getBit(String.format(RedisKey.GIVEN_MANAGE_BIT_CONFIG.getKey(), givenMangeReq.getThemeId()), userId);
         Assert.isTrue(isGiving, () -> new StarException("藏品不可转赠"));
-        Assert.isFalse(giving, () -> new StarException("转赠次数已用完"));
+       // Assert.isFalse(giving, () -> new StarException("转赠次数已用完"));
         UserInfo userInfo = iUserService.queryUserByMobile(givenMangeReq.getMobile());
         UserInfoVO userInfoVO = iUserService.queryUserInfo(userId);
         Assert.notNull(userInfo, () -> new StarException("用户不存在"));
@@ -58,9 +58,9 @@ public class GivenCoreImpl implements IGivenCore {
         //修改持有状态
         UserThemeMappingVO userThemeMappingVO = getUserThemeMappingVO(userId, givenMangeReq, userInfo, userNumbersVO);
         Boolean isSuccess = template.execute(status -> {
+            boolean update = iNumberService.modifyNumberOwnerBy(givenMangeReq.getNumberId(), userInfo.getId(), NumberStatusEnum.SOLD.getCode());
             boolean modify = userThemeService.modifyUserNumberStatus(userId, givenMangeReq.getNumberId(), BigDecimal.ZERO, UserNumberStatusEnum.PURCHASED, UserNumberStatusEnum.GIVEND);
             boolean created = this.numberRepository.createUserNumberMapping(userThemeMappingVO);
-            boolean update = iNumberService.modifyNumberOwnerBy(givenMangeReq.getNumberId(), userInfo.getId(), NumberStatusEnum.SOLD.getCode());
             return modify && created && update;
         });
       Assert.isTrue(Boolean.TRUE.equals(isSuccess),()->new StarException("转赠失败，请稍后再试"));
