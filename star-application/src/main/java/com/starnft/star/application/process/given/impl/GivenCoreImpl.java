@@ -10,6 +10,7 @@ import com.starnft.star.common.utils.Assert;
 import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.article.model.vo.UserNumbersVO;
 import com.starnft.star.domain.article.service.UserThemeService;
+import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.given.model.req.GivenMangeReq;
 import com.starnft.star.domain.number.model.vo.UserThemeMappingVO;
 import com.starnft.star.domain.number.repository.INumberRepository;
@@ -38,34 +39,44 @@ public class GivenCoreImpl implements IGivenCore {
     RedisTemplate<String, Object> redisTemplate;
     @Resource
     TransactionTemplate template;
+    @Resource
+    RedisLockUtils redisLockUtils;
+
     @Override
     public Boolean giving(Long userId, GivenMangeReq givenMangeReq) {
-        Boolean isGiving = redisTemplate.opsForSet().isMember(RedisKey.GIVEN_MANAGE_CONFIG.getKey(), givenMangeReq.getThemeId());
-//        Boolean giving = redisTemplate.opsForValue().getBit(String.format(RedisKey.GIVEN_MANAGE_BIT_CONFIG.getKey(), givenMangeReq.getThemeId()), userId);
-        Assert.isTrue(isGiving, () -> new StarException("藏品不可转赠"));
-//        Assert.isFalse(giving, () -> new StarException("转赠次数已用完"));
-        UserInfo userInfo = iUserService.queryUserByMobile(givenMangeReq.getMobile());
-        UserInfoVO userInfoVO = iUserService.queryUserInfo(userId);
-        Assert.notNull(userInfo, () -> new StarException("用户不存在"));
-        Assert.isFalse(userInfo.getId().equals(userId),()->new StarException("禁止赠送自己本人"));
-        String payPwd = StarUtils.getSHA256Str(givenMangeReq.getPayPassword());
-        Assert.isTrue(userInfoVO.getPlyPassword().equals(payPwd),()->new StarException("支付密码错误"));
-        UserNumbersVO userNumbersVO = userThemeService.queryUserNumberInfo(userId, givenMangeReq.getNumberId(), UserNumberStatusEnum.PURCHASED);
-        Assert.notNull(userNumbersVO, () -> new StarException("藏品不存在，请选择正确的藏品信息"));
-        Boolean owner = iNumberService.isOwner(userId, givenMangeReq.getThemeId(), givenMangeReq.getNumberId());
-        Assert.isTrue(owner, () -> new StarException("藏品不存在，请选择正确的藏品信息"));
+        Boolean lock = redisLockUtils.lock(String.format(RedisKey.GIVEN_MANAGE_LOCK.getKey(), givenMangeReq.getNumberId()), RedisKey.GIVEN_MANAGE_LOCK.getTime());
+        Assert.isTrue(lock, () -> new StarException("请不要重复操作"));
+        try {
+            Boolean isGiving = redisTemplate.opsForSet().isMember(RedisKey.GIVEN_MANAGE_CONFIG.getKey(), givenMangeReq.getThemeId());
+//            Boolean giving = redisTemplate.opsForValue().getBit(String.format(RedisKey.GIVEN_MANAGE_BIT_CONFIG.getKey(), givenMangeReq.getThemeId()), userId);
+            Assert.isTrue(isGiving, () -> new StarException("藏品不可转赠"));
+//            Assert.isFalse(giving, () -> new StarException("转赠次数已用完"));
+            UserInfo userInfo = iUserService.queryUserByMobile(givenMangeReq.getMobile());
+            UserInfoVO userInfoVO = iUserService.queryUserInfo(userId);
+            Assert.notNull(userInfo, () -> new StarException("用户不存在"));
+            Assert.isFalse(userInfo.getId().equals(userId), () -> new StarException("禁止赠送自己本人"));
+            String payPwd = StarUtils.getSHA256Str(givenMangeReq.getPayPassword());
+            Assert.isTrue(userInfoVO.getPlyPassword().equals(payPwd), () -> new StarException("支付密码错误"));
+            UserNumbersVO userNumbersVO = userThemeService.queryUserNumberInfo(userId, givenMangeReq.getNumberId(), UserNumberStatusEnum.PURCHASED);
+            Assert.notNull(userNumbersVO, () -> new StarException("藏品不存在，请选择正确的藏品信息"));
+            Boolean owner = iNumberService.isOwner(userId, givenMangeReq.getThemeId(), givenMangeReq.getNumberId());
+            Assert.isTrue(owner, () -> new StarException("藏品不存在，请选择正确的藏品信息"));
 
-        //修改持有状态
-        UserThemeMappingVO userThemeMappingVO = getUserThemeMappingVO(userId, givenMangeReq, userInfo, userNumbersVO);
-        Boolean isSuccess = template.execute(status -> {
-            boolean update = iNumberService.modifyNumberOwnerBy(givenMangeReq.getNumberId(), userInfo.getAccount(), NumberStatusEnum.SOLD.getCode());
-            boolean modify = userThemeService.modifyUserNumberStatus(userId, givenMangeReq.getNumberId(), BigDecimal.ZERO, UserNumberStatusEnum.PURCHASED, UserNumberStatusEnum.GIVEND);
-            boolean created = this.numberRepository.createUserNumberMapping(userThemeMappingVO);
-            return modify && created && update;
-        });
-      Assert.isTrue(Boolean.TRUE.equals(isSuccess),()->new StarException("转赠失败，请稍后再试"));
-      redisTemplate.opsForValue().setBit(String.format(RedisKey.GIVEN_MANAGE_BIT_CONFIG.getKey(), givenMangeReq.getThemeId()), userId, true);
-      return isSuccess;
+            //修改持有状态
+            UserThemeMappingVO userThemeMappingVO = getUserThemeMappingVO(userId, givenMangeReq, userInfo, userNumbersVO);
+            Boolean isSuccess = template.execute(status -> {
+                boolean update = iNumberService.modifyNumberOwnerBy(givenMangeReq.getNumberId(), userInfo.getAccount(), NumberStatusEnum.SOLD.getCode());
+                boolean modify = userThemeService.modifyUserNumberStatus(userId, givenMangeReq.getNumberId(), BigDecimal.ZERO, UserNumberStatusEnum.PURCHASED, UserNumberStatusEnum.GIVEND);
+                boolean created = this.numberRepository.createUserNumberMapping(userThemeMappingVO);
+                return modify && created && update;
+            });
+            Assert.isTrue(Boolean.TRUE.equals(isSuccess), () -> new StarException("转赠失败，请稍后再试"));
+            redisTemplate.opsForValue().setBit(String.format(RedisKey.GIVEN_MANAGE_BIT_CONFIG.getKey(), givenMangeReq.getThemeId()), userId, true);
+            return isSuccess;
+        } finally {
+            redisLockUtils.unlock(String.format(RedisKey.GIVEN_MANAGE_LOCK.getKey(), givenMangeReq.getNumberId()));
+        }
+
     }
 
     private UserThemeMappingVO getUserThemeMappingVO(Long userId, GivenMangeReq givenMangeReq, UserInfo userInfo, UserNumbersVO userNumbersVO) {
