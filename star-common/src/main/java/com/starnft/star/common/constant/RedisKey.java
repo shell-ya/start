@@ -191,7 +191,7 @@ public enum RedisKey {
      */
     MARKET_ORDER_TRANSACTION(508, StarConstants.SERVICE_NAME.concat(".market:transaction:%s"), 3L, TimeUnit.MINUTES),
 
-    MARKET_RECEIVABLES(509,StarConstants.SERVICE_NAME.concat(".market:receivables"),3L,TimeUnit.HOURS),
+    MARKET_RECEIVABLES(509, StarConstants.SERVICE_NAME.concat(".market:receivables"), 3L, TimeUnit.HOURS),
 
     /**
      * 排行榜列表
@@ -207,7 +207,7 @@ public enum RedisKey {
     //个人有效邀请
     RANK_VALID_USER(604, StarConstants.SERVICE_NAME.concat(".rank:%s:valid:user:%s"), 3L, TimeUnit.HOURS),
     RANK_USER_MAPPING(605, StarConstants.SERVICE_NAME.concat(".rank:%s:mapping"), 3L, TimeUnit.HOURS),
-    RANK_BUT_NUM(607,StarConstants.SERVICE_NAME.concat(".rank:num:%s"),3L,TimeUnit.HOURS),
+    RANK_BUT_NUM(607, StarConstants.SERVICE_NAME.concat(".rank:num:%s"), 3L, TimeUnit.HOURS),
     SCOPE_USER_MAPPING(606, StarConstants.SERVICE_NAME.concat(".scope.user:%s"), 3L, TimeUnit.HOURS),
 
     RANK_STORE(602, StarConstants.SERVICE_NAME.concat(".rank:%s:store"), 3L, TimeUnit.HOURS),
@@ -216,16 +216,15 @@ public enum RedisKey {
     COMPOSE_DRAW_STRATEGY(701, StarConstants.SERVICE_NAME.concat(".compose:draw:strategy"), 3L, TimeUnit.HOURS),
     COMPOSE_NUMBER_LOCK(702, StarConstants.SERVICE_NAME.concat(".compose:number:%s"), 3L, TimeUnit.MINUTES),
 
-    GOLD_COMPOSE(703,StarConstants.SERVICE_NAME.concat("compose.gold:permi:%s"),3L,TimeUnit.HOURS),
-    GOLD_COMPOSE_SUCCESS(704,StarConstants.SERVICE_NAME.concat("compose.gold:success:%s"),3L,TimeUnit.HOURS),
+    GOLD_COMPOSE(703, StarConstants.SERVICE_NAME.concat("compose.gold:permi:%s"), 3L, TimeUnit.HOURS),
+    GOLD_COMPOSE_SUCCESS(704, StarConstants.SERVICE_NAME.concat("compose.gold:success:%s"), 3L, TimeUnit.HOURS),
     IP_REQUEST_TIMES(111, StarConstants.SERVICE_NAME.concat(".ip:times"), 30L, TimeUnit.SECONDS),
 
     //######################################  draw cache key ######################################
 
     DRAW_AWARD_STOCK_MAPPING(800, StarConstants.SERVICE_NAME.concat(":draw.award.stock.strategy:%s"), -1L, TimeUnit.SECONDS),
 
-
-    DRAW_AWARD_OPEN_LOCK(801, StarConstants.SERVICE_NAME.concat(":draw.award.open.lock:%s"), 20L, TimeUnit.SECONDS),
+    DRAW_AWARD_OPEN_LOCK(801, StarConstants.SERVICE_NAME.concat(":draw.award.open.lock:%s"), 180L, TimeUnit.SECONDS),
 
     /**
      * 排行榜
@@ -233,6 +232,17 @@ public enum RedisKey {
 //定链价格操作
     DING_PRICE_MANAGE(111, StarConstants.SERVICE_NAME.concat(".ding:price:manage"), 60L, TimeUnit.SECONDS),
 
+    GIVEN_MANAGE_CONFIG(222, StarConstants.SERVICE_NAME.concat(".given:manage:config"), 60L, TimeUnit.SECONDS),
+    GIVEN_MANAGE_BIT_CONFIG(333, StarConstants.SERVICE_NAME.concat(".given:manage:bit:%s"), 60L, TimeUnit.SECONDS),
+
+
+    VISIT_TIMES_MAPPING(1111, StarConstants.SERVICE_NAME.concat(".visit.times.mapping:%s"), 5L, TimeUnit.SECONDS),
+
+    DANGER_LIST_RECORD(1112, StarConstants.SERVICE_NAME.concat(".visit.danger.list"), 5L, TimeUnit.SECONDS),
+
+    BLACK_MEMBERS(1113, StarConstants.SERVICE_NAME.concat(".black.list"), 5L, TimeUnit.SECONDS)
+
+    ,
     ;
 
     private Integer code;
