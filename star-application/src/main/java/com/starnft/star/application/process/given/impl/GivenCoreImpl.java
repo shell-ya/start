@@ -47,6 +47,7 @@ public class GivenCoreImpl implements IGivenCore {
         UserInfo userInfo = iUserService.queryUserByMobile(givenMangeReq.getMobile());
         UserInfoVO userInfoVO = iUserService.queryUserInfo(userId);
         Assert.notNull(userInfo, () -> new StarException("用户不存在"));
+        Assert.isFalse(userInfo.getId().equals(userId),()->new StarException("禁止赠送自己本人"));
         String payPwd = StarUtils.getSHA256Str(givenMangeReq.getPayPassword());
         Assert.isTrue(userInfoVO.getPlyPassword().equals(payPwd),()->new StarException("支付密码错误"));
         UserNumbersVO userNumbersVO = userThemeService.queryUserNumberInfo(userId, givenMangeReq.getNumberId(), UserNumberStatusEnum.PURCHASED);
