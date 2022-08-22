@@ -48,9 +48,9 @@ public class GivenCoreImpl implements IGivenCore {
         Assert.isTrue(lock, () -> new StarException("请不要重复操作"));
         try {
             Boolean isGiving = redisTemplate.opsForSet().isMember(RedisKey.GIVEN_MANAGE_CONFIG.getKey(), givenMangeReq.getThemeId());
-            Boolean giving = redisTemplate.opsForValue().getBit(String.format(RedisKey.GIVEN_MANAGE_BIT_CONFIG.getKey(), givenMangeReq.getThemeId()), userId);
+            Boolean giving = redisTemplate.opsForValue().getBit(String.format(RedisKey.GIVEN_MANAGE_BIT_CONFIG.getKey(), givenMangeReq.getThemeId()),  givenMangeReq.getNumberId());
             Assert.isTrue(isGiving, () -> new StarException("藏品不可转赠"));
-            Assert.isFalse(giving, () -> new StarException("转赠次数已用完"));
+            Assert.isFalse(giving, () -> new StarException("此藏品转赠次数已用完"));
             UserInfo userInfo = iUserService.queryUserByMobile(givenMangeReq.getMobile());
             UserInfoVO userInfoVO = iUserService.queryUserInfo(userId);
             Assert.notNull(userInfo, () -> new StarException("用户不存在"));
@@ -71,7 +71,7 @@ public class GivenCoreImpl implements IGivenCore {
                 return modify && created && update;
             });
             Assert.isTrue(Boolean.TRUE.equals(isSuccess), () -> new StarException("转赠失败，请稍后再试"));
-            redisTemplate.opsForValue().setBit(String.format(RedisKey.GIVEN_MANAGE_BIT_CONFIG.getKey(), givenMangeReq.getThemeId()), userId, true);
+            redisTemplate.opsForValue().setBit(String.format(RedisKey.GIVEN_MANAGE_BIT_CONFIG.getKey(), givenMangeReq.getThemeId()), givenMangeReq.getNumberId(), true);
             return isSuccess;
         } finally {
             redisLockUtils.unlock(String.format(RedisKey.GIVEN_MANAGE_LOCK.getKey(), givenMangeReq.getNumberId()));
