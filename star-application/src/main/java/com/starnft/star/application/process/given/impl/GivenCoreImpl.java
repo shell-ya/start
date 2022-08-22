@@ -41,9 +41,9 @@ public class GivenCoreImpl implements IGivenCore {
     @Override
     public Boolean giving(Long userId, GivenMangeReq givenMangeReq) {
         Boolean isGiving = redisTemplate.opsForSet().isMember(RedisKey.GIVEN_MANAGE_CONFIG.getKey(), givenMangeReq.getThemeId());
-        Boolean giving = redisTemplate.opsForValue().getBit(String.format(RedisKey.GIVEN_MANAGE_BIT_CONFIG.getKey(), givenMangeReq.getThemeId()), userId);
+//        Boolean giving = redisTemplate.opsForValue().getBit(String.format(RedisKey.GIVEN_MANAGE_BIT_CONFIG.getKey(), givenMangeReq.getThemeId()), userId);
         Assert.isTrue(isGiving, () -> new StarException("藏品不可转赠"));
-        Assert.isFalse(giving, () -> new StarException("转赠次数已用完"));
+//        Assert.isFalse(giving, () -> new StarException("转赠次数已用完"));
         UserInfo userInfo = iUserService.queryUserByMobile(givenMangeReq.getMobile());
         UserInfoVO userInfoVO = iUserService.queryUserInfo(userId);
         Assert.notNull(userInfo, () -> new StarException("用户不存在"));
