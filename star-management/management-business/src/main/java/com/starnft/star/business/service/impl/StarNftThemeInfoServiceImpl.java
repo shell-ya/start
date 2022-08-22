@@ -187,7 +187,7 @@ public class StarNftThemeInfoServiceImpl implements IStarNftThemeInfoService
         List<String> ids=new ArrayList<>();
         int nums= themeInfo.getPublishNumber().intValue();
         //时间加上发行数量位置
-        String pushDay = DateUtil.dateFormat(themeInfo.getCreateAt(), "yyyyMMdd");
+        String pushDay = DateUtil.dateFormat(DateUtil.getDaDate(), "yyyyMMdd");
         //先拼接字符串
         StringBuilder prifixTemplate = new StringBuilder().append(pushDay);
         for (int i = 0; i < String.valueOf(nums).length(); i++) {
@@ -207,7 +207,11 @@ public class StarNftThemeInfoServiceImpl implements IStarNftThemeInfoService
         publishGoodsReq.setPieceCount(nums);
         publishGoodsReq.setInitPrice(themeInfo.getLssuePrice().toString());
         String[] themeNameArray = themeInfo.getThemeName().split(" ");
-        publishGoodsReq.setName(String.format("链元文创-%s 首发-%s",themeNameArray[0],themeNameArray[1]));
+        if (themeNameArray.length >= 2){
+            publishGoodsReq.setName(String.format("链元文创-%s 首发-%s",themeNameArray[0],themeNameArray[1]));
+        }else {
+            publishGoodsReq.setName(String.format("链元文创 首发-%s",themeNameArray[0]));
+        }
 //        publishGoodsReq.setName("链元文创-Pluviophile 首发-金牛座");
         publishGoodsReq.setFeature(JSONUtil.toJsonStr(map));
         PublishGoodsRes createAccountRes = tiChainServer.publishGoods(publishGoodsReq);
