@@ -76,6 +76,7 @@ public class GivenCoreImpl implements IGivenCore {
         userThemeMappingVO.setSeriesThemeId(userNumbersVO.getNumberId());
         userThemeMappingVO.setStatus(UserNumberStatusEnum.PURCHASED.getCode());
         userThemeMappingVO.setBuyPrice(BigDecimal.ZERO);
+        userThemeMappingVO.setSource(givenMangeReq.getCategoryType());
         return userThemeMappingVO;
     }
 }

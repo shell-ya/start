@@ -18,4 +18,6 @@ public class GivenMangeReq {
     private Long themeId;
     @ApiModelProperty("系列ID")
     private Long seriesId;
+    @ApiModelProperty(value = "藏品类型 1藏品 2盲盒")
+    private Integer categoryType;
 }
