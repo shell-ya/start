@@ -9,6 +9,7 @@ import com.starnft.star.application.process.order.model.req.OrderPayReq;
 import com.starnft.star.application.process.order.model.res.OrderGrabRes;
 import com.starnft.star.application.process.order.white.rule.WhiteRuleContext;
 import com.starnft.star.application.process.task.activity.ActivitiesTask;
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.number.model.req.NumberConsignmentCancelRequest;
 import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
@@ -22,7 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 
 import static java.lang.Thread.sleep;
@@ -45,6 +48,15 @@ public class MarketTest {
     final IUserService userService;
 
     final WhiteRuleContext whiteRuleContext;
+
+    final RedisTemplate<String, Object> redisTemplate;
+
+    @Test
+    public void add(){
+        Long add = redisTemplate.opsForSet().add(RedisKey.GIVEN_MANAGE_CONFIG.getKey(), "1009469098485923840");
+//        redisTemplate.opsForValue().setBit(String.format(RedisKey.GIVEN_MANAGE_BIT_CONFIG.getKey(), 1009469098485923840L), 536952750L, true);
+
+    }
 
     @Test
     public void whihte(){
