@@ -84,7 +84,7 @@ public class StatInterceptor extends HandlerInterceptorAdapter {
             throw new StarException(StarError.TOKEN_NOT_EXISTS_ERROR);
         } else {
             UserInfo userInfo = this.baseUserService.checkTokenAndReturnUserId(token);
-            Boolean isBlack = redisUtil.getTemplate().opsForSet().isMember(RedisKey.BLACK_MEMBERS, userInfo.getAccount());
+            Boolean isBlack = redisUtil.getTemplate().opsForSet().isMember(RedisKey.BLACK_MEMBERS.getKey(), userInfo.getAccount());
             if (isBlack) {
                 throw new StarException(StarError.SYSTEM_ERROR, "您由于非法操作被列入黑名单，请联系客服解决！");
             }
