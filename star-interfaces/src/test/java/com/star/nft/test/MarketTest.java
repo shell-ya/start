@@ -11,6 +11,7 @@ import com.starnft.star.application.process.order.white.rule.WhiteRuleContext;
 import com.starnft.star.application.process.task.activity.ActivitiesTask;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.utils.StarUtils;
+import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.number.model.req.NumberConsignmentCancelRequest;
 import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
 import com.starnft.star.domain.order.model.res.OrderListRes;

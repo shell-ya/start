@@ -120,18 +120,18 @@ public class StarRankConfigController extends BaseController
     {
         int start = (page - 1) *size;
         int end = page * size -1;
-        List<RankingsItem> launch_rank = rankService.getRankDatasByPage("launch_rank", start, end);
-        for (RankingsItem item :
-                launch_rank) {
-            int valid = item.getValid().intValue();
-            if (valid >= 25){
-//                long l = item.getArgentum();
-                item.setArgentum(1L);
-            }
-            long cuprum = valid / 5;
-            if (cuprum >= 5L) cuprum = 5L;
-            item.setCuprum(cuprum);
-        }
+        List<RankingsItem> launch_rank = rankService.getRankDatasByPage("m_launch_rank", start, end);
+//        for (RankingsItem item :
+//                launch_rank) {
+//            int valid = item.getValid().intValue();
+//            if (valid >= 25){
+////                long l = item.getArgentum();
+//                item.setArgentum(1L);
+//            }
+//            long cuprum = valid / 5;
+//            if (cuprum >= 5L) cuprum = 5L;
+//            item.setCuprum(cuprum);
+//        }
 //        List<StarRankConfig> list = starRankConfigService.selectStarRankConfigList(starRankConfig);
         ExcelUtil<RankingsItem> util = new ExcelUtil<RankingsItem>(RankingsItem.class);
         util.exportExcel(response, launch_rank, "排行榜数据");
@@ -141,7 +141,7 @@ public class StarRankConfigController extends BaseController
     public List<RankData> getRankData(@RequestBody int[] userIds){
         List<RankData>  data = new ArrayList<>();
         for (int i = 0; i < userIds.length; i++) {
-            Long launch_rank = rankService.getRankNum("launch_rank", userIds[i]);
+            Long launch_rank = rankService.getRankNum("m_launch_rank", userIds[i]);
 //            Long rankNum = rankService.getRankNum(getNowRank().getRankName(), rankReq.getUserId());
             if (Objects.isNull(launch_rank))  launch_rank =   0L;
             launch_rank++;
