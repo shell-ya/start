@@ -37,6 +37,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -83,56 +84,59 @@ public class NumberCoreImpl implements INumberCore {
 
     @Override
     public Boolean consignment(NumberConsignmentRequest request) {
-        Long uid = request.getUid();
 
-        // 校验是否拥有该藏品
-        UserNumbersVO userNumbers = this.checkNumberOwner(uid, request.getNumberId(), UserNumberStatusEnum.PURCHASED);
+        throw new StarException(StarError.CONSIGNMENT_NOT_OPEN);
 
-        //校验是否在第三方平台挂售
-        if (numberService.queryThirdPlatSell(uid,request.getNumberId())){
-            throw new StarException(StarError.THIRD_PLAT_SELL);
-        }
-
-
-        //  校验是否到藏品市场开放时间
-        ThemeDetailVO themeDetailVO = themeService.queryThemeDetail(userNumbers.getThemeId());
-        if (DateUtil.date().before(themeDetailVO.getMarketOpenDate())) {
-            throw new StarException(StarError.MARKET_DO_NOT_START_ERROR);
-        }
-        //  校验藏品可交易
-        if (StarConstants.themeResaleEnum.NOT_RESALE.getCode().equals(themeDetailVO.getIsResale())){
-            throw new StarException(StarError.GOOD_NOT_RESALE_ERROR);
-        }
-
-        if (!Objects.equals(userNumbers.getStatus(), UserNumberStatusEnum.PURCHASED.getCode())) {
-            throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "只有已购买状态的藏品才能进行转售");
-        }
-
-        Boolean status = this.transactionTemplate.execute(transactionStatus -> {
-            // 修改商品价格和状态
-            Boolean updBool = numberService.modifyNumberInfo(
-                    NumberUpdateDTO.builder()
-                            .uid(uid)
-                            .numberId(request.getNumberId())
-                            .price(request.getPrice())
-                            .status(NumberStatusEnum.ON_CONSIGNMENT)
-                            .build());
-            // 保存寄售记录
-            Boolean saveBool = numberService.saveNumberCirculationRecord(
-                    NumberCirculationAddDTO.builder()
-                            .uid(uid)
-                            .numberId(request.getNumberId())
-                            .type(NumberCirculationTypeEnum.CONSIGNMENT)
-                            .beforePrice(userNumbers.getPrice())
-                            .afterPrice(request.getPrice())
-                            .build());
-            // 修改用户藏品状态
-            Boolean updUserNumberBool = userThemeService.modifyUserNumberStatus(uid, request.getNumberId(),request.getPrice(), UserNumberStatusEnum.PURCHASED, UserNumberStatusEnum.ON_CONSIGNMENT);
-
-            return updBool && saveBool && updUserNumberBool;
-        });
-        Assert.isTrue(Boolean.TRUE.equals(status), () -> new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "寄售失败"));
-        return Boolean.TRUE;
+//        Long uid = request.getUid();
+//
+//        // 校验是否拥有该藏品
+//        UserNumbersVO userNumbers = this.checkNumberOwner(uid, request.getNumberId(), UserNumberStatusEnum.PURCHASED);
+//
+//        //校验是否在第三方平台挂售
+//        if (numberService.queryThirdPlatSell(uid,request.getNumberId())){
+//            throw new StarException(StarError.THIRD_PLAT_SELL);
+//        }
+//
+//
+//        //  校验是否到藏品市场开放时间
+//        ThemeDetailVO themeDetailVO = themeService.queryThemeDetail(userNumbers.getThemeId());
+//        if (DateUtil.date().before(themeDetailVO.getMarketOpenDate())) {
+//            throw new StarException(StarError.MARKET_DO_NOT_START_ERROR);
+//        }
+//        //  校验藏品可交易
+//        if (StarConstants.themeResaleEnum.NOT_RESALE.getCode().equals(themeDetailVO.getIsResale())){
+//            throw new StarException(StarError.GOOD_NOT_RESALE_ERROR);
+//        }
+//
+//        if (!Objects.equals(userNumbers.getStatus(), UserNumberStatusEnum.PURCHASED.getCode())) {
+//            throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "只有已购买状态的藏品才能进行转售");
+//        }
+//
+//        Boolean status = this.transactionTemplate.execute(transactionStatus -> {
+//            // 修改商品价格和状态
+//            Boolean updBool = numberService.modifyNumberInfo(
+//                    NumberUpdateDTO.builder()
+//                            .uid(uid)
+//                            .numberId(request.getNumberId())
+//                            .price(request.getPrice())
+//                            .status(NumberStatusEnum.ON_CONSIGNMENT)
+//                            .build());
+//            // 保存寄售记录
+//            Boolean saveBool = numberService.saveNumberCirculationRecord(
+//                    NumberCirculationAddDTO.builder()
+//                            .uid(uid)
+//                            .numberId(request.getNumberId())
+//                            .type(NumberCirculationTypeEnum.CONSIGNMENT)
+//                            .beforePrice(userNumbers.getPrice())
+//                            .afterPrice(request.getPrice())
+//                            .build());
+//            // 修改用户藏品状态
+//            Boolean updUserNumberBool = userThemeService.modifyUserNumberStatus(uid, request.getNumberId(),request.getPrice(), UserNumberStatusEnum.PURCHASED, UserNumberStatusEnum.ON_CONSIGNMENT);
+//
+//            return updBool && saveBool && updUserNumberBool;
+//        });
+//        Assert.isTrue(Boolean.TRUE.equals(status), () -> new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "寄售失败"));
+//        return Boolean.TRUE;
     }
 
     @Override
