@@ -370,7 +370,8 @@ public class WalletServiceImpl implements WalletService {
         return WalletVO.builder()
                 .uid(withDrawReq.getUid())
                 .balance(balance)
-                .frozen_fee(new BigDecimal(withDrawReq.getMoney()).abs())
+                .frozen_fee(walletResult.getFrozen_fee().add(new BigDecimal(withDrawReq.getMoney()).abs()))
+//                .frozen_fee(new BigDecimal(withDrawReq.getMoney()).abs())
                 .wallet_outcome(walletResult.getWallet_outcome().add(new BigDecimal(withDrawReq.getMoney()).abs())).
                 build();
     }
