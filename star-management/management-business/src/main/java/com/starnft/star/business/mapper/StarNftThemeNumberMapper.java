@@ -1,6 +1,7 @@
 package com.starnft.star.business.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.starnft.star.business.domain.AirdropThemeRecord;
 import com.starnft.star.business.domain.StarNftThemeNumber;
 import com.starnft.star.business.domain.vo.RandomAirdrop;
 import com.starnft.star.business.domain.vo.StarNftThemeNumberVo;
@@ -72,7 +73,10 @@ public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
 
     List<Long> selectOwberBy(Long id);
 
-    StarNftThemeNumber selectOwnerIsNull(RandomAirdrop airdrop);
+    List<Long> selectOwnerIsNull(RandomAirdrop airdrop);
 
     List<Long> selectOwberIsNullAndNumberInterval(Long seriesThemeInfoId);
+
+
+    String selectNumberOwberByIsNull(AirdropThemeRecord record);
 }

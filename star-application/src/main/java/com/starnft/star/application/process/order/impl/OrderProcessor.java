@@ -51,6 +51,8 @@ import com.starnft.star.domain.theme.service.ThemeService;
 import com.starnft.star.domain.user.service.IUserService;
 import com.starnft.star.domain.wallet.model.req.WalletPayRequest;
 import com.starnft.star.domain.wallet.model.res.WalletPayResult;
+import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
+import com.starnft.star.domain.wallet.service.WalletConfig;
 import com.starnft.star.domain.wallet.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -303,6 +305,13 @@ public class OrderProcessor implements IOrderProcessor {
 
     private void calculateFee(OrderPayReq orderPayReq) {
         //todo 计算
+        walletService.verifyParam(orderPayReq.getChannel());
+        WalletConfigVO config = WalletConfig.getConfig(StarConstants.PayChannel.valueOf(orderPayReq.getChannel()));
+        BigDecimal payMoney = new BigDecimal(orderPayReq.getPayAmount());
+        BigDecimal transRate = payMoney.multiply(config.getServiceRate());
+        BigDecimal copyrightRate = payMoney.multiply(config.getCopyrightRate());
+
+
         return;
     }
 
