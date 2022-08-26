@@ -96,7 +96,8 @@ public class OrderRepository implements IOrderRepository {
         PageInfo<StarNftOrder> orders = PageHelper.startPage(page, size).doSelectPageInfo(
                 () -> starNftOrderMapper.selectList(new LambdaQueryWrapper<StarNftOrder>()
                         .eq(Objects.nonNull(uid), StarNftOrder::getUserId, uid)
-                        .eq(status != null, StarNftOrder::getStatus, status)));
+                        .eq(status != null, StarNftOrder::getStatus, status)
+                        .orderByDesc(StarNftOrder::getCreatedAt)));
 
         List<OrderVO> orderVOS = populateValues(orders.getList());
 
