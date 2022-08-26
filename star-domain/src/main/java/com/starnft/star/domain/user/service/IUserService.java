@@ -26,6 +26,7 @@ public interface IUserService {
      * @return
      */
     UserInfoVO queryUserInfo(Long userId);
+
     UserInfo queryUserByMobile(String mobile);
 
     /**
@@ -195,4 +196,8 @@ public interface IUserService {
     Boolean isCertification(Long userId);
 
     Long queryHasParent(Long userId);
+
+    Boolean isWhite(Long uid, Integer whiteType);
+
+    Boolean whiteTimeConsume(Long uid, Long whiteId);
 }

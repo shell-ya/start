@@ -77,4 +77,6 @@ public interface WalletService {
     ReceivablesCalculateResult ReceivablesMoneyCalculate(CalculateReq calculate);
 
     boolean feeProcess(String recordSn,BigDecimal fee);
+
+    List<String> checkPay();
 }

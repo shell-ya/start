@@ -203,4 +203,23 @@
         </if>
         ;
     </update>
+
+    <select id="selectAllWallet" resultMap="NftWalletMap">
+        select id,
+               is_deleted,
+               created_at,
+               created_by,
+               modified_at,
+               modified_by,
+               w_id,
+               uid,
+               balance,
+               wallet_income,
+               wallet_outcome,
+               frozen,
+               frozen_fee,
+               version
+        from nft_wallet
+    </select>
+
 </mapper>

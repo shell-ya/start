@@ -162,4 +162,11 @@ public interface IWalletRepository {
      * @return
      */
     boolean updateWalletRecordFee(String serialNo,BigDecimal fee);
+
+
+    List<WalletVO> selectAllWallet();
+
+
+    List<WalletLogVO> usersBill(Long uid);
+
 }

@@ -49,6 +49,12 @@ public class UserRepository implements IUserRepository {
     @Resource
     private UserDataAuthorizationMapper userDataAuthorizationMapper;
 
+    @Resource
+    private WhiteListConfigMapper whiteListConfigMapper;
+
+    @Resource
+    private WhiteListDetailMapper whiteListDetailMapper;
+
 
     @Override
     public UserInfo queryUserInfoByPhone(String phone) {
@@ -324,8 +330,9 @@ public class UserRepository implements IUserRepository {
         UserInfoEntity userInfoEntity = this.userInfoMapper.selectOne(queryWrapper);
         return Objects.nonNull(userInfoEntity);
     }
+
     @Override
-    public Date userCreateTime(Long account){
+    public Date userCreateTime(Long account) {
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("account", account);
         queryWrapper.eq("is_deleted", Boolean.FALSE);
@@ -340,7 +347,29 @@ public class UserRepository implements IUserRepository {
         queryWrapper.eq("account", userId);
         queryWrapper.eq("is_deleted", Boolean.FALSE);
         UserInfoEntity userInfoEntity = this.userInfoMapper.selectOne(queryWrapper);
-        return  BeanColverUtil.colver(userInfoEntity, UserInfo.class);
+        return BeanColverUtil.colver(userInfoEntity, UserInfo.class);
+    }
+
+    @Override
+    public Boolean isWhite(Long uid, Integer whiteType) {
+        WhiteListConfig whiteListConfig = whiteListConfigMapper.queryByType(whiteType);
+        WhiteListDetail whiteListDetails = whiteListDetailMapper.selectMappingWhite(whiteListConfig.getId(), uid);
+        if (whiteListDetails != null) {
+            return Boolean.TRUE;
+        }
+        return Boolean.FALSE;
+    }
+
+    @Override
+    public Boolean whiteTimeConsume(Long uid, Long whiteId) {
+
+        WhiteListDetail whiteListDetail = whiteListDetailMapper.selectMappingWhite(whiteId, uid);
+        if (whiteListDetail == null) {
+            return Boolean.TRUE;
+        }
+        Integer integer = whiteListDetailMapper.modifySurplus(whiteId, uid, whiteListDetail.getVersion());
+        log.info("uid: [{}] whiteId : [{}] 优先购资格被消耗 1 次", uid, whiteId);
+        return integer == 1;
     }
 
 }

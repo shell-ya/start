@@ -20,8 +20,20 @@
 
     <!-- 通过ID查询单条数据 -->
     <select id="queryById" resultMap="StarNftWalletLogMap">
-        select
-            id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,uid,w_id,balance_offset,current_balance,remark,display,channel
+        select id,
+               is_deleted,
+               created_at,
+               created_by,
+               modified_at,
+               modified_by,
+               record_sn,
+               uid,
+               w_id,
+               balance_offset,
+               current_balance,
+               remark,
+               display,
+               channel
         from star_nft_wallet_log
         where id = #{id}
     </select>
@@ -129,14 +141,18 @@
     </select>
 
     <!--新增数据-->
-    <insert id="createChargeLog" useGeneratedKeys="true" parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletLog">
-        insert into star_nft_wallet_log(is_deleted,created_at,created_by,modified_at,modified_by,record_sn,uid,w_id,balance_offset,current_balance,remark,display,channel)
-        values (#{isDeleted},#{createdAt},#{createdBy},#{modifiedAt},#{modifiedBy},#{recordSn},#{uid},#{wId},#{balanceOffset},#{currentBalance},#{remark},#{display},#{channel})
+    <insert id="createChargeLog" useGeneratedKeys="true"
+            parameterType="com.starnft.star.infrastructure.entity.wallet.StarNftWalletLog">
+        insert into star_nft_wallet_log(is_deleted, created_at, created_by, modified_at, modified_by, record_sn, uid,
+                                        w_id, balance_offset, current_balance, remark, display, channel)
+        values (#{isDeleted}, #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{recordSn}, #{uid}, #{wId},
+                #{balanceOffset}, #{currentBalance}, #{remark}, #{display}, #{channel})
     </insert>
 
     <!-- 批量新增数据 -->
     <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
-        insert into star_nft_wallet_log(id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,uid,w_id,balance_offset,current_balance,remark,display,channel)
+        insert into
+        star_nft_wallet_log(id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,uid,w_id,balance_offset,current_balance,remark,display,channel)
         values
         <foreach collection="entities" item="entity" separator=",">
             (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.recordSn},#{entity.uid},#{entity.wId},#{entity.balanceOffset},#{entity.currentBalance},#{entity.remark},#{entity.display},#{entity.channel})
@@ -145,7 +161,8 @@
 
     <!-- 批量新增或按主键更新数据 -->
     <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
-        insert into star_nft_wallet_log(id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,uid,w_id,balance_offset,current_balance,remark,display,channel)
+        insert into
+        star_nft_wallet_log(id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,uid,w_id,balance_offset,current_balance,remark,display,channel)
         values
         <foreach collection="entities" item="entity" separator=",">
             (#{entity.id},#{entity.isDeleted},#{entity.createdAt},#{entity.createdBy},#{entity.modifiedAt},#{entity.modifiedBy},#{entity.recordSn},#{entity.uid},#{entity.wId},#{entity.balanceOffset},#{entity.currentBalance},#{entity.remark},#{entity.display},#{entity.channel})
@@ -216,5 +233,14 @@
         </set>
         where id = #{id}
     </update>
+
+    <select id="readUsersLogs" resultMap="StarNftWalletLogMap">
+        select
+        id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,uid,w_id,balance_offset,current_balance,remark,display,channel
+        from star_nft_wallet_log
+        <where>
+            uid = #{uid}
+        </where>
+    </select>
 
 </mapper>

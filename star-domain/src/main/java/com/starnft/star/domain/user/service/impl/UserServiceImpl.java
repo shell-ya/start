@@ -133,7 +133,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
 
     @Override
     public UserVerifyCode getVerifyCode(UserVerifyCodeDTO req) {
-       log.info("获取短信验证码进入参数「{}」", JSONUtil.toJsonStr(req));
+        log.info("获取短信验证码进入参数「{}」", JSONUtil.toJsonStr(req));
         //校验图像验证码是否通过
         String imageCaptchaKey = String.format(RedisKey.REDIS_IMAGE_CAPTCHA_CHECK_SUCCESS_TOKEN.getKey(), req.getImageCaptchaId());
         Assert.isTrue(this.redisUtil.hasKey(imageCaptchaKey), () -> new StarException(StarError.IMAGE_CAPTCHA_CHECK_ERROR));
@@ -555,9 +555,19 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     @Override
     public Long queryHasParent(Long userId) {
         UserInfo userInfo = this.userRepository.queryUserParent(userId);
-        if (Objects.isNull(userInfo.getParent())){
+        if (Objects.isNull(userInfo.getParent())) {
             return null;
         }
         return userInfo.getParent();
+    }
+
+    @Override
+    public Boolean isWhite(Long uid, Integer whiteType) {
+        return userRepository.isWhite(uid, whiteType);
+    }
+
+    @Override
+    public Boolean whiteTimeConsume(Long uid, Long whiteId) {
+        return userRepository.whiteTimeConsume(uid,whiteId);
     }
 }

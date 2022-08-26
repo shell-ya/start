@@ -428,6 +428,19 @@ public class WalletRepository implements IWalletRepository {
         return starNftWalletRecordMapper.update(change, wrapper) == 1;
     }
 
+    @Override
+    public List<WalletVO> selectAllWallet() {
+        List<Wallet> wallets = walletMapper.selectAllWallet();
+
+        return BeanColverUtil.colverList(wallets, WalletVO.class);
+    }
+
+    @Override
+    public List<WalletLogVO> usersBill(Long uid) {
+        List<StarNftWalletLog> starNftWalletLogs = starNftWalletLogMapper.readUsersLogs(uid);
+        return BeanColverUtil.colverList(starNftWalletLogs, WalletLogVO.class);
+    }
+
 
     private WalletRecordVO walletRecordToVO(StarNftWalletRecord record) {
         return WalletRecordVO.builder().recordSn(record.getRecordSn())
