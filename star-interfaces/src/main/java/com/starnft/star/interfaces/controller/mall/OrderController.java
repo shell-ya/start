@@ -97,6 +97,9 @@ public class OrderController {
     @PostMapping("/market/grab")
     @ApiOperation("市场下单")
     public RopResponse<OrderListRes> order(@RequestBody MarketOrderReq request) {
+        if (!currentLimiter.tryAcquire()) {
+            throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
+        }
         request.setUserId(UserContext.getUserId().getUserId());
         return RopResponse.success(this.orderProcessor.marketOrder(request));
     }

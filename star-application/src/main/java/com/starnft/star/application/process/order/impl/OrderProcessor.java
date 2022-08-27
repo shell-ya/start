@@ -231,16 +231,13 @@ public class OrderProcessor implements IOrderProcessor {
         //规则验证
         walletService.balanceVerify(orderPayReq.getUserId(), new BigDecimal(orderPayReq.getPayAmount()));
 
+        verifyOwnerBy(orderPayReq);
+
         //市场订单参数手续费计算
         if (orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
             calculateFee(orderPayReq);
         }
 
-        if (orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())
-        && (Objects.isNull(orderPayReq.getOwnerId()) || 0L == Long.parseLong(orderPayReq.getOwnerId()))
-        ) {
-            throw new StarException(StarError.ORDER_STATUS_ERROR,"请确认藏品拥有者id正确性");
-        }
 
         String lockKey = String.format(RedisKey.SECKILL_ORDER_TRANSACTION.getKey(), orderPayReq.getOrderSn());
         try {
@@ -259,7 +256,7 @@ public class OrderProcessor implements IOrderProcessor {
 
                     redisUtil.hincr(String.format(RedisKey.SECKILL_BUY_GOODS_NUMBER.getKey(),orderPayReq.getThemeId()), String.valueOf(orderPayReq.getUserId()), 1L);
 
-                    //市场订单交易成功 更新卖家余额
+                    //只有首发订单增加积分
                     if (!orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
                         activityProducer.sendScopeMessage(createEventReq(orderPayReq));
                     }
@@ -291,6 +288,17 @@ public class OrderProcessor implements IOrderProcessor {
             redisLockUtils.unlock(lockKey);
         }
         throw new StarException(StarError.PAY_PROCESS_ERROR);
+    }
+
+    private void verifyOwnerBy(OrderPayReq orderPayReq) {
+        if (orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
+            //查询当前藏品拥有人与下订单时拥有人一致
+            if ( (Objects.isNull(orderPayReq.getOwnerId()) ||
+                    0L == Long.parseLong(orderPayReq.getOwnerId())) ||
+                    !numberService.isOwner(Long.parseLong(orderPayReq.getOwnerId()),orderPayReq.getThemeId(),orderPayReq.getNumberId())
+            )
+            throw new StarException(StarError.ORDER_STATUS_ERROR,"请确认藏品拥有者正确性");
+        }
     }
 
     private RebatesMessage createRebates(OrderPayReq orderPayReq) {
@@ -436,25 +444,18 @@ public class OrderProcessor implements IOrderProcessor {
 //        }
 
 
-        ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(new NumberDTO(marketOrderReq.getNumberId(), marketOrderReq.getOwnerBy()));
-        //禁止购买自己售出商品
-
-        if (Objects.isNull(numberDetail)){
-            throw new StarException(StarError.GOODS_NOT_FOUND);
-        }
-
-        if (marketOrderReq.getUserId().equals(numberDetail.getOwnerBy()))
-            throw new StarException(StarError.GOODS_SELF_ERROR);
-        //获取锁
         String isTransaction = String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), marketOrderReq.getNumberId());
         if (redisUtil.hasKey(RedisLockUtils.REDIS_LOCK_PREFIX + isTransaction)) {
             throw new StarException(StarError.GOODS_IS_TRANSACTION);
         }
-        //钱包余额充足
-        walletService.balanceVerify(marketOrderReq.getUserId(), numberDetail.getPrice());
+        //获取锁
         long lockTimes = RedisKey.MARKET_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.MARKET_ORDER_TRANSACTION.getTime());
         if (redisLockUtils.lock(isTransaction, lockTimes)) {
             try {
+                //多重检查
+                ThemeNumberVo numberDetail =  verifyAgain(marketOrderReq);
+                //钱包余额充足
+                walletService.balanceVerify(marketOrderReq.getUserId(), numberDetail.getPrice());
                 //生成订单
                 String orderSn = StarConstants.OrderPrefix.TransactionSn.getPrefix()
                         .concat(String.valueOf(idsIIdGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId()));
@@ -465,14 +466,31 @@ public class OrderProcessor implements IOrderProcessor {
 //                    return new OrderListRes(id,orderSn, 0, StarError.SUCCESS_000000.getErrorMessage(), lockTimes);
                     return buildOrderResp(lockTimes,numberDetail, marketOrderReq.getUserId(), orderSn, id);
                 }
-            } catch (Exception e) {
-                log.error("创建订单异常: userId: [{}] , themeNumberId: [{}] , context: [{}]", marketOrderReq.getUserId(), marketOrderReq.getNumberId(), numberDetail);
+            } catch (StarException e){
+                log.error("市场订单创建异常：userId: [{}] ,  themeNumberId: [{}] , ownerBy:[{}]",marketOrderReq.getUserId() , marketOrderReq.getNumberId(),marketOrderReq.getOwnerBy());
+                redisLockUtils.unlock(isTransaction);
+                throw  e;
+            }catch (Exception e) {
+                log.error("创建订单异常: userId: [{}] , themeNumberId: [{}]", marketOrderReq.getUserId(), marketOrderReq.getNumberId());
                 throw new RuntimeException(e.getMessage());
             } finally {
                 walletService.threadClear();
             }
         }
         throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
+    }
+
+    private ThemeNumberVo verifyAgain(MarketOrderReq marketOrderReq) {
+        ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(new NumberDTO(marketOrderReq.getNumberId(), marketOrderReq.getOwnerBy()));
+        //藏品所属人改变
+        if (Objects.isNull(numberDetail)){
+            throw new StarException(StarError.GOODS_NOT_FOUND);
+        }
+        //禁止购买自己售出商品
+        if (marketOrderReq.getUserId().equals(numberDetail.getOwnerBy()))
+            throw new StarException(StarError.GOODS_SELF_ERROR);
+
+        return numberDetail;
     }
 
     @Override
