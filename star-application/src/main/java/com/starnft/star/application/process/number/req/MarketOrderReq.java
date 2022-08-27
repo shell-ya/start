@@ -18,4 +18,5 @@ public class MarketOrderReq implements Serializable {
     @ApiModelProperty(value = "主题id")
     private Long numberId;
     private Long userId;
+    private Long ownerBy;
 }

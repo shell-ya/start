@@ -205,8 +205,8 @@ public class NumberRepository implements INumberRepository {
     }
 
     @Override
-    public ThemeNumberVo getConsignNumber(Long id) {
-        return this.starNftThemeNumberMapper.selectConsignThemeNumberDetail(id);
+    public ThemeNumberVo getConsignNumber(NumberDTO dto) {
+        return this.starNftThemeNumberMapper.selectConsignThemeNumberDetail(dto);
     }
 
     @Override

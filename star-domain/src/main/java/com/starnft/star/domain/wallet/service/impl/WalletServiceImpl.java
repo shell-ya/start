@@ -9,6 +9,7 @@ import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.common.utils.WalletAddrGenerator;
 import com.starnft.star.domain.component.RedisLockUtils;
@@ -144,7 +145,8 @@ public class WalletServiceImpl implements WalletService {
                     }
                     //记录钱包log 修改余额
                     boolean doTransaction = doTransaction(createTransReq(walletPayRequest));
-                    return doRecord && doTransaction;
+                    boolean marketTransaction = !walletPayRequest.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix()) || doTransaction(createMarketTransReq(walletPayRequest));
+                    return doRecord && doTransaction && marketTransaction;
                 });
                 if (isSuccess) {
                     return new WalletPayResult(walletPayRequest.getOrderSn(), walletPayRequest.getOutTradeNo(), ResultCode.SUCCESS.getCode(), new Date());
@@ -155,6 +157,21 @@ public class WalletServiceImpl implements WalletService {
             redisLockUtils.unlock(isTransactionKey);
         }
         throw new StarException(StarError.BALANCE_PAY_ERROR);
+    }
+
+    private TransReq createMarketTransReq(WalletPayRequest walletPayRequest) {
+        walletPayRequest.setPayAmount(walletPayRequest.getPayAmount().signum() == -1 ? walletPayRequest.getPayAmount().negate() : walletPayRequest.getPayAmount());
+        walletPayRequest.setPayAmount(walletPayRequest.getPayAmount().subtract(walletPayRequest.getFee()));
+        walletPayRequest.setTotalPayAmount(walletPayRequest.getTotalPayAmount().subtract(walletPayRequest.getFee()));
+        TransReq transReq = new TransReq();
+        transReq.setOrderSn(walletPayRequest.getOrderSn());
+        transReq.setUid(walletPayRequest.getToUid());
+        transReq.setOutTradeNo(walletPayRequest.getOutTradeNo());
+        transReq.setPayAmount(walletPayRequest.getPayAmount());
+        transReq.setPayChannel(walletPayRequest.getChannel());
+        transReq.setTotalAmount(walletPayRequest.getTotalPayAmount());
+        transReq.setTsType(StarConstants.Transaction_Type.Sell.getCode());
+        return transReq;
     }
 
     private TransReq createTransReq(WalletPayRequest walletPayRequest) {

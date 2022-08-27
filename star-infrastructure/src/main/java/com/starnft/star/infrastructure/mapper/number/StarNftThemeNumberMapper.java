@@ -1,6 +1,7 @@
 package com.starnft.star.infrastructure.mapper.number;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.starnft.star.domain.number.model.dto.NumberDTO;
 import com.starnft.star.domain.number.model.dto.NumberQueryDTO;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberDingVO;
@@ -19,7 +20,7 @@ public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
 
     List<NumberVO> selectNumberList(NumberQueryDTO numberQuery);
 
-    ThemeNumberVo selectConsignThemeNumberDetail(Long id);
+    ThemeNumberVo selectConsignThemeNumberDetail(NumberDTO dto);
     ThemeNumberVo selectRandomThemeNumber(Long id);
     List<NumberVO>  getNumberListByThemeInfo(NumberQueryDTO numberQueryDTO);
    List<NumberDingVO> getNumbers2Ding();

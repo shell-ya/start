@@ -92,10 +92,11 @@
                            ON b.series_id = c.id
                 LEFT JOIN star_nft_user_theme u
                             ON u.series_theme_id = a.id
-        WHERE a.id = #{id}
+        WHERE a.id = #{themeId}
           AND a.is_delete = 0
           AND a.status = 2
           AND u.status = 1
+          AND a.owner_by = #{ownerBy}
     </select>
 
     <select id="selectNumberList" resultType="com.starnft.star.domain.number.model.vo.NumberVO">

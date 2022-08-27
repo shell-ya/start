@@ -29,7 +29,7 @@ public interface INumberRepository {
 
     NumberCirculationDTO getLastConsignedCirculation(Long numberId);
 
-    ThemeNumberVo getConsignNumber(Long id);
+    ThemeNumberVo getConsignNumber(NumberDTO dto);
     ThemeNumberVo selectRandomThemeNumber(Long id);
 
     boolean modifyNumberStatus(Long numberId, Long uid, Integer status);
