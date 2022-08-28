@@ -226,6 +226,9 @@ public class OrderProcessor implements IOrderProcessor {
 
     @Override
     public OrderPayDetailRes orderPay(@Validated OrderPayReq orderPayReq) {
+
+        log.info("用户发起支付：{}",orderPayReq.toString());
+
         //验证支付凭证
         userService.assertPayPwdCheckSuccess(orderPayReq.getUserId(), orderPayReq.getPayToken());
         //规则验证
@@ -448,14 +451,17 @@ public class OrderProcessor implements IOrderProcessor {
         if (redisUtil.hasKey(RedisLockUtils.REDIS_LOCK_PREFIX + isTransaction)) {
             throw new StarException(StarError.GOODS_IS_TRANSACTION);
         }
+
+        //多重检查
+        ThemeNumberVo numberDetail =  verifyAgain(marketOrderReq);
+        //钱包余额充足
+        walletService.balanceVerify(marketOrderReq.getUserId(), numberDetail.getPrice());
+
         //获取锁
         long lockTimes = RedisKey.MARKET_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.MARKET_ORDER_TRANSACTION.getTime());
         if (redisLockUtils.lock(isTransaction, lockTimes)) {
             try {
-                //多重检查
-                ThemeNumberVo numberDetail =  verifyAgain(marketOrderReq);
-                //钱包余额充足
-                walletService.balanceVerify(marketOrderReq.getUserId(), numberDetail.getPrice());
+                log.info("userId:[{}]锁定藏品：[{}]",marketOrderReq.getUserId(),numberDetail.getNumberId());
                 //生成订单
                 String orderSn = StarConstants.OrderPrefix.TransactionSn.getPrefix()
                         .concat(String.valueOf(idsIIdGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId()));
@@ -466,10 +472,6 @@ public class OrderProcessor implements IOrderProcessor {
 //                    return new OrderListRes(id,orderSn, 0, StarError.SUCCESS_000000.getErrorMessage(), lockTimes);
                     return buildOrderResp(lockTimes,numberDetail, marketOrderReq.getUserId(), orderSn, id);
                 }
-            } catch (StarException e){
-                log.error("市场订单创建异常：userId: [{}] ,  themeNumberId: [{}] , ownerBy:[{}]",marketOrderReq.getUserId() , marketOrderReq.getNumberId(),marketOrderReq.getOwnerBy());
-                redisLockUtils.unlock(isTransaction);
-                throw  e;
             }catch (Exception e) {
                 log.error("创建订单异常: userId: [{}] , themeNumberId: [{}]", marketOrderReq.getUserId(), marketOrderReq.getNumberId());
                 throw new RuntimeException(e.getMessage());
