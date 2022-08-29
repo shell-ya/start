@@ -188,6 +188,31 @@ public class NumberServiceImpl implements INumberService {
         return this.numberRepository.modifyNumberStatus(id, userId, code);
     }
 
+    @Override
+    public Boolean deleteNumber(Long uid, Long seriesThemeId) {
+        return numberRepository.deleteNumber(uid,seriesThemeId);
+    }
+
+    @Override
+    public Long queryUserFirstNumberId(Long uid, Long seriesThemeInfoId) {
+        return numberRepository.firstNumber(uid,seriesThemeInfoId);
+    }
+
+    @Override
+    public List<ReNumberVo> queryReNumberList(Long themeId) {
+        return numberRepository.queryReNumberList(themeId);
+    }
+
+    @Override
+    public List<Long> queryHasReNumberUser(Long seriesThemeId) {
+        return numberRepository.queryHasReNumberUser(seriesThemeId);
+    }
+
+    @Override
+    public boolean deleteNumber2ReDraw(ReNumberVo numberVo, List<Long> ids) {
+        return numberRepository.deleteNumber2ReDraw(numberVo,ids);
+    }
+
 
     @Override
     public List<NumberDingVO> getNumberDingList() {

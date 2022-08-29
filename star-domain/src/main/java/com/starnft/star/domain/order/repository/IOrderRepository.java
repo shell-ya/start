@@ -31,4 +31,6 @@ public interface IOrderRepository {
     List<OrderVO> queryToPayOrder(Long userId);
 
     List<BuyNum> queryBuyNum();
+
+    Integer queryUserBuyBox(String uid);
 }

@@ -131,7 +131,17 @@
 
     <select id="queryBuyNum" resultType="com.starnft.star.domain.order.repository.BuyNum">
         SELECT user_id,COUNT(user_id) as `count` from star_nft_order WHERE `status` = 1
-                                                                       and series_theme_info_id = '1009469098485923840'
+        and series_theme_info_id = '1009469098485923840'
+        AND created_at &lt;
+            DATE_FORMAT( '2022-08-21 00:00:00', '%Y%m%d%H%i%s' )
         GROUP BY user_id
+    </select>
+
+    <select id="queryUserBuyBox" resultType="java.lang.Integer">
+        SELECT COUNT(user_id) as `count` from star_nft_order
+        WHERE `status` = 1
+        and series_theme_info_id = '1009469098485923840'
+        AND created_at &lt; DATE_FORMAT( '2022-08-21 00:00:00', '%Y%m%d%H%i%s' )
+        and user_id = #{uid}
     </select>
 </mapper>

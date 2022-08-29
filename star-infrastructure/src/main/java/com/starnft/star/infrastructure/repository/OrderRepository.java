@@ -182,6 +182,11 @@ public class OrderRepository implements IOrderRepository {
         return this.starNftOrderMapper.queryBuyNum();
     }
 
+    @Override
+    public   Integer queryUserBuyBox(String uid){
+        return this.starNftOrderMapper.queryUserBuyBox(uid);
+    }
+
     private StarNftOrder queryOrder(Long uid, String orderSn) {
         //找到对应订单
         return starNftOrderMapper.selectOne(

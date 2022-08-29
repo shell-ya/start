@@ -49,4 +49,14 @@ public interface INumberRepository {
     Boolean thirdPlatSelling(Long userId,Long seriesThemeId);
 
     public List<NumberDingVO> getNumberDingList();
+
+    Long firstNumber(Long uid, Long seriesThemeInfoId);
+
+    Boolean deleteNumber(Long uid, Long seriesThemeId);
+
+    List<ReNumberVo> queryReNumberList(Long themeId);
+
+    List<Long> queryHasReNumberUser(Long seriesThemeId);
+
+    boolean deleteNumber2ReDraw(ReNumberVo numberVo, List<Long> ids);
 }

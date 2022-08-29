@@ -151,4 +151,32 @@
             #{id}
         </foreach>
     </select>
+
+    <select id="firstNumber" resultType="java.lang.Long">
+        select series_theme_id
+        from star_nft_user_theme
+        where
+            series_theme_info_id = #{seriesThemeInfoId}
+        and user_id = #{uid}
+        and is_delete = 0
+        limit 1
+    </select>
+
+    <select id="queryReNumberList" resultType="com.starnft.star.domain.number.model.vo.ReNumberVo">
+        select series_theme_id,series_theme_info_id,count(series_theme_id) as nums
+        from star_nft_user_theme
+-- where series_theme_info_id = 1009469098485923840
+        where  is_delete = 0
+          and `status` in (0,1)
+          and series_theme_info_id = #{themeId}
+        GROUP BY series_theme_id
+        HAVING nums > 1
+        ORDER BY nums desc;
+    </select>
+
+    <select id="queryHasReNumberUser" resultType="java.lang.Long">
+        select user_id from star_nft_user_theme
+        where series_theme_id = #{seriesThemeId}
+        and is_delete = 0
+    </select>
 </mapper>

@@ -13,4 +13,6 @@ public interface StarNftOrderMapper extends BaseMapper<StarNftOrder> {
     Integer createOrder(StarNftOrder starNftOrder);
 
     List<BuyNum> queryBuyNum();
+
+    Integer queryUserBuyBox(String uid);
 }

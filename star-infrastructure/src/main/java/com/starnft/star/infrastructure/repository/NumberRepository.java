@@ -1,18 +1,22 @@
 package com.starnft.star.infrastructure.repository;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.page.PageMethod;
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.enums.NumberCirculationTypeEnum;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
 import com.starnft.star.domain.number.model.dto.*;
+import com.starnft.star.domain.number.model.req.HandoverReq;
 import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.*;
 import com.starnft.star.domain.number.repository.INumberRepository;
+import com.starnft.star.domain.theme.model.vo.ThemeDetailVO;
 import com.starnft.star.infrastructure.entity.number.StarNftNumberCirculationHist;
 import com.starnft.star.infrastructure.entity.number.StarNftShelvesRecord;
 import com.starnft.star.infrastructure.entity.number.StarNftThemeNumber;
@@ -22,9 +26,11 @@ import com.starnft.star.infrastructure.mapper.number.StarNftNumberCirculationHis
 import com.starnft.star.infrastructure.mapper.number.StarNftThemeNumberMapper;
 import com.starnft.star.infrastructure.mapper.user.StarNftUserThemeMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -294,6 +300,61 @@ public class NumberRepository implements INumberRepository {
     public List<NumberDingVO> getNumberDingList() {
         return this.starNftThemeNumberMapper.getNumbers2Ding();
     }
+
+    @Override
+    public Long firstNumber(Long uid, Long seriesThemeInfoId) {
+        return this.starNftUserThemeMapper.firstNumber(uid,seriesThemeInfoId);
+    }
+
+    @Override
+    public Boolean deleteNumber(Long uid, Long seriesThemeId) {
+
+        return template.execute(status -> {
+            LambdaQueryWrapper<StarNftThemeNumber> queryWrapper = new LambdaQueryWrapper<>();
+            StarNftThemeNumber starNftThemeNumber = new StarNftThemeNumber();
+            starNftThemeNumber.setOwnerBy("");
+            starNftThemeNumber.setStatus(0);
+            int isSuccess = starNftThemeNumberMapper.update(starNftThemeNumber, queryWrapper.eq(StarNftThemeNumber::getId, seriesThemeId));
+            LambdaQueryWrapper<StarNftUserTheme> utqueryWrapper = new LambdaQueryWrapper<>();
+            StarNftUserTheme starNftUserTheme = new StarNftUserTheme();
+            starNftUserTheme.setIsDelete(Boolean.TRUE);
+            int update1 = starNftUserThemeMapper.update(starNftUserTheme,
+                    utqueryWrapper.eq(StarNftUserTheme::getSeriesThemeId, seriesThemeId).eq(StarNftUserTheme::getUserId, uid));
+            return isSuccess + update1 == 2;
+        });
+    }
+
+    @Override
+    public List<ReNumberVo> queryReNumberList(Long themeId) {
+
+        return starNftUserThemeMapper.queryReNumberList(themeId);
+    }
+
+    @Override
+    public List<Long> queryHasReNumberUser(Long seriesThemeId) {
+        return starNftUserThemeMapper.queryHasReNumberUser(seriesThemeId);
+    }
+
+    @Override
+    public boolean deleteNumber2ReDraw(ReNumberVo numberVo, List<Long> ids) {
+        return template.execute(status -> {
+            //删除numebr
+            LambdaQueryWrapper<StarNftThemeNumber> queryWrapper = new LambdaQueryWrapper<>();
+            StarNftThemeNumber starNftThemeNumber = new StarNftThemeNumber();
+            starNftThemeNumber.setOwnerBy("");
+            starNftThemeNumber.setStatus(0);
+            int isSuccess = starNftThemeNumberMapper.update(starNftThemeNumber, queryWrapper.eq(StarNftThemeNumber::getId, numberVo.getSeriesThemeId()));
+            //删除user_theme
+            LambdaQueryWrapper<StarNftUserTheme> utqueryWrapper = new LambdaQueryWrapper<>();
+            StarNftUserTheme starNftUserTheme = new StarNftUserTheme();
+            starNftUserTheme.setIsDelete(Boolean.TRUE);
+            int update1 = starNftUserThemeMapper.update(starNftUserTheme,
+                    utqueryWrapper.eq(StarNftUserTheme::getSeriesThemeId, numberVo.getSeriesThemeId()).in(StarNftUserTheme::getUserId, ids));
+
+            return isSuccess + update1 == ids.size() + 1;
+        });
+    }
+
 
     private ThemeNumberVo copyToVO(StarNftThemeNumber starNftThemeNumber) {
         ThemeNumberVo themeNumberVo = BeanColverUtil.colver(starNftThemeNumber, ThemeNumberVo.class);

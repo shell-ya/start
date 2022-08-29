@@ -64,4 +64,10 @@ public interface IActivityRepository {
 
     ResponsePageResult<DrawAwardExportVO> queryUserStrategyExportByUId(DrawAwardExportsReq exportVO);
 
+    Integer queryUserExportNum(Long uid);
+
+    List<DrawAwardExportVO> queryUserExportList(Long uid);
+
+    boolean deleteExport(String orderId);
+
 }

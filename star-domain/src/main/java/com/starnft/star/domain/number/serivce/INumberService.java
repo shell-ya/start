@@ -56,5 +56,14 @@ public interface INumberService {
 
     Boolean modifyNumberOwnerBy(Long id, Long userId, Integer code);
 
+    Boolean deleteNumber(Long uid,Long seriesThemeId);
+
+    Long queryUserFirstNumberId(Long uid,Long seriesThemeInfoId);
 //    Boolean managePrice(BigDecimal price);
+
+    List<ReNumberVo> queryReNumberList(Long themeId);
+
+    List<Long> queryHasReNumberUser(Long seriesThemeId);
+
+    boolean deleteNumber2ReDraw(ReNumberVo numberVo, List<Long> ids);
 }

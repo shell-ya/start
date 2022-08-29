@@ -135,6 +135,25 @@ public class ActivityRepository implements IActivityRepository {
                 exportVO.getPage(), exportVO.getSize(), drawAwardExportVOPageInfo.getTotal());
     }
 
+    @Override
+    public Integer queryUserExportNum(Long uid) {
+        return userStrategyExportDao.queryUserStrategyExportNum(uid.toString()).size();
+    }
+
+    @Override
+    public List<DrawAwardExportVO> queryUserExportList(Long uid){
+        List<UserStrategyExport> userStrategyExports = userStrategyExportDao.queryUserStrategyExportList(uid.toString());
+        List<DrawAwardExportVO> collect = userStrategyExports
+                .stream()
+                .map(po -> BeanColverUtil.colver(po, DrawAwardExportVO.class))
+                .collect(Collectors.toList());
+        return collect;
+    }
+
+    @Override
+    public boolean deleteExport(String orderId) {
+        return userStrategyExportDao.deleteExport(orderId);
+    }
 
     @Override
     public List<ActivityVO> obtainActivities(String startTime, String endTime, List<String> keys) {
