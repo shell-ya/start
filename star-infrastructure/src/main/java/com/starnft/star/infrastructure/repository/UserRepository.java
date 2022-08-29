@@ -379,7 +379,7 @@ public class UserRepository implements IUserRepository {
     public Boolean whiteTimeConsume(Long uid, Long whiteId) {
 
         WhiteListDetail whiteListDetail = whiteListDetailMapper.selectMappingWhite(whiteId, uid);
-        if (whiteListDetail == null) {
+        if (whiteListDetail == null || whiteListDetail.getSurplusTimes() <= 0) {
             return Boolean.TRUE;
         }
         Integer integer = whiteListDetailMapper.modifySurplus(whiteId, uid, whiteListDetail.getVersion());
