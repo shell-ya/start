@@ -67,6 +67,10 @@ public class StarNftOrder extends BaseEntity implements Serializable {
     /** 备注 */
     @ApiModelProperty(name = "备注",notes = "")
     private String remark ;
+    /** 是否使用优先购 */
+    @ApiModelProperty(name = "是否使用优先购",notes = "")
+    private Integer priorityBuy ;
+
     public Long getId() {
         return id;
     }
@@ -193,5 +197,13 @@ public class StarNftOrder extends BaseEntity implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public Integer getPriorityBuy() {
+        return priorityBuy;
+    }
+
+    public void setPriorityBuy(Integer priorityBuy) {
+        this.priorityBuy = priorityBuy;
     }
 }

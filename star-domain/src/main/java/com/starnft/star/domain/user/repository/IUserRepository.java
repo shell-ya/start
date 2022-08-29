@@ -189,5 +189,9 @@ public interface IUserRepository {
 
     Boolean isWhite(Long uid, Integer whiteType);
 
+    WhiteListConfigVO obtainWhiteConfig(Long goodsId);
+
+    Integer queryPriorityTimes(Long uid,Long whiteId);
+
     Boolean whiteTimeConsume(Long uid, Long whiteId);
 }

@@ -361,6 +361,21 @@ public class UserRepository implements IUserRepository {
     }
 
     @Override
+    public WhiteListConfigVO obtainWhiteConfig(Long goodsId) {
+        WhiteListConfig whiteListConfig = whiteListConfigMapper.queryByGoodsId(goodsId);
+        if (whiteListConfig == null) {
+            return null;
+        }
+        return BeanColverUtil.colver(whiteListConfig, WhiteListConfigVO.class);
+    }
+
+    @Override
+    public Integer queryPriorityTimes(Long uid, Long whiteId) {
+        WhiteListDetail whiteListDetail = whiteListDetailMapper.selectMappingWhite(whiteId, uid);
+        return whiteListDetail.getSurplusTimes();
+    }
+
+    @Override
     public Boolean whiteTimeConsume(Long uid, Long whiteId) {
 
         WhiteListDetail whiteListDetail = whiteListDetailMapper.selectMappingWhite(whiteId, uid);

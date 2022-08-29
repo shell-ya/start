@@ -16,6 +16,7 @@ import com.starnft.star.domain.identify.IdentifyTypeEnums;
 import com.starnft.star.domain.identify.adapter.IdentifyAdapter;
 import com.starnft.star.domain.sms.interfaces.MessageStrategyInterface;
 import com.starnft.star.domain.user.model.dto.*;
+import com.starnft.star.domain.user.model.res.PriorityTimesRes;
 import com.starnft.star.domain.user.model.vo.*;
 import com.starnft.star.domain.user.repository.IUserRepository;
 import com.starnft.star.domain.user.service.IUserService;
@@ -567,7 +568,20 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     }
 
     @Override
+    public WhiteListConfigVO obtainWhiteConfig(Long goodsId) {
+        return userRepository.obtainWhiteConfig(goodsId);
+    }
+
+    @Override
+    public PriorityTimesRes queryPriorityTimes(Long uid, Long goodsId) {
+        WhiteListConfigVO whiteListConfigVO = userRepository.obtainWhiteConfig(goodsId);
+        Integer times = userRepository.queryPriorityTimes(uid, whiteListConfigVO.getId());
+
+        return new PriorityTimesRes(String.valueOf(uid), String.valueOf(goodsId), times);
+    }
+
+    @Override
     public Boolean whiteTimeConsume(Long uid, Long whiteId) {
-        return userRepository.whiteTimeConsume(uid,whiteId);
+        return userRepository.whiteTimeConsume(uid, whiteId);
     }
 }

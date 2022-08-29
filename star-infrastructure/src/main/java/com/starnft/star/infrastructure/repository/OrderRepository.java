@@ -56,6 +56,7 @@ public class OrderRepository implements IOrderRepository {
         starNftOrder.setThemeNumber(orderVO.getThemeNumber());
         starNftOrder.setIsDeleted(false);
         starNftOrder.setRemark(orderVO.getRemark());
+        starNftOrder.setPriorityBuy(orderVO.getPriorityBuy());
         return starNftOrderMapper.insert(starNftOrder) == 1;
     }
 

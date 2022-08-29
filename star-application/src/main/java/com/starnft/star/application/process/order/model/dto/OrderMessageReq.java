@@ -12,11 +12,14 @@ public class OrderMessageReq implements Serializable {
 
     private String time;
 
+    private Integer isPriority;
+
     private SecKillGoods goods;
 
-    public OrderMessageReq(Long userId, String time, SecKillGoods goods) {
+    public OrderMessageReq(Long userId, String time, Integer isPriority, SecKillGoods goods) {
         this.userId = userId;
         this.time = time;
+        this.isPriority = isPriority;
         this.goods = goods;
     }
 }

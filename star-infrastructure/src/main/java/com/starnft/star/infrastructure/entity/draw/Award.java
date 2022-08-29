@@ -31,6 +31,9 @@ public class Award {
     /** 奖品数量 */
     private Integer awardCount;
 
+    /** 奖品图片 */
+    private String awardPic;
+
     /** 创建时间 */
     private Date createTime;
 
@@ -91,6 +94,14 @@ public class Award {
 
     public void setAwardCount(Integer awardCount) {
         this.awardCount = awardCount;
+    }
+
+    public String getAwardPic() {
+        return awardPic;
+    }
+
+    public void setAwardPic(String awardPic) {
+        this.awardPic = awardPic;
     }
 
     public Date getCreateTime() {

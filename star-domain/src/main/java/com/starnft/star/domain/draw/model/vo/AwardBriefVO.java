@@ -23,6 +23,9 @@ public class AwardBriefVO {
     /** 奖品数量 */
     private Integer awardCount;
 
+    /** 奖品图片 */
+    private String awardPic;
+
     public String getAwardId() {
         return awardId;
     }
@@ -71,6 +74,14 @@ public class AwardBriefVO {
         this.awardCount = awardCount;
     }
 
+    public String getAwardPic() {
+        return awardPic;
+    }
+
+    public void setAwardPic(String awardPic) {
+        this.awardPic = awardPic;
+    }
+
     @Override
     public String toString() {
         return "AwardBriefVO{" +
@@ -80,6 +91,7 @@ public class AwardBriefVO {
                 ", awardContent='" + awardContent + '\'' +
                 ", awardCategoryId=" + awardCategoryId +
                 ", awardCount=" + awardCount +
+                ", awardPic='" + awardPic + '\'' +
                 '}';
     }
 }

@@ -9,4 +9,6 @@ public interface WhiteListConfigMapper extends BaseMapper<WhiteListConfig> {
 
     WhiteListConfig queryByType(Integer whiteType);
 
+    WhiteListConfig queryByGoodsId(Long goodsId);
+
 }

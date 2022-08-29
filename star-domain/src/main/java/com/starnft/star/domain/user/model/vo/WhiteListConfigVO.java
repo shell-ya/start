@@ -1,25 +1,17 @@
-package com.starnft.star.infrastructure.entity.user;
+package com.starnft.star.domain.user.model.vo;
 
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.starnft.star.infrastructure.entity.BaseEntity;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.Date;
 
 @Data
-@ApiModel(value = "白名单配置表", description = "")
-@TableName("white_list_config")
-public class WhiteListConfig extends BaseEntity implements Serializable {
+public class WhiteListConfigVO {
 
     /**
      * id
      */
     @ApiModelProperty(name = "id", notes = "")
-    @TableId
     private Long id;
     /**
      * 白名单描述
@@ -54,6 +46,5 @@ public class WhiteListConfig extends BaseEntity implements Serializable {
      */
     @ApiModelProperty(name = "有效结束时间", notes = "")
     private Date endTime;
-
 
 }

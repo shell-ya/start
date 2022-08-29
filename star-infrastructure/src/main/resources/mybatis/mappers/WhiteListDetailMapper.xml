@@ -46,7 +46,7 @@
         </set>
         where version = #{version}
         AND uid = #{uid}
-        AND whiteId = #{whiteId}
+        AND white_id = #{whiteId}
         AND surplus_times > 0
     </update>
 

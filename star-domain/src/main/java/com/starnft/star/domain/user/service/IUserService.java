@@ -2,6 +2,7 @@ package com.starnft.star.domain.user.service;
 
 
 import com.starnft.star.domain.user.model.dto.*;
+import com.starnft.star.domain.user.model.res.PriorityTimesRes;
 import com.starnft.star.domain.user.model.vo.*;
 
 import java.util.List;
@@ -198,6 +199,10 @@ public interface IUserService {
     Long queryHasParent(Long userId);
 
     Boolean isWhite(Long uid, Integer whiteType);
+
+    WhiteListConfigVO obtainWhiteConfig(Long goodsId);
+
+    PriorityTimesRes queryPriorityTimes(Long uid, Long goodsId);
 
     Boolean whiteTimeConsume(Long uid, Long whiteId);
 }

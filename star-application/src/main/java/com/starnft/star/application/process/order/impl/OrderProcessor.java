@@ -108,11 +108,6 @@ public class OrderProcessor implements IOrderProcessor {
             }
         }
 
-        //是否白名单
-        Boolean isWhite = whiteValidation(orderGrabReq.getUserId(), orderGrabReq.getThemeId());
-
-        log.info("uid [{}] themeId [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId());
-
         // 恶意下单校验
         Object record = redisUtil.get(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), orderGrabReq.getUserId()));
         if (record != null) {
@@ -133,20 +128,28 @@ public class OrderProcessor implements IOrderProcessor {
             log.error("商品信息不存在 themeId: [{}] Time : [{}]", orderGrabReq.getThemeId(), orderGrabReq.getTime());
             throw new StarException(StarError.GOODS_NOT_FOUND);
         }
+
+        //是否白名单
+        Boolean isWhite = false;
+        if (orderGrabReq.getIsPriority() == 1) {
+            isWhite = whiteValidation(orderGrabReq.getUserId(), orderGrabReq.getThemeId());
+            log.info("uid [{}] themeId [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId());
+        }
+        orderGrabReq.setIsPriority(isWhite ? 1 : 0);
         // 商品售卖时间验证
         if (!isWhite && DateUtil.date().before(goods.getStartTime())) {
             log.info("是白名单么[{}]", isWhite);
             throw new StarException(StarError.GOODS_DO_NOT_START_ERROR);
         }
 
-        //白名单购买时间
-        Calendar instance = Calendar.getInstance();
-        instance.setTime(goods.getStartTime());
-        instance.add(Calendar.HOUR, -1);
-        Date whiteTime = instance.getTime();
-        if (DateUtil.date().before(whiteTime)) {
-            throw new StarException(StarError.GOODS_DO_NOT_START_ERROR);
-        }
+//        //白名单购买时间
+//        Calendar instance = Calendar.getInstance();
+//        instance.setTime(goods.getStartTime());
+//        instance.add(Calendar.HOUR, -1);
+//        Date whiteTime = instance.getTime();
+//        if (DateUtil.date().before(whiteTime)) {
+//            throw new StarException(StarError.GOODS_DO_NOT_START_ERROR);
+//        }
 
         //库存验证
         String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), orderGrabReq.getThemeId(), orderGrabReq.getTime());
@@ -187,7 +190,7 @@ public class OrderProcessor implements IOrderProcessor {
             redisUtil.hset(String.format(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), orderGrabReq.getThemeId()),
                     String.valueOf(orderGrabReq.getUserId()), JSONUtil.toJsonStr(new OrderGrabStatus(orderGrabReq.getUserId(), 0, null, orderGrabReq.getTime())));
             //mq 异步下单
-            orderProducer.secKillOrder(new OrderMessageReq(orderGrabReq.getUserId(), orderGrabReq.getTime(), goods));
+            orderProducer.secKillOrder(new OrderMessageReq(orderGrabReq.getUserId(), orderGrabReq.getTime(), orderGrabReq.getIsPriority(), goods));
 
             return new OrderGrabRes(0, StarError.SUCCESS_000000.getErrorMessage());
         } catch (Exception e) {
@@ -260,6 +263,8 @@ public class OrderProcessor implements IOrderProcessor {
                 if (orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
                     walletProducer.receivablesCallback(createTranReq(orderPayReq));
                 } else {
+                    OrderListRes orderListRes = orderService.obtainSecKillOrder(orderPayReq.getUserId(), orderPayReq.getThemeId());
+                    if (orderListRes.getPriorityBuy() == 1) subPTimes(orderPayReq.getUserId(), orderListRes);
                     activityProducer.sendScopeMessage(createEventReq(orderPayReq));
                 }
                 return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn());
@@ -271,6 +276,11 @@ public class OrderProcessor implements IOrderProcessor {
             redisLockUtils.unlock(lockKey);
             walletService.threadClear();
         }
+    }
+
+    private void subPTimes(Long userId, OrderListRes orderListRes) {
+        Boolean isSuccess = userService.whiteTimeConsume(userId, orderListRes.getWhiteId());
+        if (!isSuccess) userService.whiteTimeConsume(userId, 1L);
     }
 
     private RebatesMessage createRebates(OrderPayReq orderPayReq) {
