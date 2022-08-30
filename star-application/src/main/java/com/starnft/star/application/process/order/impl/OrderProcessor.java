@@ -265,8 +265,6 @@ public class OrderProcessor implements IOrderProcessor {
 
                     //只有首发订单增加积分
                     if (!orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
-                        activityProducer.sendScopeMessage(createEventReq(orderPayReq));
-                    } else {
                         OrderListRes orderListRes = orderService.obtainSecKillOrder(orderPayReq.getUserId(), orderPayReq.getThemeId());
                         if (orderListRes.getPriorityBuy() == 1) subPTimes(orderPayReq.getUserId(), orderListRes);
                         activityProducer.sendScopeMessage(createEventReq(orderPayReq));
@@ -294,10 +292,10 @@ public class OrderProcessor implements IOrderProcessor {
                 }
                 throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "订单处理异常！");
         } catch (TransactionException | StarException e) {
-        throw new RuntimeException(e);
+            throw new RuntimeException(e);
         } finally {
             walletService.threadClear();
-//            redisLockUtils.unlock(lockKey);
+            redisLockUtils.unlock(lockKey);
         }
     }
 
@@ -487,7 +485,7 @@ public class OrderProcessor implements IOrderProcessor {
             throw new RuntimeException(e.getMessage());
         } finally {
             walletService.threadClear();
-            redisLockUtils.unlock(isTransaction);
+//            redisLockUtils.unlock(isTransaction);
         }
         throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
     }
