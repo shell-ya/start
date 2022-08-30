@@ -6,6 +6,8 @@ import com.starnft.star.domain.activity.model.vo.ActivityVO;
 import com.starnft.star.domain.activity.model.vo.GoodsHavingTimesVO;
 import com.starnft.star.domain.activity.repository.IActivityRepository;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
+import com.starnft.star.domain.draw.model.vo.DrawAwardExportVO;
+import io.swagger.models.auth.In;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -28,6 +30,15 @@ public class ActivitiesService implements IActivitiesService {
     public boolean modifyStock(Integer spuId, Integer stock) {
 
         return activityRepository.modifyStock(spuId, stock);
+    }
+
+    @Override
+    public boolean delErrorExport(String orderId) {
+        return activityRepository.deleteExport(orderId);
+    }
+
+    public List<DrawAwardExportVO> queryUserExportList(long id) {
+        return activityRepository.queryUserExportList(id);
     }
 
     @Override

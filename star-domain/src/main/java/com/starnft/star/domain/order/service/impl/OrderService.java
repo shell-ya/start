@@ -14,8 +14,10 @@ import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.order.model.req.OrderListReq;
 import com.starnft.star.domain.order.model.res.OrderListRes;
+import com.starnft.star.domain.order.model.vo.BuyBoxNum;
 import com.starnft.star.domain.order.model.vo.MarketCancelOrderVo;
 import com.starnft.star.domain.order.model.vo.OrderVO;
+import com.starnft.star.domain.order.repository.BuyNum;
 import com.starnft.star.domain.order.repository.IOrderRepository;
 import com.starnft.star.domain.order.service.IOrderService;
 import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
@@ -120,9 +122,10 @@ public class OrderService implements IOrderService {
                 log.info("[{}] 取消订单清除购买限制 uid = [{}]", this.getClass().getSimpleName(), uid);
                 String key = String.format(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), orderVO.getSeriesThemeInfoId());
                 redisUtil.hdel(key, String.valueOf(uid));
-            } else if (orderType.equals(StarConstants.OrderType.MARKET_GOODS)) {
-                redisLockUtils.unlock(String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), orderVO.getSeriesThemeId()));
             }
+//            else if (orderType.equals(StarConstants.OrderType.MARKET_GOODS)) {
+//                redisLockUtils.unlock(String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), orderVO.getSeriesThemeId()));
+//            }
             return new OrderPlaceRes(StarConstants.ORDER_STATE.PAY_CANCEL.getCode(), orderSn);
         }
 
@@ -161,6 +164,11 @@ public class OrderService implements IOrderService {
     public List<OrderVO> queryAllSuccessOrder() {
         return orderRepository.queryAllSuccessByTheme("998977713737334784");
 //        return BeanColverUtil.colverList(orderVOS, OrderListRes.class);
+    }
+
+    @Override
+    public List<BuyNum> queryUserBuyBoxNumber() {
+        return orderRepository.queryBuyNum();
     }
 
 

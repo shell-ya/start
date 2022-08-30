@@ -43,4 +43,10 @@ public interface IUserStrategyExportDao {
      */
     List<UserStrategyExport> scanInvoiceMqState();
 
+    List<UserStrategyExport> queryUserStrategyExportNum(String uid);
+
+    List<UserStrategyExport> queryUserStrategyExportList(String uid);
+
+
+    boolean deleteExport(String orderId);
 }

@@ -71,4 +71,10 @@ public interface IActivityRepository {
 
     void initGoodsHavingTimes(NumberDetailVO numberDetailVO);
 
+    Integer queryUserExportNum(Long uid);
+
+    List<DrawAwardExportVO> queryUserExportList(Long uid);
+
+    boolean deleteExport(String orderId);
+
 }

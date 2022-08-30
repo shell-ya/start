@@ -17,6 +17,6 @@ import java.util.List;
 @NoArgsConstructor
 public class RandomAirdrop {
     private Long seriesThemeInfoId;
-    private Long themeNumber;
+//    private Long themeNumber;
     private List<Serializable> redisNumberList;
 }

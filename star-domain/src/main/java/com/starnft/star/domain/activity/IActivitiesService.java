@@ -16,4 +16,6 @@ public interface IActivitiesService {
     List<GoodsHavingTimesVO> queryGoodsHavingTimesByGood(Long themeId);
 
     void initGoodsHavingTimes(NumberDetailVO numberDetailVO);
+
+    boolean delErrorExport(String orderId);
 }

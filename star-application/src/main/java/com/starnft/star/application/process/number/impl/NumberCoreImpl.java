@@ -1,7 +1,9 @@
 package com.starnft.star.application.process.number.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import com.google.common.collect.Lists;
+import com.starnft.star.application.process.draw.vo.DrawConsumeVO;
 import com.starnft.star.application.process.number.INumberCore;
 import com.starnft.star.application.process.number.res.ConsignDetailRes;
 import com.starnft.star.common.constant.RedisKey;
@@ -20,11 +22,13 @@ import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
 import com.starnft.star.domain.number.model.dto.NumberUpdateDTO;
+import com.starnft.star.domain.number.model.req.HandoverReq;
 import com.starnft.star.domain.number.model.req.NumberConsignmentCancelRequest;
 import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
 import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
+import com.starnft.star.domain.number.model.vo.ReNumberVo;
 import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.theme.model.vo.ThemeDetailVO;
 import com.starnft.star.domain.theme.service.ThemeService;
@@ -36,7 +40,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -83,6 +89,9 @@ public class NumberCoreImpl implements INumberCore {
 
     @Override
     public Boolean consignment(NumberConsignmentRequest request) {
+
+//        throw new StarException(StarError.CONSIGNMENT_NOT_OPEN);
+
         Long uid = request.getUid();
 
         // 校验是否拥有该藏品
@@ -220,6 +229,50 @@ public class NumberCoreImpl implements INumberCore {
         redisUtil.addToListLeft(stockKey2,RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTime(),RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTimeUnit(),integers2);
 
 
+    }
+
+    @Override
+    public boolean reNumber(ReNumberVo numberVo, List<Long> ids) {
+        //删除用户持有的重复藏品
+
+       return this.transactionTemplate.execute(transactionStatus -> {
+
+        boolean b = numberService.deleteNumber2ReDraw(numberVo, ids);
+        boolean result = true;
+        for (Long id :
+                ids) {
+            boolean handover = numberService.handover(buildHandOverReq(numberVo, id));
+            if (!handover) result = false;
+        }
+
+        return b && result;
+        });
+    }
+
+    private HandoverReq buildHandOverReq(ReNumberVo numberVo,Long id) {
+
+        Long awardCategoryId = numberVo.getSeriesThemeInfoId();
+        ThemeDetailVO themeDetailVO = themeService.queryThemeDetail(awardCategoryId);
+        List<NumberVO> numberVOS = numberService.loadNotSellNumberCollection(awardCategoryId);
+
+        if (CollectionUtil.isEmpty(numberVOS)) {
+            throw new RuntimeException("藏品余量不足！");
+        }
+        HandoverReq handoverReq = new HandoverReq();
+        handoverReq.setUid(id);
+        handoverReq.setSeriesId(themeDetailVO.getSeriesId());
+        handoverReq.setType(NumberCirculationTypeEnum.CASTING.getCode());
+        handoverReq.setCategoryType(1);
+        handoverReq.setCurrMoney(BigDecimal.ZERO);
+        handoverReq.setPreMoney(BigDecimal.ZERO);
+        handoverReq.setFromUid(0L);
+        handoverReq.setToUid(id);
+        handoverReq.setThemeId(awardCategoryId);
+        handoverReq.setOrderType(StarConstants.OrderType.PUBLISH_GOODS);
+        handoverReq.setNumberId(numberVOS.get(0).getId());
+        handoverReq.setItemStatus(1);
+
+        return handoverReq;
     }
 
 }

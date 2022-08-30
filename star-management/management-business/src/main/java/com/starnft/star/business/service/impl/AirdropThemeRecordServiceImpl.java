@@ -11,6 +11,7 @@ import com.starnft.star.business.service.IAirdropThemeRecordService;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.ServiceException;
+import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.utils.RandomUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
@@ -60,6 +61,9 @@ public class AirdropThemeRecordServiceImpl implements IAirdropThemeRecordService
     public boolean addUserAirdrop(AirdropThemeRecord record) {
 
         try{
+            //验证主题编号拥有人是否为空
+            String owberBy = themeNumberMapper.selectNumberOwberByIsNull(record);
+            if (StringUtils.isNotEmpty(owberBy)) throw new StarException(StarError.AIRDROP_NUMBER_ERROR);
             boolean airdropSuccess = createAirdropRecord(record);
             boolean numberSuccess = updateThemeNumber(record);
             boolean userTheme = createUserTheme(record);
@@ -180,7 +184,7 @@ public class AirdropThemeRecordServiceImpl implements IAirdropThemeRecordService
                         failureMsg.append("<br/>主题").append(item.getSeriesThemeId()).append("不存在");
                     }
                     Long numberId= null;
-                    Long themeNumber = null;
+                    Integer themeNumber = null;
 
                     List<Serializable> redisNumberList = Lists.newArrayList();
                     //检查redis中有此编号 命中换下一个
@@ -212,23 +216,26 @@ public class AirdropThemeRecordServiceImpl implements IAirdropThemeRecordService
                     //发送空投数量为0 从数据库中选出一个所属人为空的藏品
                     if (0 == item.getSeriesThemeId().size() || Objects.isNull(item.getSeriesThemeId())){
 //                        redisNumberList.add(172L);
-                        themeNumber = (long) RandomUtil.randomInt(0, themeInfo.getPublishNumber().intValue());
-                        while (true){
-                            //秒杀编号队列
-                            // TODO: 2022/8/3 秒杀库存
-
-                            RandomAirdrop randomAirdrop = new RandomAirdrop(item.getSeriesThemeInfoId(), themeNumber, redisNumberList);
-                            if (redisNumberList.size() == 0) randomAirdrop.setRedisNumberList(null);
-                            StarNftThemeNumber starNftThemeNumber = themeNumberMapper.selectOwnerIsNull(randomAirdrop);
-                            if (Objects.isNull(starNftThemeNumber)){
-                                themeNumber = (long) RandomUtil.randomInt(0, themeInfo.getPublishNumber().intValue());
-                            }else {
-                                numberId= starNftThemeNumber.getId();
-                                break;
-                            }
-                            //去数据库查询该编号所属人是否为空
-                        }
-                        item.setSeriesThemeId(Lists.newArrayList(themeNumber));
+                        //先查询出numberid 为空的记录 随机数选一条
+                        RandomAirdrop randomAirdrop = new RandomAirdrop(item.getSeriesThemeInfoId(), redisNumberList);
+                        List<Long> ids = themeNumberMapper.selectOwnerIsNull(randomAirdrop);
+                        themeNumber = RandomUtil.randomInt(0, ids.size());
+                        numberId = ids.get(themeNumber);
+//                        while (true){
+//                            //秒杀编号队列
+//                            // TODO: 2022/8/3 秒杀库存
+//
+//                            if (redisNumberList.size() == 0) randomAirdrop.setRedisNumberList(null);
+//                            StarNftThemeNumber starNftThemeNumber = themeNumberMapper.selectOwnerIsNull(randomAirdrop);
+//                            if (Objects.isNull(starNftThemeNumber)){
+//                                themeNumber = (long) RandomUtil.randomInt(0, themeInfo.getPublishNumber().intValue());
+//                            }else {
+//                                numberId= starNftThemeNumber.getId();
+//                                break;
+//                            }
+//                            //去数据库查询该编号所属人是否为空
+//                        }
+//                        item.setSeriesThemeId(Lists.newArrayList(themeNumber));
                     }else {
                         throw new StarException("空投随机编号不传藏品id seriesThemeId");
                     }

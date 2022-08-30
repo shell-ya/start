@@ -10,6 +10,7 @@ import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
 import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
+import com.starnft.star.domain.number.model.vo.ReNumberVo;
 
 import java.util.List;
 
@@ -32,4 +33,6 @@ public interface INumberCore {
     public  ResponsePageResult<UserNumbersVO> checkHasNumber(Long uid, Long themeId, UserNumberStatusEnum statusEnum,Integer page,Integer size);
 
     void putNumber(long themeId,String time1,String time2,int stock1,int stock2);
+
+    boolean reNumber(ReNumberVo numberVo, List<Long> ids);
 }

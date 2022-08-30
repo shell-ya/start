@@ -35,6 +35,7 @@ import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.number.model.dto.NumberDTO;
 import com.starnft.star.domain.number.model.req.HandoverReq;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
@@ -52,6 +53,8 @@ import com.starnft.star.domain.theme.service.ThemeService;
 import com.starnft.star.domain.user.service.IUserService;
 import com.starnft.star.domain.wallet.model.req.WalletPayRequest;
 import com.starnft.star.domain.wallet.model.res.WalletPayResult;
+import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
+import com.starnft.star.domain.wallet.service.WalletConfig;
 import com.starnft.star.domain.wallet.service.WalletService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -61,6 +64,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
+import org.web3j.utils.Strings;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -227,21 +231,21 @@ public class OrderProcessor implements IOrderProcessor {
 
     @Override
     public OrderPayDetailRes orderPay(@Validated OrderPayReq orderPayReq) {
+
+        log.info("用户发起支付：{}",orderPayReq.toString());
+
         //验证支付凭证
         userService.assertPayPwdCheckSuccess(orderPayReq.getUserId(), orderPayReq.getPayToken());
         //规则验证
         walletService.balanceVerify(orderPayReq.getUserId(), new BigDecimal(orderPayReq.getPayAmount()));
+
+        verifyOwnerBy(orderPayReq);
 
         //市场订单参数手续费计算
         if (orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
             calculateFee(orderPayReq);
         }
 
-        if (orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())
-                && (Objects.isNull(orderPayReq.getOwnerId()) || 0L == Long.parseLong(orderPayReq.getOwnerId()))
-        ) {
-            throw new StarException(StarError.ORDER_STATUS_ERROR, "您购买的藏品不存在");
-        }
 
         String lockKey = String.format(RedisKey.SECKILL_ORDER_TRANSACTION.getKey(), orderPayReq.getOrderSn());
         Boolean lock = redisLockUtils.lock(lockKey, RedisKey.SECKILL_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.SECKILL_ORDER_TRANSACTION.getTime()));
@@ -259,28 +263,56 @@ public class OrderProcessor implements IOrderProcessor {
             if (isSuccess) {
                 redisUtil.hincr(String.format(RedisKey.SECKILL_BUY_GOODS_NUMBER.getKey(), orderPayReq.getThemeId()), String.valueOf(orderPayReq.getUserId()), 1L);
 
-                //市场订单交易成功 更新卖家余额
-                if (orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
-                    walletProducer.receivablesCallback(createTranReq(orderPayReq));
-                } else {
-                    OrderListRes orderListRes = orderService.obtainSecKillOrder(orderPayReq.getUserId(), orderPayReq.getThemeId());
-                    if (orderListRes.getPriorityBuy() == 1) subPTimes(orderPayReq.getUserId(), orderListRes);
-                    activityProducer.sendScopeMessage(createEventReq(orderPayReq));
+                    //只有首发订单增加积分
+                    if (!orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
+                        OrderListRes orderListRes = orderService.obtainSecKillOrder(orderPayReq.getUserId(), orderPayReq.getThemeId());
+                        if (orderListRes.getPriorityBuy() == 1) subPTimes(orderPayReq.getUserId(), orderListRes);
+                        activityProducer.sendScopeMessage(createEventReq(orderPayReq));
+                    }
+//                    rebatesProducer.sendRebatesMessage(createRebates(orderPayReq));
+                    //todo 后面去掉
+//                    if (!orderPayReq.getThemeId().equals(1002285892654821376L) || !orderPayReq.getThemeId().equals(1009469098485923840L)) {
+//                        String userOrderMapping = String.format(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), orderPayReq.getThemeId());
+//                        String orderInfo = (String) redisUtil.hget(userOrderMapping, String.valueOf(orderPayReq.getUserId()));
+//                        OrderVO orderCache = JSONUtil.toBean(orderInfo, OrderVO.class);
+//                        String startTime = orderCache.getRemark();
+//                        String startTimeTrim = com.starnft.star.common.utils.DateUtil.date2Str(new Date());
+//                        if (Long.parseLong(startTime) > Long.parseLong(startTimeTrim)) {
+//                            Long times = 0L;
+//                            synchronized (this) {
+//                                redisUtil.hincr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L);
+//                                times = redisUtil.hdecr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L);
+//                            }
+//                            if (redisUtil.hdecr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L) <= 0) {
+//                                redisUtil.hdel(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()));
+//                            }
+//                        }
+//                    }
+                    return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn());
                 }
-                return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn());
-            }
-            throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "订单处理异常！");
+                throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "订单处理异常！");
         } catch (TransactionException | StarException e) {
             throw new RuntimeException(e);
         } finally {
-            redisLockUtils.unlock(lockKey);
             walletService.threadClear();
+            redisLockUtils.unlock(lockKey);
         }
     }
 
     private void subPTimes(Long userId, OrderListRes orderListRes) {
         Boolean isSuccess = userService.whiteTimeConsume(userId, orderListRes.getWhiteId());
         if (!isSuccess) userService.whiteTimeConsume(userId, 1L);
+    }
+
+    private void verifyOwnerBy(OrderPayReq orderPayReq) {
+        if (orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
+            //查询当前藏品拥有人与下订单时拥有人一致
+            if ( (Objects.isNull(orderPayReq.getOwnerId()) ||
+                    0L == Long.parseLong(orderPayReq.getOwnerId())) ||
+                    !numberService.isOwner(Long.parseLong(orderPayReq.getOwnerId()),orderPayReq.getThemeId(),orderPayReq.getNumberId())
+            )
+            throw new StarException(StarError.ORDER_STATUS_ERROR,"请确认藏品拥有者正确性");
+        }
     }
 
     private RebatesMessage createRebates(OrderPayReq orderPayReq) {
@@ -294,7 +326,14 @@ public class OrderProcessor implements IOrderProcessor {
 
     private void calculateFee(OrderPayReq orderPayReq) {
         //todo 计算
-        return;
+        walletService.verifyParam(orderPayReq.getChannel());
+        WalletConfigVO config = WalletConfig.getConfig(StarConstants.PayChannel.valueOf(orderPayReq.getChannel()));
+        BigDecimal payMoney = new BigDecimal(orderPayReq.getPayAmount());
+        BigDecimal transRate = payMoney.multiply(config.getServiceRate());
+        BigDecimal copyrightRate = payMoney.multiply(config.getCopyrightRate());
+        BigDecimal fee = transRate.add(copyrightRate);
+        orderPayReq.setFee(fee.toString());
+//        return;
     }
 
     private ActivityEventReq createEventReq(OrderPayReq orderPayReq) {
@@ -383,6 +422,8 @@ public class OrderProcessor implements IOrderProcessor {
 
     @Override
     public OrderListRes marketOrder(MarketOrderReq marketOrderReq) {
+
+
         ArrayList<Long> objects = Lists.newArrayList();
         objects.add(799041013L);
         objects.add(214502860L);
@@ -409,15 +450,20 @@ public class OrderProcessor implements IOrderProcessor {
             }
         }
 
-        ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(marketOrderReq.getNumberId());
-        //禁止购买自己售出商品
-        if (marketOrderReq.getUserId().equals(numberDetail.getOwnerBy()))
-            throw new StarException(StarError.GOODS_SELF_ERROR);
+        //待支付订单判断
+//        if (havingOrder(marketOrderReq.getUserId())) {
+//            throw new StarException(StarError.ORDER_DONT_PAY_ERROR);
+//        }
+
+
         //获取锁
         String isTransaction = String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), marketOrderReq.getNumberId());
         if (redisUtil.hasKey(RedisLockUtils.REDIS_LOCK_PREFIX + isTransaction)) {
             throw new StarException(StarError.GOODS_IS_TRANSACTION);
         }
+
+        //多重检查
+        ThemeNumberVo numberDetail =  verifyAgain(marketOrderReq);
         //钱包余额充足
         walletService.balanceVerify(marketOrderReq.getUserId(), numberDetail.getPrice());
         long lockTimes = RedisKey.MARKET_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.MARKET_ORDER_TRANSACTION.getTime());
@@ -439,9 +485,22 @@ public class OrderProcessor implements IOrderProcessor {
             throw new RuntimeException(e.getMessage());
         } finally {
             walletService.threadClear();
-            redisLockUtils.unlock(isTransaction);
+//            redisLockUtils.unlock(isTransaction);
         }
         throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
+    }
+
+    private ThemeNumberVo verifyAgain(MarketOrderReq marketOrderReq) {
+        ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(new NumberDTO(marketOrderReq.getNumberId(), marketOrderReq.getOwnerBy()));
+        //藏品所属人改变
+        if (Objects.isNull(numberDetail)){
+            throw new StarException(StarError.GOODS_NOT_FOUND);
+        }
+        //禁止购买自己售出商品
+        if (marketOrderReq.getUserId().equals(numberDetail.getOwnerBy()))
+            throw new StarException(StarError.GOODS_SELF_ERROR);
+
+        return numberDetail;
     }
 
     @Override
@@ -518,7 +577,7 @@ public class OrderProcessor implements IOrderProcessor {
         return times.intValue();
     }
 
-    private OrderListRes buildOrderResp(Long lockTime, ThemeNumberVo numberDetail, Long userId, String orderSn, Long id) {
+    private OrderListRes buildOrderResp(Long lockTime,ThemeNumberVo numberDetail, Long userId, String orderSn, Long id) {
         OrderListRes res = new OrderListRes();
         res.setId(id);
         res.setOrderSn(orderSn);

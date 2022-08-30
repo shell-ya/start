@@ -168,13 +168,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
-    <select id="selectOwnerIsNull" resultType="com.starnft.star.business.domain.StarNftThemeNumber">
-        <include refid="selectStarNftThemeNumberVo"/>
+    <select id="selectOwnerIsNull" resultType="java.lang.Long">
+        select  id from star_nft_theme_number
         <where>
                 series_theme_info_id = #{seriesThemeInfoId}
-                and theme_number = #{themeNumber}
                 and owner_by is null
-            <if test="redisNumberList != null and redisNumberList != ''">
+            <if test="redisNumberList != null and redisNumberList.size() != 0">
                 and theme_number not in
                 <foreach collection="redisNumberList" index="index" item="number" open="(" separator="," close=")">
                     #{number}
@@ -207,5 +206,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             or theme_number = 777
             )
         and owner_by is null
+    </select>
+
+    <select id="selectNumberOwberByIsNull" resultType="java.lang.String">
+        select owner_by from star_nft_theme_number
+        where series_theme_info_id = #{seriesThemeInfoId}
+        and theme_number = #{seriesThemeId}
     </select>
 </mapper>

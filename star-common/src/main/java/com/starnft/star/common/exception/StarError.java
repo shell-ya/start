@@ -109,6 +109,10 @@ public enum StarError {
     BLIND_IS_ON_SELL("60000002", "请从市场或第三方平台先下架盲盒！"),
 
     INVALID_DRAW_REQUEST("60000003", "无效的抽奖请求！"),
+
+    MARKET_NOT_OPEN("600000004","市场暂未开放，请等待公告通知"),
+    CONSIGNMENT_NOT_OPEN("600000004","寄售暂未开放，请等待公告通知"),
+    AIRDROP_NUMBER_ERROR("600000005","空投编号错误"),
     ;
 
     private String NS = "";

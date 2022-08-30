@@ -1,6 +1,7 @@
 package com.starnft.star.interfaces.controller.draw;
 
 import com.starnft.star.application.process.draw.IActivityDrawProcess;
+import com.starnft.star.application.process.draw.IDrawDelProcess;
 import com.starnft.star.application.process.draw.req.DrawProcessReq;
 import com.starnft.star.application.process.limit.ICurrentLimiter;
 import com.starnft.star.common.RopResponse;
@@ -13,6 +14,7 @@ import com.starnft.star.domain.draw.model.req.DrawAwardExportsReq;
 import com.starnft.star.domain.draw.model.vo.DrawAwardExportVO;
 import com.starnft.star.domain.draw.model.vo.DrawAwardVO;
 import com.starnft.star.domain.draw.service.draw.IDrawExec;
+import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import com.starnft.star.interfaces.interceptor.UserContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -36,6 +38,8 @@ public class DrawController {
     final ICurrentLimiter currentLimiter;
 
     final RedisUtil redisUtil;
+
+    final IDrawDelProcess drawDelProcess;
 
     @ApiOperation("执行抽奖")
     @PostMapping("/dodraw")
@@ -63,6 +67,22 @@ public class DrawController {
     public RopResponse<ResponsePageResult<DrawAwardExportVO>> queryDrawRecord(@RequestBody DrawAwardExportsReq req) {
         req.setUId(String.valueOf(UserContext.getUserId().getUserId()));
         return RopResponse.success(drawExec.queryDrawRecords(req));
+    }
+
+    @ApiOperation("清理异常抽奖数据")
+    @PostMapping("/delDrawExport")
+    @TokenIgnore
+    public RopResponse delDrawExport(){
+        drawDelProcess.delErrorDraw();
+        return RopResponse.success(true);
+    }
+
+    @ApiOperation("重新分配编号")
+    @PostMapping("/reNumber")
+    @TokenIgnore
+    public RopResponse reNumber(){
+        drawDelProcess.reNumber();
+        return RopResponse.success(true);
     }
 
 }

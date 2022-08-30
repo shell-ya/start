@@ -12,10 +12,7 @@ import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.Assert;
 import com.starnft.star.domain.number.model.OrderByEnum;
-import com.starnft.star.domain.number.model.dto.NumberBatchUpdateDTO;
-import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
-import com.starnft.star.domain.number.model.dto.NumberQueryDTO;
-import com.starnft.star.domain.number.model.dto.NumberUpdateDTO;
+import com.starnft.star.domain.number.model.dto.*;
 import com.starnft.star.domain.number.model.req.HandoverReq;
 import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.req.NumberReq;
@@ -89,12 +86,14 @@ public class NumberServiceImpl implements INumberService {
     }
 
     @Override
-    public ThemeNumberVo getConsignNumberDetail(Long id) {
-        Optional.ofNullable(id)
-                .orElseThrow(() -> new StarException(StarError.VALUE_COULD_NOT_BE_NULL, "商品id不能为空"));
-        ThemeNumberVo consignNumber = this.numberRepository.getConsignNumber(id);
+    public ThemeNumberVo getConsignNumberDetail(NumberDTO dto) {
+        Optional.ofNullable(dto.getThemeId())
+                .orElseThrow(() -> new StarException(StarError.VALUE_COULD_NOT_BE_NULL, "藏品id不能为空"));
+        Optional.ofNullable(dto.getOwnerBy())
+                .orElseThrow(() -> new StarException(StarError.VALUE_COULD_NOT_BE_NULL, "藏品寄售人不能为空"));
+        ThemeNumberVo consignNumber = this.numberRepository.getConsignNumber(dto);
         Optional.ofNullable(consignNumber)
-                .orElseThrow(() -> new StarException(StarError.GOODS_NOT_FOUND, "商品已被购买"));
+                .orElseThrow(() -> new StarException(StarError.GOODS_NOT_FOUND, "藏品已被购买"));
         return consignNumber;
     }
 
@@ -187,6 +186,31 @@ public class NumberServiceImpl implements INumberService {
     @Override
     public Boolean modifyNumberOwnerBy(Long id, Long userId, Integer code) {
         return this.numberRepository.modifyNumberStatus(id, userId, code);
+    }
+
+    @Override
+    public Boolean deleteNumber(Long uid, Long seriesThemeId) {
+        return numberRepository.deleteNumber(uid,seriesThemeId);
+    }
+
+    @Override
+    public Long queryUserFirstNumberId(Long uid, Long seriesThemeInfoId) {
+        return numberRepository.firstNumber(uid,seriesThemeInfoId);
+    }
+
+    @Override
+    public List<ReNumberVo> queryReNumberList(Long themeId) {
+        return numberRepository.queryReNumberList(themeId);
+    }
+
+    @Override
+    public List<Long> queryHasReNumberUser(Long seriesThemeId) {
+        return numberRepository.queryHasReNumberUser(seriesThemeId);
+    }
+
+    @Override
+    public boolean deleteNumber2ReDraw(ReNumberVo numberVo, List<Long> ids) {
+        return numberRepository.deleteNumber2ReDraw(numberVo,ids);
     }
 
     @Override

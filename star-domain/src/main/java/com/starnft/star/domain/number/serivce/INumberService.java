@@ -2,10 +2,7 @@ package com.starnft.star.domain.number.serivce;
 
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
-import com.starnft.star.domain.number.model.dto.NumberBatchUpdateDTO;
-import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
-import com.starnft.star.domain.number.model.dto.NumberQueryDTO;
-import com.starnft.star.domain.number.model.dto.NumberUpdateDTO;
+import com.starnft.star.domain.number.model.dto.*;
 import com.starnft.star.domain.number.model.req.HandoverReq;
 import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.req.NumberReq;
@@ -26,7 +23,7 @@ public interface INumberService {
 
     ResponsePageResult<NumberVO> listNumber(RequestConditionPage<NumberQueryRequest> request);
 
-    ThemeNumberVo getConsignNumberDetail(Long id);
+    ThemeNumberVo getConsignNumberDetail(NumberDTO dto);
 
     List<NumberVO> getNumberListByThemeInfoId(NumberQueryDTO numberQueryDTO);
 
@@ -59,7 +56,16 @@ public interface INumberService {
 
     Boolean modifyNumberOwnerBy(Long id, Long userId, Integer code);
 
+    Boolean deleteNumber(Long uid,Long seriesThemeId);
+
+    Long queryUserFirstNumberId(Long uid,Long seriesThemeInfoId);
 
     List<NumberDetailVO> queryNumberNotOnSell(Long themeId);
 //    Boolean managePrice(BigDecimal price);
+
+    List<ReNumberVo> queryReNumberList(Long themeId);
+
+    List<Long> queryHasReNumberUser(Long seriesThemeId);
+
+    boolean deleteNumber2ReDraw(ReNumberVo numberVo, List<Long> ids);
 }
