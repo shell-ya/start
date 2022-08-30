@@ -295,6 +295,15 @@ public class NumberRepository implements INumberRepository {
         return this.starNftThemeNumberMapper.getNumbers2Ding();
     }
 
+    @Override
+    public List<NumberDetailVO> queryNumberNotOnSell(Long themeId) {
+        LambdaQueryWrapper<StarNftThemeNumber> queryWrapper = new LambdaQueryWrapper<>();
+        List<StarNftThemeNumber> starNftThemeNumbers = starNftThemeNumberMapper.selectList(queryWrapper.eq(StarNftThemeNumber::getSeriesThemeInfoId, themeId)
+                .eq(StarNftThemeNumber::getStatus, 1));
+
+        return BeanColverUtil.colverList(starNftThemeNumbers, NumberDetailVO.class);
+    }
+
     private ThemeNumberVo copyToVO(StarNftThemeNumber starNftThemeNumber) {
         ThemeNumberVo themeNumberVo = BeanColverUtil.colver(starNftThemeNumber, ThemeNumberVo.class);
         themeNumberVo.setNumberId(starNftThemeNumber.getId());

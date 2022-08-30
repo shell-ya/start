@@ -49,4 +49,6 @@ public interface INumberRepository {
     Boolean thirdPlatSelling(Long userId,Long seriesThemeId);
 
     public List<NumberDingVO> getNumberDingList();
+
+    List<NumberDetailVO> queryNumberNotOnSell(Long themeId);
 }

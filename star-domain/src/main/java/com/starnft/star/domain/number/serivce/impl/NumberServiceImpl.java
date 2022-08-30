@@ -189,6 +189,11 @@ public class NumberServiceImpl implements INumberService {
         return this.numberRepository.modifyNumberStatus(id, userId, code);
     }
 
+    @Override
+    public List<NumberDetailVO> queryNumberNotOnSell(Long themeId) {
+        return this.numberRepository.queryNumberNotOnSell(themeId);
+    }
+
 
     @Override
     public List<NumberDingVO> getNumberDingList() {

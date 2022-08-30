@@ -59,5 +59,7 @@ public interface INumberService {
 
     Boolean modifyNumberOwnerBy(Long id, Long userId, Integer code);
 
+
+    List<NumberDetailVO> queryNumberNotOnSell(Long themeId);
 //    Boolean managePrice(BigDecimal price);
 }

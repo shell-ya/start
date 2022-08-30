@@ -1,5 +1,6 @@
 package com.starnft.star.infrastructure.repository;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.starnft.star.common.constant.StarConstants;
@@ -10,14 +11,18 @@ import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.activity.model.vo.ActivityVO;
 import com.starnft.star.domain.activity.model.vo.DrawActivityVO;
 import com.starnft.star.domain.activity.model.vo.DrawOrderVO;
+import com.starnft.star.domain.activity.model.vo.GoodsHavingTimesVO;
 import com.starnft.star.domain.activity.repository.IActivityRepository;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.draw.model.req.DrawAwardExportsReq;
 import com.starnft.star.domain.draw.model.req.PartakeReq;
 import com.starnft.star.domain.draw.model.vo.DrawAwardExportVO;
+import com.starnft.star.domain.number.model.vo.NumberDetailVO;
+import com.starnft.star.infrastructure.entity.activity.GoodsHavingTimeRecord;
 import com.starnft.star.infrastructure.entity.activity.StarScheduleSeckill;
 import com.starnft.star.infrastructure.entity.draw.Activity;
 import com.starnft.star.infrastructure.entity.draw.UserStrategyExport;
+import com.starnft.star.infrastructure.mapper.activity.GoodsHavingTimeRecordMapper;
 import com.starnft.star.infrastructure.mapper.activity.StarScheduleSeckillMapper;
 import com.starnft.star.infrastructure.mapper.draw.*;
 import org.slf4j.Logger;
@@ -26,6 +31,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,6 +53,9 @@ public class ActivityRepository implements IActivityRepository {
 
     @Resource
     private IUserStrategyExportDao userStrategyExportDao;
+
+    @Resource
+    private GoodsHavingTimeRecordMapper goodsHavingTimeRecordMapper;
 
     @Resource
     private RedisUtil redisUtil;
@@ -133,6 +142,29 @@ public class ActivityRepository implements IActivityRepository {
                 .map(po -> BeanColverUtil.colver(po, DrawAwardExportVO.class))
                 .collect(Collectors.toList()),
                 exportVO.getPage(), exportVO.getSize(), drawAwardExportVOPageInfo.getTotal());
+    }
+
+    @Override
+    public List<GoodsHavingTimesVO> queryGoodsHavingTimesByGood(Long themeId) {
+        List<GoodsHavingTimeRecord> goodsHavingTimeRecords = goodsHavingTimeRecordMapper.selectList(new LambdaQueryWrapper<GoodsHavingTimeRecord>()
+                .eq(GoodsHavingTimeRecord::getThemeInfoId, themeId).eq(GoodsHavingTimeRecord::getIsDeleted, 0));
+        return BeanColverUtil.colverList(goodsHavingTimeRecords, GoodsHavingTimesVO.class);
+    }
+
+    @Override
+    public void initGoodsHavingTimes(NumberDetailVO numberDetailVO) {
+        GoodsHavingTimeRecord goodsHavingTimeRecord = new GoodsHavingTimeRecord();
+        goodsHavingTimeRecord.setCountTimes(1);
+        goodsHavingTimeRecord.setUid(Long.parseLong(numberDetailVO.getOwnerBy()));
+        goodsHavingTimeRecord.setThemeInfoId(numberDetailVO.getThemeId());
+        goodsHavingTimeRecord.setVersion(0);
+        goodsHavingTimeRecord.setCreatedAt(new Date());
+        goodsHavingTimeRecord.setCreatedBy(Long.parseLong(numberDetailVO.getOwnerBy()));
+        goodsHavingTimeRecord.setIsDeleted(Boolean.FALSE);
+        int isSuccess = goodsHavingTimeRecordMapper.insert(goodsHavingTimeRecord);
+        if (isSuccess != 1) {
+            logger.error("藏品 ： [{}]用户 :[{}] 持有次数插入失败！", numberDetailVO.getThemeId(), numberDetailVO.getOwnerBy());
+        }
     }
 
 
