@@ -9,6 +9,7 @@ import com.starnft.star.domain.draw.model.req.DrawAwardExportsReq;
 import com.starnft.star.domain.draw.model.vo.DrawAwardExportVO;
 import com.starnft.star.domain.draw.model.vo.DrawAwardVO;
 import com.starnft.star.domain.draw.service.draw.IDrawExec;
+import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import com.starnft.star.interfaces.interceptor.UserContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,6 +49,7 @@ public class DrawController {
 
     @ApiOperation("清理异常抽奖数据")
     @PostMapping("/delDrawExport")
+    @TokenIgnore
     public RopResponse delDrawExport(){
         drawDelProcess.delErrorDraw();
         return RopResponse.success(true);
@@ -55,6 +57,7 @@ public class DrawController {
 
     @ApiOperation("重新分配编号")
     @PostMapping("/reNumber")
+    @TokenIgnore
     public RopResponse reNumber(){
         drawDelProcess.reNumber();
         return RopResponse.success(true);
