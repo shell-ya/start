@@ -15,6 +15,8 @@ import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.service.IOrderService;
 import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
+import com.starnft.star.domain.user.model.vo.WhiteListConfigVO;
+import com.starnft.star.domain.user.service.IUserService;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.slf4j.Logger;
@@ -46,6 +48,9 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
     private INumberService numberService;
 
     @Resource
+    private IUserService userService;
+
+    @Resource
     private Map<StarConstants.Ids, IIdGenerator> map;
 
 
@@ -56,8 +61,9 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
         String time = message.getTime();
         Long themeId = message.getGoods().getThemeId();
         SecKillGoods goods = message.getGoods();
+        Integer isPriority = message.getIsPriority();
 
-        Object stockQueueId = filterNum(userId, themeId,time);
+        Object stockQueueId = filterNum(userId, themeId, time);
 
         if (stockQueueId == null) {
             log.error("队列轮空 uid: [{}] goods : [{}]", userId, goods);
@@ -77,7 +83,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
                 String orderSn = StarConstants.OrderPrefix.PublishGoods.getPrefix()
                         .concat(String.valueOf(map.get(StarConstants.Ids.SnowFlake).nextId()));
                 //创建订单
-                if (createPreOrder(orderSn, message, (int) stockQueueId)) {
+                if (createPreOrder(orderSn, message, isPriority, (int) stockQueueId)) {
                     //减库存
                     stockSubtract(userId, time, themeId, goods);
                     //缓存写进订单状态
@@ -97,13 +103,13 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
 
     }
 
-    private synchronized Object filterNum(long userId, Long themeId,String time) {
+    private synchronized Object filterNum(long userId, Long themeId, String time) {
 
-        String poolKey = String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), themeId,time);
+        String poolKey = String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), themeId, time);
         //不存在库存池 生成并加载一百个库存 或 如果库存池大小小于10 扩容加100
         boolean exists = redisUtil.hasKey(poolKey);
         if (!exists || redisUtil.sGetSetSize(poolKey) <= 10) {
-            supplyPool(themeId, poolKey,time);
+            supplyPool(themeId, poolKey, time);
         }
 
         Object spop = redisUtil.spop(poolKey);
@@ -111,9 +117,9 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
         return spop;
     }
 
-    private void supplyPool(Long themeId, String poolKey,String time) {
+    private void supplyPool(Long themeId, String poolKey, String time) {
         for (int i = 0; i < 100; i++) {
-            Object number = redisUtil.rightPop(String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), themeId,time));
+            Object number = redisUtil.rightPop(String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), themeId, time));
             if (number == null) {
                 continue;
             }
@@ -123,7 +129,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
     }
 
     private void stockSubtract(long userId, String time, Long themeId, SecKillGoods goods) {
-        Long currStock = redisUtil.hincr(RedisKey.SECKILL_GOODS_STOCK_NUMBER.getKey(), String.format("%s-time-%s",themeId,time), -1L);
+        Long currStock = redisUtil.hincr(RedisKey.SECKILL_GOODS_STOCK_NUMBER.getKey(), String.format("%s-time-%s", themeId, time), -1L);
         log.info("商品id:[{}] , 消费该库存user为: [{}], 当前库存为:[{}]", themeId, userId, currStock);
 
         goods.setStock(currStock.intValue());
@@ -140,7 +146,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
         }
     }
 
-    private boolean createPreOrder(String orderSn, OrderMessageReq message, int stockQueueId) {
+    private boolean createPreOrder(String orderSn, OrderMessageReq message, Integer isPriority, int stockQueueId) {
         //查询对应藏品编号是否存在
         ThemeNumberVo themeNumberVo = numberService.queryNumberExist(stockQueueId, message.getGoods().getThemeId());
 
@@ -148,7 +154,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
             log.error("藏品可能未上架 themeId:[{}] , themeNumber:[{}]", message.getGoods().getThemeId(), stockQueueId);
             throw new RuntimeException("查询藏品失败！");
         }
-
+        WhiteListConfigVO whiteListConfigVO = userService.obtainWhiteConfig(message.getGoods().getThemeId());
         OrderVO orderVO = OrderVO.builder()
                 .id(SnowflakeWorker.generateId())
                 .userId(message.getUserId())
@@ -171,6 +177,8 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
                 .expire(180L)
                 .remark(message.getTime()) //暂时存储秒杀时间戳
                 .orderType(StarConstants.OrderType.PUBLISH_GOODS.getName())
+                .priorityBuy(isPriority)
+                .whiteId(whiteListConfigVO.getId())
                 .build();
         //创建订单
         boolean isSuccess = orderService.createOrder(orderVO);

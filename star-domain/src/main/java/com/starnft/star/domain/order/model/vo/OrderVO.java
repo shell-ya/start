@@ -125,4 +125,13 @@ public class OrderVO implements Serializable {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    /** 是否使用优先购 */
+    @ApiModelProperty(name = "是否使用优先购",notes = "")
+    private Integer priorityBuy ;
+
+    /** 白名单id */
+    @ApiModelProperty(name = "白名单id",notes = "")
+    private Long whiteId ;
+
+
 }

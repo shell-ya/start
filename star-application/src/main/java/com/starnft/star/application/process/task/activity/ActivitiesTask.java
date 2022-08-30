@@ -20,7 +20,6 @@ import com.xxl.job.core.handler.annotation.XxlJob;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -113,18 +112,6 @@ public class ActivitiesTask {
 
     private Long[] pushIds(Integer stock, Long themeId) {
         Long[] ids = new Long[stock];
-
-        //todo 特殊过滤
-        if (themeId.equals(998977713737334784L)) {
-            ArrayList<Long> filters = Lists.newArrayList(222L, 333L, 444L, 555L, 666L, 618L, 777L, 888L, 999L, 6180L,
-                    1111L, 2222L, 3333L, 4444L, 5555L, 6666L, 7777L, 8888L, 9999L);
-            for (int i = 1; i <= stock; i++) {
-                if (!filters.contains((long) i)) {
-                    ids[i - 1] = (long) i;
-                }
-            }
-            return ids;
-        }
         List<Integer> stockNums = this.numberService.loadNotSellNumberNumCollection(themeId);
         for (int i = 0; i <= stock - 1; i++) {
             ids[i] = (long) stockNums.get(i);

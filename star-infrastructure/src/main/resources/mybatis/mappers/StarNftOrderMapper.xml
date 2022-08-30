@@ -23,6 +23,7 @@
         <result property="modifiedBy" column="modified_by" jdbcType="VARCHAR"/>
         <result property="isDeleted" column="is_deleted" jdbcType="BIT"/>
         <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="priorityBuy" column="priority_buy" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="contentCondition">
@@ -122,11 +123,11 @@
         insert into star_nft_order(order_sn, series_theme_info_id, series_theme_id, series_id, theme_number,
                                    series_name, theme_name,
                                    theme_pic, theme_type, status, user_id, total_amount, pay_amount, pay_number,
-                                   created_at, created_by, modified_at, modified_by, is_deleted, remark)
+                                   created_at, created_by, modified_at, modified_by, is_deleted, remark, priority_buy)
         values (#{orderSn}, #{seriesThemeInfoId}, #{seriesThemeId}, #{seriesId}, #{theme_number}, #{seriesName},
                 #{themeName},
                 #{themePic}, #{themeType}, #{status}, #{userId}, #{totalAmount}, #{payAmount}, #{payNumber},
-                #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{isDelete}, #{remark})
+                #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{isDelete}, #{remark}, #{priorityBuy})
     </insert>
 
     <select id="queryBuyNum" resultType="com.starnft.star.domain.order.repository.BuyNum">

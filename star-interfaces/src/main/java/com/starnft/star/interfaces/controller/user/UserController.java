@@ -5,7 +5,9 @@ import com.starnft.star.application.process.user.req.*;
 import com.starnft.star.application.process.user.res.*;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.domain.user.model.dto.AuthenticationNameDTO;
+import com.starnft.star.domain.user.model.res.PriorityTimesRes;
 import com.starnft.star.domain.user.model.vo.UserPlyPasswordVO;
+import com.starnft.star.domain.user.service.IUserService;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import com.starnft.star.interfaces.interceptor.UserContext;
 import com.starnft.star.interfaces.interceptor.UserResolverInfo;
@@ -14,6 +16,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * @author WeiChunLAI
@@ -26,6 +30,9 @@ public class UserController {
 
     @Autowired
     private UserCore userCore;
+
+    @Resource
+    private IUserService userService;
 
     @ApiOperation("短信验证码登录/注册")
     @PostMapping("/userinfo/loginbyphone")
@@ -165,12 +172,14 @@ public class UserController {
         req.setUserId(userResolverInfo.getUserId());
         return RopResponse.success(this.userCore.resetPayPassword(req));
     }
+
     @ApiOperation("校验用户是否实名认证")
     @PostMapping("/userinfo/isCertification")
     public RopResponse<Boolean> isReal() {
         Long userId = UserContext.getUserId().getUserId();
         return RopResponse.success(this.userCore.isCertification(userId));
     }
+
     @ApiOperation("修改支付密码")
     @PostMapping("/paypass/setting")
     public RopResponse<Boolean> setPayPassword(UserResolverInfo userResolverInfo, @RequestBody @Validated UserPlyPasswordVO userPlyPasswordVO) {
@@ -191,4 +200,11 @@ public class UserController {
         return RopResponse.success(this.userCore.isRegister(phone));
     }
 
+
+    @ApiOperation("查询用户商品优先购次数")
+    @PostMapping("/userinfo/priority/times")
+    public RopResponse<PriorityTimesRes> queryPriorityTimes(String goodsId) {
+        Long userId = UserContext.getUserId().getUserId();
+        return RopResponse.success(this.userService.queryPriorityTimes(userId, Long.parseLong(goodsId)));
+    }
 }

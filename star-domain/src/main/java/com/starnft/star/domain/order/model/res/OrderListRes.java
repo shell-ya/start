@@ -57,5 +57,11 @@ public class OrderListRes implements Serializable {
     private String orderType;
     @ApiModelProperty("拥有者")
     private String ownerBy;
+    /** 是否使用优先购 */
+    @ApiModelProperty(name = "是否使用优先购",notes = "")
+    private Integer priorityBuy ;
+    /** 白名单id */
+    @ApiModelProperty(name = "白名单id",notes = "")
+    private Long whiteId ;
 
 }

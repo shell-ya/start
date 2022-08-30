@@ -2,6 +2,7 @@ package com.starnft.star.application.process.wallet.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.lang.Assert;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.starnft.star.application.mq.IMessageSender;
@@ -107,30 +108,30 @@ public class WalletCore implements IWalletCore {
             throw new StarException(StarError.IS_TRANSACTION);
         }
         //锁定当前钱包交易
-        if (redisLockUtils.lock(isTransaction, RedisKey.REDIS_TRANSACTION_ING.getTimeUnit().toSeconds(RedisKey.REDIS_TRANSACTION_ING.getTime()))) {
-            try {
-                //生成充值单状态为支付中
-                WalletRecordReq walletRecordReq = walletRecordInit(rechargeFacadeReq);
-                boolean isSuccess = walletService.rechargeRecordGenerate(walletRecordReq);
-                if (!isSuccess) {
-                    throw new RuntimeException("生成预充值记录失败");
-                }
-                RechargeReqResult rechargeReqResult = new RechargeReqResult();
-                //调用支付领域服务 获取拉起支付参数
-                PaymentRes payResult = paymentService.pay(buildPaymentReq(walletRecordReq, rechargeFacadeReq, userRealInfo));
-                if (payResult.getStatus().equals(ResultCode.SUCCESS.getCode())) {
-                    rechargeReqResult.setOrderSn(payResult.getOrderSn());
-                    //组装跳转url
-                    assembly(rechargeReqResult, payResult);
-                    rechargeReqResult.setChannel(rechargeFacadeReq.getChannel());
-                    return rechargeReqResult;
-                }
-            } catch (Exception e) {
-                log.error("uid:[{}] 充值异常", rechargeFacadeReq.getUserId(), e);
-                throw new StarException(StarError.PAY_PROCESS_ERROR);
-            } finally {
-                redisLockUtils.unlock(isTransaction);
+        Boolean lock = redisLockUtils.lock(isTransaction, RedisKey.REDIS_TRANSACTION_ING.getTimeUnit().toSeconds(RedisKey.REDIS_TRANSACTION_ING.getTime()));
+        Assert.isTrue(lock, () -> new RuntimeException("用户 [" + rechargeFacadeReq.getUserId() + "] 正在充值！"));
+        try {
+            //生成充值单状态为支付中
+            WalletRecordReq walletRecordReq = walletRecordInit(rechargeFacadeReq);
+            boolean isSuccess = walletService.rechargeRecordGenerate(walletRecordReq);
+            if (!isSuccess) {
+                throw new RuntimeException("生成预充值记录失败");
             }
+            RechargeReqResult rechargeReqResult = new RechargeReqResult();
+            //调用支付领域服务 获取拉起支付参数
+            PaymentRes payResult = paymentService.pay(buildPaymentReq(walletRecordReq, rechargeFacadeReq, userRealInfo));
+            if (payResult.getStatus().equals(ResultCode.SUCCESS.getCode())) {
+                rechargeReqResult.setOrderSn(payResult.getOrderSn());
+                //组装跳转url
+                assembly(rechargeReqResult, payResult);
+                rechargeReqResult.setChannel(rechargeFacadeReq.getChannel());
+                return rechargeReqResult;
+            }
+        } catch (Exception e) {
+            log.error("uid:[{}] 充值异常", rechargeFacadeReq.getUserId(), e);
+            throw new StarException(StarError.PAY_PROCESS_ERROR);
+        } finally {
+            redisLockUtils.unlock(isTransaction);
         }
         throw new StarException(StarError.PAY_PROCESS_ERROR);
     }

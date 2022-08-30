@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.user.WhiteListDetailMapper">
+    <resultMap type="com.starnft.star.infrastructure.entity.user.WhiteListDetail" id="WhiteListDetailMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="isDeleted" column="is_deleted" jdbcType="INTEGER"/>
+        <result property="createdAt" column="created_at" jdbcType="DATE"/>
+        <result property="createdBy" column="created_by" jdbcType="VARCHAR"/>
+        <result property="modifiedAt" column="modified_at" jdbcType="DATE"/>
+        <result property="modifiedBy" column="modified_by" jdbcType="VARCHAR"/>
+        <result property="whiteId" column="white_id" jdbcType="INTEGER"/>
+        <result property="uid" column="uid" jdbcType="INTEGER"/>
+        <result property="surplusTimes" column="surplus_times" jdbcType="INTEGER"/>
+        <result property="version" column="version" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="selectMappingWhite" resultMap="WhiteListDetailMap">
+
+        select id,
+        is_deleted,
+        created_at,
+        created_by,
+        modified_at,
+        modified_by,
+        white_id,
+        uid,
+        surplus_times,
+        version
+        from white_list_detail
+        <where>
+            <if test="whiteId != null">
+                AND white_id = #{whiteId}
+            </if>
+            <if test="uid != null">
+                AND uid = #{uid}
+            </if>
+            AND surplus_times > 0
+        </where>
+    </select>
+
+    <update id="modifySurplus">
+        update white_list_detail
+        <set>
+            surplus_times = surplus_times - 1,
+            version = version + 1
+        </set>
+        where version = #{version}
+        AND uid = #{uid}
+        AND white_id = #{whiteId}
+        AND surplus_times > 0
+    </update>
+
+
+</mapper>

@@ -46,8 +46,10 @@ public class DrawAwardDeliveryConsumer implements RocketMQListener<DrawConsumeVO
 
         // 藏品
         if (drawConsumeVO.getDrawAwardVO().getAwardType() == 1) {
-            numberService.handover(buildHandOverReq(drawConsumeVO));
-            drawExec.updateUserAwardState(uId, drawConsumeVO.getDrawOrderVO().getOrderId(), awardId, StarConstants.GrantState.COMPLETE.getCode());
+            synchronized (this) {
+                numberService.handover(buildHandOverReq(drawConsumeVO));
+                drawExec.updateUserAwardState(uId, drawConsumeVO.getDrawOrderVO().getOrderId(), awardId, StarConstants.GrantState.COMPLETE.getCode());
+            }
         }
 
         // 元石

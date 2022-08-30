@@ -24,7 +24,7 @@ public class WhiteRuleContext {
     public IWhiteRule obtainWhiteRule(String themeId) {
         Object ruleName = redisUtil.hget(cacheKey, themeId);
         if (ruleName == null) {
-            return null;
+            ruleName = "commonRule";
         }
         return (IWhiteRule) SpringUtil.getBean(ruleName.toString());
     }
