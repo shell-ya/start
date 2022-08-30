@@ -64,7 +64,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
-import org.web3j.utils.Strings;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -481,11 +480,11 @@ public class OrderProcessor implements IOrderProcessor {
                 return buildOrderResp(lockTimes, numberDetail, marketOrderReq.getUserId(), orderSn, id);
             }
         } catch (Exception e) {
+            redisLockUtils.unlock(isTransaction);
             log.error("创建订单异常: userId: [{}] , themeNumberId: [{}] , context: [{}]", marketOrderReq.getUserId(), marketOrderReq.getNumberId(), numberDetail);
             throw new RuntimeException(e.getMessage());
         } finally {
             walletService.threadClear();
-//            redisLockUtils.unlock(isTransaction);
         }
         throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
     }
