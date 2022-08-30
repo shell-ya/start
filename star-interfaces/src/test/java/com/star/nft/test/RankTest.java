@@ -2,32 +2,30 @@ package com.star.nft.test;
 
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpUtil;
-import cn.hutool.json.JSONUtil;
 import com.starnft.star.application.process.user.UserCore;
 import com.starnft.star.application.process.user.req.UserGatheringInfoReq;
 import com.starnft.star.application.process.user.res.UserGatheringInfoRes;
-import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.template.TemplateHelper;
 import com.starnft.star.common.utils.RandomUtil;
+import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.order.model.vo.RankScoreDto;
+import com.starnft.star.domain.order.service.impl.OrderService;
 import com.starnft.star.domain.rank.core.rank.core.IRankService;
-import com.starnft.star.domain.rank.core.rank.model.RankDefinition;
 import com.starnft.star.domain.rank.core.rank.model.RankItemMetaData;
 import com.starnft.star.domain.rank.core.rank.model.res.InvitationHistoryItem;
 import com.starnft.star.domain.rank.core.rank.model.res.RankingsItem;
 import com.starnft.star.domain.user.repository.IUserRepository;
+import com.starnft.star.domain.user.service.impl.UserServiceImpl;
 import com.starnft.star.interfaces.StarApplication;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ScanOptions;
 import org.web3j.utils.Strings;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.util.*;
 
 @Slf4j
@@ -46,7 +44,57 @@ public class RankTest {
 
 
     @Resource
+    UserServiceImpl userService;
+    @Resource
     UserCore userCore;
+    @Resource
+    RedisUtil redisUtil;
+
+    @Test
+    public void addScore(){
+
+        List<RankScoreDto> scoreDtos  =    Lists.newArrayList(
+              new RankScoreDto(620253057L, 9),
+              new RankScoreDto(429600201L, 12),
+              new RankScoreDto(577096550L, 3),
+              new RankScoreDto(558621535L, 1),
+              new RankScoreDto(679201459L, 3),
+              new RankScoreDto(129033971L, 1),
+              new RankScoreDto(959145358L, 1),
+              new RankScoreDto(774355060L, 2),
+              new RankScoreDto(269918750L, 1),
+              new RankScoreDto(327282057L, 1),
+              new RankScoreDto(983410015L, 1)
+
+                );
+
+        for (RankScoreDto dto :
+                scoreDtos) {
+//            Long parent = userService.queryHasParent(dto.getUserId());
+//            if (null==parent) continue;
+//            rankService.putScore("m_launch_rank",dto.getUserId().toString(),dto.getScore(),null);
+        }
+    }
+
+    @Test
+    public void mockRank() {
+        String params = "3,294592515";
+        System.out.println("执行有参方法：" + params);
+        String[] split = params.split(",");
+        for (int num = 1; num < split.length; num++) {
+            String userId = split[num].trim();
+            int i = RandomUtil.randomInt(1, Integer.parseInt(split[0]));
+            for (int j = 0; j < i; j++) {
+                RankItemMetaData rankItemMetaData = new RankItemMetaData();
+                rankItemMetaData.setMobile(RandomUtil.randomPhone());
+                rankItemMetaData.setNickName(RandomUtil.randomName());
+                rankItemMetaData.setChildrenId(RandomUtil.randomLong(9));
+                rankItemMetaData.setInvitationTime(new Date());
+                rankService.put("m_launch_rank", userId, 1, rankItemMetaData);
+                rankService.validPut("m_launch_rank", userId, 1, rankItemMetaData);
+            }
+        }
+    }
 
     @Test
     public void getBuy(){
@@ -75,13 +123,13 @@ public class RankTest {
     public void user(){
         int num = 1;
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 25; i++) {
             Long userId = RandomUtil.randomLong(9);
             String phone = RandomUtil.randomPhone();
             Boolean register = userCore.isRegister(phone);
             if (register) continue;
             log.info("account:{},phone:{}",userId,phone);
-            rankService.setUserPhoneMapping("launch_rank",userId.toString(),phone);
+            rankService.setUserPhoneMapping("m_launch_rank",userId.toString(),phone);
             sb.append(userId.toString()).append(",");
             num++;
         }

@@ -45,7 +45,7 @@ public interface IRankService {
      */
     public Double put(String rankName, String  key, double value, RankItemMetaData rankItemMetaData);
     public Double validPut(String rankName, String  key, double value, RankItemMetaData rankItemMetaData);
-
+//    public Double putScore(String rankName,String key, double score,RankItemMetaData rankItemMetaData);
     public Long putBuyNum(String rankName, Long  userId);
 
     public Long getBuyNum(String rankName,Long userId);

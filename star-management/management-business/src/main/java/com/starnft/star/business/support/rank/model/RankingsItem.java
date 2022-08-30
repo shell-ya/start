@@ -31,10 +31,10 @@ public class RankingsItem implements Serializable {
     @ApiModelProperty(value = "有效人数")
     @Excel(name = "有效人数")
     private Long valid;
-    @Excel(name = "金")
-    private Long aurum = 0L;
-    @Excel(name = "银")
-    private Long argentum = 0L;
-    @Excel(name = "铜")
-    private Long cuprum = 0L;
+//    @Excel(name = "金")
+//    private Long aurum = 0L;
+//    @Excel(name = "银")
+//    private Long argentum = 0L;
+//    @Excel(name = "铜")
+//    private Long cuprum = 0L;
 }

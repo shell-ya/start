@@ -24,6 +24,32 @@ public class RyTask
 
     @Resource
     IRankService rankService;
+
+    /*
+    1: 榜前3， 占据2位
+    2: 榜4-10， 占据3位
+    3: 榜11 - 50 ， 占据20
+     */
+
+    public void bang(String params){
+        System.out.println("执行有参方法：" + params);
+        String[] split = params.split(",");
+        for (int num = 1; num < split.length; num++) {
+            String userId = split[num].trim();
+            int i = RandomUtil.randomInt(1,Integer.parseInt(split[0]));
+            for (int j = 0; j < i; j++) {
+                RankItemMetaData rankItemMetaData = new RankItemMetaData();
+                rankItemMetaData.setMobile(RandomUtil.randomPhone());
+                rankItemMetaData.setNickName(RandomUtil.randomName());
+                rankItemMetaData.setChildrenId(RandomUtil.randomLong(9));
+                rankItemMetaData.setInvitationTime(new Date());
+                rankService.put("m_launch_rank", userId,1,rankItemMetaData);
+                rankService.validPut("m_launch_rank",userId,1,rankItemMetaData);
+            }
+        }
+    }
+
+
     public void ryMultipleParams(String s, Boolean b, Long l, Double d, Integer i)
     {
         System.out.println(StringUtils.format("执行多参方法： 字符串类型{}，布尔类型{}，长整型{}，浮点型{}，整形{}", s, b, l, d, i));
@@ -76,22 +102,39 @@ public class RyTask
     }
 
     public void mockRank(String params){
-        System.out.println("执行随机排行榜方法：" + params);
+
+        System.out.println("执行有参方法：" + params);
         String[] split = params.split(",");
-        for (int i = 0; i < split.length; i++) {
-            String trim = split[i].trim();
-            int index = RandomUtil.randomInt(10);
-            int num = number[index];
-            for (int j = 0; j <= num; j++) {
+        for (int num = 1; num < split.length; num++) {
+            String userId = split[num].trim();
+            int i = RandomUtil.randomInt(1,Integer.parseInt(split[0]));
+            for (int j = 0; j < i; j++) {
                 RankItemMetaData rankItemMetaData = new RankItemMetaData();
                 rankItemMetaData.setMobile(RandomUtil.randomPhone());
                 rankItemMetaData.setNickName(RandomUtil.randomName());
                 rankItemMetaData.setChildrenId(RandomUtil.randomLong(9));
                 rankItemMetaData.setInvitationTime(new Date());
-                rankService.put("launch_rank", trim,1,rankItemMetaData);
-                rankService.validPut("launch_rank",trim,1,rankItemMetaData);
+                rankService.put("m_launch_rank", userId,1,rankItemMetaData);
+                rankService.validPut("m_launch_rank",userId,1,rankItemMetaData);
             }
         }
+
+//        System.out.println("执行随机排行榜方法：" + params);
+//        String[] split = params.split(",");
+//        for (int i = 0; i < split.length; i++) {
+//            String trim = split[i].trim();
+//            int index = RandomUtil.randomInt(10);
+//            int num = number[index];
+//            for (int j = 0; j <= num; j++) {
+//                RankItemMetaData rankItemMetaData = new RankItemMetaData();
+//                rankItemMetaData.setMobile(RandomUtil.randomPhone());
+//                rankItemMetaData.setNickName(RandomUtil.randomName());
+//                rankItemMetaData.setChildrenId(RandomUtil.randomLong(9));
+//                rankItemMetaData.setInvitationTime(new Date());
+//                rankService.put("launch_rank", trim,1,rankItemMetaData);
+//                rankService.validPut("launch_rank",trim,1,rankItemMetaData);
+//            }
+//        }
     }
 
 

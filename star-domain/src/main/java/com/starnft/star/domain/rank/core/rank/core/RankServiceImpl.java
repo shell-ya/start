@@ -97,6 +97,11 @@ public class RankServiceImpl implements IRankService {
         return result;
     }
 
+//    @Override
+//    public Double putScore(String rankName,String key, double score,RankItemMetaData rankItemMetaData){
+//      return   redisTemplate.opsForZSet().incrementScore(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), key, score);
+//    }
+
     @Override
     public Long putBuyNum(String rankName, Long userId) {
         return redisTemplate.opsForHash().increment(String.format(RedisKey.RANK_BUT_NUM.getKey(),rankName),userId.toString(),1L);

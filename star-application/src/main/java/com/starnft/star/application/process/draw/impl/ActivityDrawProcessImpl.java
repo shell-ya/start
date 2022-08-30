@@ -1,5 +1,6 @@
 package com.starnft.star.application.process.draw.impl;
 
+import cn.hutool.core.lang.Assert;
 import com.starnft.star.application.mq.IMessageSender;
 import com.starnft.star.application.mq.constant.TopicConstants;
 import com.starnft.star.application.process.draw.IActivityDrawProcess;
@@ -60,49 +61,46 @@ public class ActivityDrawProcessImpl implements IActivityDrawProcess {
     @Override
     public DrawProcessResult doDrawProcess(DrawProcessReq req) {
 
-        String lockKey = String.format(RedisKey.SECKILL_ORDER_TRANSACTION.getKey(), req.getNumberId());
+        String lockKey = String.format(RedisKey.DRAW_AWARD_OPEN_LOCK.getKey(), req.getNumberId());
+        Boolean lock = redisLockUtils.lock(lockKey, RedisKey.DRAW_AWARD_OPEN_LOCK.getTime());
+        Assert.isTrue(lock, () -> new StarException(StarError.SYSTEM_ERROR, "请勿重复开启"));
         try {
-            Boolean lock = redisLockUtils.lock(lockKey, RedisKey.DRAW_AWARD_OPEN_LOCK.getTime());
-            if (lock) {
-                // 0. 领取活动
-                DrawActivityVO drawActivity = drawExec.getDrawActivity(new PartakeReq(req.getuId(), req.getActivityId()));
-                drawActivity.setConsumeItemId(drawActivity.getActivityId());
+            // 0. 领取活动
+            DrawActivityVO drawActivity = drawExec.getDrawActivity(new PartakeReq(req.getuId(), req.getActivityId()));
+            drawActivity.setConsumeItemId(drawActivity.getActivityId());
 
-                // 1. 挂售状态判断 当前物品持有性判断
-                isOnSell(req, drawActivity);
+            // 1. 挂售状态判断 当前物品持有性判断
+            isOnSell(req, drawActivity);
 
-                // 2. 执行抽奖
-                DrawResult drawResult = drawExec.doDrawExec(new DrawReq(req.getuId(), drawActivity.getStrategyId()));
-                if (StarConstants.DrawState.FAIL.getCode().equals(drawResult.getDrawState())) {
-                    throw new RuntimeException();
-                }
-                DrawAwardVO drawAwardVO = drawResult.getDrawAwardInfo();
-
-                // 3. 结果落库
-                DrawOrderVO drawOrderVO = buildDrawOrderVO(req, drawActivity.getStrategyId(), idGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId(), drawAwardVO);
-                Result result = drawExec.recordDrawOrder(drawOrderVO);
-                if (!ResultCode.SUCCESS.getCode().equals(result.getCode())) {
-                    logger.error("抽奖结果落库失败 uid:[{}] activityId:[{}] award Info :[{}]", req.getuId(), req.getActivityId(), drawActivity);
-                    throw new RuntimeException("抽奖结果落库失败！");
-                }
-
-                DrawConsumeVO drawConsumeVO = new DrawConsumeVO(req.getNumberId(), drawAwardVO, drawActivity, drawOrderVO);
-                // 4. 消耗抽奖物品
-                Boolean isSuccess = comsumeItem(drawConsumeVO);
-                // 5. 发送MQ，触发发奖流程
-                if (isSuccess) {
-                    sendMessage(req, drawOrderVO, drawConsumeVO);
-                }
-                // 6. 返回结果
-                return new DrawProcessResult(StarError.SUCCESS_000000.getErrorCode(), StarError.SUCCESS_000000.getErrorMessage(), drawAwardVO);
+            // 2. 执行抽奖
+            DrawResult drawResult = drawExec.doDrawExec(new DrawReq(req.getuId(), drawActivity.getStrategyId()));
+            if (StarConstants.DrawState.FAIL.getCode().equals(drawResult.getDrawState())) {
+                throw new RuntimeException();
             }
+            DrawAwardVO drawAwardVO = drawResult.getDrawAwardInfo();
+
+            // 3. 结果落库
+            DrawOrderVO drawOrderVO = buildDrawOrderVO(req, drawActivity.getStrategyId(), idGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId(), drawAwardVO);
+            Result result = drawExec.recordDrawOrder(drawOrderVO);
+            if (!ResultCode.SUCCESS.getCode().equals(result.getCode())) {
+                logger.error("抽奖结果落库失败 uid:[{}] activityId:[{}] award Info :[{}]", req.getuId(), req.getActivityId(), drawActivity);
+                throw new RuntimeException("抽奖结果落库失败！");
+            }
+
+            DrawConsumeVO drawConsumeVO = new DrawConsumeVO(req.getNumberId(), drawAwardVO, drawActivity, drawOrderVO);
+            // 4. 消耗抽奖物品
+            Boolean isSuccess = comsumeItem(drawConsumeVO);
+            // 5. 发送MQ，触发发奖流程
+            if (isSuccess) {
+                sendMessage(req, drawOrderVO, drawConsumeVO);
+            }
+            // 6. 返回结果
+            return new DrawProcessResult(StarError.SUCCESS_000000.getErrorCode(), StarError.SUCCESS_000000.getErrorMessage(), drawAwardVO);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
         } finally {
             redisLockUtils.unlock(lockKey);
         }
-
-        throw new StarException(StarError.SYSTEM_ERROR, "请勿重复开启");
     }
 
     private void sendMessage(DrawProcessReq req, DrawOrderVO drawOrderVO, DrawConsumeVO drawConsumeVO) {
