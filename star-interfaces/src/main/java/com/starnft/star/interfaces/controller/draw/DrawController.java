@@ -1,6 +1,7 @@
 package com.starnft.star.interfaces.controller.draw;
 
 import com.starnft.star.application.process.draw.IActivityDrawProcess;
+import com.starnft.star.application.process.draw.IDrawDelProcess;
 import com.starnft.star.application.process.draw.req.DrawProcessReq;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.page.ResponsePageResult;
@@ -28,6 +29,8 @@ public class DrawController {
 
     final IDrawExec drawExec;
 
+    final IDrawDelProcess drawDelProcess;
+
     @ApiOperation("执行抽奖")
     @PostMapping("/dodraw")
     public RopResponse<DrawAwardVO> list(@RequestBody DrawProcessReq drawReq) {
@@ -41,6 +44,20 @@ public class DrawController {
     public RopResponse<ResponsePageResult<DrawAwardExportVO>> queryDrawRecord(@RequestBody DrawAwardExportsReq req) {
         req.setUId(String.valueOf(UserContext.getUserId().getUserId()));
         return RopResponse.success(drawExec.queryDrawRecords(req));
+    }
+
+    @ApiOperation("清理异常抽奖数据")
+    @PostMapping("/delDrawExport")
+    public RopResponse delDrawExport(){
+        drawDelProcess.delErrorDraw();
+        return RopResponse.success(true);
+    }
+
+    @ApiOperation("重新分配编号")
+    @PostMapping("/reNumber")
+    public RopResponse reNumber(){
+        drawDelProcess.reNumber();
+        return RopResponse.success(true);
     }
 
 }
