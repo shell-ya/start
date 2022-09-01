@@ -51,7 +51,7 @@ public class GiftGivenTask {
         if (CollectionUtil.isEmpty(hisTimes)) {
             for (Map.Entry<String, List<NumberDetailVO>> number : uidMapping.entrySet()) {
                 activitiesService.initGoodsHavingTimes(number.getValue().get(0));
-                deliveryScopes(number.getValue().get(0).getOwnerBy(), number.getValue().get(0).getThemeId(), 1);
+                deliveryScopes(number.getValue().get(0).getOwnerBy(), number.getValue().get(0).getThemeId(), 1, new BigDecimal(1));
             }
             return;
         }
@@ -66,7 +66,7 @@ public class GiftGivenTask {
             // 增加持有天数 发放对应持有阶段积分
             Integer isSuccess = activitiesService.addTimes(hisTime.getUid(), Long.parseLong(giftGivenParam.getThemeInfoId()), hisTime.getVersion());
             if (isSuccess == 1) {
-                deliveryScopes(String.valueOf(hisTime.getUid()), hisTime.getThemeInfoId(), hisTime.getCountTimes() + 1);
+                deliveryScopes(String.valueOf(hisTime.getUid()), hisTime.getThemeInfoId(), hisTime.getCountTimes() + 1, new BigDecimal(numberDetailVO.size()));
             } else {
                 log.error("uid :[{}] themeId:[{}] 增加持有天数失败！", hisTime.getUid(), Long.parseLong(giftGivenParam.getThemeInfoId()));
             }
@@ -77,17 +77,17 @@ public class GiftGivenTask {
             GoodsHavingTimesVO goodsHavingTimesVO = hisMapping.get(Long.parseLong(number.getValue().get(0).getOwnerBy()));
             if (goodsHavingTimesVO == null) {
                 activitiesService.initGoodsHavingTimes(number.getValue().get(0));
-                deliveryScopes(number.getValue().get(0).getOwnerBy(), number.getValue().get(0).getThemeId(), 1);
+                deliveryScopes(number.getValue().get(0).getOwnerBy(), number.getValue().get(0).getThemeId(), 1, new BigDecimal(1));
             }
         }
 
     }
 
-    private void deliveryScopes(String ownerBy, Long themeId, int i) {
+    private void deliveryScopes(String ownerBy, Long themeId, int i, BigDecimal portion) {
         Long value = awardValueObtain(themeId, i);
         ScoreDTO scoreDTO = new ScoreDTO();
         scoreDTO.setUserId(Long.parseLong(ownerBy));
-        scoreDTO.setScope(new BigDecimal(value));
+        scoreDTO.setScope(new BigDecimal(value).multiply(portion));
         scoreDTO.setScopeType(0);
         String format = String.format("累积持有活动藏品%s天,", i);
         scoreDTO.setTemplate(format + "获得%s元石");
