@@ -372,6 +372,7 @@ public class UserRepository implements IUserRepository {
     @Override
     public Integer queryPriorityTimes(Long uid, Long whiteId) {
         WhiteListDetail whiteListDetail = whiteListDetailMapper.selectMappingWhite(whiteId, uid);
+        if (whiteListDetail == null) return 0;
         return whiteListDetail.getSurplusTimes();
     }
 

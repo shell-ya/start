@@ -5,9 +5,8 @@ import com.starnft.star.domain.activity.IActivitiesService;
 import com.starnft.star.domain.activity.model.vo.ActivityVO;
 import com.starnft.star.domain.activity.model.vo.GoodsHavingTimesVO;
 import com.starnft.star.domain.activity.repository.IActivityRepository;
-import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.draw.model.vo.DrawAwardExportVO;
-import io.swagger.models.auth.In;
+import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -35,6 +34,16 @@ public class ActivitiesService implements IActivitiesService {
     @Override
     public boolean delErrorExport(String orderId) {
         return activityRepository.deleteExport(orderId);
+    }
+
+    @Override
+    public void delTimes(Long uid, Long themeId) {
+        activityRepository.delTimes(uid, themeId);
+    }
+
+    @Override
+    public Integer addTimes(Long uid, Long themeId, Integer version) {
+        return activityRepository.addTimes(uid, themeId, version);
     }
 
     public List<DrawAwardExportVO> queryUserExportList(long id) {

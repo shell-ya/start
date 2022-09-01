@@ -1,22 +1,19 @@
 package com.starnft.star.infrastructure.repository;
 
-import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.page.PageMethod;
-import com.starnft.star.common.constant.StarConstants;
+import com.google.common.collect.Lists;
 import com.starnft.star.common.enums.NumberCirculationTypeEnum;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
 import com.starnft.star.domain.number.model.dto.*;
-import com.starnft.star.domain.number.model.req.HandoverReq;
 import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.*;
 import com.starnft.star.domain.number.repository.INumberRepository;
-import com.starnft.star.domain.theme.model.vo.ThemeDetailVO;
 import com.starnft.star.infrastructure.entity.number.StarNftNumberCirculationHist;
 import com.starnft.star.infrastructure.entity.number.StarNftShelvesRecord;
 import com.starnft.star.infrastructure.entity.number.StarNftThemeNumber;
@@ -25,12 +22,12 @@ import com.starnft.star.infrastructure.mapper.number.StarNFtShelvesRecordMapper;
 import com.starnft.star.infrastructure.mapper.number.StarNftNumberCirculationHistMapper;
 import com.starnft.star.infrastructure.mapper.number.StarNftThemeNumberMapper;
 import com.starnft.star.infrastructure.mapper.user.StarNftUserThemeMapper;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -303,7 +300,7 @@ public class NumberRepository implements INumberRepository {
 
     @Override
     public Long firstNumber(Long uid, Long seriesThemeInfoId) {
-        return this.starNftUserThemeMapper.firstNumber(uid,seriesThemeInfoId);
+        return this.starNftUserThemeMapper.firstNumber(uid, seriesThemeInfoId);
     }
 
     @Override
@@ -362,7 +359,19 @@ public class NumberRepository implements INumberRepository {
         List<StarNftThemeNumber> starNftThemeNumbers = starNftThemeNumberMapper.selectList(queryWrapper.eq(StarNftThemeNumber::getSeriesThemeInfoId, themeId)
                 .eq(StarNftThemeNumber::getStatus, 1));
 
-        return BeanColverUtil.colverList(starNftThemeNumbers, NumberDetailVO.class);
+        return mappingNumberValues(starNftThemeNumbers);
+    }
+
+    private List<NumberDetailVO> mappingNumberValues(List<StarNftThemeNumber> starNftThemeNumbers) {
+        ArrayList<@Nullable NumberDetailVO> objects = Lists.newArrayList();
+        for (StarNftThemeNumber starNftThemeNumber : starNftThemeNumbers) {
+            NumberDetailVO numberDetailVO = new NumberDetailVO();
+            BeanUtils.copyProperties(starNftThemeNumber, numberDetailVO);
+            numberDetailVO.setThemeId(starNftThemeNumber.getSeriesThemeInfoId());
+            objects.add(numberDetailVO);
+        }
+
+        return objects;
     }
 
     private ThemeNumberVo copyToVO(StarNftThemeNumber starNftThemeNumber) {

@@ -173,7 +173,7 @@ public class ActivityRepository implements IActivityRepository {
     }
 
     @Override
-    public List<DrawAwardExportVO> queryUserExportList(Long uid){
+    public List<DrawAwardExportVO> queryUserExportList(Long uid) {
         List<UserStrategyExport> userStrategyExports = userStrategyExportDao.queryUserStrategyExportList(uid.toString());
         List<DrawAwardExportVO> collect = userStrategyExports
                 .stream()
@@ -185,6 +185,19 @@ public class ActivityRepository implements IActivityRepository {
     @Override
     public boolean deleteExport(String orderId) {
         return userStrategyExportDao.deleteExport(orderId);
+    }
+
+    @Override
+    public void delTimes(Long uid, Long themeId) {
+        goodsHavingTimeRecordMapper.delete(new LambdaQueryWrapper<GoodsHavingTimeRecord>().eq(GoodsHavingTimeRecord::getUid, uid)
+                .eq(GoodsHavingTimeRecord::getThemeInfoId, themeId));
+    }
+
+    @Override
+    public Integer addTimes(Long uid, Long themeId, Integer version) {
+        int isSuccess = goodsHavingTimeRecordMapper.addCountTimes(uid, themeId, version);
+        return isSuccess;
+
     }
 
     @Override

@@ -77,4 +77,8 @@ public interface IActivityRepository {
 
     boolean deleteExport(String orderId);
 
+    void delTimes(Long uid, Long themeId);
+
+    Integer addTimes(Long uid, Long themeId, Integer version);
+
 }

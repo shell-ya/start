@@ -23,6 +23,18 @@
                 #{countTimes}, #{version})
     </insert>
 
+    <update id="addCountTimes">
+        update goods_having_time_record
+        <set>
+            count_times = count_times + 1,
+            version = version + 1
+        </set>
+        where
+        uid = #{uid}
+        and version = #{version}
+        and theme_info_id = #{themeId}
+    </update>
+
     <!--通过主键删除-->
     <delete id="deleteById">
         delete

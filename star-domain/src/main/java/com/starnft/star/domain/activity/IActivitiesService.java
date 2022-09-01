@@ -18,4 +18,8 @@ public interface IActivitiesService {
     void initGoodsHavingTimes(NumberDetailVO numberDetailVO);
 
     boolean delErrorExport(String orderId);
+
+    void delTimes(Long uid, Long themeId);
+
+    Integer addTimes(Long uid, Long themeId, Integer version);
 }
