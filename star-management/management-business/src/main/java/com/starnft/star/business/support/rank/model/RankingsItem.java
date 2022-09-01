@@ -31,6 +31,9 @@ public class RankingsItem implements Serializable {
     @ApiModelProperty(value = "有效人数")
     @Excel(name = "有效人数")
     private Long valid;
+    @ApiModelProperty(value = "总积分")
+    @Excel(name = "总积分")
+    private Double score;
 //    @Excel(name = "金")
 //    private Long aurum = 0L;
 //    @Excel(name = "银")

@@ -2,7 +2,9 @@ import com.starnft.star.admin.RuoYiApplication;
 import com.starnft.star.business.domain.AirdropThemeRecord;
 import com.starnft.star.business.domain.dto.AirdropRecordDto;
 import com.starnft.star.business.domain.dto.RecordItem;
+import com.starnft.star.business.domain.vo.RechargeVO;
 import com.starnft.star.business.service.IAirdropThemeRecordService;
+import com.starnft.star.business.service.INftWalletService;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.utils.redis.RedisUtil;
 import org.assertj.core.util.Lists;
@@ -10,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,14 +24,28 @@ import java.util.List;
 public class AirdropTest {
 
     private final IAirdropThemeRecordService airdropThemeRecordService;
+    private final INftWalletService walletService;
+
     //注册用户链上地址 密钥使用加密后密码
 
     //铸造创世金章 创世银章 创世铜章 首发白羊座 创世摩羯座
     private final RedisUtil redisUtil;
     @Autowired
-    public AirdropTest(IAirdropThemeRecordService airdropThemeRecordService, RedisUtil redisUtil) {
+    public AirdropTest(IAirdropThemeRecordService airdropThemeRecordService, INftWalletService walletService, RedisUtil redisUtil) {
         this.airdropThemeRecordService = airdropThemeRecordService;
+        this.walletService = walletService;
         this.redisUtil = redisUtil;
+    }
+
+    @Test
+    public void pay(){
+        RechargeVO rechargeVO = new RechargeVO();
+        rechargeVO.setUid("947078548");
+        rechargeVO.setTotalAmount(new BigDecimal("50"));
+        rechargeVO.setAwardName("京东E卡50元");
+        rechargeVO.setVerification(1);
+        Boolean aBoolean = walletService.walletRecharge(rechargeVO);
+        assert aBoolean;
     }
 
     @Test

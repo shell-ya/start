@@ -59,4 +59,6 @@ public interface StarNftWalletLogMapper
      * @return 结果
      */
     public int deleteStarNftWalletLogByIds(Long[] ids);
+
+    int createChargeLog(StarNftWalletLog starNftWalletLog);
 }

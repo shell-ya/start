@@ -9,6 +9,7 @@ import com.starnft.star.common.constant.RedisKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -137,18 +138,20 @@ public class RankServiceImpl implements IRankService {
     @Override
     public List<RankingsItem> getRankDatasByPage(String rankName, int page, int pageSize) {
 
-        Set set = redisTemplate.opsForZSet().reverseRange(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), page, pageSize );
-        if (Objects.isNull(set)) return null;
+        Set<ZSetOperations.TypedTuple<String>> reverseRangeWithScores = redisTemplate.opsForZSet().reverseRangeWithScores(String.format(RedisKey.RANK_ITEM_VALID.getKey(),rankName), page, pageSize);
+//        Set set = redisTemplate.opsForZSet().reverseRange(String.format(RedisKey.RANK_ITEM_VALID.getKey(), rankName), page, pageSize );
+        if (Objects.isNull(reverseRangeWithScores)) return null;
 
         List<RankingsItem> items = Lists.newArrayList();
-        for (Object userId :
-                set) {
+        for (ZSetOperations.TypedTuple<String> userId :
+                reverseRangeWithScores) {
             RankingsItem rankingsItem = new RankingsItem();
 //            rankingsItem.setAccount(Long.valueOf((String) userId));
-            rankingsItem.setTotal(redisTemplate.opsForHash().size(String.format(RedisKey.RANK_TOTAL_USER.getKey(),rankName,userId)));
-            rankingsItem.setValid(redisTemplate.opsForHash().size(String.format(RedisKey.RANK_VALID_USER.getKey(),rankName,userId)));
-            rankingsItem.setPhone((String) redisTemplate.opsForHash().get(String.format(RedisKey.RANK_USER_MAPPING.getKey(), rankName), userId));
-            rankingsItem.setAccount(Long.valueOf(userId.toString()));
+            rankingsItem.setTotal(redisTemplate.opsForHash().size(String.format(RedisKey.RANK_TOTAL_USER.getKey(),rankName,userId.getValue())));
+            rankingsItem.setValid(redisTemplate.opsForHash().size(String.format(RedisKey.RANK_VALID_USER.getKey(),rankName,userId.getValue())));
+            rankingsItem.setPhone((String) redisTemplate.opsForHash().get(String.format(RedisKey.RANK_USER_MAPPING.getKey(), rankName), userId.getValue()));
+            rankingsItem.setAccount(Long.parseLong(userId.getValue()));
+            rankingsItem.setScore(userId.getScore());
             items.add(rankingsItem);
         }
 

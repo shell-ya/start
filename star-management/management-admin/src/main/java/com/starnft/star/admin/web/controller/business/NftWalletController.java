@@ -1,6 +1,7 @@
 package com.starnft.star.admin.web.controller.business;
 
 import com.starnft.star.business.domain.NftWallet;
+import com.starnft.star.business.domain.vo.RechargeVO;
 import com.starnft.star.business.service.INftWalletService;
 import com.starnft.star.common.annotation.Log;
 import com.starnft.star.common.core.controller.BaseController;
@@ -43,6 +44,14 @@ public class NftWalletController extends BaseController
     public AjaxResult edit(@RequestBody NftWallet nftWallet)
     {
         return toAjax(nftWalletService.updateNftWallet(nftWallet));
+    }
+
+    @PreAuthorize("@ss.hasPermi('business:wallet:update')")
+    @Log(title = "钱包", businessType = BusinessType.UPDATE)
+    @PostMapping
+    public AjaxResult updateWallet(@RequestBody RechargeVO rechargeVO)
+    {
+        return toAjax(nftWalletService.walletRecharge(rechargeVO));
     }
 
 }

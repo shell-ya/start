@@ -1,6 +1,7 @@
 package com.starnft.star.business.service;
 
 import com.starnft.star.business.domain.NftWallet;
+import com.starnft.star.business.domain.vo.RechargeVO;
 
 import java.util.List;
 
@@ -59,4 +60,7 @@ public interface INftWalletService
      * @return 结果
      */
     public int deleteNftWalletById(Long id);
+
+
+    public Boolean walletRecharge(RechargeVO rechargeVO);
 }

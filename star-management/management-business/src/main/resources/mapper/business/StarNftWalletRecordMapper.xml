@@ -225,4 +225,86 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                       ) con
         order by payTime desc
     </select>
+
+    <select id="queryWalletRecordBySerialNo" resultType="com.starnft.star.business.domain.vo.WalletRecordVO">
+
+    </select>
+
+    <select id="selectByLimit" resultType="com.starnft.star.business.domain.StarNftWalletRecord">
+        select
+        id,is_deleted,created_at,created_by,modified_at,modified_by,record_sn,order_sn,out_trade_no,from_uid,to_uid,ts_type,ts_money,
+        ts_cost,ts_fee,pay_channel,remark,pay_status,pay_time,curr_money
+        from star_nft_wallet_record
+        <where>
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                and is_deleted = #{isDeleted}
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                and created_at = #{createdAt}
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                and created_by = #{createdBy}
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                and modified_at = #{modifiedAt}
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                and modified_by = #{modifiedBy}
+            </if>
+            <if test="recordSn != null and recordSn != ''">
+                and record_sn = #{recordSn}
+            </if>
+            <if test="orderSn != null and orderSn != ''">
+                and order_sn = #{orderSn}
+            </if>
+            <if test="outTradeNo != null and outTradeNo != ''">
+                and out_trade_no = #{outTradeNo}
+            </if>
+            <if test="fromUid != null and fromUid != ''">
+                and from_uid = #{fromUid}
+            </if>
+            <if test="toUid != null and toUid != ''">
+                and to_uid = #{toUid}
+            </if>
+            <if test="tsType != null and tsType != ''">
+                and ts_type = #{tsType}
+            </if>
+            <if test="tsMoney != null">
+                and ts_money = #{tsMoney}
+            </if>
+            <if test="tsCost != null">
+                and ts_cost = #{tsCost}
+            </if>
+            <if test="tsFee != null">
+                and ts_fee = #{tsFee}
+            </if>
+            <if test="payChannel != null and payChannel != ''">
+                and pay_channel = #{payChannel}
+            </if>
+            <if test="remark != null and remark != ''">
+                and remark = #{remark}
+            </if>
+            <if test="payStatus != null and payStatus != ''">
+                and pay_status = #{payStatus}
+            </if>
+            <if test="payTime != null and payTime != ''">
+                and pay_time = #{payTime}
+            </if>
+        </where>
+    </select>
+
+    <insert id="createWalletRecord">
+        insert into star_nft_wallet_record(is_deleted, created_at, created_by, modified_at, modified_by, record_sn,
+                                           order_sn, out_trade_no,
+                                           from_uid, to_uid, ts_type, ts_money, ts_cost, ts_fee, pay_channel, remark,
+                                           pay_status,
+                                           pay_time,curr_money)
+        values (#{isDeleted}, #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{recordSn}, #{orderSn},
+                #{outTradeNo}, #{fromUid},
+                #{toUid}, #{tsType}, #{tsMoney}, #{tsCost}, #{tsFee}, #{payChannel}, #{remark}, #{payStatus},
+                #{payTime}, #{currMoney})
+    </insert>
 </mapper>

@@ -112,4 +112,142 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <update id="walletRecharge">
+        update nft_wallet
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="createdBy != null">created_by = #{createdBy},</if>
+            <if test="modifiedAt != null">modified_at = #{modifiedAt},</if>
+            <if test="modifiedBy != null">modified_by = #{modifiedBy},</if>
+            <if test="wId != null and wId != ''">w_id = #{wId},</if>
+            <if test="uid != null">uid = #{uid},</if>
+            <if test="balance != null">balance = #{balance},</if>
+            <if test="walletIncome != null">wallet_income = #{walletIncome},</if>
+            <if test="walletOutcome != null">wallet_outcome = #{walletOutcome},</if>
+            <if test="frozen != null">frozen = #{frozen},</if>
+            <if test="frozenFee != null">frozen_fee = #{frozenFee},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+
+    <!-- 更新数据 -->
+    <update id="updateWallet" parameterType="com.starnft.star.business.domain.NftWallet">
+        update nft_wallet
+        <set>
+            <if test="id != null and id != ''">
+                id = #{id},
+            </if>
+            <if test="isDeleted != null and isDeleted != ''">
+                is_deleted = #{isDeleted},
+            </if>
+            <if test="createdAt != null and createdAt != ''">
+                created_at = #{createdAt},
+            </if>
+            <if test="createdBy != null and createdBy != ''">
+                created_by = #{createdBy},
+            </if>
+            <if test="modifiedAt != null and modifiedAt != ''">
+                modified_at = #{modifiedAt},
+            </if>
+            <if test="modifiedBy != null and modifiedBy != ''">
+                modified_by = #{modifiedBy},
+            </if>
+            <if test="balance != null">
+                balance = #{balance},
+            </if>
+            <if test="walletIncome != null">
+                wallet_income = #{walletIncome},
+            </if>
+            <if test="walletOutcome != null ">
+                wallet_outcome = #{walletOutcome},
+            </if>
+            <if test="frozen != null">
+                frozen = #{frozen},
+            </if>
+            <if test="frozenFee != null">
+                frozen_fee = #{frozenFee},
+            </if>
+            <if test="version != null ">
+                version= ${version} + 1
+            </if>
+        </set>
+        WHERE 1 = 1
+        <if test="id != null and id != ''">
+            AND
+            id = #{id}
+        </if>
+        <if test="uid != null and uid != ''">
+            AND
+            uid = #{uid}
+        </if>
+        <if test="wId != null and wId != ''">
+            AND
+            w_id = #{wId}
+        </if>
+        <if test="wId != null and wId != ''">
+            AND
+            balance >= 0
+        </if>
+        <if test="version != null">
+            AND
+            version = #{version}
+        </if>
+        ;
+    </update>
+
+
+
+    <select id="queryWalletByParams" resultType="com.starnft.star.business.domain.NftWallet">
+        select
+        id,is_deleted,created_at,created_by,modified_at,modified_by,w_id,uid,balance,wallet_income,wallet_outcome,frozen,frozen_fee,version
+        from nft_wallet
+        <where>
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="isDeleted != null and isDeleted != ''">
+            and is_deleted = #{isDeleted}
+        </if>
+        <if test="createdAt != null and createdAt != ''">
+            and created_at = #{createdAt}
+        </if>
+        <if test="createdBy != null and createdBy != ''">
+            and created_by = #{createdBy}
+        </if>
+        <if test="modifiedAt != null and modifiedAt != ''">
+            and modified_at = #{modifiedAt}
+        </if>
+        <if test="modifiedBy != null and modifiedBy != ''">
+            and modified_by = #{modifiedBy}
+        </if>
+        <if test="wId != null and wId != ''">
+            and w_id = #{wId}
+        </if>
+        <if test="uid != null">
+            and uid = #{uid}
+        </if>
+        <if test="balance != null">
+            and balance = #{balance}
+        </if>
+        <if test="walletIncome != null">
+            and wallet_income = #{walletIncome}
+        </if>
+        <if test="walletOutcome != null">
+            and wallet_outcome = #{walletOutcome}
+        </if>
+        <if test="frozen != null">
+            and frozen = #{frozen}
+        </if>
+        <if test="frozenFee != null ">
+            and frozen_fee = #{frozenFee}
+        </if>
+        <if test="version != null ">
+            and version = #{version}
+        </if>
+
+        </where>
+    </select>
 </mapper>

@@ -92,6 +92,8 @@ public class StarNftWalletRecord extends BaseEntity
     @Excel(name = "交易时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:SS")
     private Date payTime;
 
+    private BigDecimal currMoney;
+
     public void setId(Long id)
     {
         this.id = id;
@@ -249,6 +251,16 @@ public class StarNftWalletRecord extends BaseEntity
     {
         return payTime;
     }
+
+
+    public BigDecimal getCurrMoney() {
+        return currMoney;
+    }
+
+    public void setCurrMoney(BigDecimal currMoney) {
+        this.currMoney = currMoney;
+    }
+
 
     @Override
     public String toString() {

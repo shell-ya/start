@@ -61,4 +61,10 @@ public interface NftWalletMapper
     public int deleteNftWalletByIds(Long[] ids);
 
     NftWallet selectNftWalletByUid(Long id);
+
+    int walletRecharge(NftWallet nftWallet);
+
+    Integer updateWallet(NftWallet wallet);
+
+    NftWallet queryWalletByParams(NftWallet wallet);
 }

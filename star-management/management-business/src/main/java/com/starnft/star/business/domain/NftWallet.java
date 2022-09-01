@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.starnft.star.common.annotation.Excel;
 import com.starnft.star.common.core.domain.BaseEntity;
+import io.swagger.annotations.ApiModelProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -74,6 +75,10 @@ public class NftWallet extends BaseEntity
     /** 冻结金额 */
     @Excel(name = "冻结金额")
     private BigDecimal frozenFee;
+
+    /** 乐观锁 */
+    @ApiModelProperty(name = "乐观锁",notes = "")
+    private Integer version ;
 
     public void setId(Long id)
     {
@@ -191,6 +196,14 @@ public class NftWallet extends BaseEntity
     public BigDecimal getFrozenFee()
     {
         return frozenFee;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     @Override

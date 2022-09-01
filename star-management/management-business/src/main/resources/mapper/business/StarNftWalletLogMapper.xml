@@ -112,4 +112,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <!--新增数据-->
+    <insert id="createChargeLog" useGeneratedKeys="true"
+            parameterType="com.starnft.star.business.domain.StarNftWalletLog">
+        insert into star_nft_wallet_log(is_deleted, created_at, created_by, modified_at, modified_by, record_sn, uid,
+                                        w_id, balance_offset, current_balance, remark, display, channel)
+        values (#{isDeleted}, #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{recordSn}, #{uid}, #{wId},
+                #{balanceOffset}, #{currentBalance}, #{remark}, #{display}, #{channel})
+    </insert>
 </mapper>
