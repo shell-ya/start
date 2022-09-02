@@ -8,6 +8,7 @@ import com.starnft.star.application.process.task.context.GiftGivenParam;
 import com.starnft.star.common.enums.OwnAwardMapping;
 import com.starnft.star.domain.activity.IActivitiesService;
 import com.starnft.star.domain.activity.model.vo.GoodsHavingTimesVO;
+import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.serivce.INumberService;
 import com.xxl.job.core.context.XxlJobHelper;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,53 +37,79 @@ public class GiftGivenTask {
     @Resource
     IScopeCore scopeCore;
 
+    @Resource
+    RedisUtil redisUtil;
+
     @XxlJob("giftGivenTask")
     public void statisticsNGift() {
+
         String jsonContext = XxlJobHelper.getJobParam();
         GiftGivenParam giftGivenParam = JSON.parseObject(jsonContext, GiftGivenParam.class);
 
-        //当前持有者信息
-        List<NumberDetailVO> numbers =
-                numberService.queryNumberNotOnSell(Long.parseLong(giftGivenParam.getThemeInfoId()));
-        Map<String, List<NumberDetailVO>> uidMapping = numbers.stream().distinct().collect(Collectors.groupingBy(NumberDetailVO::getOwnerBy));
+        //当天执行过则不执行
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String format = simpleDateFormat.format(new Date());
+        synchronized (this) {
+            redisUtil.hincr("task.scope.delivery" + giftGivenParam.getThemeInfoId(), format, 1L);
+            Long times = redisUtil.hdecr("task.scope.delivery" + giftGivenParam.getThemeInfoId(), format, 1L);
+            if (times >= 1) {
+                log.error("themeId:[{}] date:[{}] 已执行过 次数为：[{}]", giftGivenParam.getThemeInfoId(), format, times);
+                return;
+            }
+        }
 
-        //与历史持有信息对比
-        List<GoodsHavingTimesVO> hisTimes = activitiesService.queryGoodsHavingTimesByGood(Long.parseLong(giftGivenParam.getThemeInfoId()));
-        Map<Long, GoodsHavingTimesVO> hisMapping = hisTimes.stream().collect(Collectors.toMap(GoodsHavingTimesVO::getUid, nu -> nu));
+        try {
+            //当前持有者信息
+            List<NumberDetailVO> numbers =
+                    numberService.queryNumberNotOnSell(Long.parseLong(giftGivenParam.getThemeInfoId()));
+            Map<String, List<NumberDetailVO>> uidMapping = numbers.stream().distinct().collect(Collectors.groupingBy(NumberDetailVO::getOwnerBy));
 
-        if (CollectionUtil.isEmpty(hisTimes)) {
+            //与历史持有信息对比
+            List<GoodsHavingTimesVO> hisTimes = activitiesService.queryGoodsHavingTimesByGood(Long.parseLong(giftGivenParam.getThemeInfoId()));
+            Map<Long, GoodsHavingTimesVO> hisMapping = hisTimes.stream().collect(Collectors.toMap(GoodsHavingTimesVO::getUid, nu -> nu));
+
+            if (CollectionUtil.isEmpty(hisTimes)) {
+                for (Map.Entry<String, List<NumberDetailVO>> number : uidMapping.entrySet()) {
+                    activitiesService.initGoodsHavingTimes(number.getValue().get(0));
+                    deliveryScopes(number.getValue().get(0).getOwnerBy(), number.getValue().get(0).getThemeId(), 1, new BigDecimal(1));
+                }
+                return;
+            }
+
+            //清除未持有的
+            for (GoodsHavingTimesVO hisTime : hisTimes) {
+                List<NumberDetailVO> numberDetailVO = uidMapping.get(String.valueOf(hisTime.getUid()));
+                //遍历历史数据 在当前持有信息中找不到 藏品被出售不被持有 ，清除持有信息数据 不发放积分
+                if (numberDetailVO == null || CollectionUtil.isEmpty(numberDetailVO)) {
+                    activitiesService.delTimes(hisTime.getUid(), Long.parseLong(giftGivenParam.getThemeInfoId()));
+                }
+                // 增加持有天数 发放对应持有阶段积分
+                Integer isSuccess = activitiesService.addTimes(hisTime.getUid(), Long.parseLong(giftGivenParam.getThemeInfoId()), hisTime.getVersion());
+                if (isSuccess == 1) {
+                    deliveryScopes(String.valueOf(hisTime.getUid()), hisTime.getThemeInfoId(), hisTime.getCountTimes() + 1, new BigDecimal(numberDetailVO.size()));
+                } else {
+                    log.error("uid :[{}] themeId:[{}] 增加持有天数失败！", hisTime.getUid(), Long.parseLong(giftGivenParam.getThemeInfoId()));
+                }
+            }
+
+            //新增 新购入的
             for (Map.Entry<String, List<NumberDetailVO>> number : uidMapping.entrySet()) {
-                activitiesService.initGoodsHavingTimes(number.getValue().get(0));
-                deliveryScopes(number.getValue().get(0).getOwnerBy(), number.getValue().get(0).getThemeId(), 1, new BigDecimal(1));
+                GoodsHavingTimesVO goodsHavingTimesVO = hisMapping.get(Long.parseLong(number.getValue().get(0).getOwnerBy()));
+                if (goodsHavingTimesVO == null) {
+                    activitiesService.initGoodsHavingTimes(number.getValue().get(0));
+                    deliveryScopes(number.getValue().get(0).getOwnerBy(), number.getValue().get(0).getThemeId(), 1, new BigDecimal(1));
+                }
             }
-            return;
+        } finally {
+            executeDateRecord(giftGivenParam.getThemeInfoId());
         }
 
-        //清除未持有的
-        for (GoodsHavingTimesVO hisTime : hisTimes) {
-            List<NumberDetailVO> numberDetailVO = uidMapping.get(String.valueOf(hisTime.getUid()));
-            //遍历历史数据 在当前持有信息中找不到 藏品被出售不被持有 ，清除持有信息数据 不发放积分
-            if (numberDetailVO == null || CollectionUtil.isEmpty(numberDetailVO)) {
-                activitiesService.delTimes(hisTime.getUid(), Long.parseLong(giftGivenParam.getThemeInfoId()));
-            }
-            // 增加持有天数 发放对应持有阶段积分
-            Integer isSuccess = activitiesService.addTimes(hisTime.getUid(), Long.parseLong(giftGivenParam.getThemeInfoId()), hisTime.getVersion());
-            if (isSuccess == 1) {
-                deliveryScopes(String.valueOf(hisTime.getUid()), hisTime.getThemeInfoId(), hisTime.getCountTimes() + 1, new BigDecimal(numberDetailVO.size()));
-            } else {
-                log.error("uid :[{}] themeId:[{}] 增加持有天数失败！", hisTime.getUid(), Long.parseLong(giftGivenParam.getThemeInfoId()));
-            }
-        }
+    }
 
-        //新增 新购入的
-        for (Map.Entry<String, List<NumberDetailVO>> number : uidMapping.entrySet()) {
-            GoodsHavingTimesVO goodsHavingTimesVO = hisMapping.get(Long.parseLong(number.getValue().get(0).getOwnerBy()));
-            if (goodsHavingTimesVO == null) {
-                activitiesService.initGoodsHavingTimes(number.getValue().get(0));
-                deliveryScopes(number.getValue().get(0).getOwnerBy(), number.getValue().get(0).getThemeId(), 1, new BigDecimal(1));
-            }
-        }
-
+    private void executeDateRecord(String themeInfoId) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String format = simpleDateFormat.format(new Date());
+        redisUtil.hincr("task.scope.delivery" + themeInfoId, format, 1L);
     }
 
     private void deliveryScopes(String ownerBy, Long themeId, int i, BigDecimal portion) {
