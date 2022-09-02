@@ -59,4 +59,13 @@ public interface IStarNftOrderService
      * @return 结果
      */
     public int deleteStarNftOrderById(Long id);
+
+    /**
+     * 退款
+     * 市场订单 交易金额退回付款账号 收款账户减去扣除手续费后的收款金额 藏品返回收款账户
+     * 首发订单 交易金额退回付款账户 藏品设置为未出售状态
+     * @param orderSn
+     * @return
+     */
+    Boolean refundOrder(String orderSn);
 }

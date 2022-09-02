@@ -96,4 +96,11 @@ public class StarNftOrderController extends BaseController
     {
         return toAjax(starNftOrderService.deleteStarNftOrderByIds(ids));
     }
+
+    @PreAuthorize("@ss.hasPermi('business:order:edit')")
+    @Log(title = "订单", businessType = BusinessType.UPDATE)
+    @PostMapping(value = "refund")
+    public AjaxResult refund(String orderSn){
+        return toAjax(starNftOrderService.refundOrder(orderSn));
+    }
 }

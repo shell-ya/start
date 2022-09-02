@@ -491,7 +491,7 @@ public class OrderProcessor implements IOrderProcessor {
     }
 
     private ThemeNumberVo verifyAgain(MarketOrderReq marketOrderReq) {
-        ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(new NumberDTO(marketOrderReq.getNumberId(), marketOrderReq.getOwnerBy()));
+        ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(new NumberDTO(marketOrderReq.getNumberId(), marketOrderReq.getOwnerId()));
         //藏品所属人改变
         if (Objects.isNull(numberDetail)){
             throw new StarException(StarError.GOODS_NOT_FOUND);

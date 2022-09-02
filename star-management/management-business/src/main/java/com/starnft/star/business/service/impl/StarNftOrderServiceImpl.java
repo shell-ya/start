@@ -91,4 +91,11 @@ public class StarNftOrderServiceImpl implements IStarNftOrderService
     {
         return starNftOrderMapper.deleteStarNftOrderById(id);
     }
+
+    @Override
+    public Boolean refundOrder(String orderSn) {
+        //判断是市场订单还是首发订单
+        return true;
+
+    }
 }
