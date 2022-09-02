@@ -180,6 +180,11 @@ public enum RedisKey {
     SECKILL_GOODS_NOT_ONSELL(511, StarConstants.SERVICE_NAME.concat(".seckill:notonsell:%s"), -1L, TimeUnit.MINUTES),
 
     /**
+     * 秒杀商品下单锁
+     */
+    SECKILL_GOODS_PURCHASE_LOCK(514, StarConstants.SERVICE_NAME.concat(".seckill.purchase.goods:%s:u:%s"), 10L, TimeUnit.SECONDS),
+
+    /**
      * 优先购次数
      */
     SECKILL_GOODS_PRIORITY_TIMES(512, StarConstants.SERVICE_NAME.concat(".seckill:priority:shoufa"), -1L, TimeUnit.MINUTES),
@@ -241,9 +246,7 @@ public enum RedisKey {
 
     DANGER_LIST_RECORD(1112, StarConstants.SERVICE_NAME.concat(".visit.danger.list"), 5L, TimeUnit.SECONDS),
 
-    BLACK_MEMBERS(1113, StarConstants.SERVICE_NAME.concat(".black.list"), 5L, TimeUnit.SECONDS)
-
-    ,
+    BLACK_MEMBERS(1113, StarConstants.SERVICE_NAME.concat(".black.list"), 5L, TimeUnit.SECONDS),
     ;
 
     private Integer code;

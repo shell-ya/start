@@ -167,41 +167,48 @@ public class OrderProcessor implements IOrderProcessor {
             throw new StarException(StarError.STOCK_EMPTY_ERROR);
         }
 
-        try {
-            //校验余额
-            walletService.balanceVerify(orderGrabReq.getUserId(), goods.getSecCost());
-            //用户下单次数验证 防重复下单
-            if (orderGrabReq.getThemeId().equals(1002285892654821376L)) {
-                Long userOrderedCount = redisUtil.hincr(key, String.valueOf(orderGrabReq.getUserId()), 1L);
-                if (userOrderedCount > 1) {
-                    log.error("防重复下单 uid: [{}] themeId : [{}] count : [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), userOrderedCount);
-                    throw new StarException(StarError.ORDER_REPETITION);
+        String purchaseKey = String.format(RedisKey.SECKILL_GOODS_PURCHASE_LOCK.getKey(), orderGrabReq.getThemeId(), orderGrabReq.getUserId());
+        Boolean lock = redisLockUtils.lock(purchaseKey, 10);
+        Assert.isTrue(lock, () -> new StarException(StarError.ORDER_REPETITION, "您的下单频率太快了,休息一下吧！"));
+        if (lock) {
+            try {
+                //校验余额
+                walletService.balanceVerify(orderGrabReq.getUserId(), goods.getSecCost());
+                //用户下单次数验证 防重复下单
+                if (orderGrabReq.getThemeId().equals(1002285892654821376L)) {
+                    Long userOrderedCount = redisUtil.hincr(key, String.valueOf(orderGrabReq.getUserId()), 1L);
+                    if (userOrderedCount > 1) {
+                        log.error("防重复下单 uid: [{}] themeId : [{}] count : [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), userOrderedCount);
+                        throw new StarException(StarError.ORDER_REPETITION);
+                    }
                 }
-            }
 
-            if (orderGrabReq.getThemeId().equals(1009469098485923840L)) {
+                if (orderGrabReq.getThemeId().equals(1009469098485923840L)) {
 
-                Long userOrderedCount = redisUtil.hincr(buyNumKey, String.valueOf(orderGrabReq.getUserId()), 1L);
-                redisUtil.hdecr(buyNumKey, String.valueOf(orderGrabReq.getUserId()), 1L);
-                if (userOrderedCount > 10) {
-                    log.error("防重复下单 uid: [{}] themeId : [{}] count : [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), userOrderedCount);
-                    throw new StarException(StarError.ORDER_REPETITION);
+                    Long userOrderedCount = redisUtil.hincr(buyNumKey, String.valueOf(orderGrabReq.getUserId()), 1L);
+                    redisUtil.hdecr(buyNumKey, String.valueOf(orderGrabReq.getUserId()), 1L);
+                    if (userOrderedCount > 10) {
+                        log.error("防重复下单 uid: [{}] themeId : [{}] count : [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), userOrderedCount);
+                        throw new StarException(StarError.ORDER_REPETITION);
+                    }
                 }
+
+                //排队中状态
+                redisUtil.hset(String.format(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), orderGrabReq.getThemeId()),
+                        String.valueOf(orderGrabReq.getUserId()), JSONUtil.toJsonStr(new OrderGrabStatus(orderGrabReq.getUserId(), 0, null, orderGrabReq.getTime())));
+                //mq 异步下单
+                orderProducer.secKillOrder(new OrderMessageReq(orderGrabReq.getUserId(), orderGrabReq.getTime(), orderGrabReq.getIsPriority(), goods));
+
+                return new OrderGrabRes(0, StarError.SUCCESS_000000.getErrorMessage());
+            } catch (Exception e) {
+                redisLockUtils.unlock(purchaseKey);
+                log.error("异步下单失败 uid:[{}] , themeId:[{}] ,time: [{}] , goods: [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), orderGrabReq.getTime(), goods, e);
+                throw new RuntimeException(e);
+            } finally {
+                walletService.threadClear();
             }
-
-            //排队中状态
-            redisUtil.hset(String.format(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), orderGrabReq.getThemeId()),
-                    String.valueOf(orderGrabReq.getUserId()), JSONUtil.toJsonStr(new OrderGrabStatus(orderGrabReq.getUserId(), 0, null, orderGrabReq.getTime())));
-            //mq 异步下单
-            orderProducer.secKillOrder(new OrderMessageReq(orderGrabReq.getUserId(), orderGrabReq.getTime(), orderGrabReq.getIsPriority(), goods));
-
-            return new OrderGrabRes(0, StarError.SUCCESS_000000.getErrorMessage());
-        } catch (Exception e) {
-            log.error("异步下单失败 uid:[{}] , themeId:[{}] ,time: [{}] , goods: [{}]", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), orderGrabReq.getTime(), goods, e);
-            throw new RuntimeException(e);
-        } finally {
-            walletService.threadClear();
         }
+        throw new StarException(StarError.SYSTEM_ERROR);
     }
 
     private Boolean whiteValidation(Long userId, Long themeId) {
@@ -231,7 +238,7 @@ public class OrderProcessor implements IOrderProcessor {
     @Override
     public OrderPayDetailRes orderPay(@Validated OrderPayReq orderPayReq) {
 
-        log.info("用户发起支付：{}",orderPayReq.toString());
+        log.info("用户发起支付：{}", orderPayReq.toString());
 
         //验证支付凭证
         userService.assertPayPwdCheckSuccess(orderPayReq.getUserId(), orderPayReq.getPayToken());
@@ -262,14 +269,14 @@ public class OrderProcessor implements IOrderProcessor {
             if (isSuccess) {
                 redisUtil.hincr(String.format(RedisKey.SECKILL_BUY_GOODS_NUMBER.getKey(), orderPayReq.getThemeId()), String.valueOf(orderPayReq.getUserId()), 1L);
 
-                    //只有首发订单增加积分
-                    if (!orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
-                        OrderListRes orderListRes = orderService.obtainSecKillOrder(orderPayReq.getUserId(), orderPayReq.getThemeId());
-                        if (orderListRes.getPriorityBuy() == 1) subPTimes(orderPayReq.getUserId(), orderListRes);
-                        activityProducer.sendScopeMessage(createEventReq(orderPayReq));
-                    }
+                //只有首发订单增加积分
+                if (!orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
+                    OrderListRes orderListRes = orderService.obtainSecKillOrder(orderPayReq.getUserId(), orderPayReq.getThemeId());
+                    if (orderListRes.getPriorityBuy() == 1) subPTimes(orderPayReq.getUserId(), orderListRes);
+                    activityProducer.sendScopeMessage(createEventReq(orderPayReq));
+                }
 //                    rebatesProducer.sendRebatesMessage(createRebates(orderPayReq));
-                    //todo 后面去掉
+                //todo 后面去掉
 //                    if (!orderPayReq.getThemeId().equals(1002285892654821376L) || !orderPayReq.getThemeId().equals(1009469098485923840L)) {
 //                        String userOrderMapping = String.format(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), orderPayReq.getThemeId());
 //                        String orderInfo = (String) redisUtil.hget(userOrderMapping, String.valueOf(orderPayReq.getUserId()));
@@ -287,9 +294,9 @@ public class OrderProcessor implements IOrderProcessor {
 //                            }
 //                        }
 //                    }
-                    return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn());
-                }
-                throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "订单处理异常！");
+                return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn());
+            }
+            throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "订单处理异常！");
         } catch (TransactionException | StarException e) {
             throw new RuntimeException(e);
         } finally {
@@ -306,11 +313,11 @@ public class OrderProcessor implements IOrderProcessor {
     private void verifyOwnerBy(OrderPayReq orderPayReq) {
         if (orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
             //查询当前藏品拥有人与下订单时拥有人一致
-            if ( (Objects.isNull(orderPayReq.getOwnerId()) ||
+            if ((Objects.isNull(orderPayReq.getOwnerId()) ||
                     0L == Long.parseLong(orderPayReq.getOwnerId())) ||
-                    !numberService.isOwner(Long.parseLong(orderPayReq.getOwnerId()),orderPayReq.getThemeId(),orderPayReq.getNumberId())
+                    !numberService.isOwner(Long.parseLong(orderPayReq.getOwnerId()), orderPayReq.getThemeId(), orderPayReq.getNumberId())
             )
-            throw new StarException(StarError.ORDER_STATUS_ERROR,"请确认藏品拥有者正确性");
+                throw new StarException(StarError.ORDER_STATUS_ERROR, "请确认藏品拥有者正确性");
         }
     }
 
@@ -462,7 +469,7 @@ public class OrderProcessor implements IOrderProcessor {
         }
 
         //多重检查
-        ThemeNumberVo numberDetail =  verifyAgain(marketOrderReq);
+        ThemeNumberVo numberDetail = verifyAgain(marketOrderReq);
         //钱包余额充足
         walletService.balanceVerify(marketOrderReq.getUserId(), numberDetail.getPrice());
         long lockTimes = RedisKey.MARKET_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.MARKET_ORDER_TRANSACTION.getTime());
@@ -492,7 +499,7 @@ public class OrderProcessor implements IOrderProcessor {
     private ThemeNumberVo verifyAgain(MarketOrderReq marketOrderReq) {
         ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(new NumberDTO(marketOrderReq.getNumberId(), marketOrderReq.getOwnerBy()));
         //藏品所属人改变
-        if (Objects.isNull(numberDetail)){
+        if (Objects.isNull(numberDetail)) {
             throw new StarException(StarError.GOODS_NOT_FOUND);
         }
         //禁止购买自己售出商品
@@ -576,7 +583,7 @@ public class OrderProcessor implements IOrderProcessor {
         return times.intValue();
     }
 
-    private OrderListRes buildOrderResp(Long lockTime,ThemeNumberVo numberDetail, Long userId, String orderSn, Long id) {
+    private OrderListRes buildOrderResp(Long lockTime, ThemeNumberVo numberDetail, Long userId, String orderSn, Long id) {
         OrderListRes res = new OrderListRes();
         res.setId(id);
         res.setOrderSn(orderSn);
