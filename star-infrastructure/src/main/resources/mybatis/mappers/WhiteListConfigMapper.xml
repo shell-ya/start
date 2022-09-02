@@ -4,16 +4,16 @@
     <resultMap type="com.starnft.star.infrastructure.entity.user.WhiteListConfig" id="WhiteListConfigMap">
         <result property="id" column="id" jdbcType="BIGINT"/>
         <result property="isDeleted" column="is_deleted" jdbcType="INTEGER"/>
-        <result property="createdAt" column="created_at" jdbcType="DATE"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
         <result property="createdBy" column="created_by" jdbcType="VARCHAR"/>
-        <result property="modifiedAt" column="modified_at" jdbcType="DATE"/>
+        <result property="modifiedAt" column="modified_at" jdbcType="TIMESTAMP"/>
         <result property="modifiedBy" column="modified_by" jdbcType="VARCHAR"/>
         <result property="whiteDesc" column="white_desc" jdbcType="VARCHAR"/>
         <result property="whiteType" column="white_type" jdbcType="INTEGER"/>
         <result property="effective" column="effective" jdbcType="VARCHAR"/>
         <result property="goodsId" column="goods_id" jdbcType="BIGINT"/>
-        <result property="startTime" column="start_time" jdbcType="DATE"/>
-        <result property="endTime" column="end_time" jdbcType="DATE"/>
+        <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
+        <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <!-- 通过ID查询单条数据 -->

@@ -381,7 +381,7 @@ public class UserRepository implements IUserRepository {
 
         WhiteListDetail whiteListDetail = whiteListDetailMapper.selectMappingWhite(whiteId, uid);
         if (whiteListDetail == null || whiteListDetail.getSurplusTimes() <= 0) {
-            return Boolean.TRUE;
+            return Boolean.FALSE;
         }
         Integer integer = whiteListDetailMapper.modifySurplus(whiteId, uid, whiteListDetail.getVersion());
         log.info("uid: [{}] whiteId : [{}] 优先购资格被消耗 1 次", uid, whiteId);
