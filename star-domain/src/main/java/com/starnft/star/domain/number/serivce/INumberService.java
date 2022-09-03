@@ -59,6 +59,8 @@ public interface INumberService {
     Boolean deleteNumber(Long uid,Long seriesThemeId);
 
     Long queryUserFirstNumberId(Long uid,Long seriesThemeInfoId);
+
+    List<NumberDetailVO> queryNumberNotOnSell(Long themeId);
 //    Boolean managePrice(BigDecimal price);
 
     List<ReNumberVo> queryReNumberList(Long themeId);

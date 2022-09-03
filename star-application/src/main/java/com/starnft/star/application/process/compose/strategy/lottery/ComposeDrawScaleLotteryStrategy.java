@@ -1,16 +1,13 @@
 package com.starnft.star.application.process.compose.strategy.lottery;
 
-import com.google.common.collect.Lists;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.domain.compose.model.dto.ComposePrizeDTO;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component("composeDrawScaleLotteryStrategy")

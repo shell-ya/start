@@ -178,7 +178,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
                 .remark(message.getTime()) //暂时存储秒杀时间戳
                 .orderType(StarConstants.OrderType.PUBLISH_GOODS.getName())
                 .priorityBuy(isPriority)
-                .whiteId(whiteListConfigVO.getId())
+                .whiteId(whiteListConfigVO == null ? null : whiteListConfigVO.getId())
                 .build();
         //创建订单
         boolean isSuccess = orderService.createOrder(orderVO);

@@ -19,6 +19,6 @@ public class OrderGrabReq implements Serializable {
     private Long themeId;
 
     @ApiModelProperty(value = "是否使用优先购 0不使用 1使用")
-    private Integer isPriority;
+    private Integer isPriority = 0;
 
 }

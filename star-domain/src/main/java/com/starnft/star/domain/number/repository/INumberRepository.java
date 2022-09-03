@@ -59,4 +59,6 @@ public interface INumberRepository {
     List<Long> queryHasReNumberUser(Long seriesThemeId);
 
     boolean deleteNumber2ReDraw(ReNumberVo numberVo, List<Long> ids);
+
+    List<NumberDetailVO> queryNumberNotOnSell(Long themeId);
 }

@@ -213,6 +213,11 @@ public class NumberServiceImpl implements INumberService {
         return numberRepository.deleteNumber2ReDraw(numberVo,ids);
     }
 
+    @Override
+    public List<NumberDetailVO> queryNumberNotOnSell(Long themeId) {
+        return this.numberRepository.queryNumberNotOnSell(themeId);
+    }
+
 
     @Override
     public List<NumberDingVO> getNumberDingList() {
