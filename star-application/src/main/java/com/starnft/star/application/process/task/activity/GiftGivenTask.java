@@ -71,7 +71,7 @@ public class GiftGivenTask {
             if (CollectionUtil.isEmpty(hisTimes)) {
                 for (Map.Entry<String, List<NumberDetailVO>> number : uidMapping.entrySet()) {
                     activitiesService.initGoodsHavingTimes(number.getValue().get(0));
-                    deliveryScopes(number.getValue().get(0).getOwnerBy(), number.getValue().get(0).getThemeId(), 1, new BigDecimal(1));
+                    deliveryScopes(number.getValue().get(0).getOwnerBy(), number.getValue().get(0).getThemeId(), 1, new BigDecimal(number.getValue().size()));
                 }
                 return;
             }
@@ -97,7 +97,7 @@ public class GiftGivenTask {
                 GoodsHavingTimesVO goodsHavingTimesVO = hisMapping.get(Long.parseLong(number.getValue().get(0).getOwnerBy()));
                 if (goodsHavingTimesVO == null) {
                     activitiesService.initGoodsHavingTimes(number.getValue().get(0));
-                    deliveryScopes(number.getValue().get(0).getOwnerBy(), number.getValue().get(0).getThemeId(), 1, new BigDecimal(1));
+                    deliveryScopes(number.getValue().get(0).getOwnerBy(), number.getValue().get(0).getThemeId(), 1, new BigDecimal(number.getValue().size()));
                 }
             }
         } finally {
