@@ -158,4 +158,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select * from star_nft_order
         where id_deleted = 0 and order_sn = #{orderSn}
     </select>
+
+    <select id="queryStarNftOrder" resultType="com.starnft.star.business.domain.StarNftOrder">
+        select * from star_nft_order
+        where id_deleted = 0
+        and order_sn= #{orderSn}
+        and  status = 1
+    </select>
 </mapper>
