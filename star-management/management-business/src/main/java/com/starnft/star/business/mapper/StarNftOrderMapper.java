@@ -63,4 +63,6 @@ public interface StarNftOrderMapper
     public List<StarNftOrder>  dayOrder();
 
     public List<StarNftOrder>  toDayOrder();
+
+    public List<StarNftOrder> queryOrderBuSn(String orderSn);
 }

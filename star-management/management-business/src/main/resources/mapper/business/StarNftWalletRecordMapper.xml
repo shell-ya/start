@@ -307,4 +307,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 #{toUid}, #{tsType}, #{tsMoney}, #{tsCost}, #{tsFee}, #{payChannel}, #{remark}, #{payStatus},
                 #{payTime}, #{currMoney})
     </insert>
+
+    <select id="queryStarNftWalletRecord" resultType="com.starnft.star.business.domain.StarNftWalletRecord">
+        select * from star_nft_wallet_record
+        where is_deleted = 0
+        and record_sn = #{recordSn}
+    </select>
 </mapper>

@@ -92,4 +92,6 @@ public interface StarNftWalletRecordMapper
     List<StarNftWalletRecord> selectByLimit(StarNftWalletRecord request);
 
     int createWalletRecord(StarNftWalletRecord starNftWalletRecord);
+
+    public List<StarNftWalletRecord> queryStarNftWalletRecord(String recordSn);
 }

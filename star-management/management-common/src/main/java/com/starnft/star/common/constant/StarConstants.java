@@ -294,7 +294,9 @@ public class StarConstants {
         //发行商品订单前缀
         PublishGoods("PG"),
         //市场交易订单前缀
-        TransactionSn("TS")
+        TransactionSn("TS"),
+        //退款
+        RefundSN("RE"),
 
         ;
 

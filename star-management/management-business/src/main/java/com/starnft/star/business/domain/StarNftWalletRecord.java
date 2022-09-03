@@ -215,7 +215,7 @@ public class StarNftWalletRecord extends BaseEntity
     {
         this.tsCost = tsCost;
     }
-    private BigDecimal getTsCost() {
+    public BigDecimal getTsCost() {
         return this.tsCost;
     }
     public void setTsFee(BigDecimal tsFee)
