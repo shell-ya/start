@@ -57,6 +57,7 @@ import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
 import com.starnft.star.domain.wallet.service.WalletConfig;
 import com.starnft.star.domain.wallet.service.WalletService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -406,7 +407,7 @@ public class OrderProcessor implements IOrderProcessor {
         walletPayRequest.setTotalPayAmount(new BigDecimal(orderPayReq.getTotalPayAmount()));
         walletPayRequest.setPayAmount(payAmount.signum() == -1 ? payAmount : payAmount.negate());
         walletPayRequest.setFromUid(orderPayReq.getUserId());
-        walletPayRequest.setToUid(Long.parseLong(orderPayReq.getOwnerId()));
+        walletPayRequest.setToUid(StringUtils.isEmpty(orderPayReq.getOwnerId()) ? 0L : Long.parseLong(orderPayReq.getOwnerId()));
         return walletPayRequest;
     }
 
@@ -497,7 +498,7 @@ public class OrderProcessor implements IOrderProcessor {
     }
 
     private ThemeNumberVo verifyAgain(MarketOrderReq marketOrderReq) {
-        ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(new NumberDTO(marketOrderReq.getNumberId(), marketOrderReq.getOwnerBy()));
+        ThemeNumberVo numberDetail = numberService.getConsignNumberDetail(new NumberDTO(marketOrderReq.getNumberId(), marketOrderReq.getOwnerId()));
         //藏品所属人改变
         if (Objects.isNull(numberDetail)) {
             throw new StarException(StarError.GOODS_NOT_FOUND);
