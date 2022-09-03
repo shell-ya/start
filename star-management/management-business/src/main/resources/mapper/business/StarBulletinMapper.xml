@@ -15,10 +15,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createdBy"    column="created_by"    />
         <result property="modifiedAt"    column="modified_at"    />
         <result property="modifiedBy"    column="modified_by"    />
+        <result property="linkType"    column="link_type"    />
+        <result property="linkUrl"    column="link_url"    />
     </resultMap>
 
     <sql id="selectStarBulletinVo">
-        select id, title, pic_url, content, publish_time, is_deleted, created_at, created_by, modified_at, modified_by from star_bulletin
+        select id, title, pic_url, content, publish_time, is_deleted, created_at, created_by, modified_at, modified_by,link_type,link_url from star_bulletin
     </sql>
 
     <select id="selectStarBulletinList" parameterType="StarBulletin" resultMap="StarBulletinResult">
@@ -48,6 +50,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createdBy != null">created_by,</if>
             <if test="modifiedAt != null">modified_at,</if>
             <if test="modifiedBy != null">modified_by,</if>
+            <if test="linkType != null">link_type,</if>
+            <if test="linkUrl != null">link_url,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -60,6 +64,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createdBy != null">#{createdBy},</if>
             <if test="modifiedAt != null">#{modifiedAt},</if>
             <if test="modifiedBy != null">#{modifiedBy},</if>
+            <if test="linkType != null">#{linkType},</if>
+            <if test="linkUrl != null">#{linkUrl},</if>
          </trim>
     </insert>
 
@@ -75,6 +81,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createdBy != null">created_by = #{createdBy},</if>
             <if test="modifiedAt != null">modified_at = #{modifiedAt},</if>
             <if test="modifiedBy != null">modified_by = #{modifiedBy},</if>
+            <if test="linkType != null"> link_type = #{linkType},</if>
+            <if test="linkUrl != null"> link_url =#{linkUrl},</if>
         </trim>
         where id = #{id}
     </update>

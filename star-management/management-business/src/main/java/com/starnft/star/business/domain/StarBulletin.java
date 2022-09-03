@@ -41,6 +41,11 @@ public class StarBulletin
     /** 公告内容 */
     private String content;
 
+    /** 公告类型 */
+    private Integer linkType;
+    /** 外链地址 */
+    private String linkUrl;
+
     /** 发布时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS")
     @Excel(name = "发布时间", width = 30, dateFormat = "yyyy-MM-dd")
@@ -167,5 +172,21 @@ public class StarBulletin
             .append("modifiedAt", getModifiedAt())
             .append("modifiedBy", getModifiedBy())
             .toString();
+    }
+
+    public String getLinkUrl() {
+        return linkUrl;
+    }
+
+    public void setLinkUrl(String linkUrl) {
+        this.linkUrl = linkUrl;
+    }
+
+    public Integer getLinkType() {
+        return linkType;
+    }
+
+    public void setLinkType(Integer linkType) {
+        this.linkType = linkType;
     }
 }
