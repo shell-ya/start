@@ -31,4 +31,7 @@ public class MyCouponRes {
 
     @ApiModelProperty("优惠卷类型")
     private Integer type;
+
+    @ApiModelProperty("优惠卷id")
+    private String couponId;
 }
