@@ -408,6 +408,7 @@ public class OrderProcessor implements IOrderProcessor {
         walletPayRequest.setPayAmount(payAmount.signum() == -1 ? payAmount : payAmount.negate());
         walletPayRequest.setFromUid(orderPayReq.getUserId());
         walletPayRequest.setToUid(StringUtils.isEmpty(orderPayReq.getOwnerId()) ? 0L : Long.parseLong(orderPayReq.getOwnerId()));
+        walletPayRequest.setUserId(orderPayReq.getUserId());
         return walletPayRequest;
     }
 
