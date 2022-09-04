@@ -2,6 +2,7 @@ package com.starnft.star.business.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.starnft.star.business.domain.StarNftUserTheme;
+import com.starnft.star.business.domain.po.UpdateUserThemeVo;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -46,6 +47,8 @@ public interface StarNftUserThemeMapper extends BaseMapper<StarNftUserTheme>
      * @return 结果
      */
     public int updateStarNftUserTheme(StarNftUserTheme starNftUserTheme);
+
+    public int updateStarNftUserThemeStatus(UpdateUserThemeVo updateUserThemeVo);
 
     /**
      * 删除用户藏品

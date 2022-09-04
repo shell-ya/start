@@ -63,4 +63,6 @@ public interface INftWalletService
 
 
     public Boolean walletRecharge(RechargeVO rechargeVO);
+
+    public Boolean refundOrder(String orderSn);
 }
