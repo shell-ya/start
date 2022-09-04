@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -69,6 +70,10 @@ public class ActivityDrawProcessImpl implements IActivityDrawProcess {
             DrawActivityVO drawActivity = drawExec.getDrawActivity(new PartakeReq(req.getuId(), req.getActivityId()));
             drawActivity.setConsumeItemId(drawActivity.getActivityId());
 
+            if (new Date().before(drawActivity.getBeginDateTime()) || new Date().after(drawActivity.getEndDateTime())) {
+                throw new StarException(StarError.INVALID_DRAW_REQUEST, "未在活动开启时间内！");
+            }
+
             // 1. 挂售状态判断 当前物品持有性判断
             isOnSell(req, drawActivity);
 
@@ -97,9 +102,8 @@ public class ActivityDrawProcessImpl implements IActivityDrawProcess {
             // 6. 返回结果
             return new DrawProcessResult(StarError.SUCCESS_000000.getErrorCode(), StarError.SUCCESS_000000.getErrorMessage(), drawAwardVO);
         } catch (RuntimeException e) {
-            throw new RuntimeException(e);
-        } finally {
             redisLockUtils.unlock(lockKey);
+            throw new RuntimeException(e);
         }
     }
 
