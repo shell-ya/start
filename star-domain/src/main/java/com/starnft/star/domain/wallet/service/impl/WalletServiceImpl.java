@@ -152,7 +152,11 @@ public class WalletServiceImpl implements WalletService {
                 }
                 //记录钱包log 修改余额
                 boolean doTransaction = doTransaction(createTransReq(walletPayRequest));
-                boolean marketTransaction = !walletPayRequest.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix()) || doTransaction(createMarketTransReq(walletPayRequest));
+                boolean marketTransaction = true;
+                if (walletPayRequest.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())){
+                    marketTransaction =  doTransaction(createMarketTransReq(walletPayRequest));
+                }
+//                boolean marketTransaction = !walletPayRequest.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix()) || doTransaction(createMarketTransReq(walletPayRequest));
 
                 return doRecord && doTransaction && marketTransaction;
             });
