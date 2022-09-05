@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.infrastructure.mapper.coupon.StarNftCouponMapper">
+
+
+    <select id="queryAllByHistory" resultType="com.starnft.star.infrastructure.entity.coupon.StarNftCoupon">
+        SELECT
+        snc.coupon_id,
+        snc.type,
+        snc.name,
+        snc.image,
+        snc.amount,
+        snc.min_point,
+        snc.use_type,
+        snc.end_time
+        FROM star_nft_coupon_history snch LEFT JOIN star_nft_coupon snc
+        ON snch.coupon_id = snc.coupon_id
+        WHERE
+        snch.is_deleted = 0
+        AND snch.use_status = #{useStatus}
+        AND snch.user_id = #{userId}
+    </select>
+</mapper>
