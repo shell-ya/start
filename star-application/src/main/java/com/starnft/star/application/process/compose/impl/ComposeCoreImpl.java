@@ -124,13 +124,17 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
          Assert.isTrue(composeRes.getComposeStatus().equals(ComposeStatusEnum.Running.getCode()),()->new StarException("合成不在开启状态"));
 
          //true可执行
-        boolean canCompose = redisUtil.sHasKey(String.format(RedisKey.GOLD_COMPOSE.getKey(),composeManageReq.getComposeId()), composeManageReq.getUserId());
-        //true 不可执行
-        boolean composeSuccess = redisUtil.sHasKey(String.format(RedisKey.GOLD_COMPOSE_SUCCESS.getKey(),composeManageReq.getComposeId()), composeManageReq.getUserId());
-
-        if (canCompose == false|| composeSuccess){
+        boolean openCompose = redisUtil.hasKey(String.format(RedisKey.OPEN_COMPOSE.getKey(), composeManageReq.getComposeId()));
+        if (!openCompose){
             throw new StarException(StarError.COMPOSE_PRIZE_EXIST);
         }
+        //        boolean canCompose = redisUtil.sHasKey(String.format(RedisKey.GOLD_COMPOSE.getKey(),composeManageReq.getComposeId()), composeManageReq.getUserId());
+//        //true 不可执行
+//        boolean composeSuccess = redisUtil.sHasKey(String.format(RedisKey.GOLD_COMPOSE_SUCCESS.getKey(),composeManageReq.getComposeId()), composeManageReq.getUserId());
+//
+//        if (canCompose == false|| composeSuccess){
+//            throw new StarException(StarError.COMPOSE_PRIZE_EXIST);
+//        }
 
         ComposeCategoryRes composeCategoryRes = composeService.composeCategoryByCategoryId(composeManageReq.getCategoryId());
         //积分判断操作
