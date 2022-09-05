@@ -419,9 +419,9 @@ public class NftWalletServiceImpl implements INftWalletService
 
         BigDecimal toCurr = toWallet.getBalance().subtract(record.getTsMoney().abs().subtract(record.getTsFee().abs()).abs());
         BigDecimal toOutCome = toWallet.getWalletOutcome().add(record.getTsMoney().abs().subtract(record.getTsFee().abs()).abs());
-        String toKey = RedisLockUtils.REDIS_LOCK_PREFIX + String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
+        String toKey =   String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
                toUid);
-        String fromKey = RedisLockUtils.REDIS_LOCK_PREFIX + String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
+        String fromKey =  String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
                 fromUid);
 
         Boolean toLock = redisLockUtils.lock(toKey, RedisKey.REDIS_TRANSACTION_ING.getTime());
