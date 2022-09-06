@@ -238,6 +238,8 @@ public class ActivityRepository implements IActivityRepository {
         activityVO.setCreator(activity.getCreator());
         activityVO.setCreateTime(activity.getCreateTime());
         activityVO.setUpdateTime(activity.getUpdateTime());
+        activityVO.setUpdateTime(activity.getUpdateTime());
+        activityVO.setConsumables(activity.getConsumables());
 
         return activityVO;
 

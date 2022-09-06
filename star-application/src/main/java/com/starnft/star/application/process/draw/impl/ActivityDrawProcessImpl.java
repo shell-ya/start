@@ -6,14 +6,17 @@ import com.starnft.star.application.mq.constant.TopicConstants;
 import com.starnft.star.application.process.draw.IActivityDrawProcess;
 import com.starnft.star.application.process.draw.req.DrawProcessReq;
 import com.starnft.star.application.process.draw.res.DrawProcessResult;
+import com.starnft.star.application.process.draw.strategy.DrawConsumeExecutor;
 import com.starnft.star.application.process.draw.vo.DrawConsumeVO;
 import com.starnft.star.common.Result;
 import com.starnft.star.common.ResultCode;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.common.enums.ActivitiesConsumeEnum;
 import com.starnft.star.common.enums.NumberStatusEnum;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
+import com.starnft.star.common.utils.SpringUtil;
 import com.starnft.star.domain.activity.model.vo.DrawActivityVO;
 import com.starnft.star.domain.activity.model.vo.DrawOrderVO;
 import com.starnft.star.domain.component.RedisLockUtils;
@@ -24,6 +27,7 @@ import com.starnft.star.domain.draw.model.vo.DrawAwardVO;
 import com.starnft.star.domain.draw.service.draw.IDrawExec;
 import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.support.ids.IIdGenerator;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -61,10 +65,13 @@ public class ActivityDrawProcessImpl implements IActivityDrawProcess {
 
     @Override
     public DrawProcessResult doDrawProcess(DrawProcessReq req) {
-
-        String lockKey = String.format(RedisKey.DRAW_AWARD_OPEN_LOCK.getKey(), req.getNumberId());
-        Boolean lock = redisLockUtils.lock(lockKey, RedisKey.DRAW_AWARD_OPEN_LOCK.getTime());
-        Assert.isTrue(lock, () -> new StarException(StarError.SYSTEM_ERROR, "请勿重复开启"));
+        String lockKey = "";
+        boolean isBlindbox = !StringUtils.isBlank(req.getNumberId());
+        if (isBlindbox) {
+            lockKey = String.format(RedisKey.DRAW_AWARD_OPEN_LOCK.getKey(), req.getNumberId());
+            Boolean lock = redisLockUtils.lock(lockKey, RedisKey.DRAW_AWARD_OPEN_LOCK.getTime());
+            Assert.isTrue(lock, () -> new StarException(StarError.SYSTEM_ERROR, "请勿重复开启"));
+        }
         try {
             // 0. 领取活动
             DrawActivityVO drawActivity = drawExec.getDrawActivity(new PartakeReq(req.getuId(), req.getActivityId()));
@@ -75,7 +82,7 @@ public class ActivityDrawProcessImpl implements IActivityDrawProcess {
             }
 
             // 1. 挂售状态判断 当前物品持有性判断
-            isOnSell(req, drawActivity);
+            if (isBlindbox) isOnSell(req, drawActivity);
 
             // 2. 执行抽奖
             DrawResult drawResult = drawExec.doDrawExec(new DrawReq(req.getuId(), drawActivity.getStrategyId()));
@@ -139,8 +146,14 @@ public class ActivityDrawProcessImpl implements IActivityDrawProcess {
 
     private Boolean comsumeItem(DrawConsumeVO drawConsumeVO) {
 
-        // TODO: 2022/8/18 策略设计 不同抽奖活动消耗不同标的
-        return iNumberService.comsumeNumber(Long.parseLong(drawConsumeVO.getDrawAwardVO().getuId()), Long.parseLong(drawConsumeVO.getNumberId()));
+        for (ActivitiesConsumeEnum value : ActivitiesConsumeEnum.values()) {
+            if (value.getCode().equals(drawConsumeVO.getDrawActivityVO().getConsumables())) {
+                DrawConsumeExecutor bean = (DrawConsumeExecutor) SpringUtil.getBean(value.getBeanName());
+                assert bean != null;
+                return bean.doConsume(drawConsumeVO);
+            }
+        }
+        throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "未找到消耗标的！");
     }
 
     private DrawOrderVO buildDrawOrderVO(DrawProcessReq req, Long strategyId, Long takeId, DrawAwardVO drawAwardVO) {
