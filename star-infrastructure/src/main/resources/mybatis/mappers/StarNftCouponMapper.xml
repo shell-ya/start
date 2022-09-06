@@ -2,8 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.starnft.star.infrastructure.mapper.coupon.StarNftCouponMapper">
 
+    <resultMap id="CouponHistoryResMap" type="com.starnft.star.domain.coupon.model.res.CouponHistoryRes">
+        <id column="id" property="id" />
+        <result column="coupon_id" property="couponId"/>
+        <result column="type" property="type"/>
+        <result column="name" property="composeName"/>
+        <result column="image" property="images"/>
+        <result column="amount" property="amount"/>
+        <result column="min_point" property="minPoint"/>
+        <result column="use_type" property="useType"/>
+        <result column="get_type" property="getType"/>
+        <result column="series_id" property="seriesId"/>
+        <result column="theme_id" property="themeId"/>
+    </resultMap>
 
-    <select id="queryAllByHistory" resultType="com.starnft.star.infrastructure.entity.coupon.StarNftCoupon">
+    <select id="queryAllByHistory" resultMap="CouponHistoryResMap">
+    <![CDATA[
         SELECT
         snc.coupon_id,
         snc.type,
@@ -12,12 +26,37 @@
         snc.amount,
         snc.min_point,
         snc.use_type,
-        snc.end_time
-        FROM star_nft_coupon_history snch LEFT JOIN star_nft_coupon snc
-        ON snch.coupon_id = snc.coupon_id
-        WHERE
-        snch.is_deleted = 0
-        AND snch.use_status = #{useStatus}
-        AND snch.user_id = #{userId}
+        snc.end_time,
+        snc.start_time,
+        snc.amount,
+        snc.min_point,
+        snc.use_type,
+        snch.id,
+        snch.get_type,
+        sncsr.series_id,
+        snctr.theme_id
+        FROM star_nft_coupon_history snch
+        LEFT JOIN star_nft_coupon snc ON snch.coupon_id = snc.coupon_id
+        LEFT JOIN star_nft_coupon_series_relation sncsr ON sncsr.coupon_id = snch.coupon_id
+        LEFT JOIN star_nft_coupon_theme_relation snctr ON snctr.coupon_id = snch.coupon_id
+        <where>
+            snch.is_deleted = 0
+            <if test="req.useStatus != null">
+                AND snch.use_status = #{req.useStatus}
+            </if>
+            <if test="req.userId != null">
+                AND snch.user_id = #{req.userId}
+            </if>
+            <if test="req.seriesId != null">
+                AND sncsr.series_id = #{req.seriesId}
+            </if>
+            <if test="req.themeId != null">
+                AND snctr.theme_id = #{req.themeId}
+            </if>
+            <if test="req.minPoint != null and req.minPoint != 0">
+                AND snctr.min_point <= #{req.minPoint}
+            </if>
+        </where>
+        ]]>
     </select>
 </mapper>
