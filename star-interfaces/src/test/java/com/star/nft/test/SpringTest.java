@@ -1,6 +1,5 @@
 package com.star.nft.test;
 
-import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -17,16 +16,11 @@ import com.starnft.star.application.process.scope.model.ScoreDTO;
 import com.starnft.star.application.process.theme.ThemeCore;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
-import com.starnft.star.common.enums.NumberCirculationTypeEnum;
-import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.template.FreeMakerTemplateHelper;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.draw.model.req.DrawAwardExportsReq;
-import com.starnft.star.domain.draw.model.req.DrawReq;
 import com.starnft.star.domain.draw.model.vo.DrawAwardExportVO;
 import com.starnft.star.domain.draw.service.draw.IDrawExec;
-import com.starnft.star.domain.number.model.req.HandoverReq;
-import com.starnft.star.domain.number.model.vo.NumberVO;
 import com.starnft.star.domain.number.model.vo.ReNumberVo;
 import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.order.repository.BuyNum;
@@ -40,7 +34,6 @@ import com.starnft.star.domain.support.process.assign.TradeType;
 import com.starnft.star.domain.support.process.config.ChannelConf;
 import com.starnft.star.domain.support.process.config.TempConf;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
-import com.starnft.star.domain.theme.model.vo.ThemeDetailVO;
 import com.starnft.star.domain.theme.service.ThemeService;
 import com.starnft.star.domain.wallet.model.req.CalculateReq;
 import com.starnft.star.domain.wallet.model.res.CalculateResult;
@@ -54,9 +47,7 @@ import org.assertj.core.util.Lists;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.redis.core.RedisTemplate;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -150,6 +141,32 @@ public class SpringTest {
 
 
     }
+
+
+    @Test
+    public void docache(){
+        String key = String.format(RedisKey.DRAW_AWARD_STOCK_MAPPING.getKey(), "10000002");
+        redisUtil.hincr(key,"1010",200L);
+        redisUtil.hincr(key,"1011",300L);
+        redisUtil.hincr(key,"1012",38L);
+        redisUtil.hincr(key,"1013",38L);
+        redisUtil.hincr(key,"1014",38L);
+        redisUtil.hincr(key,"1015",38L);
+        redisUtil.hincr(key,"1016",38L);
+        redisUtil.hincr(key,"1017",38L);
+        redisUtil.hincr(key,"1018",38L);
+        redisUtil.hincr(key,"1019",38L);
+        redisUtil.hincr(key,"1020",38L);
+        redisUtil.hincr(key,"1021",38L);
+        redisUtil.hincr(key,"1022",38L);
+        redisUtil.hincr(key,"1023",38L);
+        redisUtil.hincr(key,"1006",3L);
+        redisUtil.hincr(key,"1005",10L);
+        redisUtil.hincr(key,"1035",3L);
+        redisUtil.hincr(key,"1001",1L);
+        redisUtil.hincr(key,"1036",1L);
+    }
+
 
     @Test
     public void remove(){

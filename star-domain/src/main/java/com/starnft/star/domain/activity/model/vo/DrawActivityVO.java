@@ -73,6 +73,12 @@ public class DrawActivityVO {
      */
     private Integer state;
 
+
+    /**
+     * 消耗品 1 盲盒 2 元石
+     */
+    private Integer consumables;
+
     /**
      * 创建人
      */

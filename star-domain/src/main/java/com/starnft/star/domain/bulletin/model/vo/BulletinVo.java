@@ -20,4 +20,6 @@ public class BulletinVo implements Serializable {
     private Date publishTime;
     private String picUrl;
     private String content;
+    private Integer linkType;
+    private String linkUrl;
 }

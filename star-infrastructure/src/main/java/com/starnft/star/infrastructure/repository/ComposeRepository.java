@@ -16,6 +16,7 @@ import com.starnft.star.infrastructure.tools.PageHelperInterface;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -35,7 +36,7 @@ public class ComposeRepository implements IComposeRepository, PageHelperInterfac
 
         List<StarNftCompose> starNftComposes = starNftComposeMapper
                 .selectList(new QueryWrapper<StarNftCompose>()
-                        .setEntity(starNftCompose));
+                        .setEntity(starNftCompose).orderByDesc(StarNftCompose.COL_END_AT));
 
         return starNftComposes.stream().map(item -> {
             ComposeRes composeRes = new ComposeRes();

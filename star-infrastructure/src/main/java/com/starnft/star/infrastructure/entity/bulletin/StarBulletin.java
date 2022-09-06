@@ -26,4 +26,8 @@ public class StarBulletin extends BaseEntity {
     private String picUrl;
 
     private String content;
+
+    private Integer linkType;
+
+    private String linkUrl;
 }

@@ -5,6 +5,7 @@ import cn.hutool.http.HttpUtil;
 import com.starnft.star.application.process.user.UserCore;
 import com.starnft.star.application.process.user.req.UserGatheringInfoReq;
 import com.starnft.star.application.process.user.res.UserGatheringInfoRes;
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.template.TemplateHelper;
 import com.starnft.star.common.utils.RandomUtil;
 import com.starnft.star.domain.component.RedisUtil;
@@ -49,6 +50,11 @@ public class RankTest {
     UserCore userCore;
     @Resource
     RedisUtil redisUtil;
+
+    @Test
+    public void add(){
+        redisUtil.set(String.format(RedisKey.OPEN_COMPOSE.getKey(),3L),1);
+    }
 
     @Test
     public void addScore(){
