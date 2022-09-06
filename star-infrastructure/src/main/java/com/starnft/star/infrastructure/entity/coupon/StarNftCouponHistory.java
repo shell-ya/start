@@ -28,7 +28,7 @@ public class StarNftCouponHistory extends BaseEntity {
     @TableId(value = "id", type = IdType.INPUT)
     private Long id;
 
-  /**
+     /**
      * 优惠卷id
      */
     @TableField(value = "coupon_id")

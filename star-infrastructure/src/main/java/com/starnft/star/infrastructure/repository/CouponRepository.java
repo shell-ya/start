@@ -1,8 +1,18 @@
 package com.starnft.star.infrastructure.repository;
 
-import com.starnft.star.domain.coupon.model.res.MyCouponRes;
+import cn.hutool.core.date.DateUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.starnft.star.common.utils.BeanColverUtil;
+import com.starnft.star.domain.coupon.model.dto.CouponHistoryAdd;
+import com.starnft.star.domain.coupon.model.dto.CouponHistoryUpdate;
+import com.starnft.star.domain.coupon.model.req.CouponHistoryReq;
+import com.starnft.star.domain.coupon.model.res.CouponHistoryInfoRes;
+import com.starnft.star.domain.coupon.model.res.CouponHistoryRes;
+import com.starnft.star.domain.coupon.model.res.CouponInfoRes;
 import com.starnft.star.domain.coupon.repository.ICouponRepository;
 import com.starnft.star.infrastructure.entity.coupon.StarNftCoupon;
+import com.starnft.star.infrastructure.entity.coupon.StarNftCouponHistory;
 import com.starnft.star.infrastructure.mapper.coupon.StarNftCouponHistoryMapper;
 import com.starnft.star.infrastructure.mapper.coupon.StarNftCouponMapper;
 import com.starnft.star.infrastructure.mapper.coupon.StarNftCouponSeriesRelationMapper;
@@ -11,9 +21,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -33,21 +41,60 @@ public class CouponRepository implements ICouponRepository {
     @Resource
     private StarNftCouponThemeRelationMapper starNftCouponThemeRelationMapper;
 
+
     @Override
-    public List<MyCouponRes> queryMyCouponList(Long userId, Integer useStatus) {
-        List<StarNftCoupon> starNftCoupons = starNftCouponMapper.queryAllByHistory(userId, useStatus);
-        if (CollectionUtils.isNotEmpty(starNftCoupons)){
-           return starNftCoupons.stream().map(val -> convertMyCouponRes(val)).collect(Collectors.toList());
-        }
-        return null;
+    public List<CouponHistoryRes> queryCouponListByCouponHistory(CouponHistoryReq req) {
+        return starNftCouponMapper.queryAllByHistory(req);
     }
 
-    private MyCouponRes convertMyCouponRes(StarNftCoupon starNftCoupon){
-        return new MyCouponRes()
-                .setComposeName(starNftCoupon.getName())
-                .setCount(starNftCoupon.getCount())
-                .setEndAt(starNftCoupon.getEndTime())
-                .setImages(starNftCoupon.getImage())
-                .setType(starNftCoupon.getType());
+    @Override
+    public CouponInfoRes queryCouponInfoById(String couponId) {
+        LambdaQueryWrapper<StarNftCoupon> queryWrapper = new LambdaQueryWrapper();
+        queryWrapper.eq(StarNftCoupon::getCouponId, couponId);
+        StarNftCoupon starNftCoupon = starNftCouponMapper.selectOne(queryWrapper);
+        return BeanColverUtil.colver(starNftCoupon, CouponInfoRes.class);
+    }
+
+    @Override
+    public List<CouponInfoRes> queryCouponInfoByIdList(List<String> couponIdList) {
+        LambdaQueryWrapper<StarNftCoupon> queryWrapper = new LambdaQueryWrapper();
+        queryWrapper.in(StarNftCoupon::getCouponId, couponIdList);
+        List<StarNftCoupon> starNftCoupons = starNftCouponMapper.selectList(queryWrapper);
+        return BeanColverUtil.colverList(starNftCoupons, CouponInfoRes.class);
+    }
+
+    @Override
+    public CouponHistoryInfoRes queryCouponHistoryInfoById(Long id) {
+        LambdaQueryWrapper<StarNftCouponHistory> queryWrapper = new LambdaQueryWrapper();
+        queryWrapper.eq(StarNftCouponHistory::getId, id);
+        return BeanColverUtil.colver(starNftCouponHistoryMapper.selectOne(queryWrapper), CouponHistoryInfoRes.class);
+    }
+
+    @Override
+    public int addCouponHistory(CouponHistoryAdd couponHistory) {
+        StarNftCouponHistory starNftCouponHistory = new StarNftCouponHistory();
+        starNftCouponHistory.setChannelId(couponHistory.getChannelId());
+        starNftCouponHistory.setCouponId(couponHistory.getCouponId());
+        starNftCouponHistory.setUserId(couponHistory.getUserId());
+        starNftCouponHistory.setGetType(couponHistory.getGetType());
+        starNftCouponHistory.setCreatedAt(DateUtil.date());
+        starNftCouponHistory.setModifiedAt(DateUtil.date());
+        starNftCouponHistory.setIsDeleted(Boolean.FALSE);
+        starNftCouponHistory.setCreatedBy(couponHistory.getUserId());
+        starNftCouponHistory.setModifiedBy(couponHistory.getUserId());
+        return starNftCouponHistoryMapper.insert(starNftCouponHistory);
+    }
+
+    @Override
+    public int updateCouponHistory(CouponHistoryUpdate couponHistory) {
+        LambdaUpdateWrapper<StarNftCouponHistory> queryWrapper = new LambdaUpdateWrapper();
+        queryWrapper.in(StarNftCouponHistory::getId, couponHistory.getIdList());
+        StarNftCouponHistory starNftCouponHistory = new StarNftCouponHistory();
+        starNftCouponHistory.setOrderId(couponHistory.getOrderId());
+        starNftCouponHistory.setUseStatus(couponHistory.getUseStatus());
+        starNftCouponHistory.setUseTime(couponHistory.getUseTime());
+        starNftCouponHistory.setModifiedAt(DateUtil.date());
+        starNftCouponHistory.setModifiedBy(couponHistory.getUserId());
+        return starNftCouponHistoryMapper.update(starNftCouponHistory, queryWrapper);
     }
 }
