@@ -417,63 +417,119 @@ public class NftWalletServiceImpl implements INftWalletService
         //增加总收入金额
         BigDecimal fromIncome = fromWallet.getWalletIncome().add(record.getTsMoney().abs());
 
-        BigDecimal toCurr = toWallet.getBalance().subtract(record.getTsMoney().abs().subtract(record.getTsFee().abs()).abs());
-        BigDecimal toOutCome = toWallet.getWalletOutcome().add(record.getTsMoney().abs().subtract(record.getTsFee().abs()).abs());
-        String toKey =   String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
-               toUid);
-        String fromKey =  String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
-                fromUid);
+        if(toUid != 0L){
 
-        Boolean toLock = redisLockUtils.lock(toKey, RedisKey.REDIS_TRANSACTION_ING.getTime());
-        Boolean fromLock = redisLockUtils.lock(fromKey,RedisKey.REDIS_TRANSACTION_ING.getTime());
-        try {
-            Assert.isTrue(toLock, () -> new StarException(StarError.IS_TRANSACTION));
-            Assert.isTrue(fromLock, () -> new StarException(StarError.IS_TRANSACTION));
+            BigDecimal toCurr = toWallet.getBalance().subtract(record.getTsMoney().abs().subtract(record.getTsFee().abs()).abs());
+            BigDecimal toOutCome = toWallet.getWalletOutcome().add(record.getTsMoney().abs().subtract(record.getTsFee().abs()).abs());
+            String toKey =   String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
+                    toUid);
+            String fromKey =  String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
+                    fromUid);
 
-            Boolean isSuccess = template.execute(status -> {
+            Boolean toLock = redisLockUtils.lock(toKey, RedisKey.REDIS_TRANSACTION_ING.getTime());
+            Boolean fromLock = redisLockUtils.lock(fromKey,RedisKey.REDIS_TRANSACTION_ING.getTime());
+            try {
+                Assert.isTrue(toLock, () -> new StarException(StarError.IS_TRANSACTION));
+                Assert.isTrue(fromLock, () -> new StarException(StarError.IS_TRANSACTION));
 
-                //记录钱包交易记录
-                boolean result = this.rechargeRecordGenerate(walletRecordReq, toCurr);
-                //记录余额变动记录
-                boolean fromLogWrite = this.createWalletLog(WalletLogReq.builder().walletId(fromWallet.getwId())
-                        .userId(fromWallet.getUid()).offset(walletRecordReq.getTsMoney()).currentMoney(fromCurr).payChannel(walletRecordReq.getPayChannel())
-                        .orderNo(walletRecordReq.getRecordSn()).build());
+                Boolean isSuccess = template.execute(status -> {
 
-                //修改余额
-                boolean fromBalanceModify = this.modifyWalletBalance(WalletVO.builder().uid(fromUid)
-                        .balance(fromCurr).wallet_income(fromIncome).build());
+                    //记录钱包交易记录
+                    boolean result = this.rechargeRecordGenerate(walletRecordReq, toCurr);
+                    //记录余额变动记录
+                    boolean fromLogWrite = this.createWalletLog(WalletLogReq.builder().walletId(fromWallet.getwId())
+                            .userId(fromWallet.getUid()).offset(walletRecordReq.getTsMoney()).currentMoney(fromCurr).payChannel(walletRecordReq.getPayChannel())
+                            .orderNo(walletRecordReq.getRecordSn()).build());
 
-                //记录余额变动记录
-                boolean toLogWrite = this.createWalletLog(WalletLogReq.builder().walletId(toWallet.getwId())
-                        .userId(toWallet.getUid()).offset(record.getTsMoney().subtract(record.getTsFee()).negate()).currentMoney(toCurr).payChannel(walletRecordReq.getPayChannel())
-                        .orderNo(walletRecordReq.getRecordSn()).build());
+                    //修改余额
+                    boolean fromBalanceModify = this.modifyWalletBalance(WalletVO.builder().uid(fromUid)
+                            .balance(fromCurr).wallet_income(fromIncome).build());
 
-                //修改余额
-                boolean toBalanceModify = this.modifyWalletBalance(WalletVO.builder().uid(toUid)
-                        .balance(toCurr).wallet_outcome(toOutCome).build());
+                    //记录余额变动记录
+                    boolean toLogWrite = this.createWalletLog(WalletLogReq.builder().walletId(toWallet.getwId())
+                            .userId(toWallet.getUid()).offset(record.getTsMoney().subtract(record.getTsFee()).negate()).currentMoney(toCurr).payChannel(walletRecordReq.getPayChannel())
+                            .orderNo(walletRecordReq.getRecordSn()).build());
 
-                //退回藏品 更新number表所有人为原所有人 更新userTheme表原所有人状态 删除购买人数据
+                    //修改余额
+                    boolean toBalanceModify = this.modifyWalletBalance(WalletVO.builder().uid(toUid)
+                            .balance(toCurr).wallet_outcome(toOutCome).build());
 
-                Boolean modifyNumber = this.modifyThemeOwner(order.getSeriesThemeId(), toUid, fromUid);
-                boolean successResult = fromLogWrite && fromBalanceModify && result && toLogWrite && toBalanceModify && modifyNumber;
-                if (!successResult) throw  new StarException(StarError.SYSTEM_ERROR);
-                return successResult;
-            });
-            return isSuccess;
-        }catch (Exception e){
-            throw new RuntimeException("充值提现发生异常",e);
-        }finally {
-            redisLockUtils.unlock(toKey);
-            redisLockUtils.unlock(fromKey);
+                    //退回藏品 更新number表所有人为原所有人 更新userTheme表原所有人状态 删除购买人数据
+
+                    Boolean modifyNumber = this.modifyThemeOwner(order.getSeriesThemeId(), toUid, fromUid);
+                    boolean successResult = fromLogWrite && fromBalanceModify && result && toLogWrite && toBalanceModify && modifyNumber;
+                    if (!successResult) throw  new StarException(StarError.SYSTEM_ERROR);
+                    return successResult;
+                });
+                return isSuccess;
+            }catch (Exception e){
+                throw new RuntimeException("充值提现发生异常",e);
+            }finally {
+                redisLockUtils.unlock(toKey);
+                redisLockUtils.unlock(fromKey);
+            }
+        }else{
+            //退款 收回
+            String fromKey =  String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
+                    fromUid);
+            Boolean fromLock = redisLockUtils.lock(fromKey,RedisKey.REDIS_TRANSACTION_ING.getTime());
+
+            try {
+                Assert.isTrue(fromLock, () -> new StarException(StarError.IS_TRANSACTION));
+
+                Boolean isSuccess = template.execute(status -> {
+
+                    //记录钱包交易记录
+                    boolean result = this.rechargeRecordGenerate(walletRecordReq, fromCurr);
+                    //记录余额变动记录
+                    boolean fromLogWrite = this.createWalletLog(WalletLogReq.builder().walletId(fromWallet.getwId())
+                            .userId(fromWallet.getUid()).offset(walletRecordReq.getTsMoney()).currentMoney(fromCurr).payChannel(walletRecordReq.getPayChannel())
+                            .orderNo(walletRecordReq.getRecordSn()).build());
+
+                    //修改余额
+                    boolean fromBalanceModify = this.modifyWalletBalance(WalletVO.builder().uid(fromUid)
+                            .balance(fromCurr).wallet_income(fromIncome).build());
+
+                    //记录余额变动记录
+//                    boolean toLogWrite = this.createWalletLog(WalletLogReq.builder().walletId(toWallet.getwId())
+//                            .userId(toWallet.getUid()).offset(record.getTsMoney().subtract(record.getTsFee()).negate()).currentMoney(fromCurr).payChannel(walletRecordReq.getPayChannel())
+//                            .orderNo(walletRecordReq.getRecordSn()).build());
+
+                    //修改余额
+//                    boolean toBalanceModify = this.modifyWalletBalance(WalletVO.builder().uid(toUid)
+//                            .balance(toCurr).wallet_outcome(toOutCome).build());
+
+                    //退回藏品 更新number表所有人为原所有人 更新userTheme表原所有人状态 删除购买人数据
+
+                    Boolean modifyNumber = this.killModifyThemeOwner(order.getSeriesThemeId(), toUid, fromUid);
+                    boolean successResult = fromLogWrite && fromBalanceModify && result && modifyNumber;
+                    if (!successResult) throw  new StarException(StarError.SYSTEM_ERROR);
+                    return successResult;
+                });
+                return isSuccess;
+            }catch (Exception e){
+                throw new RuntimeException("充值提现发生异常",e);
+            }finally {
+                redisLockUtils.unlock(fromKey);
+            }
         }
+
 
     }
     private Boolean modifyThemeOwner(Long seriesThemeId, Long toId, Long fromId){
         Boolean modify = this.modifyNumberOwner(seriesThemeId, toId);
-        Boolean toResult = this.modifyUserTheme(seriesThemeId, fromId, 0, 4,1);
+        Boolean toResult = this.modifyUserTheme(seriesThemeId, fromId, 0, 3,1);
         Boolean fromResult = this.modifyUserTheme(seriesThemeId, toId, 2,0, 0);
         return modify && toResult && fromResult;
     }
+
+    private Boolean killModifyThemeOwner(Long seriesThemeId, Long toId, Long fromId){
+        Boolean modify = this.modifyNumberOwner(seriesThemeId, toId);
+        Boolean toResult = this.modifyUserTheme(seriesThemeId, fromId, 0, 3,1);
+//        Boolean fromResult = this.modifyUserTheme(seriesThemeId, toId, 2,0, 0);
+        return modify && toResult;
+    }
+
     private Boolean modifyUserTheme(Long seriesThemeId,Long uid,Integer beforeStatus,Integer status,Integer isDelete){
         UpdateUserThemeVo userTheme = new UpdateUserThemeVo();
         userTheme.setUserId(uid);
