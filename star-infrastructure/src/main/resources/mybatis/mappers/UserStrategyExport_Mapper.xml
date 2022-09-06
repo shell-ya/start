@@ -76,7 +76,7 @@
     </select>
 
     <delete id="deleteExport">
-        UPDATE user_strategy_export SET grant_state = -1, update_time = now()
+        UPDATE user_strategy_export SET grant_state = 2, update_time = now()
         WHERE u_id = #{uId} AND order_id = #{orderId}
     </delete>
 </mapper>
