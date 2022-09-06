@@ -183,8 +183,8 @@ public class ActivityRepository implements IActivityRepository {
     }
 
     @Override
-    public boolean deleteExport(String orderId) {
-        return userStrategyExportDao.deleteExport(orderId);
+    public boolean deleteExport(String uId,String orderId) {
+        return userStrategyExportDao.deleteExport(uId,orderId);
     }
 
     @Override

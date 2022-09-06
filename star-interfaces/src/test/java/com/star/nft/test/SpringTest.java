@@ -193,7 +193,7 @@ public class SpringTest {
                     //删除user_thmee中命中主题第一个藏品
                     //恢复theme_number当前用户命中主题第一个藏品
                     numberService.deleteNumber((long)id,seriesThemeId);
-                    repository.deleteExport(export.getOrderId().toString());
+//                    repository.deleteExport(export.getOrderId().toString());
                 }else if (6 == awardType){
                     //元石奖励 减少元石
                     String num = export.getAwardName().substring(0, export.getAwardName().length() - 2);
@@ -203,10 +203,10 @@ public class SpringTest {
                     addScoreDTO.setUserId((long)id);
                     addScoreDTO.setScope(new BigDecimal(num).negate());
                     iScopeCore.userScopeManageAdd(addScoreDTO);
-                    repository.deleteExport(export.getOrderId().toString());
+//                    repository.deleteExport(export.getOrderId().toString());
                 }else if (4 == awardType){
                     //实物奖励 更新抽奖记录结果 改为非法操作取消奖励
-                    repository.deleteExport(export.getOrderId().toString());
+//                    repository.deleteExport(export.getOrderId().toString());
                 }
 
         }

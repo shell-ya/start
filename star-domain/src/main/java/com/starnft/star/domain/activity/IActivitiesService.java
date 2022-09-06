@@ -17,7 +17,7 @@ public interface IActivitiesService {
 
     void initGoodsHavingTimes(NumberDetailVO numberDetailVO);
 
-    boolean delErrorExport(String orderId);
+    boolean delErrorExport(String uId,String orderId);
 
     void delTimes(Long uid, Long themeId);
 

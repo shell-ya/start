@@ -2,6 +2,7 @@ package com.starnft.star.infrastructure.mapper.draw;
 
 import com.starnft.star.infrastructure.entity.draw.UserStrategyExport;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -48,5 +49,5 @@ public interface IUserStrategyExportDao {
     List<UserStrategyExport> queryUserStrategyExportList(String uid);
 
 
-    boolean deleteExport(String orderId);
+    boolean deleteExport(@Param("uId") String uid, @Param("orderId")String orderId);
 }

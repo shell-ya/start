@@ -75,7 +75,7 @@ public interface IActivityRepository {
 
     List<DrawAwardExportVO> queryUserExportList(Long uid);
 
-    boolean deleteExport(String orderId);
+    boolean deleteExport(String uId,String orderId);
 
     void delTimes(Long uid, Long themeId);
 
