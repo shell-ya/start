@@ -3,7 +3,10 @@ package com.starnft.star.interfaces.controller.compose;
 import com.starnft.star.application.process.compose.IComposeCore;
 import com.starnft.star.application.process.compose.model.req.UserMaterialReq;
 import com.starnft.star.application.process.compose.model.res.ComposeDetailRes;
+import com.starnft.star.application.process.limit.ICurrentLimiter;
 import com.starnft.star.common.RopResponse;
+import com.starnft.star.common.exception.StarError;
+import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.article.model.vo.UserNumbersVO;
@@ -29,6 +32,7 @@ import java.util.Map;
 public class ComposeController {
     final IComposeService composeService;
     final IComposeCore composeCore;
+    final ICurrentLimiter currentLimiter;
 
     @ApiOperation("合成列表")
     @TokenIgnore
@@ -51,6 +55,9 @@ public class ComposeController {
     @ApiOperation("合成操作")
     @PostMapping("/manage")
     public RopResponse manage(UserResolverInfo userResolverInfo,@RequestBody ComposeManageReq composeManageReq) {
+        if (!currentLimiter.tryAcquire()) {
+            throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
+        }
         composeManageReq.setUserId(userResolverInfo.getUserId());
         return RopResponse.success(composeCore.composeManage(composeManageReq));
     }
