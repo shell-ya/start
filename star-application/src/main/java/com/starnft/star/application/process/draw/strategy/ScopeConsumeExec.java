@@ -1,8 +1,14 @@
 package com.starnft.star.application.process.draw.strategy;
 
+import com.starnft.star.application.process.draw.req.ConsumablesVerifyReq;
 import com.starnft.star.application.process.draw.vo.DrawConsumeVO;
 import com.starnft.star.application.process.scope.IScopeCore;
 import com.starnft.star.application.process.scope.model.ScoreDTO;
+import com.starnft.star.common.exception.StarException;
+import com.starnft.star.common.utils.Assert;
+import com.starnft.star.domain.scope.model.req.UserScopeReq;
+import com.starnft.star.domain.scope.model.res.UserScopeRes;
+import com.starnft.star.domain.scope.service.IUserScopeService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -14,6 +20,9 @@ public class ScopeConsumeExec implements DrawConsumeExecutor {
     @Resource
     IScopeCore scopeCore;
 
+    @Resource
+    IUserScopeService iUserScopeService;
+
     @Override
     public Boolean doConsume(DrawConsumeVO consumeVO) {
         try {
@@ -22,6 +31,13 @@ public class ScopeConsumeExec implements DrawConsumeExecutor {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public void doVerify(ConsumablesVerifyReq req) {
+        UserScopeReq userScopeReq = new UserScopeReq(req.getUid(), 0);
+        UserScopeRes userScopeRes = iUserScopeService.getUserScopeByUserId(userScopeReq);
+        Assert.isTrue(userScopeRes.getScope().compareTo(new BigDecimal(1000)) >= 0, () -> new StarException("积分不足"));
     }
 
     private ScoreDTO buildScopeReq(DrawConsumeVO drawConsumeVO) {

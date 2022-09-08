@@ -12,6 +12,8 @@ public class DrawConsumeVO {
 
     private String numberId;
 
+    private Integer product;
+
     private DrawAwardVO drawAwardVO;
 
     private DrawActivityVO drawActivityVO;

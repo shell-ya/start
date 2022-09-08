@@ -2,6 +2,7 @@ package com.starnft.star.domain.activity;
 
 import com.starnft.star.domain.activity.model.vo.ActivityVO;
 import com.starnft.star.domain.activity.model.vo.GoodsHavingTimesVO;
+import com.starnft.star.domain.activity.model.vo.DrawBuffTimesRes;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 
 import java.util.Date;
@@ -22,4 +23,6 @@ public interface IActivitiesService {
     void delTimes(Long uid, Long themeId);
 
     Integer addTimes(Long uid, Long themeId, Integer version);
+
+    DrawBuffTimesRes queryBuffTimes(String uid , String awardId);
 }

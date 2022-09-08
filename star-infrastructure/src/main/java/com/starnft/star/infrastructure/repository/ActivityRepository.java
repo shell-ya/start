@@ -3,15 +3,13 @@ package com.starnft.star.infrastructure.repository;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
-import com.starnft.star.domain.activity.model.vo.ActivityVO;
-import com.starnft.star.domain.activity.model.vo.DrawActivityVO;
-import com.starnft.star.domain.activity.model.vo.DrawOrderVO;
-import com.starnft.star.domain.activity.model.vo.GoodsHavingTimesVO;
+import com.starnft.star.domain.activity.model.vo.*;
 import com.starnft.star.domain.activity.repository.IActivityRepository;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.draw.model.req.DrawAwardExportsReq;
@@ -198,6 +196,18 @@ public class ActivityRepository implements IActivityRepository {
         int isSuccess = goodsHavingTimeRecordMapper.addCountTimes(uid, themeId, version);
         return isSuccess;
 
+    }
+
+    @Override
+    public DrawBuffTimesRes queryBuffTimes(String uid, String awardId) {
+        String buffKey = String.format(RedisKey.AWARD_BUFF_KEY.getKey(), awardId, uid);
+        Long times = 0L;
+        Integer product = null;
+        if (redisUtil.hasKey(buffKey)) {
+            times = redisUtil.lGetListSize(buffKey);
+            product = (Integer) redisUtil.lGetIndex(buffKey, 0);
+        }
+        return new DrawBuffTimesRes(awardId, times.intValue(), product);
     }
 
     @Override

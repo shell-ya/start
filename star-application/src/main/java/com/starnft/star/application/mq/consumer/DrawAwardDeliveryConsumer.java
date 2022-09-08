@@ -4,8 +4,10 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.starnft.star.application.process.draw.vo.DrawConsumeVO;
 import com.starnft.star.application.process.scope.IScopeCore;
 import com.starnft.star.application.process.scope.model.ScoreDTO;
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.enums.NumberCirculationTypeEnum;
+import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.draw.service.draw.IDrawExec;
 import com.starnft.star.domain.number.model.req.HandoverReq;
 import com.starnft.star.domain.number.model.vo.NumberVO;
@@ -34,6 +36,8 @@ public class DrawAwardDeliveryConsumer implements RocketMQListener<DrawConsumeVO
 
     final IDrawExec drawExec;
 
+    final RedisUtil redisUtil;
+
 
     @Override
     public void onMessage(DrawConsumeVO drawConsumeVO) {
@@ -41,6 +45,7 @@ public class DrawAwardDeliveryConsumer implements RocketMQListener<DrawConsumeVO
         //奖品id
         String awardId = drawConsumeVO.getDrawAwardVO().getAwardId();
         String uId = drawConsumeVO.getDrawAwardVO().getuId();
+        Integer product = drawConsumeVO.getProduct();
 
         // TODO: 2022/8/19 引入规则引擎drools 针对不同情况执行对应的规则
 
@@ -61,6 +66,12 @@ public class DrawAwardDeliveryConsumer implements RocketMQListener<DrawConsumeVO
         // 实物
         if (drawConsumeVO.getDrawAwardVO().getAwardType() == 4) {
 
+        }
+
+        //buff
+        if (drawConsumeVO.getDrawAwardVO().getAwardType() == 7) {
+            String buffKey = String.format(RedisKey.AWARD_BUFF_KEY.getKey(), awardId, uId);
+            redisUtil.incr(buffKey, 1);
         }
 
     }

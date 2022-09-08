@@ -3,6 +3,7 @@ package com.starnft.star.domain.activity.impl;
 import com.starnft.star.common.utils.DateUtil;
 import com.starnft.star.domain.activity.IActivitiesService;
 import com.starnft.star.domain.activity.model.vo.ActivityVO;
+import com.starnft.star.domain.activity.model.vo.DrawBuffTimesRes;
 import com.starnft.star.domain.activity.model.vo.GoodsHavingTimesVO;
 import com.starnft.star.domain.activity.repository.IActivityRepository;
 import com.starnft.star.domain.draw.model.vo.DrawAwardExportVO;
@@ -44,6 +45,11 @@ public class ActivitiesService implements IActivitiesService {
     @Override
     public Integer addTimes(Long uid, Long themeId, Integer version) {
         return activityRepository.addTimes(uid, themeId, version);
+    }
+
+    @Override
+    public DrawBuffTimesRes queryBuffTimes(String uid, String awardId) {
+        return activityRepository.queryBuffTimes(uid, awardId);
     }
 
     public List<DrawAwardExportVO> queryUserExportList(long id) {
