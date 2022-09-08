@@ -27,4 +27,6 @@ public interface IUserThemeRepository {
 
     Boolean modifyUserNumberStatus(Long uid, Long numberId, BigDecimal price,UserNumberStatusEnum beforeStatusEnum, UserNumberStatusEnum statusEnum);
     Boolean modifyUserBatchNumberStatus(Long uid, List<Long> numberId,UserNumberStatusEnum beforeStatusEnum, UserNumberStatusEnum statusEnum);
+
+    ResponsePageResult<UserNumbersVO> queryUserArticleNumberInfoBySeriesIds(Long userId, List<Long> seriesIds, UserNumberStatusEnum purchased, int page, int size);
 }
