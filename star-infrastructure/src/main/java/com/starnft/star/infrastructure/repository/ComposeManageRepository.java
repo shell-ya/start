@@ -72,4 +72,9 @@ public class ComposeManageRepository implements IComposeManageRepository {
        return starNftComposeRecordMapper.insert(starNftComposeRecord)>=1;
     }
 
+    @Override
+    public List<ComposeUserArticleNumberDTO> queryUserArticleNumberInfoBySeriesNumberIds(Long userId, List<Long> sourceIds, UserNumberStatusEnum purchased) {
+        return starNftUserThemeMapper.queryComposeUserArticleNumberInfoBySeriesNumberIds(userId, sourceIds, purchased);
+    }
+
 }

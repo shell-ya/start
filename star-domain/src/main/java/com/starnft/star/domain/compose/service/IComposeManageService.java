@@ -13,4 +13,7 @@ public interface IComposeManageService {
     Boolean composeModifyUserNumberStatus(Long userId, List<Long> userNumberIds, UserNumberStatusEnum purchased, UserNumberStatusEnum destroy, NumberStatusEnum currentStatusEnum, NumberStatusEnum statusEnum, Boolean isDeleted);
 
     public Boolean saveComposeRecord(ComposeRecordDTO composeRecordDTO);
+
+    List<ComposeUserArticleNumberDTO> queryUserArticleNumberInfoBySeriesNumberIds(Long userId, List<Long> sourceIds, UserNumberStatusEnum purchased);
+
 }

@@ -26,4 +26,6 @@ public interface UserThemeService {
     ResponsePageResult<UserNumbersVO> queryUserArticleNumberInfoByThemeIds(Long uid, List<Long> themeIds, UserNumberStatusEnum statusEnum,Integer page,Integer size);
 
     List<UserNumbersVO> queryUserArticleNumberInfoByNumberIds(Long uid, List<Long> numberIds, UserNumberStatusEnum statusEnum);
+
+    ResponsePageResult<UserNumbersVO> queryUserArticleNumberInfoBySeriesIds(Long userId, List<Long> seriesIds, UserNumberStatusEnum purchased, int page, int size);
 }

@@ -31,9 +31,12 @@ public interface StarNftUserThemeMapper extends BaseMapper<StarNftUserTheme> {
 
     List<ComposeUserArticleNumberDTO> queryComposeUserArticleNumberInfoByNumberIds(@Param("userId") Long userId, @Param("sourceIds")List<Long> sourceIds,@Param("statusEnum")  UserNumberStatusEnum purchased);
 
+    List<ComposeUserArticleNumberDTO>  queryComposeUserArticleNumberInfoBySeriesNumberIds(@Param("userId") Long userId, @Param("sourceIds")List<Long> sourceIds,@Param("statusEnum")  UserNumberStatusEnum purchased);
     Long firstNumber(@Param("uid")Long uid, @Param("seriesThemeInfoId") Long seriesThemeInfoId);
 
     List<ReNumberVo> queryReNumberList(Long themeId);
 
     List<Long> queryHasReNumberUser(Long seriesThemeId);
+
+    List<UserNumbersVO> queryUserArticleNumberInfoBySeriesIds(@Param("uId")Long userId, @Param("seriesIds")List<Long> seriesIds,  @Param("statusEnum")UserNumberStatusEnum purchased);
 }

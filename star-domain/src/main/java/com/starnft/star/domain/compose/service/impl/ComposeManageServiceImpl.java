@@ -35,4 +35,9 @@ public class ComposeManageServiceImpl implements IComposeManageService {
         composeRecordDTO.setId(idsIIdGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId());
         return composeManageRepository.insertComposeRecord(composeRecordDTO);
     }
+
+    @Override
+    public List<ComposeUserArticleNumberDTO> queryUserArticleNumberInfoBySeriesNumberIds(Long userId, List<Long> sourceIds, UserNumberStatusEnum purchased) {
+        return composeManageRepository.queryUserArticleNumberInfoBySeriesNumberIds(userId,sourceIds,purchased);
+    }
 }
