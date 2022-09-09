@@ -3,6 +3,7 @@ package com.starnft.star.interfaces.controller.coupon;
 import com.starnft.star.application.process.coupon.CouponCore;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.domain.coupon.model.res.CouponHistoryRes;
+import com.starnft.star.interfaces.interceptor.UserContext;
 import com.starnft.star.interfaces.interceptor.UserResolverInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,7 +28,9 @@ public class CouponController {
 
     @ApiOperation("我的优惠卷")
     @GetMapping("/my/list")
-    public RopResponse<List<CouponHistoryRes>> list(UserResolverInfo userResolverInfo, @RequestParam("useStatus") Integer useStatus) {
-        return RopResponse.success(couponCore.queryCouponListByUserId(userResolverInfo.getUserId(), useStatus));
+    public RopResponse<List<CouponHistoryRes>> list(@RequestParam("useStatus") Integer useStatus) {
+        return RopResponse.success(couponCore.queryCouponListByUserId(UserContext.getUserId().getUserId(), useStatus));
     }
+
+
 }

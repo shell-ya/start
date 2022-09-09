@@ -1,11 +1,12 @@
 package com.starnft.star.domain.coupon.service.impl;
 
 import cn.hutool.core.date.DateUtil;
-import com.starnft.star.common.enums.CouponUseStatus;
+import com.starnft.star.common.constant.YesOrNoStatusEnum;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.domain.coupon.model.dto.CouponHistoryAdd;
 import com.starnft.star.domain.coupon.model.dto.CouponHistoryUpdate;
+import com.starnft.star.domain.coupon.model.dto.CouponInfoUpdate;
 import com.starnft.star.domain.coupon.model.req.CouponHistoryReq;
 import com.starnft.star.domain.coupon.model.res.CouponHistoryInfoRes;
 import com.starnft.star.domain.coupon.model.res.CouponHistoryRes;
@@ -40,12 +41,18 @@ public class CouponServiceImpl implements ICouponService {
         return couponRepository.queryCouponListByCouponHistory(req);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public int addCouponHistory(CouponHistoryAdd couponHistory) {
         CouponInfoRes couponInfoRes = couponRepository.queryCouponInfoById(couponHistory.getCouponId());
         if (Objects.isNull(couponInfoRes)){
             throw new StarException(StarError.PARAETER_UNSUPPORTED,"该卡劵不存在");
         }
+        //发行数量更新
+        CouponInfoUpdate couponInfoUpdate = new CouponInfoUpdate();
+        couponInfoUpdate.setCouponId(couponHistory.getCouponId());
+        couponInfoUpdate.setReceiveCount(couponInfoRes.getReceiveCount() + 1);
+        couponRepository.updateCouponInfo(couponInfoUpdate);
         return couponRepository.addCouponHistory(couponHistory);
     }
 
@@ -59,7 +66,7 @@ public class CouponServiceImpl implements ICouponService {
                 throw new StarException(StarError.PARAETER_UNSUPPORTED, "该卡劵不存在或不属于该用户");
             }
         }
-        couponHistory.setUseStatus(CouponUseStatus.Airdrop.getType());
+        couponHistory.setUseStatus(YesOrNoStatusEnum.YES.getCode());
         couponHistory.setUseTime(DateUtil.date());
         couponHistory.setOrderId(couponHistory.getOrderId());
         return couponRepository.updateCouponHistory(couponHistory);

@@ -13,11 +13,12 @@
         <result column="use_type" property="useType"/>
         <result column="get_type" property="getType"/>
         <result column="series_id" property="seriesId"/>
+        <result column="series_name" property="seriesName"/>
         <result column="theme_id" property="themeId"/>
+        <result column="theme_name" property="themeName"/>
     </resultMap>
 
     <select id="queryAllByHistory" resultMap="CouponHistoryResMap">
-    <![CDATA[
         SELECT
         snc.coupon_id,
         snc.type,
@@ -34,7 +35,9 @@
         snch.id,
         snch.get_type,
         sncsr.series_id,
-        snctr.theme_id
+        sncsr.series_name,
+        snctr.theme_id,
+        snctr.theme_name
         FROM star_nft_coupon_history snch
         LEFT JOIN star_nft_coupon snc ON snch.coupon_id = snc.coupon_id
         LEFT JOIN star_nft_coupon_series_relation sncsr ON sncsr.coupon_id = snch.coupon_id
@@ -54,9 +57,8 @@
                 AND snctr.theme_id = #{req.themeId}
             </if>
             <if test="req.minPoint != null and req.minPoint != 0">
-                AND snctr.min_point <= #{req.minPoint}
+                AND snctr.min_point &lt;= #{req.minPoint}
             </if>
         </where>
-        ]]>
     </select>
 </mapper>
