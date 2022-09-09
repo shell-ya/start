@@ -10,7 +10,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -125,4 +125,59 @@ public class RedisConfig extends CachingConfigurerSupport
         return redisTemplate;
 
     }
+    /**
+     * 对 HASH 类型的数据操作
+     *
+     * @param redisTemplate RedisTemplate
+     * @return HashOperations
+     */
+    @Bean
+    public HashOperations<String, String, Serializable> hashOperations(RedisTemplate<String, Serializable> redisTemplate) {
+        return redisTemplate.opsForHash();
+    }
+
+    /**
+     * 对redis字符串类型数据操作
+     *
+     * @param redisTemplate RedisTemplate
+     * @return ValueOperations
+     */
+    @Bean
+    public ValueOperations<String, Serializable> valueOperations(RedisTemplate<String, Serializable> redisTemplate) {
+        return redisTemplate.opsForValue();
+    }
+
+    /**
+     * 对链表类型的数据操作
+     *
+     * @param redisTemplate RedisTemplate
+     * @return ListOperations
+     */
+    @Bean
+    public ListOperations<String, Serializable> listOperations(RedisTemplate<String, Serializable> redisTemplate) {
+        return redisTemplate.opsForList();
+    }
+
+    /**
+     * 对无序集合类型的数据操作
+     *
+     * @param redisTemplate RedisTemplate
+     * @return SetOperations
+     */
+    @Bean
+    public SetOperations<String, Serializable> setOperations(RedisTemplate<String, Serializable> redisTemplate) {
+        return redisTemplate.opsForSet();
+    }
+
+    /**
+     * 对有序集合类型的数据操作
+     *
+     * @param redisTemplate RedisTemplate
+     * @return ZSetOperations
+     */
+    @Bean
+    public ZSetOperations<String, Serializable> zSetOperations(RedisTemplate<String, Serializable> redisTemplate) {
+        return redisTemplate.opsForZSet();
+    }
+
 }

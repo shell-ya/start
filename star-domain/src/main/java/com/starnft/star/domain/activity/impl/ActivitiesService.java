@@ -32,8 +32,8 @@ public class ActivitiesService implements IActivitiesService {
     }
 
     @Override
-    public boolean delErrorExport(String orderId) {
-        return activityRepository.deleteExport(orderId);
+    public boolean delErrorExport(String uId,String orderId) {
+        return activityRepository.deleteExport(uId,orderId);
     }
 
     @Override

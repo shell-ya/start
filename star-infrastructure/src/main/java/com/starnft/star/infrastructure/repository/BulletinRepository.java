@@ -61,6 +61,8 @@ public class BulletinRepository implements IBulletinRepository {
             bulletinVo.setId(bulletin.getId());
             bulletinVo.setTitle(bulletin.getTitle());
             bulletinVo.setPublishTime(bulletin.getPublishTime());
+            bulletinVo.setLinkType(bulletin.getLinkType());
+            bulletinVo.setLinkUrl(bulletin.getLinkUrl());
             bulletinVos.add(bulletinVo);
         }
         return bulletinVos;

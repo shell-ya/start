@@ -315,6 +315,7 @@ public class NumberRepository implements INumberRepository {
             LambdaQueryWrapper<StarNftUserTheme> utqueryWrapper = new LambdaQueryWrapper<>();
             StarNftUserTheme starNftUserTheme = new StarNftUserTheme();
             starNftUserTheme.setIsDelete(Boolean.TRUE);
+            starNftThemeNumber.setStatus(3);
             int update1 = starNftUserThemeMapper.update(starNftUserTheme,
                     utqueryWrapper.eq(StarNftUserTheme::getSeriesThemeId, seriesThemeId).eq(StarNftUserTheme::getUserId, uid));
             return isSuccess + update1 == 2;

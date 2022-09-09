@@ -111,5 +111,13 @@ public class UserThemeRepository implements IUserThemeRepository, PageHelperInte
                 .build(), wrapper) == numberIds.size();
     }
 
+    @Override
+    public ResponsePageResult<UserNumbersVO> queryUserArticleNumberInfoBySeriesIds(Long userId, List<Long> seriesIds, UserNumberStatusEnum purchased, int page, int size) {
+        PageInfo<UserNumbersVO> result = PageHelper.startPage(page, size).doSelectPageInfo(() -> {
+        this.starNftUserThemeMapper.queryUserArticleNumberInfoBySeriesIds(userId, seriesIds, purchased);
+        });
+        return this.listReplace(result, result.getList());
+    }
+
 
 }

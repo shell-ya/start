@@ -20,20 +20,18 @@ public class DrawProcessReq {
      * 活动ID
      */
     @ApiModelProperty(value = "活动ID 盲盒对应主题id", required = true)
-    @NotBlank(message = "numberId不能为空")
+    @NotBlank(message = "activityId不能为空")
     private Long activityId;
 
     /**
      * numberId
      */
     @ApiModelProperty(value = "numberId", required = true)
-    @NotBlank(message = "numberId不能为空")
     private String numberId;
     /**
      * 抽奖消耗品ID
      */
     @ApiModelProperty(value = "抽奖消耗品ID 盲盒编号number", required = false)
-    @NotBlank(message = "盲盒编号不能为空")
     private String number;
 
     public DrawProcessReq() {

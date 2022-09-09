@@ -59,6 +59,7 @@ public class NumberCoreImpl implements INumberCore {
     private final UserThemeService userThemeService;
     private final TransactionTemplate transactionTemplate;
     private final RedisUtil redisUtil;
+    private final RedisLockUtils redisLockUtils;
 
     @Override
     public NumberDetailVO obtainThemeNumberDetail(Long id) {
@@ -101,7 +102,6 @@ public class NumberCoreImpl implements INumberCore {
         if (numberService.queryThirdPlatSell(uid,request.getNumberId())){
             throw new StarException(StarError.THIRD_PLAT_SELL);
         }
-
 
         //  校验是否到藏品市场开放时间
         ThemeDetailVO themeDetailVO = themeService.queryThemeDetail(userNumbers.getThemeId());
@@ -148,38 +148,52 @@ public class NumberCoreImpl implements INumberCore {
     public Boolean consignmentCancel(NumberConsignmentCancelRequest request) {
         Long uid = request.getUid();
 
-        // 校验是否拥有该藏品
-        UserNumbersVO userNumbers = this.checkNumberOwner(uid, request.getNumberId(), UserNumberStatusEnum.ON_CONSIGNMENT);
+        String isTransaction = String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), request.getNumberId());
+        long lockTimes = RedisKey.MARKET_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.MARKET_ORDER_TRANSACTION.getTime());
 
-        // 判断商品是否在寄售中
-        if (!Objects.equals(UserNumberStatusEnum.ON_CONSIGNMENT.getCode(), userNumbers.getStatus())) {
-            throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "该藏品不是是寄售状态 无法取消");
+        Boolean lock = redisLockUtils.lock(isTransaction, lockTimes);
+
+        Assert.isTrue(Boolean.TRUE.equals(lock), () -> new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "藏品正在交易。"));
+
+        try{
+
+            // 校验是否拥有该藏品
+            UserNumbersVO userNumbers = this.checkNumberOwner(uid, request.getNumberId(), UserNumberStatusEnum.ON_CONSIGNMENT);
+
+            // 判断商品是否在寄售中
+            if (!Objects.equals(UserNumberStatusEnum.ON_CONSIGNMENT.getCode(), userNumbers.getStatus())) {
+                throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "该藏品不是寄售状态 无法取消");
+            }
+            Boolean status = this.transactionTemplate.execute(transactionStatus -> {
+                // 还原商品状态
+                Boolean updBool = this.numberService.modifyNumberInfo(
+                        NumberUpdateDTO.builder()
+                                .uid(uid)
+                                .numberId(request.getNumberId())
+                                .status(NumberStatusEnum.SOLD)
+                                .build());
+
+                // 保存取消寄售记录
+                Boolean saveBool = this.numberService.saveNumberCirculationRecord(
+                        NumberCirculationAddDTO.builder()
+                                .uid(uid)
+                                .numberId(request.getNumberId())
+                                .type(NumberCirculationTypeEnum.CANCEL_CONSIGNMENT)
+                                .build());
+
+                // 还原用户藏品状态
+                Boolean updUserNumberBool = this.userThemeService.modifyUserNumberStatus(uid, request.getNumberId(),null, UserNumberStatusEnum.ON_CONSIGNMENT, UserNumberStatusEnum.PURCHASED);
+
+                return updBool && saveBool && updUserNumberBool;
+            });
+
+            Assert.isTrue(Boolean.TRUE.equals(status), () -> new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "取消寄售失败"));
+            return Boolean.TRUE;
+        }finally {
+            redisLockUtils.unlock(isTransaction);
         }
 
-        Boolean status = this.transactionTemplate.execute(transactionStatus -> {
-            // 还原商品状态
-            Boolean updBool = this.numberService.modifyNumberInfo(
-                    NumberUpdateDTO.builder()
-                            .uid(uid)
-                            .numberId(request.getNumberId())
-                            .status(NumberStatusEnum.SOLD)
-                            .build());
 
-            // 保存取消寄售记录
-            Boolean saveBool = this.numberService.saveNumberCirculationRecord(
-                    NumberCirculationAddDTO.builder()
-                            .uid(uid)
-                            .numberId(request.getNumberId())
-                            .type(NumberCirculationTypeEnum.CANCEL_CONSIGNMENT)
-                            .build());
-
-            // 还原用户藏品状态
-            Boolean updUserNumberBool = this.userThemeService.modifyUserNumberStatus(uid, request.getNumberId(),null, UserNumberStatusEnum.ON_CONSIGNMENT, UserNumberStatusEnum.PURCHASED);
-
-            return updBool && saveBool && updUserNumberBool;
-        });
-        Assert.isTrue(Boolean.TRUE.equals(status), () -> new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "取消寄售失败"));
-        return Boolean.TRUE;
     }
 
     @Override

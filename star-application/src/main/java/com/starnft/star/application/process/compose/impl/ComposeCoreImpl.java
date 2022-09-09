@@ -23,6 +23,7 @@ import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.article.model.vo.UserNumbersVO;
 import com.starnft.star.domain.article.repository.IUserThemeRepository;
 import com.starnft.star.domain.article.service.UserThemeService;
+import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.compose.model.dto.ComposeMaterialDTO;
 import com.starnft.star.domain.compose.model.dto.ComposePrizeDTO;
@@ -75,6 +76,9 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
     @Resource
     RedisUtil redisUtil;
 
+    @Resource
+    RedisLockUtils redisLockUtils;
+
     ApplicationContext applicationContext;
 
     @Override
@@ -111,8 +115,13 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
         List<ComposeMaterialDTO> composeMaterials = JSONUtil.toList(composeCategoryRes.getComposeMaterial(), ComposeMaterialDTO.class);
         List<Long> themeIds = composeMaterials.stream().map(ComposeMaterialDTO::getThemeId).collect(Collectors.toList());
         List<Long> filterArray = themeIds.stream().filter(item -> item.equals(userMaterialReq.getCondition().getThemeId())).collect(Collectors.toList());
-          Assert.isTrue(!filterArray.isEmpty(),()->new StarException("所选素材不在合成类目中"));
-        ResponsePageResult<UserNumbersVO> userNumbersVOResponsePageResult = userThemeService.queryUserArticleNumberInfoByThemeIds(userId, filterArray, UserNumberStatusEnum.PURCHASED, userMaterialReq.getPage(), userMaterialReq.getSize());
+        Assert.isTrue(!filterArray.isEmpty(),()->new StarException("所选素材不在合成类目中"));
+        ResponsePageResult<UserNumbersVO> userNumbersVOResponsePageResult = filterArray.size() == 1 && filterArray.get(0) < 128 ?
+                userThemeService.queryUserArticleNumberInfoBySeriesIds(userId, filterArray, UserNumberStatusEnum.PURCHASED, userMaterialReq.getPage(), userMaterialReq.getSize()) :
+                userThemeService.queryUserArticleNumberInfoByThemeIds(userId, filterArray, UserNumberStatusEnum.PURCHASED, userMaterialReq.getPage(), userMaterialReq.getSize());
+
+//        ResponsePageResult<UserNumbersVO> userNumbersVOResponsePageResult = userThemeService.queryUserArticleNumberInfoByThemeIds(userId, filterArray,
+//                UserNumberStatusEnum.PURCHASED, userMaterialReq.getPage(), userMaterialReq.getSize());
         //  Map<Long, List<UserNumbersVO>> collect = userHaveNumbers.stream().collect(Collectors.groupingBy(UserNumbersVO::getThemeId));
         return userNumbersVOResponsePageResult;
     }
@@ -124,13 +133,17 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
          Assert.isTrue(composeRes.getComposeStatus().equals(ComposeStatusEnum.Running.getCode()),()->new StarException("合成不在开启状态"));
 
          //true可执行
-        boolean canCompose = redisUtil.sHasKey(String.format(RedisKey.GOLD_COMPOSE.getKey(),composeManageReq.getComposeId()), composeManageReq.getUserId());
-        //true 不可执行
-        boolean composeSuccess = redisUtil.sHasKey(String.format(RedisKey.GOLD_COMPOSE_SUCCESS.getKey(),composeManageReq.getComposeId()), composeManageReq.getUserId());
-
-        if (canCompose == false|| composeSuccess){
+        boolean openCompose = redisUtil.hasKey(String.format(RedisKey.OPEN_COMPOSE.getKey(), composeManageReq.getComposeId()));
+        if (!openCompose){
             throw new StarException(StarError.COMPOSE_PRIZE_EXIST);
         }
+        //        boolean canCompose = redisUtil.sHasKey(String.format(RedisKey.GOLD_COMPOSE.getKey(),composeManageReq.getComposeId()), composeManageReq.getUserId());
+//        //true 不可执行
+//        boolean composeSuccess = redisUtil.sHasKey(String.format(RedisKey.GOLD_COMPOSE_SUCCESS.getKey(),composeManageReq.getComposeId()), composeManageReq.getUserId());
+//
+//        if (canCompose == false|| composeSuccess){
+//            throw new StarException(StarError.COMPOSE_PRIZE_EXIST);
+//        }
 
         ComposeCategoryRes composeCategoryRes = composeService.composeCategoryByCategoryId(composeManageReq.getCategoryId());
         //积分判断操作
@@ -140,12 +153,18 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
             iScopeCore.userScopeManageSub(subScoreDTO);
         }
         List<ComposeMaterialDTO> composeMaterials = JSONUtil.toList(composeCategoryRes.getComposeMaterial(), ComposeMaterialDTO.class);
-        //查询用户是否持有numbers
-        List<ComposeUserArticleNumberDTO> composeUserNumberArrays = composeManageService.queryUserArticleNumberInfoByNumberIds(composeManageReq.getUserId(), composeManageReq.getSourceIds(), UserNumberStatusEnum.PURCHASED);
+
+        List<ComposeUserArticleNumberDTO> composeUserNumberArrays = composeMaterials.size() == 1 && composeMaterials.get(0).getThemeId() < 128 ?
+                composeManageService.queryUserArticleNumberInfoBySeriesNumberIds(composeManageReq.getUserId(),composeManageReq.getSourceIds(),UserNumberStatusEnum.PURCHASED)
+                :composeManageService.queryUserArticleNumberInfoByNumberIds(composeManageReq.getUserId(), composeManageReq.getSourceIds(), UserNumberStatusEnum.PURCHASED);
+
+
         Assert.isTrue(composeManageReq.getSourceIds().size() == composeUserNumberArrays.size(), () -> new StarException("不能操作非本人物品"));
+        // TODO: 2022/9/8 优化
         Map<Long, List<ComposeUserArticleNumberDTO>> collect = composeUserNumberArrays.stream().collect(Collectors.groupingBy(ComposeUserArticleNumberDTO::getThemeId));
         Map<Long, ComposeMaterialDTO> composeMaterialDTOMap = composeMaterials.stream().collect(Collectors.toMap(ComposeMaterialDTO::getThemeId, Function.identity()));
         checkThemeCounts(collect, composeMaterialDTOMap);
+
         //抽取  合成物品  抽奖
         ComposeDrawLotteryStrategy composeDrawLotteryStrategy = applicationContext
                 .getBean(ComposeDrawLotteryStrategyEnums
@@ -164,28 +183,37 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
         List<Long> userNumberIds = composeUserNumberArrays.stream().map(item -> item.getNumberId()).collect(Collectors.toList());
 
         List<NumberCirculationAddDTO> numberCirculations = getNumberCirculations(composeUserNumberArrays, composeManageReq);
-//        //执行商品合成操作
-        PrizeRes prizeRes = composePrizeStrategy.composePrize(composeManageReq, composePrizeDTO);
-        //修改藏品的状态
-        Boolean modifyStatus = composeManageService.composeModifyUserNumberStatus(composeManageReq.getUserId(), userNumberIds, UserNumberStatusEnum.PURCHASED, UserNumberStatusEnum.DESTROY, NumberStatusEnum.SOLD, NumberStatusEnum.DESTROY, Boolean.TRUE);
-        //物品流转状态
-        Boolean circulationStatus = numberService.saveBatchNumberCirculationRecord(numberCirculations);
-        // 记录保存
-        Boolean recordStatus = composeManageService.saveComposeRecord(getComposeRecordDTO(composeManageReq, composeCategoryRes, composeUserNumberArrays, prizeRes));
+
+//        String lockKey = String.format(RedisKey.USER_COMPOSE_ING.getKey(),composeManageReq.getUserId());
+//        Boolean lock = redisLockUtils.lock(lockKey,RedisKey.USER_COMPOSE_ING.getTimeUnit().toSeconds(RedisKey.USER_COMPOSE_ING.getTime()));
+//        Assert.isTrue(lock, () -> new StarException(StarError.SYSTEM_ERROR,"正在合成中，请稍等"));
+//        try{
+            //        //执行商品合成操作
+            PrizeRes prizeRes = composePrizeStrategy.composePrize(composeManageReq, composePrizeDTO);
+            //修改藏品的状态
+            Boolean modifyStatus = composeManageService.composeModifyUserNumberStatus(composeManageReq.getUserId(), userNumberIds, UserNumberStatusEnum.PURCHASED, UserNumberStatusEnum.DESTROY, NumberStatusEnum.SOLD, NumberStatusEnum.DESTROY, Boolean.TRUE);
+            //物品流转状态
+            Boolean circulationStatus = numberService.saveBatchNumberCirculationRecord(numberCirculations);
+            // 记录保存
+            Boolean recordStatus = composeManageService.saveComposeRecord(getComposeRecordDTO(composeManageReq, composeCategoryRes, composeUserNumberArrays, prizeRes));
 //        //封装返回数据
-  log.info("prize:{}",prizeRes);
-  log.info("modifyStatus:{}",modifyStatus);
-  log.info("recordStatus:{}",recordStatus);
-  log.info("circulationStatus:{}",circulationStatus);
-        Assert.isTrue(modifyStatus && circulationStatus && recordStatus, () -> new StarException("合成失败"));
-        ComposeManageRes composeManageRes = new ComposeManageRes();
-        composeManageRes.setIsSuccess(Boolean.TRUE);
-        composeManageRes.setPrizeRes(prizeRes);
+            log.info("prize:{}",prizeRes);
+            log.info("modifyStatus:{}",modifyStatus);
+            log.info("recordStatus:{}",recordStatus);
+            log.info("circulationStatus:{}",circulationStatus);
+            Assert.isTrue(modifyStatus && circulationStatus && recordStatus, () -> new StarException("合成失败"));
+            ComposeManageRes composeManageRes = new ComposeManageRes();
+            composeManageRes.setIsSuccess(Boolean.TRUE);
+            composeManageRes.setPrizeRes(prizeRes);
 
-        redisUtil.sSet(String.format(RedisKey.GOLD_COMPOSE_SUCCESS.getKey(),composeManageReq.getComposeId()),composeManageReq.getUserId());
+//            redisUtil.sSet(String.format(RedisKey.GOLD_COMPOSE_SUCCESS.getKey(),composeManageReq.getComposeId()),composeManageReq.getUserId());
 
-        //先默认销毁
-        return composeManageRes;
+            //先默认销毁
+            return composeManageRes;
+//        }finally {
+//            redisLockUtils.unlock(lockKey);
+//        }
+
     }
 
     private ComposeRecordDTO getComposeRecordDTO(ComposeManageReq composeManageReq, ComposeCategoryRes composeCategoryRes, List<ComposeUserArticleNumberDTO> composeUserNumberArrays, PrizeRes prizeRes) {

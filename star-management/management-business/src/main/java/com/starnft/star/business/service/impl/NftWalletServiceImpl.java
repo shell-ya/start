@@ -2,20 +2,15 @@ package com.starnft.star.business.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.google.common.base.Strings;
-import com.starnft.star.business.domain.NftWallet;
-import com.starnft.star.business.domain.StarNftWalletLog;
-import com.starnft.star.business.domain.StarNftWalletRecord;
-import com.starnft.star.business.domain.UserStrategyExport;
+import com.starnft.star.business.domain.*;
 import com.starnft.star.business.domain.dto.WalletInfoReq;
 import com.starnft.star.business.domain.dto.WalletLogReq;
 import com.starnft.star.business.domain.dto.WalletRecordReq;
+import com.starnft.star.business.domain.po.UpdateUserThemeVo;
 import com.starnft.star.business.domain.vo.RechargeVO;
 import com.starnft.star.business.domain.vo.WalletRecordVO;
 import com.starnft.star.business.domain.vo.WalletVO;
-import com.starnft.star.business.mapper.IUserStrategyExportDao;
-import com.starnft.star.business.mapper.NftWalletMapper;
-import com.starnft.star.business.mapper.StarNftWalletLogMapper;
-import com.starnft.star.business.mapper.StarNftWalletRecordMapper;
+import com.starnft.star.business.mapper.*;
 import com.starnft.star.business.service.INftWalletService;
 import com.starnft.star.common.Result;
 import com.starnft.star.common.ResultCode;
@@ -32,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.web3j.abi.datatypes.Int;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -64,6 +60,12 @@ public class NftWalletServiceImpl implements INftWalletService
     private StarNftWalletLogMapper walletLogMapper;
     @Resource
     private IUserStrategyExportDao userStrategyExportDao;
+    @Resource
+    private StarNftOrderMapper orderMapper;
+    @Resource
+    private StarNftUserThemeMapper userThemeMapper;
+    @Resource
+    private StarNftThemeNumberMapper themeNumberMapper;
     /**
      * 查询钱包
      *
@@ -330,6 +332,22 @@ public class NftWalletServiceImpl implements INftWalletService
                 .build();
     }
 
+    private WalletRecordReq walletRecordInit(StarNftWalletRecord record) {
+
+        return WalletRecordReq.builder()
+                .recordSn(StarConstants.OrderPrefix.RefundSN.getPrefix().concat(String.valueOf(SnowflakeWorker.generateId())))
+                .from_uid(record.getToUid()) // 充值为0
+                .to_uid(record.getFromUid())
+                .payChannel(StarConstants.PayChannel.Balance.name())
+                .tsType(StarConstants.Transaction_Type.Refund.getCode())
+                .tsMoney(record.getTsMoney())
+                .tsCost(record.getTsCost())
+                .tsFee(BigDecimal.ZERO)
+                .payTime(new Date())
+                .payStatus(StarConstants.Pay_Status.PAY_SUCCESS.name())
+                .build();
+    }
+
     @Transactional
     public boolean createWalletRecord(WalletRecordReq walletRecordReq,BigDecimal currMoney) {
         StarNftWalletRecord starNftWalletRecord = initWalletRecord(walletRecordReq,currMoney);
@@ -371,6 +389,177 @@ public class NftWalletServiceImpl implements INftWalletService
         if (CollectionUtil.isEmpty(starNftWalletRecords)) {
             return null;
         }
+
+        return starNftWalletRecords.get(0);
+    }
+
+
+
+    @Override
+    public Boolean refundOrder(String orderSn) {
+        //判断是市场订单还是首发订单
+        //市场订单 付款账户退回余额 收款账户减去余额 藏品返回收款账户 新赠一条交易记录 两条变化记录
+        //首发订单 付款账户退回余额 新增一条交易记录、变化记录 回收藏品
+        //生成退款记录
+        StarNftWalletRecord record = queryRecord(orderSn);
+        //确定藏品id
+        StarNftOrder order = queryOrder(orderSn);
+        WalletRecordReq walletRecordReq = this.walletRecordInit(record);
+
+        Long toUid = record.getToUid();
+        Long fromUid = record.getFromUid();
+        //from +钱 to -钱 from藏品转移to
+        NftWallet fromWallet = nftWalletMapper.selectNftWalletByUid(fromUid);
+        NftWallet toWallet = nftWalletMapper.selectNftWalletByUid(toUid);
+
+        //充值后当前金额
+        BigDecimal fromCurr = fromWallet.getBalance().add(record.getTsMoney().abs());
+        //增加总收入金额
+        BigDecimal fromIncome = fromWallet.getWalletIncome().add(record.getTsMoney().abs());
+
+        if(toUid != 0L){
+
+            BigDecimal toCurr = toWallet.getBalance().subtract(record.getTsMoney().abs().subtract(record.getTsFee().abs()).abs());
+            BigDecimal toOutCome = toWallet.getWalletOutcome().add(record.getTsMoney().abs().subtract(record.getTsFee().abs()).abs());
+            String toKey =   String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
+                    toUid);
+            String fromKey =  String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
+                    fromUid);
+
+            Boolean toLock = redisLockUtils.lock(toKey, RedisKey.REDIS_TRANSACTION_ING.getTime());
+            Boolean fromLock = redisLockUtils.lock(fromKey,RedisKey.REDIS_TRANSACTION_ING.getTime());
+            try {
+                Assert.isTrue(toLock, () -> new StarException(StarError.IS_TRANSACTION));
+                Assert.isTrue(fromLock, () -> new StarException(StarError.IS_TRANSACTION));
+
+                Boolean isSuccess = template.execute(status -> {
+
+                    //记录钱包交易记录
+                    boolean result = this.rechargeRecordGenerate(walletRecordReq, toCurr);
+                    //记录余额变动记录
+                    boolean fromLogWrite = this.createWalletLog(WalletLogReq.builder().walletId(fromWallet.getwId())
+                            .userId(fromWallet.getUid()).offset(walletRecordReq.getTsMoney()).currentMoney(fromCurr).payChannel(walletRecordReq.getPayChannel())
+                            .orderNo(walletRecordReq.getRecordSn()).build());
+
+                    //修改余额
+                    boolean fromBalanceModify = this.modifyWalletBalance(WalletVO.builder().uid(fromUid)
+                            .balance(fromCurr).wallet_income(fromIncome).build());
+
+                    //记录余额变动记录
+                    boolean toLogWrite = this.createWalletLog(WalletLogReq.builder().walletId(toWallet.getwId())
+                            .userId(toWallet.getUid()).offset(record.getTsMoney().subtract(record.getTsFee()).negate()).currentMoney(toCurr).payChannel(walletRecordReq.getPayChannel())
+                            .orderNo(walletRecordReq.getRecordSn()).build());
+
+                    //修改余额
+                    boolean toBalanceModify = this.modifyWalletBalance(WalletVO.builder().uid(toUid)
+                            .balance(toCurr).wallet_outcome(toOutCome).build());
+
+                    //退回藏品 更新number表所有人为原所有人 更新userTheme表原所有人状态 删除购买人数据
+
+                    Boolean modifyNumber = this.modifyThemeOwner(order.getSeriesThemeId(), toUid, fromUid);
+                    boolean successResult = fromLogWrite && fromBalanceModify && result && toLogWrite && toBalanceModify && modifyNumber;
+                    if (!successResult) throw  new StarException(StarError.SYSTEM_ERROR);
+                    return successResult;
+                });
+                return isSuccess;
+            }catch (Exception e){
+                throw new RuntimeException("充值提现发生异常",e);
+            }finally {
+                redisLockUtils.unlock(toKey);
+                redisLockUtils.unlock(fromKey);
+            }
+        }else{
+            //退款 收回
+            String fromKey =  String.format(RedisKey.REDIS_TRANSACTION_ING.getKey(),
+                    fromUid);
+            Boolean fromLock = redisLockUtils.lock(fromKey,RedisKey.REDIS_TRANSACTION_ING.getTime());
+
+            try {
+                Assert.isTrue(fromLock, () -> new StarException(StarError.IS_TRANSACTION));
+
+                Boolean isSuccess = template.execute(status -> {
+
+                    //记录钱包交易记录
+                    boolean result = this.rechargeRecordGenerate(walletRecordReq, fromCurr);
+                    //记录余额变动记录
+                    boolean fromLogWrite = this.createWalletLog(WalletLogReq.builder().walletId(fromWallet.getwId())
+                            .userId(fromWallet.getUid()).offset(walletRecordReq.getTsMoney()).currentMoney(fromCurr).payChannel(walletRecordReq.getPayChannel())
+                            .orderNo(walletRecordReq.getRecordSn()).build());
+
+                    //修改余额
+                    boolean fromBalanceModify = this.modifyWalletBalance(WalletVO.builder().uid(fromUid)
+                            .balance(fromCurr).wallet_income(fromIncome).build());
+
+                    //记录余额变动记录
+//                    boolean toLogWrite = this.createWalletLog(WalletLogReq.builder().walletId(toWallet.getwId())
+//                            .userId(toWallet.getUid()).offset(record.getTsMoney().subtract(record.getTsFee()).negate()).currentMoney(fromCurr).payChannel(walletRecordReq.getPayChannel())
+//                            .orderNo(walletRecordReq.getRecordSn()).build());
+
+                    //修改余额
+//                    boolean toBalanceModify = this.modifyWalletBalance(WalletVO.builder().uid(toUid)
+//                            .balance(toCurr).wallet_outcome(toOutCome).build());
+
+                    //退回藏品 更新number表所有人为原所有人 更新userTheme表原所有人状态 删除购买人数据
+
+                    Boolean modifyNumber = this.killModifyThemeOwner(order.getSeriesThemeId(), toUid, fromUid);
+                    boolean successResult = fromLogWrite && fromBalanceModify && result && modifyNumber;
+                    if (!successResult) throw  new StarException(StarError.SYSTEM_ERROR);
+                    return successResult;
+                });
+                return isSuccess;
+            }catch (Exception e){
+                throw new RuntimeException("充值提现发生异常",e);
+            }finally {
+                redisLockUtils.unlock(fromKey);
+            }
+        }
+
+
+    }
+    private Boolean modifyThemeOwner(Long seriesThemeId, Long toId, Long fromId){
+        Boolean modify = this.modifyNumberOwner(seriesThemeId, toId);
+        Boolean toResult = this.modifyUserTheme(seriesThemeId, fromId, 0, 3,1);
+        Boolean fromResult = this.modifyUserTheme(seriesThemeId, toId, 2,0, 0);
+        return modify && toResult && fromResult;
+    }
+
+    private Boolean killModifyThemeOwner(Long seriesThemeId, Long toId, Long fromId){
+        Boolean modify = this.modifyNumberOwner(seriesThemeId, toId);
+        Boolean toResult = this.modifyUserTheme(seriesThemeId, fromId, 0, 3,1);
+//        Boolean fromResult = this.modifyUserTheme(seriesThemeId, toId, 2,0, 0);
+        return modify && toResult;
+    }
+
+    private Boolean modifyUserTheme(Long seriesThemeId,Long uid,Integer beforeStatus,Integer status,Integer isDelete){
+        UpdateUserThemeVo userTheme = new UpdateUserThemeVo();
+        userTheme.setUserId(uid);
+        userTheme.setSeriesThemeId(seriesThemeId);
+        userTheme.setStatus(status);
+        userTheme.setBeforeStatus(beforeStatus);
+        userTheme.setIsDelete(isDelete);
+        return userThemeMapper.updateStarNftUserThemeStatus(userTheme) == 1;
+    }
+
+    private Boolean modifyNumberOwner(Long seriesThemeId, Long uid){
+        StarNftThemeNumber number = new StarNftThemeNumber();
+        number.setOwnerBy(uid.toString());
+        number.setId(seriesThemeId);
+        number.setStatus(1);
+        return themeNumberMapper.updateStarNftThemeNumber(number) == 1;
+    }
+
+    private StarNftOrder queryOrder(String orderSn){
+        List<StarNftOrder> starNftOrders = orderMapper.queryStarNftOrder(orderSn);
+
+        if (starNftOrders.size() > 1) throw new StarException(StarError.SYSTEM_ERROR);
+
+        return starNftOrders.get(0);
+    }
+
+    private StarNftWalletRecord queryRecord(String recordSn){
+        List<StarNftWalletRecord> starNftWalletRecords = walletRecordMapper.queryStarNftWalletRecord(recordSn);
+
+        if (starNftWalletRecords.size() > 1) throw new StarException(StarError.SYSTEM_ERROR);
 
         return starNftWalletRecords.get(0);
     }

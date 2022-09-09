@@ -37,10 +37,10 @@ public class ThemeComposePrizeStrategy implements ComposePrizeStrategy {
         NumberQueryDTO numberQueryDTO = new NumberQueryDTO();
         numberQueryDTO.setThemeId(Long.parseLong(composePrizeDTO.getPrizeStamp()));
         List<NumberVO> themeNumberArrays = iNumberService.getNumberListByThemeInfoId(numberQueryDTO);
-        Assert.isTrue(!themeNumberArrays.isEmpty(), () -> new StarException("合成人数过多，请稍后再试～"));
+        Assert.isTrue(!themeNumberArrays.isEmpty(), () -> new StarException("合成奖池已空～"));
         int randomInt = RandomUtil.randomInt(0, themeNumberArrays.size());
         NumberVO themeNumberVo = themeNumberArrays.get(randomInt);
-        Boolean lock = redisLockUtils.lock(String.format(RedisKey.COMPOSE_NUMBER_LOCK.getKey(), themeNumberVo.getId()), RedisKey.COMPOSE_NUMBER_LOCK.getTime());
+        Boolean lock = redisLockUtils.lock(String.format(RedisKey.COMPOSE_NUMBER_LOCK.getKey(), themeNumberVo.getId()), RedisKey.COMPOSE_NUMBER_LOCK.getTimeUnit().toSeconds(RedisKey.COMPOSE_NUMBER_LOCK.getTime()));
         Assert.isTrue(lock, () -> new StarException("合成人数过多，请稍后再试～"));
         //物品派发
         iNumberService.modifyNumberOwnerBy(themeNumberVo.getId(),composeManageReq.getUserId(), NumberStatusEnum.SOLD.getCode());

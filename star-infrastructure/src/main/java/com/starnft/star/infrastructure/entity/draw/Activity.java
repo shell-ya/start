@@ -66,6 +66,11 @@ public class Activity {
     private Integer state;
 
     /**
+     * 消耗品 1 盲盒 2 元石
+     */
+    private Integer consumables;
+
+    /**
      * 创建人
      */
     private String creator;
@@ -166,6 +171,14 @@ public class Activity {
 
     public void setState(Integer state) {
         this.state = state;
+    }
+
+    public Integer getConsumables() {
+        return consumables;
+    }
+
+    public void setConsumables(Integer consumables) {
+        this.consumables = consumables;
     }
 
     public String getCreator() {

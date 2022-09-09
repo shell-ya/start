@@ -179,4 +179,43 @@
         where series_theme_id = #{seriesThemeId}
         and is_delete = 0
     </select>
+
+
+    <select id="queryUserArticleNumberInfoBySeriesIds"
+            resultType="com.starnft.star.domain.article.model.vo.UserNumbersVO">
+        SELECT t.theme_name           AS theme_name,
+        n.id                   AS number_id,
+        n.theme_number         AS theme_number,
+        u.series_id            AS theme_id,
+        u.pre_tax_price        AS price,
+        t.theme_pic            AS theme_images
+        FROM star_nft_user_theme u
+        LEFT JOIN star_nft_theme_info t ON u.series_theme_info_id = t.id
+        LEFT JOIN star_nft_theme_number n ON u.series_theme_id = n.id
+        WHERE u.user_id = #{uId}
+        AND u.`status` = #{statusEnum.code}
+        AND u.is_delete = 0
+        <foreach collection="seriesIds" item="id" open="AND u.series_id  in(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="queryComposeUserArticleNumberInfoBySeriesNumberIds"
+            resultType="com.starnft.star.domain.compose.model.dto.ComposeUserArticleNumberDTO">
+        SELECT series.series_name             AS theme_name,
+        number.id                    AS number_id,
+        number.theme_number          AS theme_number,
+        u_theme.series_id            AS theme_id,
+        u_theme.pre_tax_price        AS price,
+        series.series_images              AS theme_images
+        FROM star_nft_user_theme u_theme
+        LEFT JOIN star_nft_series series ON u_theme.series_id = series.id
+        LEFT JOIN star_nft_theme_number number ON u_theme.series_theme_id = number.id
+        WHERE u_theme.user_id = #{userId}
+        AND u_theme.`status` = #{statusEnum.code}
+        AND u_theme.is_delete = 0
+        <foreach collection="sourceIds" item="id" open="AND u_theme.series_theme_id  in(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
 </mapper>

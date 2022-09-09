@@ -54,4 +54,13 @@ public class NftWalletController extends BaseController
         return toAjax(nftWalletService.walletRecharge(rechargeVO));
     }
 
+    @PreAuthorize("@ss.hasPermi('business:wallet:update')")
+    @Log(title = "钱包", businessType = BusinessType.UPDATE)
+    @PostMapping("/refund")
+    public AjaxResult  refund(String orderSn){
+        return toAjax(nftWalletService.refundOrder(orderSn));
+    }
+
+
+
 }
