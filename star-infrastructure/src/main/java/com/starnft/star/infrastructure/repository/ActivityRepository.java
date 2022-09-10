@@ -3,6 +3,7 @@ package com.starnft.star.infrastructure.repository;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
@@ -23,6 +24,7 @@ import com.starnft.star.infrastructure.entity.draw.UserStrategyExport;
 import com.starnft.star.infrastructure.mapper.activity.GoodsHavingTimeRecordMapper;
 import com.starnft.star.infrastructure.mapper.activity.StarScheduleSeckillMapper;
 import com.starnft.star.infrastructure.mapper.draw.*;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -208,6 +210,21 @@ public class ActivityRepository implements IActivityRepository {
             product = (Integer) redisUtil.lGetIndex(buffKey, 0);
         }
         return new DrawBuffTimesRes(awardId, times.intValue(), product);
+    }
+
+    @Override
+    public List<LuckyGuysVO> luckyGuys(Long strategyId) {
+        List<UserStrategyExport> userStrategyExports = userStrategyExportDao.luckyGuys(strategyId);
+        ArrayList<@Nullable LuckyGuysVO> luckyGuysVOS = Lists.newArrayList();
+        for (UserStrategyExport userStrategyExport : userStrategyExports) {
+            LuckyGuysVO luckyGuysVO = new LuckyGuysVO();
+            luckyGuysVO.setLuckyTime(userStrategyExport.getCreateTime());
+            luckyGuysVO.setLuckyUid(userStrategyExport.getuId());
+            luckyGuysVO.setAwardId(userStrategyExport.getAwardId());
+            luckyGuysVO.setAwardName(userStrategyExport.getAwardName());
+            luckyGuysVOS.add(luckyGuysVO);
+        }
+        return luckyGuysVOS;
     }
 
     @Override

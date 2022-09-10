@@ -80,4 +80,6 @@ public interface IActivityRepository {
 
     DrawBuffTimesRes queryBuffTimes(String uid, String awardId);
 
+    List<LuckyGuysVO> luckyGuys(Long strategyId);
+
 }

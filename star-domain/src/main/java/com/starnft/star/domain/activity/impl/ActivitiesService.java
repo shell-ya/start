@@ -5,6 +5,7 @@ import com.starnft.star.domain.activity.IActivitiesService;
 import com.starnft.star.domain.activity.model.vo.ActivityVO;
 import com.starnft.star.domain.activity.model.vo.DrawBuffTimesRes;
 import com.starnft.star.domain.activity.model.vo.GoodsHavingTimesVO;
+import com.starnft.star.domain.activity.model.vo.LuckyGuysVO;
 import com.starnft.star.domain.activity.repository.IActivityRepository;
 import com.starnft.star.domain.draw.model.vo.DrawAwardExportVO;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
@@ -33,8 +34,8 @@ public class ActivitiesService implements IActivitiesService {
     }
 
     @Override
-    public boolean delErrorExport(String uId,String orderId) {
-        return activityRepository.deleteExport(uId,orderId);
+    public boolean delErrorExport(String uId, String orderId) {
+        return activityRepository.deleteExport(uId, orderId);
     }
 
     @Override
@@ -50,6 +51,11 @@ public class ActivitiesService implements IActivitiesService {
     @Override
     public DrawBuffTimesRes queryBuffTimes(String uid, String awardId) {
         return activityRepository.queryBuffTimes(uid, awardId);
+    }
+
+    @Override
+    public List<LuckyGuysVO> luckyGuys() {
+        return activityRepository.luckyGuys(10000003L);
     }
 
     public List<DrawAwardExportVO> queryUserExportList(long id) {

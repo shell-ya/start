@@ -11,6 +11,7 @@ import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.activity.IActivitiesService;
 import com.starnft.star.domain.activity.model.vo.DrawBuffTimesRes;
+import com.starnft.star.domain.activity.model.vo.LuckyGuysVO;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.draw.model.req.DrawAwardExportsReq;
 import com.starnft.star.domain.draw.model.vo.DrawAwardExportVO;
@@ -23,6 +24,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "抽奖「DrawController」")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -91,6 +94,13 @@ public class DrawController {
     public RopResponse<DrawBuffTimesRes> buffTimes(@PathVariable String awardId) {
         String uid = String.valueOf(UserContext.getUserId().getUserId());
         return RopResponse.success(activitiesService.queryBuffTimes(uid, awardId));
+    }
+
+    @ApiOperation("幸运用户列表")
+    @PostMapping("/lucky/guys")
+    @TokenIgnore
+    public RopResponse<List<LuckyGuysVO>> luckyguys() {
+        return RopResponse.success(activitiesService.luckyGuys());
     }
 
 }
