@@ -4,6 +4,7 @@ import com.starnft.star.application.process.draw.req.ConsumablesVerifyReq;
 import com.starnft.star.application.process.draw.vo.DrawConsumeVO;
 import com.starnft.star.application.process.scope.IScopeCore;
 import com.starnft.star.application.process.scope.model.ScoreDTO;
+import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.utils.Assert;
 import com.starnft.star.domain.scope.model.req.UserScopeReq;
@@ -37,7 +38,7 @@ public class ScopeConsumeExec implements DrawConsumeExecutor {
     public void doVerify(ConsumablesVerifyReq req) {
         UserScopeReq userScopeReq = new UserScopeReq(req.getUid(), 0);
         UserScopeRes userScopeRes = iUserScopeService.getUserScopeByUserId(userScopeReq);
-        Assert.isTrue(userScopeRes.getScope().compareTo(new BigDecimal(1000)) >= 0, () -> new StarException("积分不足"));
+        Assert.isTrue(userScopeRes.getScope().compareTo(new BigDecimal(1000)) >= 0, () -> new StarException(StarError.INVALID_DRAW_REQUEST, "元石不足"));
     }
 
     private ScoreDTO buildScopeReq(DrawConsumeVO drawConsumeVO) {
