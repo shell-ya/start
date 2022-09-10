@@ -1,8 +1,9 @@
 package com.starnft.star.domain.activity;
 
+import com.alicp.jetcache.anno.Cached;
 import com.starnft.star.domain.activity.model.vo.ActivityVO;
-import com.starnft.star.domain.activity.model.vo.GoodsHavingTimesVO;
 import com.starnft.star.domain.activity.model.vo.DrawBuffTimesRes;
+import com.starnft.star.domain.activity.model.vo.GoodsHavingTimesVO;
 import com.starnft.star.domain.activity.model.vo.LuckyGuysVO;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 
@@ -27,6 +28,6 @@ public interface IActivitiesService {
 
     DrawBuffTimesRes queryBuffTimes(String uid , String awardId);
 
-
+    @Cached(name="IActivitiesService.luckyGuys", expire = 300)
     List<LuckyGuysVO> luckyGuys();
 }
