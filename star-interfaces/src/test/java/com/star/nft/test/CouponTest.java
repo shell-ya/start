@@ -24,10 +24,30 @@ public class CouponTest {
     @Test
     public void testAddCoupon(){
         CouponHistoryAdd add = new CouponHistoryAdd();
-        add.setCouponId("DR999273003453906944");
+        add.setCouponId("CK879278014611491840");
         add.setGetType(CouponGetType.ACTIVITY.getType());
         add.setUserId(657119310l);
         couponCore.addCouponHistory(add);
+
+        CouponHistoryAdd add2 = new CouponHistoryAdd();
+        add2.setCouponId("CK879278014611491840");
+        add2.setGetType(CouponGetType.ACTIVITY.getType());
+        add2.setUserId(657119310l);
+        couponCore.addCouponHistory(add2);
+
+
+        CouponHistoryAdd add3 = new CouponHistoryAdd();
+        add3.setCouponId("CK879278014611491840");
+        add3.setGetType(CouponGetType.ACTIVITY.getType());
+        add3.setUserId(657119310l);
+        couponCore.addCouponHistory(add3);
+
+        CouponHistoryAdd add4 = new CouponHistoryAdd();
+        add4.setCouponId("CK879278014611491840");
+        add4.setGetType(CouponGetType.ACTIVITY.getType());
+        add4.setUserId(657119310l);
+        couponCore.addCouponHistory(add4);
+
     }
 
 }

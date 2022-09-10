@@ -30,6 +30,11 @@ public enum CouponType {
      */
     PREFERENTIAL_AMOUNT(4, "优惠金额", "PA"),
 
+    /**
+     * 指定藏品空投
+     */
+    COLLECTION_KO(5, "藏品空投", "CK"),
+
     ;
 
     /**

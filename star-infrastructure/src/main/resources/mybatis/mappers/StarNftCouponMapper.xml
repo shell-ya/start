@@ -16,6 +16,8 @@
         <result column="series_name" property="seriesName"/>
         <result column="theme_id" property="themeId"/>
         <result column="theme_name" property="themeName"/>
+        <result column="start_time" property="startAt"/>
+        <result column="end_time" property="endAt"/>
     </resultMap>
 
     <select id="queryAllByHistory" resultMap="CouponHistoryResMap">

@@ -51,7 +51,7 @@ public class CouponHistoryRes {
     /**
      * 优惠卷类型
      */
-    @ApiModelProperty("优惠卷类型：1-优先购 2-手续费抵扣 3-打折 4-优惠金额")
+    @ApiModelProperty("优惠卷类型：1-优先购 2-手续费抵扣 3-打折 4-优惠金额 5-藏品空投")
     private Integer type;
 
     /**
