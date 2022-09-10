@@ -109,4 +109,10 @@ public class CouponHistoryRes {
      */
     @ApiModelProperty("使用类型 0-全场通用 1-指定系列 2-指定主题")
     private Integer useType;
+
+    /**
+     * 同一类型卡劵数量
+     */
+    @ApiModelProperty("数量")
+    private Long count;
 }
