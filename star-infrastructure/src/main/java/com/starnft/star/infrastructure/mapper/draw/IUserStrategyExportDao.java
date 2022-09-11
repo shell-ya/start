@@ -25,7 +25,7 @@ public interface IUserStrategyExportDao {
      * @param uId 用户ID
      * @return 用户策略
      */
-    List<UserStrategyExport> queryUserStrategyExportByUId(String uId);
+    List<UserStrategyExport> queryUserStrategyExportByUId(String uId, String activityId);
 
     /**
      * 更新发奖状态

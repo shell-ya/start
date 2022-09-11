@@ -135,7 +135,7 @@ public class ActivityRepository implements IActivityRepository {
     @Override
     public ResponsePageResult<DrawAwardExportVO> queryUserStrategyExportByUId(DrawAwardExportsReq exportVO) {
         PageInfo<UserStrategyExport> drawAwardExportVOPageInfo = PageHelper.startPage(exportVO.getPage(), exportVO.getSize())
-                .doSelectPageInfo(() -> userStrategyExportDao.queryUserStrategyExportByUId(exportVO.getUId()));
+                .doSelectPageInfo(() -> userStrategyExportDao.queryUserStrategyExportByUId(exportVO.getUId(),exportVO.getActivityId()));
 
         return new ResponsePageResult<DrawAwardExportVO>(drawAwardExportVOPageInfo.getList()
                 .stream()

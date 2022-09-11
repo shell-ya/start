@@ -31,7 +31,7 @@
                 #{awardName}, #{awardContent}, #{uuid}, #{mqState}, now(), now())
     </insert>
 
-    <select id="queryUserStrategyExportByUId" parameterType="java.lang.String" resultMap="userStrategyExportMap">
+    <select id="queryUserStrategyExportByUId" resultMap="userStrategyExportMap">
         SELECT id,
                u_id,
                activity_id,
@@ -51,6 +51,7 @@
                update_time
         FROM user_strategy_export
         WHERE u_id = #{uId}
+          and activity_id = #{activityId}
     </select>
 
     <select id="queryUserStrategyExportNum" parameterType="java.lang.String" resultMap="userStrategyExportMap">
