@@ -12,8 +12,10 @@ import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ActivitiesService implements IActivitiesService {
@@ -55,7 +57,7 @@ public class ActivitiesService implements IActivitiesService {
 
     @Override
     public List<LuckyGuysVO> luckyGuys() {
-        return activityRepository.luckyGuys(10000003L);
+        return activityRepository.luckyGuys(10000003L).stream().sorted(Comparator.comparing(LuckyGuysVO::getLuckyTime).reversed()).collect(Collectors.toList());
     }
 
     public List<DrawAwardExportVO> queryUserExportList(long id) {
