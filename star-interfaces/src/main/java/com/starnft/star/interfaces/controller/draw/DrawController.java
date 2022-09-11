@@ -73,6 +73,13 @@ public class DrawController {
         return RopResponse.success(drawExec.queryDrawRecords(req));
     }
 
+    @ApiOperation("抽奖次数")
+    @PostMapping("/draw/times")
+    public RopResponse<Integer> drawTimes(@RequestBody DrawAwardExportsReq req) {
+        req.setUId(String.valueOf(UserContext.getUserId().getUserId()));
+        return RopResponse.success(drawExec.drawTimes(req));
+    }
+
     @ApiOperation("清理异常抽奖数据")
     @PostMapping("/delDrawExport")
     @TokenIgnore

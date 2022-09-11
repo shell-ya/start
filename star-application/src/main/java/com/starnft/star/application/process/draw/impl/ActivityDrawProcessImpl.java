@@ -91,6 +91,8 @@ public class ActivityDrawProcessImpl implements IActivityDrawProcess {
             // 1. 挂售状态判断 当前物品持有性判断
             if (isBlindbox) isOnSell(req, drawActivity);
 
+            timesVerify(drawActivity.getActivityId(), req.getuId());
+
             // 2. 执行抽奖
             DrawResult drawResult = drawExec.doDrawExec(new DrawReq(req.getuId(), drawActivity.getStrategyId()));
             if (StarConstants.DrawState.FAIL.getCode().equals(drawResult.getDrawState())) {
@@ -121,6 +123,16 @@ public class ActivityDrawProcessImpl implements IActivityDrawProcess {
         } catch (RuntimeException e) {
             redisLockUtils.unlock(lockKey);
             throw new RuntimeException(e);
+        }
+    }
+
+    private void timesVerify(Long activityId, String uid) {
+        if (activityId == 20220710200000L) {
+            String key = String.format(RedisKey.ACTIVITY_JOIN_TIME.getKey(), String.valueOf(activityId));
+            Long times = redisUtil.hincr(key, uid, 1L);
+            if (times > 5) {
+                throw new StarException(StarError.INVALID_DRAW_REQUEST, "您没有剩余的抽奖次数！");
+            }
         }
     }
 

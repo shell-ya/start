@@ -251,6 +251,8 @@ public enum RedisKey {
 
     AWARD_BUFF_KEY(802, StarConstants.SERVICE_NAME.concat(".award.buff.id:%s:uid:%s"), 5L, TimeUnit.SECONDS),
 
+    ACTIVITY_JOIN_TIME(803, StarConstants.SERVICE_NAME.concat(".activity.times:%s"), -1L, TimeUnit.SECONDS),
+
     ;
 
     private Integer code;
