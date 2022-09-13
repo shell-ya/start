@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.starnft.star.infrastructure.mapper.draw.IUserStrategyExportDao">
-
     <resultMap id="userStrategyExportMap" type="com.starnft.star.infrastructure.entity.draw.UserStrategyExport">
         <id column="id" property="id"/>
         <result column="u_id" property="uId"/>
@@ -27,56 +26,136 @@
         (u_id, activity_id, order_id, strategy_id, strategy_mode,
          grant_type, grant_date, grant_state, award_id, award_type,
          award_name, award_content, uuid, mq_state, create_time, update_time)
-        VALUES
-        (#{uId},#{activityId},#{orderId},#{strategyId},#{strategyMode},
-         #{grantType},#{grantDate},#{grantState},#{awardId},#{awardType},
-         #{awardName},#{awardContent},#{uuid},#{mqState},now(),now())
+        VALUES (#{uId}, #{activityId}, #{orderId}, #{strategyId}, #{strategyMode},
+                #{grantType}, #{grantDate}, #{grantState}, #{awardId}, #{awardType},
+                #{awardName}, #{awardContent}, #{uuid}, #{mqState}, now(), now())
     </insert>
 
-    <select id="queryUserStrategyExportByUId" parameterType="java.lang.String" resultMap="userStrategyExportMap">
-        SELECT id, u_id, activity_id, order_id, strategy_id, strategy_mode,
-               grant_type, grant_date, grant_state, award_id, award_type,
-               award_name, award_content, uuid, mq_state, create_time, update_time
+    <select id="queryUserStrategyExportByUId" resultMap="userStrategyExportMap">
+        SELECT id,
+               u_id,
+               activity_id,
+               order_id,
+               strategy_id,
+               strategy_mode,
+               grant_type,
+               grant_date,
+               grant_state,
+               award_id,
+               award_type,
+               award_name,
+               award_content,
+               uuid,
+               mq_state,
+               create_time,
+               update_time
         FROM user_strategy_export
         WHERE u_id = #{uId}
+          and activity_id = #{activityId}
     </select>
 
     <select id="queryUserStrategyExportNum" parameterType="java.lang.String" resultMap="userStrategyExportMap">
-        SELECT id, u_id, activity_id, order_id, strategy_id, strategy_mode,
-               grant_type, grant_date, grant_state, award_id, award_type,
-               award_name, award_content, uuid, mq_state, create_time, update_time
+        SELECT id,
+               u_id,
+               activity_id,
+               order_id,
+               strategy_id,
+               strategy_mode,
+               grant_type,
+               grant_date,
+               grant_state,
+               award_id,
+               award_type,
+               award_name,
+               award_content,
+               uuid,
+               mq_state,
+               create_time,
+               update_time
         FROM user_strategy_export
         WHERE u_id = #{uId}
-        and create_time &lt; DATE_FORMAT( '2022-08-21 00:00:00', '%Y%m%d%H%i%s' ) ;
+          and create_time &lt; DATE_FORMAT('2022-08-21 00:00:00', '%Y%m%d%H%i%s');
     </select>
 
     <update id="updateUserAwardState" parameterType="com.starnft.star.infrastructure.entity.draw.UserStrategyExport">
-        UPDATE user_strategy_export SET grant_state = #{grantState}, grant_date = now(), update_time = now()
-        WHERE u_id = #{uId} AND order_id = #{orderId} AND award_id = #{awardId}
+        UPDATE user_strategy_export
+        SET grant_state = #{grantState},
+            grant_date  = now(),
+            update_time = now()
+        WHERE u_id = #{uId}
+          AND order_id = #{orderId}
+          AND award_id = #{awardId}
     </update>
 
     <update id="updateInvoiceMqState" parameterType="com.starnft.star.infrastructure.entity.draw.UserStrategyExport">
-        UPDATE user_strategy_export SET mq_state = #{mqState}, update_time = now()
-        WHERE u_id = #{uId} AND order_id = #{orderId}
+        UPDATE user_strategy_export
+        SET mq_state    = #{mqState},
+            update_time = now()
+        WHERE u_id = #{uId}
+          AND order_id = #{orderId}
     </update>
 
     <select id="scanInvoiceMqState" resultMap="userStrategyExportMap">
         SELECT u_id, order_id, award_id, award_type, award_name, award_content
         FROM user_strategy_export
-        WHERE mq_state = 2 OR ( mq_state = 0 AND now() - create_time > 1800000 )
+        WHERE mq_state = 2
+           OR (mq_state = 0 AND now() - create_time > 1800000)
     </select>
 
     <select id="queryUserStrategyExportList" resultMap="userStrategyExportMap">
-        SELECT id, u_id, activity_id, order_id, strategy_id, strategy_mode,
-               grant_type, grant_date, grant_state, award_id, award_type,
-               award_name, award_content, uuid, mq_state, create_time, update_time
+        SELECT id,
+               u_id,
+               activity_id,
+               order_id,
+               strategy_id,
+               strategy_mode,
+               grant_type,
+               grant_date,
+               grant_state,
+               award_id,
+               award_type,
+               award_name,
+               award_content,
+               uuid,
+               mq_state,
+               create_time,
+               update_time
         FROM user_strategy_export
         WHERE u_id = #{uId}
-          and create_time &lt; DATE_FORMAT( '2022-08-21 00:00:00', '%Y%m%d%H%i%s' ) ;
+          and create_time &lt; DATE_FORMAT('2022-08-21 00:00:00', '%Y%m%d%H%i%s');
     </select>
 
     <delete id="deleteExport">
-        UPDATE user_strategy_export SET grant_state = 2, update_time = now()
-        WHERE u_id = #{uId} AND order_id = #{orderId}
+        UPDATE user_strategy_export
+        SET grant_state = 2,
+            update_time = now()
+        WHERE u_id = #{uId}
+          AND order_id = #{orderId}
     </delete>
+
+    <select id="luckyGuys" resultMap="userStrategyExportMap">
+        SELECT id,
+               u_id,
+               activity_id,
+               order_id,
+               strategy_id,
+               strategy_mode,
+               grant_type,
+               grant_date,
+               grant_state,
+               award_id,
+               award_type,
+               award_name,
+               award_content,
+               uuid,
+               mq_state,
+               create_time,
+               update_time
+        FROM user_strategy_export
+        WHERE strategy_id = #{strategyId} AND award_id = "2017"
+           OR award_id = "2009"
+           OR award_id = "2010"
+           OR award_id = "2011"
+           OR award_id = "2012";
+    </select>
 </mapper>

@@ -1,10 +1,7 @@
 package com.starnft.star.domain.activity.repository;
 
 import com.starnft.star.common.page.ResponsePageResult;
-import com.starnft.star.domain.activity.model.vo.ActivityVO;
-import com.starnft.star.domain.activity.model.vo.DrawActivityVO;
-import com.starnft.star.domain.activity.model.vo.DrawOrderVO;
-import com.starnft.star.domain.activity.model.vo.GoodsHavingTimesVO;
+import com.starnft.star.domain.activity.model.vo.*;
 import com.starnft.star.domain.draw.model.req.DrawAwardExportsReq;
 import com.starnft.star.domain.draw.model.req.PartakeReq;
 import com.starnft.star.domain.draw.model.vo.DrawAwardExportVO;
@@ -80,5 +77,9 @@ public interface IActivityRepository {
     void delTimes(Long uid, Long themeId);
 
     Integer addTimes(Long uid, Long themeId, Integer version);
+
+    DrawBuffTimesRes queryBuffTimes(String uid, String awardId);
+
+    List<LuckyGuysVO> luckyGuys(Long strategyId);
 
 }

@@ -575,8 +575,10 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     @Override
     public PriorityTimesRes queryPriorityTimes(Long uid, Long goodsId) {
         WhiteListConfigVO whiteListConfigVO = userRepository.obtainWhiteConfig(goodsId);
+        if (whiteListConfigVO == null) {
+            return new PriorityTimesRes(String.valueOf(uid), String.valueOf(goodsId), 0);
+        }
         Integer times = userRepository.queryPriorityTimes(uid, whiteListConfigVO.getId());
-
         return new PriorityTimesRes(String.valueOf(uid), String.valueOf(goodsId), times);
     }
 

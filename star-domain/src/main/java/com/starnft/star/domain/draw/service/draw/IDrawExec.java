@@ -69,4 +69,12 @@ public interface IDrawExec {
      */
     ResponsePageResult<DrawAwardExportVO> queryDrawRecords(DrawAwardExportsReq req);
 
+    /**
+     * 查询中奖次数
+     *
+     * @param req
+     * @return
+     */
+    Integer drawTimes(DrawAwardExportsReq req);
+
 }

@@ -4,6 +4,7 @@ import cn.hutool.core.lang.Assert;
 import com.starnft.star.application.mq.IMessageSender;
 import com.starnft.star.application.mq.constant.TopicConstants;
 import com.starnft.star.application.process.draw.IActivityDrawProcess;
+import com.starnft.star.application.process.draw.req.ConsumablesVerifyReq;
 import com.starnft.star.application.process.draw.req.DrawProcessReq;
 import com.starnft.star.application.process.draw.res.DrawProcessResult;
 import com.starnft.star.application.process.draw.strategy.DrawConsumeExecutor;
@@ -20,6 +21,7 @@ import com.starnft.star.common.utils.SpringUtil;
 import com.starnft.star.domain.activity.model.vo.DrawActivityVO;
 import com.starnft.star.domain.activity.model.vo.DrawOrderVO;
 import com.starnft.star.domain.component.RedisLockUtils;
+import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.draw.model.req.DrawReq;
 import com.starnft.star.domain.draw.model.req.PartakeReq;
 import com.starnft.star.domain.draw.model.res.DrawResult;
@@ -31,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -62,8 +65,11 @@ public class ActivityDrawProcessImpl implements IActivityDrawProcess {
     @Resource
     private RedisLockUtils redisLockUtils;
 
+    @Resource
+    private RedisUtil redisUtil;
 
     @Override
+    @Transactional
     public DrawProcessResult doDrawProcess(DrawProcessReq req) {
         String lockKey = "";
         boolean isBlindbox = !StringUtils.isBlank(req.getNumberId());
@@ -81,8 +87,11 @@ public class ActivityDrawProcessImpl implements IActivityDrawProcess {
                 throw new StarException(StarError.INVALID_DRAW_REQUEST, "未在活动开启时间内！");
             }
 
+            comsumeVerify(req.getuId(), req.getNumberId(), drawActivity);
             // 1. 挂售状态判断 当前物品持有性判断
             if (isBlindbox) isOnSell(req, drawActivity);
+
+            timesVerify(drawActivity.getActivityId(), req.getuId());
 
             // 2. 执行抽奖
             DrawResult drawResult = drawExec.doDrawExec(new DrawReq(req.getuId(), drawActivity.getStrategyId()));
@@ -90,6 +99,9 @@ public class ActivityDrawProcessImpl implements IActivityDrawProcess {
                 throw new RuntimeException();
             }
             DrawAwardVO drawAwardVO = drawResult.getDrawAwardInfo();
+
+            //读取buff乘积
+            Integer product = readBuff(req.getuId(), drawResult.getDrawAwardInfo().getAwardId());
 
             // 3. 结果落库
             DrawOrderVO drawOrderVO = buildDrawOrderVO(req, drawActivity.getStrategyId(), idGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId(), drawAwardVO);
@@ -99,7 +111,7 @@ public class ActivityDrawProcessImpl implements IActivityDrawProcess {
                 throw new RuntimeException("抽奖结果落库失败！");
             }
 
-            DrawConsumeVO drawConsumeVO = new DrawConsumeVO(req.getNumberId(), drawAwardVO, drawActivity, drawOrderVO);
+            DrawConsumeVO drawConsumeVO = new DrawConsumeVO(req.getNumberId(), product, drawAwardVO, drawActivity, drawOrderVO);
             // 4. 消耗抽奖物品
             Boolean isSuccess = comsumeItem(drawConsumeVO);
             // 5. 发送MQ，触发发奖流程
@@ -111,6 +123,33 @@ public class ActivityDrawProcessImpl implements IActivityDrawProcess {
         } catch (RuntimeException e) {
             redisLockUtils.unlock(lockKey);
             throw new RuntimeException(e);
+        }
+    }
+
+    private void timesVerify(Long activityId, String uid) {
+        if (activityId == 20220710200000L) {
+            String key = String.format(RedisKey.ACTIVITY_JOIN_TIME.getKey(), String.valueOf(activityId));
+            Long times = redisUtil.hincr(key, uid, 1L);
+            if (times > 5) {
+                throw new StarException(StarError.INVALID_DRAW_REQUEST, "您没有剩余的抽奖次数！");
+            }
+        }
+    }
+
+    private Integer readBuff(String uid, String awardId) {
+        String buffKey = String.format(RedisKey.AWARD_BUFF_KEY.getKey(), awardId, uid);
+        if (!redisUtil.hasKey(buffKey)) return 1;
+        Integer times = (Integer) redisUtil.leftPop(buffKey);
+        return times > 0 ? times : 1;
+    }
+
+    private void comsumeVerify(String uid, String uniqueItemId, DrawActivityVO drawActivity) {
+        for (ActivitiesConsumeEnum value : ActivitiesConsumeEnum.values()) {
+            if (value.getCode().equals(drawActivity.getConsumables())) {
+                DrawConsumeExecutor bean = (DrawConsumeExecutor) SpringUtil.getBean(value.getBeanName());
+                assert bean != null;
+                bean.doVerify(new ConsumablesVerifyReq(drawActivity.getConsumables(), Long.parseLong(uid), uniqueItemId));
+            }
         }
     }
 

@@ -3,15 +3,14 @@ package com.starnft.star.infrastructure.repository;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
-import com.starnft.star.domain.activity.model.vo.ActivityVO;
-import com.starnft.star.domain.activity.model.vo.DrawActivityVO;
-import com.starnft.star.domain.activity.model.vo.DrawOrderVO;
-import com.starnft.star.domain.activity.model.vo.GoodsHavingTimesVO;
+import com.starnft.star.domain.activity.model.vo.*;
 import com.starnft.star.domain.activity.repository.IActivityRepository;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.draw.model.req.DrawAwardExportsReq;
@@ -25,6 +24,7 @@ import com.starnft.star.infrastructure.entity.draw.UserStrategyExport;
 import com.starnft.star.infrastructure.mapper.activity.GoodsHavingTimeRecordMapper;
 import com.starnft.star.infrastructure.mapper.activity.StarScheduleSeckillMapper;
 import com.starnft.star.infrastructure.mapper.draw.*;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -135,7 +135,7 @@ public class ActivityRepository implements IActivityRepository {
     @Override
     public ResponsePageResult<DrawAwardExportVO> queryUserStrategyExportByUId(DrawAwardExportsReq exportVO) {
         PageInfo<UserStrategyExport> drawAwardExportVOPageInfo = PageHelper.startPage(exportVO.getPage(), exportVO.getSize())
-                .doSelectPageInfo(() -> userStrategyExportDao.queryUserStrategyExportByUId(exportVO.getUId()));
+                .doSelectPageInfo(() -> userStrategyExportDao.queryUserStrategyExportByUId(exportVO.getUId(),exportVO.getActivityId()));
 
         return new ResponsePageResult<DrawAwardExportVO>(drawAwardExportVOPageInfo.getList()
                 .stream()
@@ -198,6 +198,33 @@ public class ActivityRepository implements IActivityRepository {
         int isSuccess = goodsHavingTimeRecordMapper.addCountTimes(uid, themeId, version);
         return isSuccess;
 
+    }
+
+    @Override
+    public DrawBuffTimesRes queryBuffTimes(String uid, String awardId) {
+        String buffKey = String.format(RedisKey.AWARD_BUFF_KEY.getKey(), awardId, uid);
+        Long times = 0L;
+        Integer product = null;
+        if (redisUtil.hasKey(buffKey)) {
+            times = redisUtil.lGetListSize(buffKey);
+            product = (Integer) redisUtil.lGetIndex(buffKey, 0);
+        }
+        return new DrawBuffTimesRes(awardId, times.intValue(), product);
+    }
+
+    @Override
+    public List<LuckyGuysVO> luckyGuys(Long strategyId) {
+        List<UserStrategyExport> userStrategyExports = userStrategyExportDao.luckyGuys(strategyId);
+        ArrayList<@Nullable LuckyGuysVO> luckyGuysVOS = Lists.newArrayList();
+        for (UserStrategyExport userStrategyExport : userStrategyExports) {
+            LuckyGuysVO luckyGuysVO = new LuckyGuysVO();
+            luckyGuysVO.setLuckyTime(userStrategyExport.getCreateTime());
+            luckyGuysVO.setLuckyUid(userStrategyExport.getuId());
+            luckyGuysVO.setAwardId(userStrategyExport.getAwardId());
+            luckyGuysVO.setAwardName(userStrategyExport.getAwardName());
+            luckyGuysVOS.add(luckyGuysVO);
+        }
+        return luckyGuysVOS;
     }
 
     @Override

@@ -18,7 +18,7 @@ public class AwardBriefVO {
     private String awardContent;
 
     /** 奖品分类id */
-    private Long awardCategoryId;
+    private String awardCategoryId;
 
     /** 奖品数量 */
     private Integer awardCount;
@@ -58,11 +58,11 @@ public class AwardBriefVO {
         this.awardContent = awardContent;
     }
 
-    public Long getAwardCategoryId() {
+    public String getAwardCategoryId() {
         return awardCategoryId;
     }
 
-    public void setAwardCategoryId(Long awardCategoryId) {
+    public void setAwardCategoryId(String awardCategoryId) {
         this.awardCategoryId = awardCategoryId;
     }
 

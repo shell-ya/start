@@ -138,4 +138,11 @@ public abstract class AbstractDrawBase extends DrawStrategySupport implements ID
     public ResponsePageResult<DrawAwardExportVO> queryDrawRecords(DrawAwardExportsReq req) {
         return super.queryDrawRecords(req);
     }
+
+    @Override
+    public Integer drawTimes(DrawAwardExportsReq req) {
+        ResponsePageResult<DrawAwardExportVO> drawAwardExportVOResponsePageResult = super.queryDrawRecords(req);
+        return Math.max((5 - drawAwardExportVOResponsePageResult.getTotal().intValue()), 0);
+
+    }
 }
