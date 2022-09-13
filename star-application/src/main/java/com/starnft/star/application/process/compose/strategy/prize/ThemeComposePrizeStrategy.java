@@ -43,7 +43,7 @@ public class ThemeComposePrizeStrategy implements ComposePrizeStrategy {
         Boolean lock = redisLockUtils.lock(String.format(RedisKey.COMPOSE_NUMBER_LOCK.getKey(), themeNumberVo.getId()), RedisKey.COMPOSE_NUMBER_LOCK.getTimeUnit().toSeconds(RedisKey.COMPOSE_NUMBER_LOCK.getTime()));
         Assert.isTrue(lock, () -> new StarException("合成人数过多，请稍后再试～"));
         //物品派发
-        iNumberService.modifyNumberOwnerBy(themeNumberVo.getId(),composeManageReq.getUserId(), NumberStatusEnum.SOLD.getCode());
+        iNumberService.modifyNumberOwnerByVersion(themeNumberVo.getId(),composeManageReq.getUserId(), NumberStatusEnum.SOLD.getCode(),themeNumberVo.getVersion());
         iNumberService.createUserNumberMapping(getUserThemeMappingVO(composeManageReq, themeNumberVo));
         redisLockUtils.unlock(String.format(RedisKey.COMPOSE_NUMBER_LOCK.getKey(), themeNumberVo.getId()));
         PrizeRes prizeRes = new PrizeRes();

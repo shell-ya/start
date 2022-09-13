@@ -61,4 +61,6 @@ public interface INumberRepository {
     boolean deleteNumber2ReDraw(ReNumberVo numberVo, List<Long> ids);
 
     List<NumberDetailVO> queryNumberNotOnSell(Long themeId);
+
+    Boolean modifyNumberStatusVersion(Long id, Long userId, Integer code, Integer version);
 }

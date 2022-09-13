@@ -189,6 +189,13 @@ public class NumberServiceImpl implements INumberService {
     }
 
     @Override
+    public Boolean modifyNumberOwnerByVersion(Long id, Long userId, Integer code, Integer version) {
+        Boolean result = this.numberRepository.modifyNumberStatusVersion(id, userId, code, version);
+        Assert.isTrue(result,() -> new StarException("合成藏品已被抢走，请重新合成"));
+        return result;
+    }
+
+    @Override
     public Boolean deleteNumber(Long uid, Long seriesThemeId) {
         return numberRepository.deleteNumber(uid,seriesThemeId);
     }

@@ -46,12 +46,12 @@ public class TiChainServerTest {
         Map<String,Object> map=new HashMap<>();
 
         List<String> ids=new ArrayList<>();
-        int nums=50;
-        long prifix=2022090900L;
+        int nums=400;
+        long prifix=2022091300L;
         for (int i = 1; i <= nums; i++) {
             ids.add(String.format("%s",prifix+i));
         }
-        map.put("images","https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1662964855906_0ee1949a.jpg");
+        map.put("images","https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1663063407533_6f831ac4.jpg");
         PublishGoodsReq publishGoodsReq = new PublishGoodsReq();
         publishGoodsReq.setUserId("951029971223");
         String userKey = SecureUtil.sha1("951029971223".concat("lywc"));
@@ -60,7 +60,7 @@ public class TiChainServerTest {
         publishGoodsReq.setProductIds(ids.toArray(new String[ids.size()]));
         publishGoodsReq.setPieceCount(nums);
         publishGoodsReq.setInitPrice("0.0");
-        publishGoodsReq.setName("链元文创 荣耀传承 - 承");
+        publishGoodsReq.setName("链元文创 四象神兽 - 盘星苍龙");
         publishGoodsReq.setFeature(JSONUtil.toJsonStr(map));
         PublishGoodsRes createAccountRes = tiChainServer.publishGoods(publishGoodsReq);
         System.out.println(createAccountRes);

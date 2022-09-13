@@ -27,4 +27,6 @@ public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
 
    @Select("SELECT * from star_nft_theme_number as n    WHERE LENGTH(owner_by) > 10")
    List<StarNftThemeNumber> getBing();
+
+    Boolean updateNumberStatus(@Param("id") Long id, @Param("userId")Long userId, @Param("code")Integer code, @Param("version")Integer version);
 }

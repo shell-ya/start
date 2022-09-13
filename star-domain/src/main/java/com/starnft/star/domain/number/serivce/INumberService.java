@@ -56,6 +56,9 @@ public interface INumberService {
 
     Boolean modifyNumberOwnerBy(Long id, Long userId, Integer code);
 
+
+    Boolean modifyNumberOwnerByVersion(Long id, Long userId, Integer code,Integer version);
+
     Boolean deleteNumber(Long uid,Long seriesThemeId);
 
     Long queryUserFirstNumberId(Long uid,Long seriesThemeInfoId);

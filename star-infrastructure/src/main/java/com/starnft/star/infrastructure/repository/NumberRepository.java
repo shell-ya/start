@@ -363,6 +363,13 @@ public class NumberRepository implements INumberRepository {
         return mappingNumberValues(starNftThemeNumbers);
     }
 
+    @Override
+    public Boolean modifyNumberStatusVersion(Long id, Long userId, Integer code, Integer version) {
+
+       return starNftThemeNumberMapper.updateNumberStatus(id,userId,code,version);
+
+    }
+
     private List<NumberDetailVO> mappingNumberValues(List<StarNftThemeNumber> starNftThemeNumbers) {
         ArrayList<@Nullable NumberDetailVO> objects = Lists.newArrayList();
         for (StarNftThemeNumber starNftThemeNumber : starNftThemeNumbers) {
