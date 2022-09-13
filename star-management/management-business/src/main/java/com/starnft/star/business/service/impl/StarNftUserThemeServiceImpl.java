@@ -188,7 +188,7 @@ public class StarNftUserThemeServiceImpl extends ServiceImpl<StarNftUserThemeMap
             StarNftThemeNumber starNftThemeNumber = starNftThemeNumberMap.get(item.getSeriesThemeId());
             UserNumberVO userNumberVO = new UserNumberVO();
             userNumberVO.setUserId(item.getUserId());
-            userNumberVO.setId(item.getId());
+            userNumberVO.setId(item.getSeriesThemeId());
             userNumberVO.setAfterTaxPrice(item.getAfterTaxPrice());
             userNumberVO.setCopyrightTax(item.getCopyrightTax());
             userNumberVO.setPlatformTax(item.getPlatformTax());
