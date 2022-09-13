@@ -5,7 +5,9 @@ import com.starnft.star.business.domain.AirdropThemeRecord;
 import com.starnft.star.business.domain.StarNftThemeNumber;
 import com.starnft.star.business.domain.vo.RandomAirdrop;
 import com.starnft.star.business.domain.vo.StarNftThemeNumberVo;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -17,6 +19,7 @@ import java.util.List;
  * @author shellya
  * @date 2022-06-03
  */
+@Mapper
 public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
 {
     /**
@@ -79,4 +82,6 @@ public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
 
 
     String selectNumberOwberByIsNull(AirdropThemeRecord record);
+
+    int modifyNumberOwnerBy(@Param("id") Long id, @Param("userId") Long userId, @Param("status") Integer status);
 }

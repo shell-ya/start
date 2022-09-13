@@ -1,9 +1,8 @@
 package com.starnft.star.admin.web.controller.business;
 
+import com.starnft.star.business.domain.StarNftThemeInfo;
 import com.starnft.star.business.domain.StarNftUserTheme;
-import com.starnft.star.business.domain.vo.UserNumberVO;
-import com.starnft.star.business.domain.vo.UserSeriesVO;
-import com.starnft.star.business.domain.vo.UserThemeVO;
+import com.starnft.star.business.domain.vo.*;
 import com.starnft.star.business.service.IStarNftUserThemeService;
 import com.starnft.star.common.annotation.Log;
 import com.starnft.star.common.core.controller.BaseController;
@@ -70,15 +69,15 @@ public class StarNftUserThemeController extends BaseController
     /**
      * 导出用户藏品列表
      */
-    @PreAuthorize("@ss.hasPermi('usertheme:theme:export')")
-    @Log(title = "用户藏品", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, StarNftUserTheme starNftUserTheme)
-    {
-        List<StarNftUserTheme> list = starNftUserThemeService.selectStarNftUserThemeList(starNftUserTheme);
-        ExcelUtil<StarNftUserTheme> util = new ExcelUtil<StarNftUserTheme>(StarNftUserTheme.class);
-        util.exportExcel(response, list, "用户藏品数据");
-    }
+//    @PreAuthorize("@ss.hasPermi('usertheme:theme:export')")
+//    @Log(title = "用户藏品", businessType = BusinessType.EXPORT)
+//    @PostMapping("/export")
+//    public void export(HttpServletResponse response, StarNftUserTheme starNftUserTheme)
+//    {
+//        List<StarNftUserTheme> list = starNftUserThemeService.selectStarNftUserThemeList(starNftUserTheme);
+//        ExcelUtil<StarNftUserTheme> util = new ExcelUtil<StarNftUserTheme>(StarNftUserTheme.class);
+//        util.exportExcel(response, list, "用户藏品数据");
+//    }
 
     /**
      * 获取用户藏品详细信息
@@ -122,4 +121,23 @@ public class StarNftUserThemeController extends BaseController
     {
         return toAjax(starNftUserThemeService.deleteStarNftUserThemeByIds(ids));
     }
+
+    @PreAuthorize("@ss.hasPermi('usertheme:theme:edit')")
+    @Log(title = "用户藏品", businessType = BusinessType.UPDATE)
+    @PostMapping(value = "give")
+    public AjaxResult give(@RequestBody GiveReq giveReq){
+        return toAjax(starNftUserThemeService.give(giveReq));
+    }
+
+    @PreAuthorize("@ss.hasPermi('business:info:export')")
+    @Log(title = "主题", businessType = BusinessType.EXPORT)
+    @PostMapping("/export")
+    public void export(HttpServletResponse response, Long seriesThemeInfoId)
+    {
+
+        List<UserInfo> list = starNftUserThemeService.selectHasThemeUser(seriesThemeInfoId);
+        ExcelUtil<UserInfo> util = new ExcelUtil<UserInfo>(UserInfo.class);
+        util.exportExcel(response, list, "用户藏品");
+    }
+
 }

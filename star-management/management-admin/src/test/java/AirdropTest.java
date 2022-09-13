@@ -2,9 +2,11 @@ import com.starnft.star.admin.RuoYiApplication;
 import com.starnft.star.business.domain.AirdropThemeRecord;
 import com.starnft.star.business.domain.dto.AirdropRecordDto;
 import com.starnft.star.business.domain.dto.RecordItem;
+import com.starnft.star.business.domain.vo.GiveReq;
 import com.starnft.star.business.domain.vo.RechargeVO;
 import com.starnft.star.business.service.IAirdropThemeRecordService;
 import com.starnft.star.business.service.INftWalletService;
+import com.starnft.star.business.service.IStarNftUserThemeService;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.utils.redis.RedisUtil;
 import org.assertj.core.util.Lists;
@@ -30,11 +32,15 @@ public class AirdropTest {
 
     //铸造创世金章 创世银章 创世铜章 首发白羊座 创世摩羯座
     private final RedisUtil redisUtil;
+
+    private final IStarNftUserThemeService userThemeService;
     @Autowired
-    public AirdropTest(IAirdropThemeRecordService airdropThemeRecordService, INftWalletService walletService, RedisUtil redisUtil) {
+    public AirdropTest(IAirdropThemeRecordService airdropThemeRecordService, INftWalletService walletService,
+                       RedisUtil redisUtil, IStarNftUserThemeService userThemeService) {
         this.airdropThemeRecordService = airdropThemeRecordService;
         this.walletService = walletService;
         this.redisUtil = redisUtil;
+        this.userThemeService = userThemeService;
     }
 
     @Test
@@ -133,5 +139,14 @@ public class AirdropTest {
 //        assert b;
 
 
+    }
+
+    @Test
+    public void giveTest(){
+        GiveReq giveReq = new GiveReq();
+        giveReq.setFromUid(281850262L);
+        giveReq.setToUid(294592515L);
+        giveReq.setSeriesThemeId(1010328301707071488L);
+        assert userThemeService.give(giveReq);
     }
 }

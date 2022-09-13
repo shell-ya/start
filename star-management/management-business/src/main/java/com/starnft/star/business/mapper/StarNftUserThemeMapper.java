@@ -3,8 +3,12 @@ package com.starnft.star.business.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.starnft.star.business.domain.StarNftUserTheme;
 import com.starnft.star.business.domain.po.UpdateUserThemeVo;
+import com.starnft.star.business.domain.vo.GiveReq;
+import com.starnft.star.business.domain.vo.UserInfo;
+import com.starnft.star.common.enums.UserNumberStatusEnum;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -65,4 +69,10 @@ public interface StarNftUserThemeMapper extends BaseMapper<StarNftUserTheme>
      * @return 结果
      */
     public int deleteStarNftUserThemeByIds(Long[] ids);
+
+//    boolean modifyUserNumberStatus(Long fromUid, Long seriesThemeId, BigDecimal zero, UserNumberStatusEnum purchased, UserNumberStatusEnum givend);
+
+    StarNftUserTheme selectUserThemeBySeriesThemeId(GiveReq giveReq);
+
+    List<UserInfo> selecUsertHasTheme(Long seriesThemeInfoId);
 }

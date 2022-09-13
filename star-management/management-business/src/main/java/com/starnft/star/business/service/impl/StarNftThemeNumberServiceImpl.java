@@ -1,5 +1,6 @@
 package com.starnft.star.business.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.starnft.star.business.domain.StarNftThemeNumber;
 import com.starnft.star.business.domain.vo.StarNftThemeNumberVo;
 import com.starnft.star.business.mapper.StarNftThemeNumberMapper;
@@ -17,6 +18,7 @@ import javax.validation.Validator;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 主题编号Service业务层处理
@@ -178,6 +180,12 @@ public class StarNftThemeNumberServiceImpl implements IStarNftThemeNumberService
     @Override
     public List<StarNftThemeNumber> selectStarNftThemeNumberByIds(Collection ids) {
         return starNftThemeNumberMapper.selectStarNftThemeNumberByIds(ids);
+    }
+
+    @Override
+    public Boolean modifyNumberOwnerBy(Long id, Long userId, Integer code) {
+        return this.starNftThemeNumberMapper.modifyNumberOwnerBy(id,userId,code) == 1;
+
     }
 
     public List<Long> selectThemeNumberOwberByIsNull(Long id){
