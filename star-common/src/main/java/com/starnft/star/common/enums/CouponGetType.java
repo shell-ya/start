@@ -11,7 +11,7 @@ import lombok.Getter;
 public enum CouponGetType {
 
     ACTIVITY(1, "活动"),
-    Airdrop(2, "空投"),
+    AIRDROP(2, "空投"),
     ;
 
     private Integer type;

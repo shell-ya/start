@@ -3,9 +3,11 @@ package com.starnft.star.infrastructure.repository;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.starnft.star.common.constant.YesOrNoStatusEnum;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.coupon.model.dto.CouponHistoryAdd;
 import com.starnft.star.domain.coupon.model.dto.CouponHistoryUpdate;
+import com.starnft.star.domain.coupon.model.dto.CouponInfoUpdate;
 import com.starnft.star.domain.coupon.model.req.CouponHistoryReq;
 import com.starnft.star.domain.coupon.model.res.CouponHistoryInfoRes;
 import com.starnft.star.domain.coupon.model.res.CouponHistoryRes;
@@ -17,12 +19,10 @@ import com.starnft.star.infrastructure.mapper.coupon.StarNftCouponHistoryMapper;
 import com.starnft.star.infrastructure.mapper.coupon.StarNftCouponMapper;
 import com.starnft.star.infrastructure.mapper.coupon.StarNftCouponSeriesRelationMapper;
 import com.starnft.star.infrastructure.mapper.coupon.StarNftCouponThemeRelationMapper;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author ：Lai Wei Chun
@@ -82,6 +82,7 @@ public class CouponRepository implements ICouponRepository {
         starNftCouponHistory.setIsDeleted(Boolean.FALSE);
         starNftCouponHistory.setCreatedBy(couponHistory.getUserId());
         starNftCouponHistory.setModifiedBy(couponHistory.getUserId());
+        starNftCouponHistory.setUseStatus(YesOrNoStatusEnum.NO.getCode());
         return starNftCouponHistoryMapper.insert(starNftCouponHistory);
     }
 
@@ -96,5 +97,14 @@ public class CouponRepository implements ICouponRepository {
         starNftCouponHistory.setModifiedAt(DateUtil.date());
         starNftCouponHistory.setModifiedBy(couponHistory.getUserId());
         return starNftCouponHistoryMapper.update(starNftCouponHistory, queryWrapper);
+    }
+
+    @Override
+    public int updateCouponInfo(CouponInfoUpdate couponInfoUpdate) {
+        StarNftCoupon coupon = BeanColverUtil.colver(couponInfoUpdate, StarNftCoupon.class);
+        LambdaUpdateWrapper<StarNftCoupon> queryWrapper = new LambdaUpdateWrapper();
+        queryWrapper.in(StarNftCoupon::getCouponId, couponInfoUpdate.getCouponId());
+        coupon.setModifiedAt(DateUtil.date());
+        return starNftCouponMapper.update(coupon, queryWrapper);
     }
 }

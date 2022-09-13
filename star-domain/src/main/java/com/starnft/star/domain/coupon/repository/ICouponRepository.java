@@ -2,6 +2,7 @@ package com.starnft.star.domain.coupon.repository;
 
 import com.starnft.star.domain.coupon.model.dto.CouponHistoryAdd;
 import com.starnft.star.domain.coupon.model.dto.CouponHistoryUpdate;
+import com.starnft.star.domain.coupon.model.dto.CouponInfoUpdate;
 import com.starnft.star.domain.coupon.model.req.CouponHistoryReq;
 import com.starnft.star.domain.coupon.model.res.CouponHistoryInfoRes;
 import com.starnft.star.domain.coupon.model.res.CouponInfoRes;
@@ -57,4 +58,11 @@ public interface ICouponRepository {
      * @return
      */
     int updateCouponHistory(CouponHistoryUpdate couponHistory);
+    
+    /**
+     * 修改卡劵信息
+     * @param couponInfoUpdate
+     * @return
+     */
+    int updateCouponInfo(CouponInfoUpdate couponInfoUpdate);
 }
