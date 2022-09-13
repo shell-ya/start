@@ -52,6 +52,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -253,10 +254,11 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
     }
 
     private void checkThemeCounts(Map<Long, List<ComposeUserArticleNumberDTO>> collect, Map<Long, ComposeMaterialDTO> composeMaterialDTOMap) {
-        for (Long themeId : collect.keySet()) {
-            int size = collect.get(themeId).size();
+        for (Long themeId : composeMaterialDTOMap.keySet()) {
             ComposeMaterialDTO composeMaterialDTO = composeMaterialDTOMap.get(themeId);
             Integer number = composeMaterialDTO.getNumber();
+            Optional.ofNullable(collect.get(themeId)).orElseThrow(() -> new StarException("合成数量不足"));
+            int size = collect.get(themeId).size();
             Assert.isTrue(size == number, () -> new StarException("合成数量不足"));
         }
     }
