@@ -67,4 +67,6 @@ public interface IStarNftThemeNumberService
     public List<StarNftThemeNumberVo> selectStarNftThemeNumberVoList(StarNftThemeNumberVo starNftThemeNumber);
 
     List<StarNftThemeNumber> selectStarNftThemeNumberByIds(Collection ids);
+
+    Boolean modifyNumberOwnerBy(Long seriesThemeId, Long toUid, Integer code);
 }

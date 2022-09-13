@@ -1,24 +1,32 @@
 package com.starnft.star.business.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.starnft.star.business.domain.StarNftSeries;
-import com.starnft.star.business.domain.StarNftThemeInfo;
-import com.starnft.star.business.domain.StarNftThemeNumber;
-import com.starnft.star.business.domain.StarNftUserTheme;
-import com.starnft.star.business.domain.vo.UserNumberVO;
-import com.starnft.star.business.domain.vo.UserSeriesVO;
-import com.starnft.star.business.domain.vo.UserThemeVO;
+import com.starnft.star.business.domain.*;
+import com.starnft.star.business.domain.vo.*;
 import com.starnft.star.business.mapper.StarNftSeriesMapper;
 import com.starnft.star.business.mapper.StarNftUserThemeMapper;
+import com.starnft.star.business.service.IAccountUserService;
 import com.starnft.star.business.service.IStarNftThemeInfoService;
 import com.starnft.star.business.service.IStarNftThemeNumberService;
 import com.starnft.star.business.service.IStarNftUserThemeService;
 import com.starnft.star.common.constant.IsDeleteStatusEnum;
+import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.common.enums.NumberStatusEnum;
+import com.starnft.star.common.enums.UserNumberStatusEnum;
+import com.starnft.star.common.exception.StarError;
+import com.starnft.star.common.exception.StarException;
+import com.starnft.star.common.utils.Assert;
+import com.starnft.star.common.utils.BeanColverUtil;
+import com.starnft.star.common.utils.SnowflakeWorker;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -40,6 +48,10 @@ public class StarNftUserThemeServiceImpl extends ServiceImpl<StarNftUserThemeMap
     private IStarNftThemeInfoService starNftThemeInfoService;
     @Autowired
     private IStarNftThemeNumberService starNftThemeNumberService;
+    @Autowired
+    private IAccountUserService accountUserService;
+    @Resource
+    TransactionTemplate template;
 
     /**
      * 查询用户藏品
@@ -189,12 +201,96 @@ public class StarNftUserThemeServiceImpl extends ServiceImpl<StarNftUserThemeMap
         }).collect(Collectors.toList());
     }
 
+    @Override
+    public Boolean give(GiveReq giveReq) {
+        //藏品在用户收藏中
+        Optional.ofNullable(giveReq.getFromUid()).orElseThrow(() -> new StarException(StarError.SYSTEM_ERROR,"用户id不能为空"));
+        Optional.ofNullable(giveReq.getToUid()).orElseThrow(() -> new StarException(StarError.SYSTEM_ERROR,"接收用户id不能为空"));
+        Optional.ofNullable(giveReq.getSeriesThemeId()).orElseThrow(() -> new StarException(StarError.SYSTEM_ERROR,"藏品id不能为空"));
+
+
+        Assert.isFalse(giveReq.getFromUid().equals(giveReq.getToUid()), () -> new StarException("禁止赠送自己本人"));
+
+        //收藏品用户存在
+        AccountUser accountUser = accountUserService.selectUserByAccount(giveReq.getToUid());
+        Optional.ofNullable(accountUser).orElseThrow(() -> new StarException(StarError.SYSTEM_ERROR,"转增用户不存在"));
+        AccountUser fromUser = accountUserService.selectUserByAccount(giveReq.getFromUid());
+        Optional.ofNullable(fromUser).orElseThrow(() -> new StarException(StarError.SYSTEM_ERROR,"接收用户不存在"));
+
+        //藏品在寄售中
+        StarNftThemeNumber starNftThemeNumber = starNftThemeNumberService.selectStarNftThemeNumberById(giveReq.getSeriesThemeId());
+        if (starNftThemeNumber.getStatus().equals(NumberStatusEnum.ON_CONSIGNMENT.getCode())) throw  new StarException(StarError.SYSTEM_ERROR,"藏品寄售中，请先下降");
+        if (!starNftThemeNumber.getOwnerBy().equals(giveReq.getFromUid().toString())) throw new StarException(StarError.SYSTEM_ERROR,"藏品不属于转增人");
+
+        StarNftUserTheme userTheme = starNftUserThemeMapper.selectUserThemeBySeriesThemeId(giveReq);
+        Optional.ofNullable(userTheme).orElseThrow(() -> new StarException(StarError.SYSTEM_ERROR,"藏品不属于转增人"));
+
+        //藏品转移并生成一条转增记录
+        UserThemeMappingVO userThemeMappingVO = getUserThemeMappingVO(giveReq, userTheme);
+        Boolean isSuccess = template.execute(status -> {
+            //记录藏品变化log
+            boolean update = starNftThemeNumberService.modifyNumberOwnerBy(giveReq.getSeriesThemeId(), giveReq.getToUid(), NumberStatusEnum.SOLD.getCode());
+            boolean modify = this.modifyUserNumberStatus(giveReq.getFromUid(), giveReq.getSeriesThemeId(), BigDecimal.ZERO, UserNumberStatusEnum.PURCHASED, UserNumberStatusEnum.GIVEND);
+            boolean created = this.createUserNumberMapping(userThemeMappingVO);
+            return modify && created && update;
+        });
+
+        Assert.isTrue(Boolean.TRUE.equals(isSuccess), () -> new StarException("转赠失败，请稍后再试"));
+        return isSuccess;
+    }
+
+    @Override
+    public List<UserInfo> selectHasThemeUser(Long seriesThemeInfoId) {
+
+        return starNftUserThemeMapper.selecUsertHasTheme(seriesThemeInfoId);
+    }
+
+
+    private boolean createUserNumberMapping(UserThemeMappingVO userThemeMappingVO) {
+        StarNftUserTheme userTheme = BeanColverUtil.colver(userThemeMappingVO, StarNftUserTheme.class);
+        userTheme.setId(SnowflakeWorker.generateId());
+        userTheme.setSeriesThemeInfoId(userThemeMappingVO.getSeriesThemeInfoId());
+        userTheme.setCreateAt(new Date());
+        userTheme.setSource(userThemeMappingVO.getSource());
+        userTheme.setCreateBy(userThemeMappingVO.getUserId());
+        userTheme.setBuyPrice(userThemeMappingVO.getBuyPrice());
+        userTheme.setIsDelete(0);
+        return this.starNftUserThemeMapper.insert(userTheme) == 1;
+    }
+
     @NotNull
     private BinaryOperator<UserSeriesVO> getUserSeriesVOBinaryOperator() {
         return (a, b) -> {
             b.setNums(a.getNums() + b.getNums());
             return b;
         };
+    }
+
+    private boolean modifyUserNumberStatus(Long uid, Long numberId, BigDecimal price, UserNumberStatusEnum beforeStatusEnum, UserNumberStatusEnum statusEnum){
+
+        StarNftUserTheme starNftUserTheme = new StarNftUserTheme();
+        starNftUserTheme.setStatus(statusEnum.getCode());
+        starNftUserTheme.setSellPrice(price);
+        starNftUserTheme.setUpdateAt(new Date());
+        starNftUserTheme.setUpdateBy(String.valueOf(uid));
+        return this.starNftUserThemeMapper.update(starNftUserTheme,
+                Wrappers.lambdaUpdate(StarNftUserTheme.class)
+                        .eq(StarNftUserTheme::getSeriesThemeId, numberId)
+                        .eq(StarNftUserTheme::getUserId, uid)
+                        .eq(StarNftUserTheme::getStatus, beforeStatusEnum.getCode())) == 1;
+    }
+
+    private UserThemeMappingVO getUserThemeMappingVO(GiveReq giveReq,StarNftUserTheme themeNumber) {
+        UserThemeMappingVO userThemeMappingVO = new UserThemeMappingVO();
+        userThemeMappingVO.setBeforeUserId(giveReq.getFromUid().toString());
+        userThemeMappingVO.setUserId(giveReq.getToUid().toString());
+        userThemeMappingVO.setSeriesId(themeNumber.getSeriesId());
+        userThemeMappingVO.setSeriesThemeInfoId(themeNumber.getSeriesThemeInfoId());
+        userThemeMappingVO.setSeriesThemeId(themeNumber.getSeriesThemeId());
+        userThemeMappingVO.setStatus(UserNumberStatusEnum.PURCHASED.getCode());
+        userThemeMappingVO.setBuyPrice(BigDecimal.ZERO);
+        userThemeMappingVO.setSource(1);
+        return userThemeMappingVO;
     }
 
 

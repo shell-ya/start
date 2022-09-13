@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.starnft.star.common.annotation.Excel;
 import com.starnft.star.common.core.domain.BaseEntity;
+import lombok.Builder;
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -82,6 +84,10 @@ public class StarNftUserTheme
     /** 系列id */
     @Excel(name = "系列id")
     private Long seriesId;
+
+    private BigDecimal buyPrice;
+
+    private BigDecimal sellPrice;
 
     public void setId(Long id)
     {
@@ -210,6 +216,26 @@ public class StarNftUserTheme
         return seriesId;
     }
 
+    public void setBuyPrice(BigDecimal buyPrice)
+    {
+        this.buyPrice = buyPrice;
+    }
+
+    public BigDecimal getBuyPrice()
+    {
+        return buyPrice;
+    }
+
+    public void setSellPrice(BigDecimal sellPrice)
+    {
+        this.sellPrice = sellPrice;
+    }
+
+    public BigDecimal getSellPrice()
+    {
+        return sellPrice;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -236,5 +262,13 @@ public class StarNftUserTheme
 
     public void setCreateBy(String createBy) {
         this.createBy = createBy;
+    }
+
+    public String getUpdateBy() {
+        return updateBy;
+    }
+
+    public void setUpdateBy(String updateBy) {
+        this.updateBy = updateBy;
     }
 }

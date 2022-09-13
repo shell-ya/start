@@ -2,9 +2,7 @@ package com.starnft.star.business.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.starnft.star.business.domain.StarNftUserTheme;
-import com.starnft.star.business.domain.vo.UserNumberVO;
-import com.starnft.star.business.domain.vo.UserSeriesVO;
-import com.starnft.star.business.domain.vo.UserThemeVO;
+import com.starnft.star.business.domain.vo.*;
 
 import java.util.List;
 import java.util.Map;
@@ -72,4 +70,8 @@ public interface IStarNftUserThemeService extends IService<StarNftUserTheme>
     Map<Long, Optional<UserThemeVO>> listThemeBySeriesAndAccount(StarNftUserTheme starNftUserTheme);
 
     List<UserNumberVO> listNumberByThemeAndAccount(StarNftUserTheme starNftUserTheme);
+
+    Boolean give(GiveReq giveReq);
+
+    List<UserInfo> selectHasThemeUser(Long seriesThemeInfoId);
 }

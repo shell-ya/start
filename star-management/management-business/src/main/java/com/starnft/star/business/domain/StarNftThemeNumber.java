@@ -57,7 +57,7 @@ public class StarNftThemeNumber extends BaseEntity
     private BigDecimal price;
 
     /** 状态(0-发行未出售  1-发行已出售  2 未挂售  3挂售中) */
-    @Excel(name = "状态(0-发行未出售  1-发行已出售  2 未挂售  3挂售中)")
+    @Excel(name = "状态(0-发行未出售  1-发行已出售  2 挂售中  3销毁)")
 //            ,converter = ThemeNumberConverter.class)
     private Integer status;
 

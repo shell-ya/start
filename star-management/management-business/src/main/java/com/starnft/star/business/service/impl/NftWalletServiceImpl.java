@@ -319,7 +319,7 @@ public class NftWalletServiceImpl implements INftWalletService
     private WalletRecordReq walletRecordInit(RechargeVO rechargeVO) {
 
         return WalletRecordReq.builder()
-                .recordSn(StarConstants.OrderPrefix.RechargeSn.getPrefix().concat(String.valueOf(SnowflakeWorker.generateId())))
+                .recordSn(rechargeVO.getOrderSn())
                 .from_uid(0L) // 充值为0
                 .to_uid(Long.parseLong(rechargeVO.getUid()))
                 .payChannel(String.valueOf(StarConstants.PayChannel.Other))
