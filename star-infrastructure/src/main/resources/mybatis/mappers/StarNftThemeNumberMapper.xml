@@ -20,8 +20,19 @@
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
-        id, series_theme_info_id, theme_number, ` contract_address`, chain_identification,
-        price, `status`, owenr_by, create_at, create_by, update_at, update_by, is_delete
+        id,
+        series_theme_info_id,
+        theme_number,
+        ` contract_address`,
+        chain_identification,
+        price,
+        `status`,
+        owenr_by,
+        create_at,
+        create_by,
+        update_at,
+        update_by,
+        is_delete
     </sql>
 
     <select id="selectNumberDetailById" resultType="com.starnft.star.domain.number.model.vo.NumberDetailVO">
@@ -46,32 +57,32 @@
     </select>
 
     <select id="getNumberListByThemeInfo" resultType="com.starnft.star.domain.number.model.vo.NumberVO">
-        SELECT a.id id,
+        SELECT a.id           id,
                a.theme_number number,
-               a.price price,
-               a.status status,
+               a.price        price,
+               a.status       status,
                b.series_id,
-               b.id theme_id,
-               b.theme_name theme_name,
-               b.theme_pic theme_pic,
-               b.theme_type type,
-               a.version version
+               b.id           theme_id,
+               b.theme_name   theme_name,
+               b.theme_pic    theme_pic,
+               b.theme_type   type,
+               a.version      version
         FROM star_nft_theme_number a
-                     INNER JOIN star_nft_theme_info b ON a.series_theme_info_id = b.id
+                 INNER JOIN star_nft_theme_info b ON a.series_theme_info_id = b.id
         <where>
-        <if test="themeType != null and themeType != ''">
-            b.theme_type = #{themeType}
-        </if>
-        <if test="seriesId != null and seriesId != ''">
-            AND b.series_id = #{seriesId}
-        </if>
-        <if test="themeId != null and themeId != ''">
-            AND b.id = #{themeId}
-        </if>
-        AND a.is_delete = 0
-        AND a.owner_by is null
-        AND a.status=0
-        AND b.is_delete = 0
+            <if test="themeType != null and themeType != ''">
+                b.theme_type = #{themeType}
+            </if>
+            <if test="seriesId != null and seriesId != ''">
+                AND b.series_id = #{seriesId}
+            </if>
+            <if test="themeId != null and themeId != ''">
+                AND b.id = #{themeId}
+            </if>
+            AND a.is_delete = 0
+            AND a.owner_by is null
+            AND a.status = 0
+            AND b.is_delete = 0
         </where>
     </select>
 
@@ -85,7 +96,7 @@
                b.theme_type   theme_type,
                c.id           series_id,
                c.series_name  series_name,
-               a.owner_by      owner_by
+               a.owner_by     owner_by
         FROM star_nft_theme_number a
                  LEFT JOIN star_nft_theme_info b
                            ON a.series_theme_info_id = b.id
@@ -98,16 +109,16 @@
     </select>
 
     <select id="selectNumberList" resultType="com.starnft.star.domain.number.model.vo.NumberVO">
-        SELECT a.id id,
-        a.theme_number number,
-        a.price price,
-        a.status status,
-        b.id theme_id,
-        b.theme_name theme_name,
-        b.theme_pic theme_pic,
-        b.theme_type type
+        SELECT a.id           id,
+               a.theme_number number,
+               a.price        price,
+               a.status       status,
+               b.id           theme_id,
+               b.theme_name   theme_name,
+               b.theme_pic    theme_pic,
+               b.theme_type   type
         FROM star_nft_theme_number a
-        INNER JOIN star_nft_theme_info b ON a.series_theme_info_id = b.id
+                 INNER JOIN star_nft_theme_info b ON a.series_theme_info_id = b.id
         <where>
             <if test="themeType != null and themeType != ''">
                 b.theme_type = #{themeType}
@@ -119,7 +130,7 @@
                 AND b.id = #{themeId}
             </if>
             <if test="themeName != null and themeName != ''">
-                AND b.theme_name LIKE CONCAT('%',#{themeName},'%')
+                AND b.theme_name LIKE CONCAT('%', #{themeName}, '%')
             </if>
             AND a.is_delete = 0
             AND b.is_delete = 0
@@ -128,44 +139,60 @@
         <if test="orderBy != null and orderBy != ''">
             ORDER BY a.${orderBy} ${sortType}
         </if>
-
     </select>
 
     <select id="selectRandomThemeNumber" resultType="com.starnft.star.domain.number.model.vo.ThemeNumberVo">
-        SELECT a.id       id,
-        a.theme_number         number,
-        a.contract_address     contract_address,
-        a.chain_identification chain_identification,
-        a.price                price,
-        a.status               status,
-        a.owner_by             owner_by,
-        b.id                   theme_id,
-        b.theme_name           name,
-        b.theme_pic            picture,
-        b.descrption           descrption,
-        b.theme_type           type,
-        b.is_resale            resale
+        SELECT a.id                   id,
+               a.theme_number         number,
+               a.contract_address     contract_address,
+               a.chain_identification chain_identification,
+               a.price                price,
+               a.status               status,
+               a.owner_by             owner_by,
+               b.id                   theme_id,
+               b.theme_name           name,
+               b.theme_pic            picture,
+               b.descrption           descrption,
+               b.theme_type           type,
+               b.is_resale            resale
         FROM star_nft_theme_number a
-        LEFT JOIN star_nft_theme_info b
-        ON a.series_theme_info_id = b.id
-        JOIN (SELECT ROUND(RAND() * ((SELECT MAX(id ) FROM star_nft_theme_number)-(SELECT MIN(id) FROM star_nft_theme_number))+(SELECT MIN(id) FROM star_nft_theme_number)) AS id)AS t2
+                 LEFT JOIN star_nft_theme_info b
+                           ON a.series_theme_info_id = b.id
+                 JOIN (SELECT ROUND(RAND() * ((SELECT MAX(id) FROM star_nft_theme_number) -
+                                              (SELECT MIN(id) FROM star_nft_theme_number)) +
+                                    (SELECT MIN(id) FROM star_nft_theme_number)) AS id) AS t2
         WHERE a.id = #{id}
-        AND a.is_delete = 0
-        AND a.status=0
-        AND a.id >= t2.id ORDER BY a.id LIMIT 1;
+          AND a.is_delete = 0
+          AND a.status = 0
+          AND a.id >= t2.id
+        ORDER BY a.id LIMIT 1;
     </select>
 
     <select id="getNumbers2Ding" resultType="NumberDingVO">
-
-        SELECT MIN(price) as price,i.theme_name as `name`,i.theme_pic as image from star_nft_theme_number as n   LEFT JOIN star_nft_theme_info as i on i.id=series_theme_info_id WHERE n.`status`=2 and n.is_delete=0 GROUP BY series_theme_info_id
+        SELECT MIN(price) as price, i.theme_name as `name`, i.theme_pic as image
+        from star_nft_theme_number as n
+                 LEFT JOIN star_nft_theme_info as i on i.id = series_theme_info_id
+        WHERE n.`status` = 2
+          and n.is_delete = 0
+        GROUP BY series_theme_info_id
     </select>
 
     <update id="updateNumberStatus">
         update star_nft_theme_number
-            set owner_by = #{userId},
-                `status` = #{code},
-                version = #{version} + 1
-        where  id = #{id}
-        and version = #{version}
+        set owner_by = #{userId},
+            `status` = #{code},
+            version  = #{version} + 1
+        where id = #{id}
+          and version = #{version}
     </update>
+
+    <select id="countPublishNumber" resultType="java.lang.Integer">
+        SELECT COUNT(1)
+        from star_nft_theme_number
+        WHERE series_theme_info_id = #{themeId}
+    </select>
+
+    <select id="minPrice" resultType="java.math.BigDecimal">
+        SELECT MIN(star_nft_theme_number.price) from star_nft_theme_number WHERE series_theme_info_id = #{themeId}
+    </select>
 </mapper>

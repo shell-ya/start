@@ -28,6 +28,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -365,9 +366,18 @@ public class NumberRepository implements INumberRepository {
 
     @Override
     public Boolean modifyNumberStatusVersion(Long id, Long userId, Integer code, Integer version) {
+        return starNftThemeNumberMapper.updateNumberStatus(id, userId, code, version);
 
-       return starNftThemeNumberMapper.updateNumberStatus(id,userId,code,version);
+    }
 
+    @Override
+    public Integer queryThemeNumberOnSellCount(Long themeId) {
+        return starNftThemeNumberMapper.countPublishNumber(themeId);
+    }
+
+    @Override
+    public BigDecimal minPrice(Long themeId) {
+        return starNftThemeNumberMapper.minPrice(themeId);
     }
 
     private List<NumberDetailVO> mappingNumberValues(List<StarNftThemeNumber> starNftThemeNumbers) {

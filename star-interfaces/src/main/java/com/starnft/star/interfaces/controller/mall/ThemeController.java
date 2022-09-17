@@ -4,10 +4,12 @@ import com.starnft.star.application.process.theme.ThemeCore;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.page.RequestPage;
 import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.domain.theme.model.req.ThemeGoodsReq;
 import com.starnft.star.domain.theme.model.req.ThemeReq;
 import com.starnft.star.domain.theme.model.res.ThemeDetailRes;
 import com.starnft.star.domain.theme.model.res.ThemeRes;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
+import com.starnft.star.domain.theme.model.vo.ThemeGoodsVO;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -45,6 +47,13 @@ public class ThemeController {
                                 .seriesId(id)
                                 .build())
         );
+    }
+
+    @PostMapping("/market/theme")
+    @ApiOperation("获取系列ID下市场主题")
+    @TokenIgnore
+    public RopResponse<ResponsePageResult<ThemeGoodsVO>> themeGoodsList(@RequestBody ThemeGoodsReq themeGoodsReq) {
+        return RopResponse.success(this.themeCore.themeGoodsList(themeGoodsReq));
     }
 
     @PostMapping("/detail/{id}")

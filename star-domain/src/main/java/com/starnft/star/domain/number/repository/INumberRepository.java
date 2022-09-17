@@ -5,6 +5,7 @@ import com.starnft.star.domain.number.model.dto.*;
 import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface INumberRepository {
@@ -63,4 +64,8 @@ public interface INumberRepository {
     List<NumberDetailVO> queryNumberNotOnSell(Long themeId);
 
     Boolean modifyNumberStatusVersion(Long id, Long userId, Integer code, Integer version);
+
+    Integer queryThemeNumberOnSellCount(Long themeId);
+
+    BigDecimal minPrice(Long themeId);
 }

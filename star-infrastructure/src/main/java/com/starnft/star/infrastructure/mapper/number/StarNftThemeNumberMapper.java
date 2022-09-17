@@ -12,6 +12,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper
@@ -29,4 +30,8 @@ public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
    List<StarNftThemeNumber> getBing();
 
     Boolean updateNumberStatus(@Param("id") Long id, @Param("userId")Long userId, @Param("code")Integer code, @Param("version")Integer version);
+
+    Integer countPublishNumber(Long themeId);
+
+    BigDecimal minPrice(Long themeId);
 }

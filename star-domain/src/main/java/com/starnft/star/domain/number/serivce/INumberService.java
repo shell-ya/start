@@ -8,6 +8,7 @@ import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface INumberService {
@@ -71,4 +72,8 @@ public interface INumberService {
     List<Long> queryHasReNumberUser(Long seriesThemeId);
 
     boolean deleteNumber2ReDraw(ReNumberVo numberVo, List<Long> ids);
+
+    Integer queryThemeNumberOnSellCount(Long themeId);
+
+    BigDecimal minPrice(Long themeId);
 }
