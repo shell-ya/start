@@ -85,6 +85,6 @@ public class ThemeGoodsVO implements Serializable {
      * 市场最低价
      */
     @ApiModelProperty(value = "市场最低价")
-    private BigDecimal price;
+    private BigDecimal floor;
 
 }

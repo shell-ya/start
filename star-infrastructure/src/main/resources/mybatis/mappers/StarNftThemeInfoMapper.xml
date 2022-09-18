@@ -80,12 +80,11 @@
                ti.publish_number   publish_number,
                ti.theme_level      theme_level,
                ti.market_open_time market_open_time,
-               tn.price            price
+               tn.price            floor
         FROM star_nft_theme_info ti
-                 LEFT JOIN (SELECT series_theme_info_id, price
+                 LEFT JOIN (SELECT series_theme_info_id AS theme_id, min(price) AS price
                             FROM star_nft_theme_number
-                            WHERE price = (SELECT min(price) FROM star_nft_theme_number) LIMIT 0, 1) tn
-                           ON ti.id = tn.series_theme_info_id
+                            GROUP BY theme_id) tn ON ti.id = tn.theme_id
         WHERE ti.series_id = #{seriesId}
           AND is_resale = 1
         <if test="sortType == 1">
