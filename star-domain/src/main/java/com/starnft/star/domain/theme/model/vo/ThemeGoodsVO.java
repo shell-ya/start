@@ -1,5 +1,8 @@
 package com.starnft.star.domain.theme.model.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +22,7 @@ public class ThemeGoodsVO implements Serializable {
      */
 
     @ApiModelProperty(value = "主题id")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     /**
@@ -79,6 +83,7 @@ public class ThemeGoodsVO implements Serializable {
      * 市场开放时间
      */
     @ApiModelProperty(value = "市场开放时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Shanghai")
     private Date marketOpenTime;
 
     /**
