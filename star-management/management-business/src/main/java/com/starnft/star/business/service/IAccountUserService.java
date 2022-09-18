@@ -1,6 +1,7 @@
 package com.starnft.star.business.service;
 
 import com.starnft.star.business.domain.AccountUser;
+import com.starnft.star.business.domain.vo.UserInfo;
 
 import java.util.List;
 
@@ -61,4 +62,6 @@ public interface IAccountUserService
     public int deleteAccountUserById(Long id);
 
     public AccountUser selectUserByAccount(Long account);
+
+    List<UserInfo> queryUserId(String[] phones);
 }

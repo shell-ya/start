@@ -75,6 +75,14 @@ public class AccountUserController extends BaseController
         return toAjax(accountUserService.insertAccountUser(accountUser));
     }
 
+    @PreAuthorize("@ss.hasPermi('business:user:add')")
+    @Log(title = "用户", businessType = BusinessType.INSERT)
+    @PostMapping("/getUserId")
+    public AjaxResult getUserId(@RequestBody String[] phones)
+    {
+        return AjaxResult.success(accountUserService.queryUserId(phones));
+    }
+
     /**
      * 修改用户
      */
