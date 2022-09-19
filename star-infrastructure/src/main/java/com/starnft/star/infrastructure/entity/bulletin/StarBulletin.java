@@ -19,6 +19,8 @@ public class StarBulletin extends BaseEntity {
     @TableId
     private Long id;
 
+    private Integer bulletinType;
+
     private String title;
 
     private Date publishTime;

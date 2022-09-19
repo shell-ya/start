@@ -30,6 +30,7 @@ public class StarBulletin
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
+    private Integer bulletinType;
     /** 标题 */
     @Excel(name = "标题")
     private String title;
@@ -189,4 +190,14 @@ public class StarBulletin
     public void setLinkType(Integer linkType) {
         this.linkType = linkType;
     }
+
+    public Integer getBulletinType() {
+        return bulletinType;
+    }
+
+    public void setBulletinType(Integer bulletinType) {
+        this.bulletinType = bulletinType;
+    }
+
+
 }
