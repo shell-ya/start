@@ -35,13 +35,14 @@ public class BulletinRepository implements IBulletinRepository {
 
 
     @Override
-    public ResponsePageResult<BulletinVo> pageBulletin(int page, int size) {
+    public ResponsePageResult<BulletinVo> pageBulletin(BulletinPageDto dto) {
         LambdaQueryWrapper<StarBulletin> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(BaseEntity::getIsDeleted, Boolean.FALSE);
+        wrapper.eq(Objects.nonNull(dto.getBulletinType()),StarBulletin::getBulletinType,dto.getBulletinType());
         wrapper.orderByDesc(StarBulletin::getPublishTime);
-        PageInfo<StarBulletin> pageInfo = PageHelper.startPage(page, size).doSelectPageInfo(() -> this.bulletinMapper.selectList(wrapper));
+        PageInfo<StarBulletin> pageInfo = PageHelper.startPage(dto.getPage(), dto.getSize()).doSelectPageInfo(() -> this.bulletinMapper.selectList(wrapper));
         List<BulletinVo> bulletinVos = coverBulletinVo(pageInfo.getList());
-        return new ResponsePageResult<>(bulletinVos,page,size,pageInfo.getTotal());
+        return new ResponsePageResult<>(bulletinVos,dto.getPage(), dto.getSize(),pageInfo.getTotal());
     }
 
     @Override

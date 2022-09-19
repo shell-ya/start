@@ -6,6 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap type="StarBulletin" id="StarBulletinResult">
         <result property="id"    column="id"    />
+        <result property="bulletinType" column="bulletin_type"/>
         <result property="title"    column="title"    />
         <result property="picUrl"    column="pic_url"    />
         <result property="content"    column="content"    />
@@ -20,7 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectStarBulletinVo">
-        select id, title, pic_url, content, publish_time, is_deleted, created_at, created_by, modified_at, modified_by,link_type,link_url from star_bulletin
+        select id, bulletin_type,title, pic_url, content, publish_time, is_deleted, created_at, created_by, modified_at, modified_by,link_type,link_url from star_bulletin
     </sql>
 
     <select id="selectStarBulletinList" parameterType="StarBulletin" resultMap="StarBulletinResult">
@@ -28,6 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             is_deleted = 0
             <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="bulletinType != null  and bulletinType != ''"> and bulletin_type = #{bulletinType} </if>
             <if test="isDeleted != null "> and is_deleted = #{isDeleted}</if>
         </where>
     </select>

@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface IBulletinRepository {
 
-    public ResponsePageResult<BulletinVo> pageBulletin(int page, int size);
+    public ResponsePageResult<BulletinVo> pageBulletin(BulletinPageDto dto);
 
     BulletinVo queryBulletinById(Long id);
 }
