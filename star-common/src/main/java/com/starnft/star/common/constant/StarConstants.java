@@ -52,6 +52,12 @@ public class StarConstants {
      * 市场主题列表
      */
     public static final String THEME_IN_MARKET_CACHE_NAME = ".theme.market.list.cache";
+
+    /**
+     * 市场主题列表
+     */
+    public static final String THEME_IN_MARKET_NUMBER_LIST_CACHE_NAME = ".theme.market.num.list.cache-";
+
     /**
      * 轮播图缓存名字
      */

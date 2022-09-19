@@ -5,9 +5,11 @@ import com.starnft.star.application.process.number.res.ConsignDetailRes;
 import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.domain.number.model.req.MarketNumberListReq;
 import com.starnft.star.domain.number.model.req.NumberConsignmentCancelRequest;
 import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
 import com.starnft.star.domain.number.model.req.NumberQueryRequest;
+import com.starnft.star.domain.number.model.vo.MarketNumberInfoVO;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
@@ -36,6 +38,13 @@ public class NumbersController {
     @TokenIgnore
     public RopResponse<ResponsePageResult<NumberVO>> getNumberList(@RequestBody RequestConditionPage<NumberQueryRequest> request) {
         return RopResponse.success(this.numberCore.obtainThemeNumberList(request));
+    }
+
+    @PostMapping("/theme/list")
+    @ApiOperation("获取藏品市场列表")
+    @TokenIgnore
+    public RopResponse<ResponsePageResult<MarketNumberInfoVO>> getNumberList(@RequestBody MarketNumberListReq request) {
+        return RopResponse.success(this.numberCore.marketNumberList(request));
     }
 
     @GetMapping("/{id}")

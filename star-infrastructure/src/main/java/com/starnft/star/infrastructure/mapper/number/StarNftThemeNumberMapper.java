@@ -3,10 +3,8 @@ package com.starnft.star.infrastructure.mapper.number;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.starnft.star.domain.number.model.dto.NumberDTO;
 import com.starnft.star.domain.number.model.dto.NumberQueryDTO;
-import com.starnft.star.domain.number.model.vo.NumberDetailVO;
-import com.starnft.star.domain.number.model.vo.NumberDingVO;
-import com.starnft.star.domain.number.model.vo.NumberVO;
-import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
+import com.starnft.star.domain.number.model.req.MarketNumberListReq;
+import com.starnft.star.domain.number.model.vo.*;
 import com.starnft.star.infrastructure.entity.number.StarNftThemeNumber;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -34,4 +32,6 @@ public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
     Integer countPublishNumber(Long themeId);
 
     BigDecimal minPrice(Long themeId);
+
+    List<MarketNumberInfoVO> marketNumberList(MarketNumberListReq marketNumberListReq);
 }

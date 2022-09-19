@@ -14,6 +14,7 @@ import com.starnft.star.common.utils.Assert;
 import com.starnft.star.domain.number.model.OrderByEnum;
 import com.starnft.star.domain.number.model.dto.*;
 import com.starnft.star.domain.number.model.req.HandoverReq;
+import com.starnft.star.domain.number.model.req.MarketNumberListReq;
 import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.*;
@@ -229,6 +230,11 @@ public class NumberServiceImpl implements INumberService {
     @Override
     public BigDecimal minPrice(Long themeId) {
         return numberRepository.minPrice(themeId);
+    }
+
+    @Override
+    public ResponsePageResult<MarketNumberInfoVO> marketNumberList(MarketNumberListReq marketNumberListReq) {
+        return numberRepository.marketNumberList(marketNumberListReq);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.starnft.star.infrastructure.repository;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.page.PageMethod;
 import com.google.common.collect.Lists;
@@ -11,6 +12,7 @@ import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
 import com.starnft.star.domain.number.model.dto.*;
+import com.starnft.star.domain.number.model.req.MarketNumberListReq;
 import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.*;
 import com.starnft.star.domain.number.repository.INumberRepository;
@@ -378,6 +380,14 @@ public class NumberRepository implements INumberRepository {
     @Override
     public BigDecimal minPrice(Long themeId) {
         return starNftThemeNumberMapper.minPrice(themeId);
+    }
+
+    @Override
+    public ResponsePageResult<MarketNumberInfoVO> marketNumberList(MarketNumberListReq marketNumberListReq) {
+        PageInfo<MarketNumberInfoVO> marketNumList = PageHelper.startPage(marketNumberListReq.getPage(), marketNumberListReq.getSize())
+                .doSelectPageInfo(() -> this.starNftThemeNumberMapper.marketNumberList(marketNumberListReq));
+
+        return new ResponsePageResult<>(marketNumList.getList(), marketNumList.getPageNum(), marketNumList.getPageSize(), marketNumList.getTotal());
     }
 
     private List<NumberDetailVO> mappingNumberValues(List<StarNftThemeNumber> starNftThemeNumbers) {

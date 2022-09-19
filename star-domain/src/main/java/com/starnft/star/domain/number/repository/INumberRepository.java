@@ -2,6 +2,7 @@ package com.starnft.star.domain.number.repository;
 
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.number.model.dto.*;
+import com.starnft.star.domain.number.model.req.MarketNumberListReq;
 import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.*;
 
@@ -68,4 +69,6 @@ public interface INumberRepository {
     Integer queryThemeNumberOnSellCount(Long themeId);
 
     BigDecimal minPrice(Long themeId);
+
+    ResponsePageResult<MarketNumberInfoVO> marketNumberList(MarketNumberListReq marketNumberListReq);
 }
