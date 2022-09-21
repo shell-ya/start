@@ -33,7 +33,7 @@ public class BulletinController {
     @TokenIgnore
     public RopResponse<ResponsePageResult<BulletinVo>> bulletinList(@RequestBody(required = false) BulletinPageDto dto){
         if (Objects.isNull(dto)) {
-            dto = new BulletinPageDto(1,100,0);
+            dto = new BulletinPageDto(1,100,null);
         }
         return RopResponse.success(bulletinService.queryBulletinList(dto));
     }

@@ -60,6 +60,7 @@ public class BulletinRepository implements IBulletinRepository {
         for (StarBulletin bulletin : starBulletins) {
             BulletinVo bulletinVo = new BulletinVo();
             bulletinVo.setId(bulletin.getId());
+            bulletinVo.setBulletinType(bulletin.getBulletinType());
             bulletinVo.setTitle(bulletin.getTitle());
             bulletinVo.setPublishTime(bulletin.getPublishTime());
             bulletinVo.setLinkType(bulletin.getLinkType());

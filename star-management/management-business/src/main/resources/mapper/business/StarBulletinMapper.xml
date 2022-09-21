@@ -31,6 +31,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="title != null  and title != ''"> and title = #{title}</if>
             <if test="bulletinType != null  and bulletinType != ''"> and bulletin_type = #{bulletinType} </if>
             <if test="isDeleted != null "> and is_deleted = #{isDeleted}</if>
+            order by created_at desc
         </where>
     </select>
 
@@ -75,6 +76,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update star_bulletin
         <trim prefix="SET" suffixOverrides=",">
             <if test="title != null and title != ''">title = #{title},</if>
+            <if test="bulletinType != null and bulletinType != ''">bulletin_type = #{bulletinType},</if>
             <if test="picUrl != null">pic_url = #{picUrl},</if>
             <if test="content != null and content != ''">content = #{content},</if>
             <if test="publishTime != null">publish_time = #{publishTime},</if>
