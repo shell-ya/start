@@ -12,6 +12,9 @@ public class ThemeGoodsReq extends RequestPage implements Serializable {
     @ApiModelProperty("系列id")
     private Long seriesId;
 
+    @ApiModelProperty("类型 1 藏品 2 盲盒")
+    private Integer themeType;
+
     @ApiModelProperty("排序类型 1：按发行时间排序 2：按价格")
     private Integer sortType;
 
