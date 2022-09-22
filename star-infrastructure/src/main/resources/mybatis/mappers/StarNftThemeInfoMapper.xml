@@ -83,13 +83,19 @@
                tn.price            floor
         FROM star_nft_theme_info ti
                  LEFT JOIN (SELECT series_theme_info_id AS theme_id, min(price) AS price
-                            FROM star_nft_theme_number where status = 2
+                            FROM star_nft_theme_number
+                            where status = 2
                             GROUP BY theme_id) tn ON ti.id = tn.theme_id
-        WHERE ti.series_id = #{seriesId}
+        WHERE
+        1 = 1
+        <if test="seriesId != null">
+            AND ti.series_id = #{seriesId}
+        </if>
+
         <if test="themeType != null">
             AND ti.theme_type = #{themeType}
         </if>
-          AND is_resale = 1
+        AND is_resale = 1
         <if test="sortType == 1">
             ORDER BY ti.market_open_time
         </if>
