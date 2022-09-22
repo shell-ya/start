@@ -3,7 +3,6 @@ package com.starnft.star.application.process.number.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import com.google.common.collect.Lists;
-import com.starnft.star.application.process.draw.vo.DrawConsumeVO;
 import com.starnft.star.application.process.number.INumberCore;
 import com.starnft.star.application.process.number.res.ConsignDetailRes;
 import com.starnft.star.common.constant.RedisKey;
@@ -22,10 +21,8 @@ import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
 import com.starnft.star.domain.number.model.dto.NumberUpdateDTO;
-import com.starnft.star.domain.number.model.req.HandoverReq;
-import com.starnft.star.domain.number.model.req.NumberConsignmentCancelRequest;
-import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
-import com.starnft.star.domain.number.model.req.NumberQueryRequest;
+import com.starnft.star.domain.number.model.req.*;
+import com.starnft.star.domain.number.model.vo.MarketNumberInfoVO;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
 import com.starnft.star.domain.number.model.vo.ReNumberVo;
@@ -36,13 +33,13 @@ import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
 import com.starnft.star.domain.wallet.service.WalletConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -74,15 +71,15 @@ public class NumberCoreImpl implements INumberCore {
         Map<Long, Integer> issuedQtyCache = new HashMap<>();
         numberList.getList().forEach(numberVO -> {
             numberVO.setIssuedQty(
-                Optional.ofNullable(issuedQtyCache.get(numberVO.getThemeId())).orElseGet(() -> {
-                    Integer qty = this.themeService.obtainThemeIssuedQty(numberVO.getThemeId());
-                    issuedQtyCache.put(numberVO.getThemeId(), qty);
-                    return qty;
-                }));
+                    Optional.ofNullable(issuedQtyCache.get(numberVO.getThemeId())).orElseGet(() -> {
+                        Integer qty = this.themeService.obtainThemeIssuedQty(numberVO.getThemeId());
+                        issuedQtyCache.put(numberVO.getThemeId(), qty);
+                        return qty;
+                    }));
             //设置交易状态
             String isTransaction = String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), numberVO.getId());
             if (redisUtil.hasKey(RedisLockUtils.REDIS_LOCK_PREFIX + isTransaction)) {
-               numberVO.setIsTransaction(1);
+                numberVO.setIsTransaction(1);
             }
         });
         return numberList;
@@ -99,7 +96,7 @@ public class NumberCoreImpl implements INumberCore {
         UserNumbersVO userNumbers = this.checkNumberOwner(uid, request.getNumberId(), UserNumberStatusEnum.PURCHASED);
 
         //校验是否在第三方平台挂售
-        if (numberService.queryThirdPlatSell(uid,request.getNumberId())){
+        if (numberService.queryThirdPlatSell(uid, request.getNumberId())) {
             throw new StarException(StarError.THIRD_PLAT_SELL);
         }
 
@@ -109,7 +106,7 @@ public class NumberCoreImpl implements INumberCore {
             throw new StarException(StarError.MARKET_DO_NOT_START_ERROR);
         }
         //  校验藏品可交易
-        if (StarConstants.themeResaleEnum.NOT_RESALE.getCode().equals(themeDetailVO.getIsResale())){
+        if (StarConstants.themeResaleEnum.NOT_RESALE.getCode().equals(themeDetailVO.getIsResale())) {
             throw new StarException(StarError.GOOD_NOT_RESALE_ERROR);
         }
 
@@ -136,7 +133,7 @@ public class NumberCoreImpl implements INumberCore {
                             .afterPrice(request.getPrice())
                             .build());
             // 修改用户藏品状态
-            Boolean updUserNumberBool = userThemeService.modifyUserNumberStatus(uid, request.getNumberId(),request.getPrice(), UserNumberStatusEnum.PURCHASED, UserNumberStatusEnum.ON_CONSIGNMENT);
+            Boolean updUserNumberBool = userThemeService.modifyUserNumberStatus(uid, request.getNumberId(), request.getPrice(), UserNumberStatusEnum.PURCHASED, UserNumberStatusEnum.ON_CONSIGNMENT);
 
             return updBool && saveBool && updUserNumberBool;
         });
@@ -155,7 +152,7 @@ public class NumberCoreImpl implements INumberCore {
 
         Assert.isTrue(Boolean.TRUE.equals(lock), () -> new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "藏品正在交易。"));
 
-        try{
+        try {
 
             // 校验是否拥有该藏品
             UserNumbersVO userNumbers = this.checkNumberOwner(uid, request.getNumberId(), UserNumberStatusEnum.ON_CONSIGNMENT);
@@ -182,14 +179,14 @@ public class NumberCoreImpl implements INumberCore {
                                 .build());
 
                 // 还原用户藏品状态
-                Boolean updUserNumberBool = this.userThemeService.modifyUserNumberStatus(uid, request.getNumberId(),null, UserNumberStatusEnum.ON_CONSIGNMENT, UserNumberStatusEnum.PURCHASED);
+                Boolean updUserNumberBool = this.userThemeService.modifyUserNumberStatus(uid, request.getNumberId(), null, UserNumberStatusEnum.ON_CONSIGNMENT, UserNumberStatusEnum.PURCHASED);
 
                 return updBool && saveBool && updUserNumberBool;
             });
 
             Assert.isTrue(Boolean.TRUE.equals(status), () -> new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "取消寄售失败"));
             return Boolean.TRUE;
-        }finally {
+        } finally {
             redisLockUtils.unlock(isTransaction);
         }
 
@@ -220,9 +217,10 @@ public class NumberCoreImpl implements INumberCore {
         Assert.notNull(userNumberInfo, () -> new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "你不是该藏品的拥有者 无法进行相关操作"));
         return userNumberInfo;
     }
-@Override
-    public  ResponsePageResult<UserNumbersVO> checkHasNumber(Long uid, Long themeId, UserNumberStatusEnum statusEnum,Integer page,Integer size) {
-        return this.userThemeService.queryUserArticleNumberInfoByThemeIds(uid, Lists.newArrayList(themeId), statusEnum,page,size);
+
+    @Override
+    public ResponsePageResult<UserNumbersVO> checkHasNumber(Long uid, Long themeId, UserNumberStatusEnum statusEnum, Integer page, Integer size) {
+        return this.userThemeService.queryUserArticleNumberInfoByThemeIds(uid, Lists.newArrayList(themeId), statusEnum, page, size);
 
     }
 
@@ -232,15 +230,15 @@ public class NumberCoreImpl implements INumberCore {
         Integer[] integers = stockNums.subList(0, stock1).toArray(new Integer[stock1]);
         Integer[] integers2 = stockNums.subList(stock1, stock1 + stock2).toArray(new Integer[stock2]);
 
-        String stockKey1 = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), themeId,time1);
-        String stockKey2 = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), themeId,time2);
+        String stockKey1 = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), themeId, time1);
+        String stockKey2 = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), themeId, time2);
 //        redisUtil.hashIncr(RedisKey.SECKILL_GOODS_STOCK_NUMBER.getKey(), String.format("%s-time-%s",themeId,time1), stock1);
         redisUtil.delByKey(stockKey1);
         redisUtil.addToListLeft(stockKey1, RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTime(), RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTimeUnit(), integers);
 //
         redisUtil.delByKey(stockKey2);
 //        redisUtil.hashIncr(RedisKey.SECKILL_GOODS_STOCK_NUMBER.getKey(), String.format("%s-time-%s",themeId,time2), stock2);
-        redisUtil.addToListLeft(stockKey2,RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTime(),RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTimeUnit(),integers2);
+        redisUtil.addToListLeft(stockKey2, RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTime(), RedisKey.SECKILL_GOODS_STOCK_QUEUE.getTimeUnit(), integers2);
 
 
     }
@@ -249,21 +247,34 @@ public class NumberCoreImpl implements INumberCore {
     public boolean reNumber(ReNumberVo numberVo, List<Long> ids) {
         //删除用户持有的重复藏品
 
-       return this.transactionTemplate.execute(transactionStatus -> {
+        return this.transactionTemplate.execute(transactionStatus -> {
 
-        boolean b = numberService.deleteNumber2ReDraw(numberVo, ids);
-        boolean result = true;
-        for (Long id :
-                ids) {
-            boolean handover = numberService.handover(buildHandOverReq(numberVo, id));
-            if (!handover) result = false;
-        }
+            boolean b = numberService.deleteNumber2ReDraw(numberVo, ids);
+            boolean result = true;
+            for (Long id :
+                    ids) {
+                boolean handover = numberService.handover(buildHandOverReq(numberVo, id));
+                if (!handover) result = false;
+            }
 
-        return b && result;
+            return b && result;
         });
     }
 
-    private HandoverReq buildHandOverReq(ReNumberVo numberVo,Long id) {
+    @Override
+    public ResponsePageResult<MarketNumberInfoVO> marketNumberList(MarketNumberListReq marketNumberListReq) {
+        ResponsePageResult<MarketNumberInfoVO> marketNumberList = numberService.marketNumberList(marketNumberListReq);
+        ArrayList<@Nullable MarketNumberInfoVO> currList = Lists.newArrayList();
+        for (MarketNumberInfoVO marketNumberInfoVO : marketNumberList.getList()) {
+            String isTransaction = String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), marketNumberInfoVO.getNumId());
+            marketNumberInfoVO.setStatus(redisLockUtils.isLock(isTransaction) ? 1 : 0);
+            currList.add(marketNumberInfoVO);
+        }
+        marketNumberList.setList(currList);
+        return marketNumberList;
+    }
+
+    private HandoverReq buildHandOverReq(ReNumberVo numberVo, Long id) {
 
         Long awardCategoryId = numberVo.getSeriesThemeInfoId();
         ThemeDetailVO themeDetailVO = themeService.queryThemeDetail(awardCategoryId);

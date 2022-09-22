@@ -3,15 +3,14 @@ package com.starnft.star.infrastructure.mapper.number;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.starnft.star.domain.number.model.dto.NumberDTO;
 import com.starnft.star.domain.number.model.dto.NumberQueryDTO;
-import com.starnft.star.domain.number.model.vo.NumberDetailVO;
-import com.starnft.star.domain.number.model.vo.NumberDingVO;
-import com.starnft.star.domain.number.model.vo.NumberVO;
-import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
+import com.starnft.star.domain.number.model.req.MarketNumberListReq;
+import com.starnft.star.domain.number.model.vo.*;
 import com.starnft.star.infrastructure.entity.number.StarNftThemeNumber;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper
@@ -29,4 +28,10 @@ public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
    List<StarNftThemeNumber> getBing();
 
     Boolean updateNumberStatus(@Param("id") Long id, @Param("userId")Long userId, @Param("code")Integer code, @Param("version")Integer version);
+
+    Integer countPublishNumber(Long themeId);
+
+    BigDecimal minPrice(Long themeId);
+
+    List<MarketNumberInfoVO> marketNumberList(MarketNumberListReq marketNumberListReq);
 }

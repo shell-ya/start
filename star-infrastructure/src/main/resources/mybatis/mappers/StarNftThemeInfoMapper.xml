@@ -27,9 +27,27 @@
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
-        id, series_id, theme_type, theme_name, theme_pic, publish_number, descrption, theme_level,
-        stock, lssue_price, create_at, create_by, update_at, update_by, is_delete, is_recommend,
-        restrict_number, tags, contract_address,publisher_id
+        id,
+        series_id,
+        theme_type,
+        theme_name,
+        theme_pic,
+        publish_number,
+        descrption,
+        theme_level,
+        stock,
+        lssue_price,
+        create_at,
+        create_by,
+        update_at,
+        update_by,
+        is_delete,
+        is_recommend,
+        restrict_number,
+        tags,
+        contract_address,
+        publisher_id,
+        is_resale
     </sql>
 
     <select id="selectRecommendThemes" resultType="com.starnft.star.domain.theme.model.vo.ThemeVO">
@@ -52,10 +70,40 @@
           AND a.is_delete = 0
     </select>
 
+    <select id="themeGoodsList" resultType="com.starnft.star.domain.theme.model.vo.ThemeGoodsVO">
+        SELECT ti.id               id,
+               ti.series_id        series_id,
+               ti.publisher_id     publisher_id,
+               ti.theme_type       theme_type,
+               ti.theme_name       theme_name,
+               ti.theme_pic        theme_pic,
+               ti.publish_number   publish_number,
+               ti.theme_level      theme_level,
+               ti.market_open_time market_open_time,
+               tn.price            floor
+        FROM star_nft_theme_info ti
+                 LEFT JOIN (SELECT series_theme_info_id AS theme_id, min(price) AS price
+                            FROM star_nft_theme_number where status = 2
+                            GROUP BY theme_id) tn ON ti.id = tn.theme_id
+        WHERE ti.series_id = #{seriesId}
+          AND is_resale = 1
+        <if test="sortType == 1">
+            ORDER BY ti.market_open_time
+        </if>
+        <if test="sortType == 2">
+            ORDER BY tn.price
+        </if>
+        <if test="sortOrder == 1">
+            ASC
+        </if>
+        <if test="sortOrder == 2">
+            DESC
+        </if>
+    </select>
+
     <select id="selectThemeIssuedQty" resultType="java.lang.Integer">
         SELECT COUNT(1)
         FROM star_nft_theme_number
         WHERE series_theme_info_id = #{themeId}
     </select>
-
 </mapper>

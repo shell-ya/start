@@ -6,14 +6,17 @@ import com.starnft.star.application.process.theme.ThemeCore;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.publisher.model.req.PublisherReq;
 import com.starnft.star.domain.publisher.model.vo.PublisherVO;
 import com.starnft.star.domain.publisher.service.PublisherService;
+import com.starnft.star.domain.theme.model.req.ThemeGoodsReq;
 import com.starnft.star.domain.theme.model.req.ThemeReq;
 import com.starnft.star.domain.theme.model.res.ThemeDetailRes;
 import com.starnft.star.domain.theme.model.res.ThemeRes;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.domain.theme.model.vo.ThemeDetailVO;
+import com.starnft.star.domain.theme.model.vo.ThemeGoodsVO;
 import com.starnft.star.domain.theme.model.vo.ThemeVO;
 import com.starnft.star.domain.theme.service.ThemeService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +34,9 @@ public class ThemeCoreImpl implements ThemeCore {
     ThemeService themeService;
     @Resource
     PublisherService publisherService;
+
+    @Resource
+    INumberService numberService;
 
     @Resource
     private RedisUtil redisUtil;
@@ -105,13 +111,29 @@ public class ThemeCoreImpl implements ThemeCore {
         return results;
     }
 
+    @Override
+    public ResponsePageResult<ThemeGoodsVO> themeGoodsList(ThemeGoodsReq themeGoodsReq) {
+        ResponsePageResult<ThemeGoodsVO> themeGoods = themeService.themeGoodsList(themeGoodsReq);
+        List<ThemeGoodsVO> themeGoodsVOS = Lists.newArrayList();
+        for (ThemeGoodsVO themeGoodsVO : themeGoods.getList()) {
+            Long publisherId = themeGoodsVO.getPublisherId();
+            PublisherVO publisherVO = publisherService.queryPublisher(new PublisherReq(publisherId));
+            themeGoodsVO.setPublisherName(publisherVO.getPublisherName());
+            //流通量
+            Integer circulate = numberService.queryThemeNumberOnSellCount(themeGoodsVO.getId());
+            themeGoodsVO.setCirculate(themeGoodsVO.getPublishNumber());
+            themeGoodsVOS.add(themeGoodsVO);
+        }
+        return ResponsePageResult.listReplace(themeGoods, themeGoodsVOS);
+    }
+
     //更新展示库存量
     private SecKillGoods verifyStock(SecKillGoods secKillGoods) {
-        String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), secKillGoods.getThemeId(),secKillGoods.getTime());
+        String stockKey = String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), secKillGoods.getThemeId(), secKillGoods.getTime());
         String poolKey = String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), secKillGoods.getThemeId(), secKillGoods.getTime());
         long stock = redisUtil.lGetListSize(stockKey);
         long poolStock = redisUtil.sGetSetSize(poolKey);
-        if ((stock + poolStock) <= 0){
+        if ((stock + poolStock) <= 0) {
             secKillGoods.setSellOut(true);
         }
         if (secKillGoods.getStock() != stock) {
@@ -144,4 +166,6 @@ public class ThemeCoreImpl implements ThemeCore {
         }
         return result;
     }
+
+
 }
