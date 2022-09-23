@@ -13,4 +13,7 @@ public interface WhiteListDetailMapper extends BaseMapper<WhiteListDetail> {
 
     Integer modifySurplus(@Param("whiteId") Long whiteId, @Param("uid") Long uid, @Param("version") Integer version);
 
+    Integer addSurplus(@Param("whiteId") Long whiteId, @Param("uid") Long uid,@Param("surplusTime") Integer surplusTime,@Param("version") Integer version);
+
+    Integer insertSurplus(WhiteListDetail whiteListDetail);
 }

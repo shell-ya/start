@@ -1,7 +1,5 @@
 package com.starnft.star.quartz.task;
 
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.starnft.star.business.domain.StarNftOrder;
@@ -11,24 +9,21 @@ import com.starnft.star.business.domain.vo.JinUserInfo;
 import com.starnft.star.business.domain.vo.UserInfo;
 import com.starnft.star.business.service.IStarNftOrderService;
 import com.starnft.star.business.service.IStarNftUserThemeService;
-import com.starnft.star.business.service.IWhiteListDetailService;
+import com.starnft.star.business.service.IWhiteService;
 import com.starnft.star.business.support.rank.core.IRankService;
 import com.starnft.star.business.support.rank.model.RankItemMetaData;
 import com.starnft.star.common.utils.RandomUtil;
 import com.starnft.star.common.utils.StringUtils;
 import com.starnft.star.common.utils.poi.ExcelUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * 定时任务调度测试
@@ -52,7 +47,7 @@ public class RyTask
     IStarNftOrderService orderService;
 
     @Resource
-    IWhiteListDetailService whiteListDetailService;
+    IWhiteService whiteListDetailService;
 
     /*
     1: 榜前3， 占据2位
