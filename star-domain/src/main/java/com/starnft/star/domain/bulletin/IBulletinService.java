@@ -2,6 +2,7 @@ package com.starnft.star.domain.bulletin;
 
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.bulletin.model.dto.BulletinPageDto;
+import com.starnft.star.domain.bulletin.model.vo.BulletinTypeVo;
 import com.starnft.star.domain.bulletin.model.vo.BulletinVo;
 
 import java.util.List;
@@ -16,4 +17,6 @@ public interface IBulletinService {
     ResponsePageResult<BulletinVo> queryBulletinList(BulletinPageDto bulletinPageDto);
 
     BulletinVo getBulletinDetail(Long id);
+
+    List<BulletinTypeVo> queryBulletinType();
 }

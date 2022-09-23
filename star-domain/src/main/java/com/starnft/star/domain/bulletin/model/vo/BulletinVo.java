@@ -16,6 +16,7 @@ public class BulletinVo implements Serializable {
 
     @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
+    private Integer bulletinType;
     private String title;
     private Date publishTime;
     private String picUrl;

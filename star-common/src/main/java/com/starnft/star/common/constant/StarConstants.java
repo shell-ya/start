@@ -1,5 +1,7 @@
 package com.starnft.star.common.constant;
 
+import io.swagger.models.auth.In;
+
 /**
  * @author WeiChunLAI
  */
@@ -805,6 +807,40 @@ public class StarConstants {
         public void setInfo(String info) {
             this.info = info;
         }
+    }
+
+    public enum BulletinType {
+
+        ACTIVITY(1,"活动公告"),
+        ON_NEW(2,"上新公告"),
+        AIRDROP(3,"空投公告"),
+        CONSIGNMENT(4,"寄售公告"),
+        SYSTEM(5,"系统公告"),
+        COMPOSE(6,"合成公告");
+        private Integer type;
+        private String val;
+
+        BulletinType(Integer type,String val){
+            this.type = type;
+            this.val = val;
+        }
+
+        public void setType(Integer type) {
+            this.type = type;
+        }
+        public Integer getType(){
+            return type;
+        }
+
+        public void setVal(String val) {
+            this.val = val;
+        }
+
+        public String getVal(){
+            return val;
+        }
+
+
     }
 
 

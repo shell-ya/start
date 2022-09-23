@@ -11,15 +11,18 @@ import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.Assert;
 import com.starnft.star.domain.bulletin.IBulletinService;
 import com.starnft.star.domain.bulletin.model.dto.BulletinPageDto;
+import com.starnft.star.domain.bulletin.model.vo.BulletinTypeVo;
 import com.starnft.star.domain.bulletin.model.vo.BulletinVo;
 import com.starnft.star.domain.bulletin.repository.IBulletinRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @Date 2022/7/25 6:48 PM
@@ -37,10 +40,10 @@ public class BulletinServiceImpl implements IBulletinService {
             expire = 3,
             cacheType = CacheType.REMOTE,
             timeUnit = TimeUnit.MINUTES,
-            keyConvertor = KeyConvertor.FASTJSON)
+            keyConvertor = KeyConvertor.NONE)
     @CacheRefresh(refresh = 2,timeUnit = TimeUnit.MINUTES,stopRefreshAfterLastAccess = 3)
     public ResponsePageResult<BulletinVo> queryBulletinList(BulletinPageDto dto) {
-        return bulletinRepository.pageBulletin(dto.getPage(), dto.getSize());
+        return bulletinRepository.pageBulletin(dto);
     }
 
     @Override
@@ -57,5 +60,15 @@ public class BulletinServiceImpl implements IBulletinService {
                 .orElseThrow(() -> new StarException(StarError.BULLETIN_NOT_FOUND));
 
         return bulletinVo;
+    }
+
+    @Override
+    public List<BulletinTypeVo> queryBulletinType() {
+        //取出枚举封装
+        return  Arrays.stream(StarConstants.BulletinType.values()).map(this::bulletinTypeVo).collect(Collectors.toList());
+    }
+
+    private BulletinTypeVo bulletinTypeVo(StarConstants.BulletinType bulletinType){
+        return new BulletinTypeVo(bulletinType.getType(),bulletinType.getVal());
     }
 }
