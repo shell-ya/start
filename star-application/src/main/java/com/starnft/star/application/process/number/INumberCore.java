@@ -5,9 +5,11 @@ import com.starnft.star.common.enums.UserNumberStatusEnum;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.article.model.vo.UserNumbersVO;
+import com.starnft.star.domain.number.model.req.MarketNumberListReq;
 import com.starnft.star.domain.number.model.req.NumberConsignmentCancelRequest;
 import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
 import com.starnft.star.domain.number.model.req.NumberQueryRequest;
+import com.starnft.star.domain.number.model.vo.MarketNumberInfoVO;
 import com.starnft.star.domain.number.model.vo.NumberDetailVO;
 import com.starnft.star.domain.number.model.vo.NumberVO;
 import com.starnft.star.domain.number.model.vo.ReNumberVo;
@@ -35,4 +37,6 @@ public interface INumberCore {
     void putNumber(long themeId,String time1,String time2,int stock1,int stock2);
 
     boolean reNumber(ReNumberVo numberVo, List<Long> ids);
+
+    ResponsePageResult<MarketNumberInfoVO> marketNumberList(MarketNumberListReq marketNumberListReq);
 }

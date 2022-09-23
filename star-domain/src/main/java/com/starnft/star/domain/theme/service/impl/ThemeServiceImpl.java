@@ -9,9 +9,11 @@ import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.Assert;
+import com.starnft.star.domain.theme.model.req.ThemeGoodsReq;
 import com.starnft.star.domain.theme.model.req.ThemeReq;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.domain.theme.model.vo.ThemeDetailVO;
+import com.starnft.star.domain.theme.model.vo.ThemeGoodsVO;
 import com.starnft.star.domain.theme.model.vo.ThemeVO;
 import com.starnft.star.domain.theme.repository.IThemeRepository;
 import com.starnft.star.domain.theme.service.ThemeService;
@@ -56,6 +58,8 @@ public class ThemeServiceImpl implements ThemeService {
         return this.themeRepository.obtainGoodsCache(themeId, time);
     }
 
+
+
     @Override
     public ResponsePageResult<ThemeVO> obtainRecommendTheme(ThemeReq req) {
         return this.themeRepository.queryRecommendTheme(req);
@@ -66,5 +70,11 @@ public class ThemeServiceImpl implements ThemeService {
         Assert.notNull(themeId, () -> new StarException(StarError.PARAETER_UNSUPPORTED, "主题id不能为空"));
         return this.themeRepository.obtainThemeIssuedQty(themeId);
     }
+
+    @Override
+    public ResponsePageResult<ThemeGoodsVO> themeGoodsList(ThemeGoodsReq themeGoodsReq) {
+        return this.themeRepository.themeGoodsList(themeGoodsReq);
+    }
+
 
 }
