@@ -1,5 +1,6 @@
 package com.starnft.star.application.process.draw.strategy;
 
+import com.starnft.star.application.process.draw.req.ConsumablesVerifyReq;
 import com.starnft.star.application.process.draw.vo.DrawConsumeVO;
 import com.starnft.star.domain.number.serivce.INumberService;
 import org.springframework.stereotype.Component;
@@ -15,5 +16,10 @@ public class BlindBoxConsumeExec implements DrawConsumeExecutor {
     @Override
     public Boolean doConsume(DrawConsumeVO consumeVO) {
         return iNumberService.comsumeNumber(Long.parseLong(consumeVO.getDrawAwardVO().getuId()), Long.parseLong(consumeVO.getNumberId()));
+    }
+
+    @Override
+    public void doVerify(ConsumablesVerifyReq req) {
+
     }
 }

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.WhiteListConfigMapper">
+    <resultMap type="com.starnft.star.business.domain.WhiteListConfig" id="WhiteListConfigMap">
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="isDeleted" column="is_deleted" jdbcType="INTEGER"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+        <result property="createdBy" column="created_by" jdbcType="VARCHAR"/>
+        <result property="modifiedAt" column="modified_at" jdbcType="TIMESTAMP"/>
+        <result property="modifiedBy" column="modified_by" jdbcType="VARCHAR"/>
+        <result property="whiteDesc" column="white_desc" jdbcType="VARCHAR"/>
+        <result property="whiteType" column="white_type" jdbcType="INTEGER"/>
+        <result property="effective" column="effective" jdbcType="VARCHAR"/>
+        <result property="goodsId" column="goods_id" jdbcType="BIGINT"/>
+        <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
+        <result property="endTime" column="end_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 通过ID查询单条数据 -->
+    <select id="queryByType" resultMap="WhiteListConfigMap">
+        select id,
+               is_deleted,
+               created_at,
+               created_by,
+               modified_at,
+               modified_by,
+               white_desc,
+               white_type,
+               effective,
+               goods_id,
+               start_time,
+               end_time
+        from white_list_config
+        where white_type = #{whiteType}
+        and effective = 1
+    </select>
+
+    <!-- 通过ID查询单条数据 -->
+    <select id="queryById" resultMap="WhiteListConfigMap">
+        select id,
+               is_deleted,
+               created_at,
+               created_by,
+               modified_at,
+               modified_by,
+               white_desc,
+               white_type,
+               effective,
+               goods_id,
+               start_time,
+               end_time
+        from white_list_config
+        where id = #{id}
+          and effective = 1
+        and is_deleted = 0
+    </select>
+
+    <select id="queryByGoodsId" resultMap="WhiteListConfigMap">
+        select id,
+               is_deleted,
+               created_at,
+               created_by,
+               modified_at,
+               modified_by,
+               white_desc,
+               white_type,
+               effective,
+               goods_id,
+               start_time,
+               end_time
+        from white_list_config
+        where goods_id = #{goodsId}
+          and effective = 1
+    </select>
+
+
+</mapper>

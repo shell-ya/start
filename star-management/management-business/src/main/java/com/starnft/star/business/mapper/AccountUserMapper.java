@@ -1,6 +1,7 @@
 package com.starnft.star.business.mapper;
 
 import com.starnft.star.business.domain.AccountUser;
+import com.starnft.star.business.domain.vo.UserInfo;
 
 import java.util.Date;
 import java.util.List;
@@ -67,4 +68,6 @@ public interface AccountUserMapper
     public List<Integer> getDayUserCount();
     public List<Integer> getToDayUserCount();
     public List<Integer> getAllUserCount();
+
+    UserInfo selectUserByPhone(String phone);
 }

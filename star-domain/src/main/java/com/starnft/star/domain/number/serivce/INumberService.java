@@ -1,13 +1,20 @@
 package com.starnft.star.domain.number.serivce;
 
+import com.alicp.jetcache.anno.CachePenetrationProtect;
+import com.alicp.jetcache.anno.CacheRefresh;
+import com.alicp.jetcache.anno.CacheType;
+import com.alicp.jetcache.anno.Cached;
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.number.model.dto.*;
 import com.starnft.star.domain.number.model.req.HandoverReq;
+import com.starnft.star.domain.number.model.req.MarketNumberListReq;
 import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface INumberService {
@@ -56,6 +63,9 @@ public interface INumberService {
 
     Boolean modifyNumberOwnerBy(Long id, Long userId, Integer code);
 
+
+    Boolean modifyNumberOwnerByVersion(Long id, Long userId, Integer code,Integer version);
+
     Boolean deleteNumber(Long uid,Long seriesThemeId);
 
     Long queryUserFirstNumberId(Long uid,Long seriesThemeInfoId);
@@ -68,4 +78,16 @@ public interface INumberService {
     List<Long> queryHasReNumberUser(Long seriesThemeId);
 
     boolean deleteNumber2ReDraw(ReNumberVo numberVo, List<Long> ids);
+
+    Integer queryThemeNumberOnSellCount(Long themeId);
+
+    BigDecimal minPrice(Long themeId);
+
+    @Cached(name = StarConstants.THEME_IN_MARKET_NUMBER_LIST_CACHE_NAME,
+            key = "#marketNumberListReq.themeId",
+            expire = 5,
+            cacheType = CacheType.REMOTE)
+    @CacheRefresh(refresh = 4)
+    @CachePenetrationProtect
+    ResponsePageResult<MarketNumberInfoVO> marketNumberList(MarketNumberListReq marketNumberListReq);
 }

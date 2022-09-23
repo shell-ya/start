@@ -14,6 +14,7 @@ import com.starnft.star.common.utils.Assert;
 import com.starnft.star.domain.number.model.OrderByEnum;
 import com.starnft.star.domain.number.model.dto.*;
 import com.starnft.star.domain.number.model.req.HandoverReq;
+import com.starnft.star.domain.number.model.req.MarketNumberListReq;
 import com.starnft.star.domain.number.model.req.NumberQueryRequest;
 import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.*;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -189,13 +191,20 @@ public class NumberServiceImpl implements INumberService {
     }
 
     @Override
+    public Boolean modifyNumberOwnerByVersion(Long id, Long userId, Integer code, Integer version) {
+        Boolean result = this.numberRepository.modifyNumberStatusVersion(id, userId, code, version);
+        Assert.isTrue(result, () -> new StarException("合成藏品已被抢走，请重新合成"));
+        return result;
+    }
+
+    @Override
     public Boolean deleteNumber(Long uid, Long seriesThemeId) {
-        return numberRepository.deleteNumber(uid,seriesThemeId);
+        return numberRepository.deleteNumber(uid, seriesThemeId);
     }
 
     @Override
     public Long queryUserFirstNumberId(Long uid, Long seriesThemeInfoId) {
-        return numberRepository.firstNumber(uid,seriesThemeInfoId);
+        return numberRepository.firstNumber(uid, seriesThemeInfoId);
     }
 
     @Override
@@ -210,7 +219,22 @@ public class NumberServiceImpl implements INumberService {
 
     @Override
     public boolean deleteNumber2ReDraw(ReNumberVo numberVo, List<Long> ids) {
-        return numberRepository.deleteNumber2ReDraw(numberVo,ids);
+        return numberRepository.deleteNumber2ReDraw(numberVo, ids);
+    }
+
+    @Override
+    public Integer queryThemeNumberOnSellCount(Long themeId) {
+        return numberRepository.queryThemeNumberOnSellCount(themeId);
+    }
+
+    @Override
+    public BigDecimal minPrice(Long themeId) {
+        return numberRepository.minPrice(themeId);
+    }
+
+    @Override
+    public ResponsePageResult<MarketNumberInfoVO> marketNumberList(MarketNumberListReq marketNumberListReq) {
+        return numberRepository.marketNumberList(marketNumberListReq);
     }
 
     @Override

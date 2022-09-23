@@ -46,4 +46,6 @@ public class NumberVO implements Serializable {
     private Integer status;
     @ApiModelProperty("交易状态 0-未交易  1-交易中")
     private Integer isTransaction;
+    @ApiModelProperty("乐观锁")
+    private Integer version;
 }

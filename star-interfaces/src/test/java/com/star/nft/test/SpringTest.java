@@ -145,26 +145,24 @@ public class SpringTest {
 
     @Test
     public void docache(){
-        String key = String.format(RedisKey.DRAW_AWARD_STOCK_MAPPING.getKey(), "10000002");
-        redisUtil.hincr(key,"1010",200L);
-        redisUtil.hincr(key,"1011",300L);
-        redisUtil.hincr(key,"1012",38L);
-        redisUtil.hincr(key,"1013",38L);
-        redisUtil.hincr(key,"1014",38L);
-        redisUtil.hincr(key,"1015",38L);
-        redisUtil.hincr(key,"1016",38L);
-        redisUtil.hincr(key,"1017",38L);
-        redisUtil.hincr(key,"1018",38L);
-        redisUtil.hincr(key,"1019",38L);
-        redisUtil.hincr(key,"1020",38L);
-        redisUtil.hincr(key,"1021",38L);
-        redisUtil.hincr(key,"1022",38L);
-        redisUtil.hincr(key,"1023",38L);
-        redisUtil.hincr(key,"1006",3L);
-        redisUtil.hincr(key,"1005",10L);
-        redisUtil.hincr(key,"1035",3L);
-        redisUtil.hincr(key,"1001",1L);
-        redisUtil.hincr(key,"1036",1L);
+        String key = String.format(RedisKey.DRAW_AWARD_STOCK_MAPPING.getKey(), "10000003");
+        redisUtil.hincr(key,"2001",200L);
+        redisUtil.hincr(key,"2002",300L);
+        redisUtil.hincr(key,"2003",38L);
+        redisUtil.hincr(key,"2004",38L);
+        redisUtil.hincr(key,"2005",38L);
+        redisUtil.hincr(key,"2006",38L);
+        redisUtil.hincr(key,"2007",38L);
+        redisUtil.hincr(key,"2008",38L);
+        redisUtil.hincr(key,"2009",38L);
+        redisUtil.hincr(key,"2010",38L);
+        redisUtil.hincr(key,"2011",38L);
+        redisUtil.hincr(key,"2012",38L);
+        redisUtil.hincr(key,"2013",38L);
+        redisUtil.hincr(key,"2014",38L);
+        redisUtil.hincr(key,"2015",3L);
+        redisUtil.hincr(key,"2016",10L);
+        redisUtil.hincr(key,"2017",3L);
     }
 
 

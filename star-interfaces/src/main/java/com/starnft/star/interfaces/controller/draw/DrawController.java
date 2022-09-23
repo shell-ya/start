@@ -9,6 +9,9 @@ import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.domain.activity.IActivitiesService;
+import com.starnft.star.domain.activity.model.vo.DrawBuffTimesRes;
+import com.starnft.star.domain.activity.model.vo.LuckyGuysVO;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.draw.model.req.DrawAwardExportsReq;
 import com.starnft.star.domain.draw.model.vo.DrawAwardExportVO;
@@ -20,10 +23,9 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Api(tags = "抽奖「DrawController」")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -40,6 +42,8 @@ public class DrawController {
     final RedisUtil redisUtil;
 
     final IDrawDelProcess drawDelProcess;
+
+    final IActivitiesService activitiesService;
 
     @ApiOperation("执行抽奖")
     @PostMapping("/dodraw")
@@ -69,10 +73,17 @@ public class DrawController {
         return RopResponse.success(drawExec.queryDrawRecords(req));
     }
 
+    @ApiOperation("抽奖次数")
+    @PostMapping("/draw/times")
+    public RopResponse<Integer> drawTimes(@RequestBody DrawAwardExportsReq req) {
+        req.setUId(String.valueOf(UserContext.getUserId().getUserId()));
+        return RopResponse.success(drawExec.drawTimes(req));
+    }
+
     @ApiOperation("清理异常抽奖数据")
     @PostMapping("/delDrawExport")
     @TokenIgnore
-    public RopResponse delDrawExport(){
+    public RopResponse delDrawExport() {
         drawDelProcess.delErrorDraw();
         return RopResponse.success(true);
     }
@@ -80,9 +91,23 @@ public class DrawController {
     @ApiOperation("重新分配编号")
     @PostMapping("/reNumber")
     @TokenIgnore
-    public RopResponse reNumber(){
+    public RopResponse reNumber() {
         drawDelProcess.reNumber();
         return RopResponse.success(true);
+    }
+
+    @ApiOperation("buff剩余次数")
+    @PostMapping("/buff/times/{awardId}")
+    public RopResponse<DrawBuffTimesRes> buffTimes(@PathVariable String awardId) {
+        String uid = String.valueOf(UserContext.getUserId().getUserId());
+        return RopResponse.success(activitiesService.queryBuffTimes(uid, awardId));
+    }
+
+    @ApiOperation("幸运用户列表")
+    @PostMapping("/lucky/guys")
+    @TokenIgnore
+    public RopResponse<List<LuckyGuysVO>> luckyguys() {
+        return RopResponse.success(activitiesService.luckyGuys());
     }
 
 }

@@ -1,11 +1,14 @@
 package com.starnft.star.business.service.impl;
 
 import com.starnft.star.business.domain.AccountUser;
+import com.starnft.star.business.domain.vo.UserInfo;
 import com.starnft.star.business.mapper.AccountUserMapper;
 import com.starnft.star.business.service.IAccountUserService;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -95,5 +98,15 @@ public class AccountUserServiceImpl implements IAccountUserService
     @Override
     public AccountUser selectUserByAccount(Long account) {
         return accountUserMapper.selectUserByAccount(account);
+    }
+
+    @Override
+    public List<UserInfo> queryUserId(String[] phones) {
+        ArrayList<UserInfo> objects = Lists.newArrayList();
+        for (int i = 0; i < phones.length; i++) {
+            UserInfo userInfo = accountUserMapper.selectUserByPhone(phones[i]);
+            objects.add(userInfo);
+        }
+        return objects;
     }
 }

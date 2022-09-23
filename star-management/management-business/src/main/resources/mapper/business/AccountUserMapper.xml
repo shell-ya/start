@@ -216,4 +216,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectAccountUserVo"/>
         where account = #{account}
     </select>
+
+    <select id="selectUserByPhone" resultType="com.starnft.star.business.domain.vo.UserInfo">
+        select account as userId,
+                phone as phone
+        from account_user
+        where phone = #{phone}
+    </select>
 </mapper>
