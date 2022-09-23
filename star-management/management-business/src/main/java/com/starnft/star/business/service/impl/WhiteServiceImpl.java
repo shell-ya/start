@@ -2,6 +2,7 @@ package com.starnft.star.business.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.starnft.star.business.domain.AccountUser;
 import com.starnft.star.business.domain.WhiteListConfig;
 import com.starnft.star.business.domain.WhiteListDetail;
 import com.starnft.star.business.domain.vo.WhiteDetailVo;
@@ -30,6 +31,8 @@ public class WhiteServiceImpl implements IWhiteService {
     private WhiteListDetailMapper whiteListDetailMapper;
     @Autowired
     private WhiteListConfigMapper whiteListConfigMapper;
+    @Autowired
+    private AccountUserServiceImpl accountUserMapper;
 
     @Override
     public WhiteListDetail queryWhite(Long whiteId, Long uid) {
@@ -45,9 +48,10 @@ public class WhiteServiceImpl implements IWhiteService {
 
 
     @Override
-    public List<WhiteListDetail> queryWhiteList(Long whiteId) {
-        QueryWrapper<WhiteListDetail> whiteListDetailQueryWrapper = new QueryWrapper<>();
-        whiteListDetailQueryWrapper.eq("white_id",whiteId);
+    public List<WhiteListDetail> queryWhiteList(WhiteListDetail whiteListDetail) {
+        LambdaQueryWrapper<WhiteListDetail> whiteListDetailQueryWrapper = new LambdaQueryWrapper<>();
+        whiteListDetailQueryWrapper.eq(Objects.nonNull(whiteListDetail.getWhiteId()),WhiteListDetail::getWhiteId,whiteListDetail.getWhiteId());
+        whiteListDetailQueryWrapper.eq(Objects.nonNull(whiteListDetail.getUid()),WhiteListDetail::getUid,whiteListDetail.getUid());
         return whiteListDetailMapper.selectList(whiteListDetailQueryWrapper);
     }
 
@@ -64,9 +68,10 @@ public class WhiteServiceImpl implements IWhiteService {
     @Override
     public int insertWhiteConfig(WhiteListConfig whiteListConfig) {
 
-        whiteListConfig.setWhiteType(RandomUtil.randomInt());
+        whiteListConfig.setWhiteType(RandomUtil.randomInt(100));
         whiteListConfig.setCreatedAt(new Date());
         whiteListConfig.setIsDeleted(Boolean.FALSE);
+        whiteListConfig.setEffective(1);
         return whiteListConfigMapper.insert(whiteListConfig);
     }
 
@@ -88,6 +93,15 @@ public class WhiteServiceImpl implements IWhiteService {
         for (WhiteDetailVo item :
                 whiteDetailVos) {
             try{
+                //用户不存在跳过
+                //验证用户是否存在
+                AccountUser accountUser = accountUserMapper.selectUserByAccount(item.getUserId());
+                if (Objects.isNull(accountUser)){
+                    failureNum++;
+                    failureMsg.append("<br/>用户").append(item.getUserId()).append("不存在");
+                    continue;
+                }
+
                 WhiteListDetail detail = whiteListDetailMapper.selectMappingWhite(whiteId, item.getUserId());
                 if (detail == null){
                     detail = new WhiteListDetail();

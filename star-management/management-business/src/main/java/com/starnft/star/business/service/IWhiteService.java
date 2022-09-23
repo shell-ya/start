@@ -12,7 +12,7 @@ public interface IWhiteService {
 
     List<WhiteListDetail> queryCommon(Long whiteId);
 
-    List<WhiteListDetail> queryWhiteList(Long whiteId);
+    List<WhiteListDetail> queryWhiteList(WhiteListDetail whiteListDetail);
 
     List<WhiteListConfig> queryWhiteConfigList(WhiteListConfig config);
 

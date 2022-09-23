@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.starnft.star.common.core.domain.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -49,12 +50,14 @@ public class WhiteListConfig implements Serializable {
      * 有效开始时间
      */
     @ApiModelProperty(name = "有效开始时间", notes = "")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS")
     private Date startTime;
 
     /**
      * 有效结束时间
      */
     @ApiModelProperty(name = "有效结束时间", notes = "")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:SS")
     private Date endTime;
 
     @TableField("is_deleted")

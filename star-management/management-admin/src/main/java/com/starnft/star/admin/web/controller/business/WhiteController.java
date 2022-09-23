@@ -1,8 +1,8 @@
 package com.starnft.star.admin.web.controller.business;
 
-import com.starnft.star.business.domain.StarNftThemeNumber;
-import com.starnft.star.business.domain.StarScheduleSeckill;
+
 import com.starnft.star.business.domain.WhiteListConfig;
+import com.starnft.star.business.domain.WhiteListDetail;
 import com.starnft.star.business.domain.vo.StarScheduleSeckillVo;
 import com.starnft.star.business.domain.vo.WhiteDetailVo;
 import com.starnft.star.business.service.IWhiteService;
@@ -54,13 +54,24 @@ public class WhiteController extends BaseController {
         ExcelUtil<WhiteDetailVo> util = new ExcelUtil<>(WhiteDetailVo.class);
         util.importTemplateExcel(response, "白名单模版");
     }
-
+    @PreAuthorize("@ss.hasPermi('business:white:list')")
     @PostMapping("/getOneConfig")
     public AjaxResult getOneConfig(@RequestBody Long whiteId){
         return AjaxResult.success(whiteService.getOneConfig(whiteId));
     }
 
+    @PreAuthorize("@ss.hasPermi('business:white:list')")
+    @GetMapping("/whiteuse")
+    public TableDataInfo whiteDetail(WhiteListDetail whiteListDetail){
+        startPage();
+        List<WhiteListDetail> whiteListDetails = whiteService.queryWhiteList(whiteListDetail);
+        return getDataTable(whiteListDetails);
+    }
 
-
+    @PreAuthorize("@ss.hasPermi('business:white:list')")
+    @PostMapping("/addWhite")
+    public AjaxResult addWhite(@RequestBody WhiteListConfig whiteListConfig){
+        return AjaxResult.success(whiteService.insertWhiteConfig(whiteListConfig));
+    }
 
 }
