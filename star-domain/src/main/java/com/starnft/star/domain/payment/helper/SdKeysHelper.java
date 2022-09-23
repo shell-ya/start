@@ -44,6 +44,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SdKeysHelper {
     public final String PUBLIC_KEY = "public_key";
     public final String PRIVATE_KEY = "private_key";
+    public final String CLOUD_KEY = "cloud_key";
     private final ConcurrentHashMap<String, Object> keys = new ConcurrentHashMap<String, Object>();
 
     public SdKeysHelper(PayConf payConf) throws Exception {
@@ -59,6 +60,9 @@ public class SdKeysHelper {
 
         // 加载私钥
         initPulbicKey(sdChannel.getProperties().get("sandCertPath"));
+        log.info("加载公钥成功");
+
+        initCloudKey(sdChannel.getProperties().get("sandCloudPath"));
         log.info("加载公钥成功");
         // 加载公钥
         initPrivateKey(sdChannel.getProperties().get("signCertPath"), sdChannel.getProperties().get("signCertPwd"));
@@ -102,6 +106,9 @@ public class SdKeysHelper {
     public PublicKey getPublicKey() {
         return (PublicKey) keys.get(PUBLIC_KEY);
     }
+    public PublicKey getCloudKey() {
+        return (PublicKey) keys.get(CLOUD_KEY);
+    }
 
     public PrivateKey getPrivateKey() {
         return (PrivateKey) keys.get(PRIVATE_KEY);
@@ -120,6 +127,26 @@ public class SdKeysHelper {
                 }
                 PublicKey publicKey = getPublicKey(inputStream);
                 keys.put(PUBLIC_KEY, publicKey);
+            } catch (Exception e) {
+                log.error("无法加载公钥[{}]", new Object[]{publicKeyPath});
+                log.error(e.getMessage(), e);
+                throw e;
+            }
+        }
+    }
+    private void initCloudKey(String publicKeyPath) throws Exception {
+
+        String classpathKey = "classpath:";
+        if (publicKeyPath != null) {
+            try {
+                InputStream inputStream = null;
+                if (publicKeyPath.startsWith(classpathKey)) {
+                    inputStream = SdKeysHelper.class.getClassLoader().getResourceAsStream(publicKeyPath.substring(classpathKey.length()));
+                } else {
+                    inputStream = new FileInputStream(publicKeyPath);
+                }
+                PublicKey publicKey = getPublicKey(inputStream);
+                keys.put(CLOUD_KEY, publicKey);
             } catch (Exception e) {
                 log.error("无法加载公钥[{}]", new Object[]{publicKeyPath});
                 log.error(e.getMessage(), e);
@@ -151,6 +178,26 @@ public class SdKeysHelper {
 
 
     public PublicKey getPublicKey(InputStream inputStream) throws Exception {
+        try {
+
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            X509Certificate oCert = (X509Certificate) cf.generateCertificate(inputStream);
+            PublicKey publicKey = oCert.getPublicKey();
+            return publicKey;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("读取公钥异常");
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException e) {
+                log.error("出现错误", e);
+            }
+        }
+    }
+    public PublicKey getCloudKey(InputStream inputStream) throws Exception {
         try {
 
             CertificateFactory cf = CertificateFactory.getInstance("X.509");

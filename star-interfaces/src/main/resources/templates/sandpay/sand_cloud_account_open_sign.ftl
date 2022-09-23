@@ -1,0 +1,12 @@
+accsplit_flag=NO
+&create_ip=127_0_0_1
+&create_time=${createTime}
+&mer_key=${param1.merKey!''}
+&mer_no=${param1.mid!''}
+&mer_order_no=${param3!''}
+&notify_url=${param1.notify!''}
+&order_amt=0.01
+&pay_extra={"nickName":"${param2.realName!''}","userId":"${param2.userId!''}"}
+&return_url=${param2.returnUri!''}
+&sign_type=MD5&store_id=000000&version=10
+&key=${param1.md5Key!''}

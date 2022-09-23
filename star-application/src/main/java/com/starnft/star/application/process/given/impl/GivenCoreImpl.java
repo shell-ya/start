@@ -41,7 +41,6 @@ public class GivenCoreImpl implements IGivenCore {
     TransactionTemplate template;
     @Resource
     RedisLockUtils redisLockUtils;
-
     @Override
     public Boolean giving(Long userId, GivenMangeReq givenMangeReq) {
         Boolean lock = redisLockUtils.lock(String.format(RedisKey.GIVEN_MANAGE_LOCK.getKey(), givenMangeReq.getNumberId()), RedisKey.GIVEN_MANAGE_LOCK.getTime());

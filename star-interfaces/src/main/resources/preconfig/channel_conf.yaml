@@ -57,6 +57,24 @@ channel-configs:
         apiUrl: https://cashier.sandpay.com.cn/fastPay/quickPay/index
         properties:
           reqHeader: POST
+    - trade: Cloud_Account_C2C_SandPay
+      signTempPath: sandpay/sand_cloud_pay_c2c_sign.ftl
+      reqTempPath: sandpay/sand_cloud_pay_c2c_req.ftl
+      httpConf:
+        processType: json
+        bastApi: https://cashier.sandpay.com.cn/gateway/api/order/
+        apiUrl: https://cashier.sandpay.com.cn/fastPay/quickPay/index
+        properties:
+          reqHeader: POST
+    - trade: Cloud_Account_C2C_Transfer_SandPay
+      signTempPath: sandpay/sand_cloud_pay_c2c_transfer_sign.ftl
+      reqTempPath: sandpay/sand_cloud_pay_c2c_transfer_req.ftl
+      httpConf:
+        processType: json
+        bastApi: https://cashier.sandpay.com.cn/gateway/api/order/
+        apiUrl: https://cashier.sandpay.com.cn/fastPay/quickPay/index
+        properties:
+          reqHeader: POST
 
     - trade: Sand_Refund
       signTempPath: sandpay/sand_refund_sign.ftl
@@ -65,5 +83,32 @@ channel-configs:
         processType: json
         bastApi: https://cashier.sandpay.com.cn/gateway/api/order/
         apiUrl: https://cashier.sandpay.com.cn/gw/api/order/refund
+        properties:
+          reqHeader: POST
+    - trade: Cloud_Account_Status_SandPay
+      signTempPath: sandpay/sand_refund_sign.ftl
+      resTempPath: sandpay/sand_refund_res.ftl
+      httpConf:
+        processType: json
+        bastApi: https://cashier.sandpay.com.cn/gateway/api/order/
+        apiUrl: https://cap.sandpay.com.cn/v4/elecaccount/ceas.elec.member.info.query
+        properties:
+          reqHeader: POST
+    - trade: Cloud_Account_Balance_SandPay
+      signTempPath: sandpay/sand_refund_sign.ftl
+      resTempPath: sandpay/sand_refund_res.ftl
+      httpConf:
+        processType: json
+        bastApi: https://cashier.sandpay.com.cn/gateway/api/order/
+        apiUrl: https://cap.sandpay.com.cn/v4/elecaccount/ceas.elec.account.balance.query
+        properties:
+          reqHeader: POST
+    - trade: Cloud_Account_Open_SandPay
+      signTempPath: sandpay/sand_cloud_account_open_sign.ftl
+      resTempPath: sandpay/sand_cloud_account_open_res.ftl
+      httpConf:
+        processType: json
+        bastApi: https://cashier.sandpay.com.cn/gateway/api/order/
+        apiUrl: https://cap.sandpay.com.cn/v4/elecaccount/ceas.elec.account.balance.query
         properties:
           reqHeader: POST

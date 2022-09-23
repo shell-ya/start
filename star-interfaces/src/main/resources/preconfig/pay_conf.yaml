@@ -7,6 +7,7 @@ pay-conf:
         signCertPath: classpath:keys/lywc.pfx
         signCertPwd: 971223
         sandCertPath: classpath:keys/sand.cer
+        sandCloudPath: classpath:keys/sand_cloud.cer
         notify: https://www.circlemeta.cn/api/trans/notify/sand
         refundNotify: https://www.circlemeta.cn/api/trans/refundNotify/sand
         ###新渠道加密使用的md5

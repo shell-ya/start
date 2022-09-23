@@ -1,4 +1,4 @@
-https://sandcash.mixienet.com.cn/pay/h5/cloud?
+https://faspay-oss.sandpay.com.cn/pay/h5/cloud?
 version=10
 &mer_no=${param2.mid!''}
 &mer_key=${helper.urlEscape(param2.merKey!'')}
@@ -10,10 +10,10 @@ version=10
 &return_url=${helper.urlEscape(param1.frontUrl!'')}
 &create_ip=127_0_0_1
 &goods_name=${helper.urlEscape('购买')}
-&store_id=000000&product_code=04010001
-&extend=${helper.urlEscape(param1.composeCallback())}
+&store_id=000000
+&product_code=04010003
 &clear_cycle=3
-&pay_extra=${helper.urlEscape(param2.checkBankPayExtend)}
+&pay_extra=${helper.urlEscape(param3)}
 &meta_option=${helper.urlEscape('[{"s":"Android","n":"CircleMeta","id":"cn.CircleMeta.app","sc":"/index"},{"s":"IOS","n":"CircleMeta","id":"cn.CircleMeta.app","sc":"/index"}]')}
 &accsplit_flag=NO
 &jump_scheme=

@@ -9,5 +9,9 @@ public enum TradeType {
     Sand_Refund,
     Quick_Card_SandPay,
     Cloud_Account_SandPay,
-    Check_Bank_Card_SandPay
+    Cloud_Account_C2C_SandPay,
+    Cloud_Account_C2C_Transfer_SandPay,
+    Cloud_Account_Status_SandPay,
+    Cloud_Account_Balance_SandPay,
+    Cloud_Account_Open_SandPay, Check_Bank_Card_SandPay
 }
