@@ -27,6 +27,7 @@ public interface IUserService {
      * @return
      */
     UserInfoVO queryUserInfo(Long userId);
+    UserInfo queryUserInfoAll(Long userId);
 
     UserInfo queryUserByMobile(String mobile);
 

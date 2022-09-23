@@ -100,6 +100,14 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
                 .plyPassword(userInfo.getPlyPassword())
                 .build();
     }
+    @Override
+    public UserInfo queryUserInfoAll(Long userId) {
+        UserInfo userInfo = this.userRepository.queryUserInfoByUserId(userId);
+        if (Objects.isNull(userInfo)) {
+            throw new StarException(StarError.USER_NOT_EXISTS);
+        }
+        return userInfo;
+    }
 
     @Override
     public UserInfo queryUserByMobile(String mobile) {

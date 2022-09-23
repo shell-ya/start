@@ -1,7 +1,9 @@
 package com.starnft.star.interfaces.controller.pay;
 
 import com.google.common.base.Strings;
+import com.starnft.star.application.process.wallet.ICloudWalletCore;
 import com.starnft.star.application.process.wallet.IWalletCore;
+import com.starnft.star.application.process.wallet.req.OpenCloudAccountReq;
 import com.starnft.star.application.process.wallet.req.PayRecordReq;
 import com.starnft.star.application.process.wallet.req.RechargeFacadeReq;
 import com.starnft.star.application.process.wallet.res.RechargeReqResult;
@@ -10,6 +12,9 @@ import com.starnft.star.common.RopResponse;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.page.ResponsePageResult;
+import com.starnft.star.domain.payment.model.res.CloudAccountBalanceRes;
+import com.starnft.star.domain.payment.model.res.CloudAccountOPenRes;
+import com.starnft.star.domain.payment.model.res.CloudAccountStatusRes;
 import com.starnft.star.domain.wallet.model.req.*;
 import com.starnft.star.domain.wallet.model.res.CardBindResult;
 import com.starnft.star.domain.wallet.model.res.TxResultRes;
@@ -40,6 +45,7 @@ import java.util.List;
 public class WalletController {
     private final IWalletCore walletCore;
     private final WalletService walletService;
+    private final ICloudWalletCore cloudWalletCore;
 
     @ApiOperation("充值")
     @PostMapping("/recharge")
@@ -139,7 +145,21 @@ public class WalletController {
     public RopResponse<WalletResult> getBalance(UserResolverInfo userResolverInfo) {
         return RopResponse.success(this.walletService.queryWalletInfo(new WalletInfoReq(userResolverInfo.getUserId())));
     }
-
+    @ApiOperation("云钱包开通状态获取")
+    @GetMapping("/cloudWalletStatus")
+    public RopResponse<CloudAccountStatusRes> cloudWalletStatus(UserResolverInfo userResolverInfo) {
+        return RopResponse.success(this.cloudWalletCore.cloudWalletStatus(userResolverInfo.getUserId()));
+    }
+    @ApiOperation("云钱包余额获取")
+    @GetMapping("/cloudWalletBalance")
+    public RopResponse<CloudAccountBalanceRes> cloudWalletBalance(UserResolverInfo userResolverInfo) {
+        return RopResponse.success(this.cloudWalletCore.cloudWalletBalance(userResolverInfo.getUserId()));
+    }
+    @ApiOperation("云钱包开通")
+    @GetMapping("/openCloudWallet")
+    public RopResponse<CloudAccountOPenRes> openCloudWallet(UserResolverInfo userResolverInfo, @RequestBody OpenCloudAccountReq openCloudAccountReq) {
+        return RopResponse.success(this.cloudWalletCore.openCloudWallet(userResolverInfo.getUserId(),openCloudAccountReq));
+    }
 
     @ApiOperation("获取钱包手续费率")
     @GetMapping("/rates/{channel}")
