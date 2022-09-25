@@ -85,7 +85,7 @@
                  LEFT JOIN (SELECT series_theme_info_id AS theme_id, min(price) AS price
                             FROM star_nft_theme_number
                             where status = 2
-                            GROUP BY theme_id) tn ON ti.id = tn.theme_id
+                            GROUP BY theme_id) AS tn ON ti.id = tn.theme_id
         WHERE
         1 = 1
         <if test="seriesId != null">

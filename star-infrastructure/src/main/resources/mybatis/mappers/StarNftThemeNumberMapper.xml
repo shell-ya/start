@@ -17,22 +17,24 @@
         <result column="update_at" jdbcType="TIMESTAMP" property="updateAt"/>
         <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
         <result column="is_delete" jdbcType="BOOLEAN" property="isDelete"/>
+        <result column="version" jdbcType="INTEGER" property="version"/>
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
         id,
         series_theme_info_id,
         theme_number,
-        ` contract_address`,
+        `contract_address`,
         chain_identification,
         price,
         `status`,
-        owenr_by,
+        owner_by,
         create_at,
         create_by,
         update_at,
         update_by,
-        is_delete
+        is_delete,
+        version
     </sql>
 
     <select id="selectNumberDetailById" resultType="com.starnft.star.domain.number.model.vo.NumberDetailVO">
@@ -203,10 +205,11 @@
             tn.chain_identification AS chain_identification,
             tn.price AS price,
             tn.owner_by AS owner_by,
-            ti.publish_number AS publish_number
+            ti.publish_number AS publish_number,
+            ti.theme_name AS theme_name
         FROM
             star_nft_theme_number tn
-                LEFT JOIN ( SELECT id, publish_number FROM star_nft_theme_info ) ti ON tn.series_theme_info_id = ti.id
+                LEFT JOIN ( SELECT id, publish_number,theme_name FROM star_nft_theme_info ) ti ON tn.series_theme_info_id = ti.id
         WHERE
             series_theme_info_id = #{themeId}
           AND `status` = 2

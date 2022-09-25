@@ -23,8 +23,14 @@ public class MarketNumberInfoVO implements Serializable {
     @ApiModelProperty(value = "技术标识")
     private String chainIdentification;
 
+    @ApiModelProperty(value = "藏品名称")
+    private String themeName;
+
     @ApiModelProperty(value = "出售人")
-    private BigDecimal ownerBy;
+    private Long ownerBy;
+
+    @ApiModelProperty(value = "价格")
+    private BigDecimal price;
 
     @ApiModelProperty(value = "发行数量")
     private Integer publishNumber;
