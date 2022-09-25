@@ -3,6 +3,8 @@ package com.starnft.star.domain.user.model.vo;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.Date;
+
 
 /**
  * @author LaIWeiChun
@@ -33,4 +35,6 @@ public class UserInfo {
 
     private String briefIntroduction;
     private Long parent;
+
+    private Date createAt;
 }

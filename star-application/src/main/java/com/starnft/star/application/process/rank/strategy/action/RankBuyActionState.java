@@ -52,6 +52,10 @@ public class RankBuyActionState implements  IRankActionState {
             log.info("用户「{}」上级不存在不存在",activityEventReq.getUserId());
             return;
         }
+        if (userInfo.getCreateAt().after(rankDefinition.getStartTime())){
+            log.info("用户[{}]注册时间小于本次拉新活动开始时间[{}]",userInfo.getCreateAt(),rankDefinition.getStartTime());
+            return;
+        }
         String extConfigs = extArrays.getParams();
         if (Objects.isNull(extConfigs)){
             log.info("ext 配置为空");
