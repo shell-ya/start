@@ -156,7 +156,7 @@ public class WalletController {
         return RopResponse.success(this.cloudWalletCore.cloudWalletBalance(userResolverInfo.getUserId()));
     }
     @ApiOperation("云钱包开通")
-    @GetMapping("/openCloudWallet")
+    @PostMapping("/openCloudWallet")
     public RopResponse<CloudAccountOPenRes> openCloudWallet(UserResolverInfo userResolverInfo, @RequestBody OpenCloudAccountReq openCloudAccountReq) {
         return RopResponse.success(this.cloudWalletCore.openCloudWallet(userResolverInfo.getUserId(),openCloudAccountReq));
     }
