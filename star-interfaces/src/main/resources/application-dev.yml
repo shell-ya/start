@@ -29,6 +29,9 @@ spring:
     props:
       sql:
         show: true
+    mode:
+      type: Memory
+
   redis:
     host: 146.56.248.96
     database: 8
