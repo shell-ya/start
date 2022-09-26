@@ -14,21 +14,33 @@ spring:
         url: jdbc:mysql://sh-cynosdbmysql-grp-ibkpxd68.sql.tencentcdb.com:23543/star_test?serverTimezone=GMT%2B8&characterEncoding=utf8
         username: root
         password: wqd1234.
-
-    sharding:
-      tables:
-        account_user:
-          actual-data-nodes: ds0.account_user_$->{0..9}
-          table-strategy:
-            inline:
-              sharding-column: account
+    rules:
+      sharding:
+        sharding-algorithms:
+          # id-inline-database-strategy是自定义的名称，
+          # !!!最好别以下划线分隔，会有问题
+          id-inline-database-strategy:
+            type: INLINE
+            props:
+              # 该表达式是指把 id 值是偶数路由到 ds0，奇数路由到 ds1
               algorithm-expression: account_user_$->{account%10}
-      # 设置绑定关系
-      binding-tables: account_user
-    # 在日志中SQL语句
+        binding-tables: account_user
+        tables:
+          # 把 xxxx_xxxx 替换成实际的表名
+          account_user:
+            # 配置t_order的分表的规则
+            actual-data-nodes: ds0.account_user_$->{0..9}
+            table-strategy:
+              standard:
+                sharding-column: account
+                sharding-algorithm-name: id-inline-database-strategy
+      enabled: true
     props:
       sql:
         show: true
+    mode:
+      type: Memory
+
   redis:
     host: 146.56.248.96
     database: 8

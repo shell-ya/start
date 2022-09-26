@@ -1,10 +1,5 @@
 package com.starnft.star.domain.number.serivce;
 
-import com.alicp.jetcache.anno.CachePenetrationProtect;
-import com.alicp.jetcache.anno.CacheRefresh;
-import com.alicp.jetcache.anno.CacheType;
-import com.alicp.jetcache.anno.Cached;
-import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.number.model.dto.*;
@@ -83,11 +78,11 @@ public interface INumberService {
 
     BigDecimal minPrice(Long themeId);
 
-    @Cached(name = StarConstants.THEME_IN_MARKET_NUMBER_LIST_CACHE_NAME,
-            key = "#marketNumberListReq.themeId",
-            expire = 5,
-            cacheType = CacheType.REMOTE)
-    @CacheRefresh(refresh = 4)
-    @CachePenetrationProtect
+//    @Cached(name = StarConstants.THEME_IN_MARKET_NUMBER_LIST_CACHE_NAME,
+//            key = "#marketNumberListReq.themeId,#marketNumberListReq.page",
+//            expire = 5,
+//            cacheType = CacheType.REMOTE)
+//    @CacheRefresh(refresh = 4)
+//    @CachePenetrationProtect
     ResponsePageResult<MarketNumberInfoVO> marketNumberList(MarketNumberListReq marketNumberListReq);
 }
