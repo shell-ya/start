@@ -1,5 +1,6 @@
 package com.starnft.star.infrastructure.repository;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.notify.model.req.NotifyOrderReq;
 import com.starnft.star.domain.notify.repository.INotifyOrderRepository;
@@ -12,15 +13,16 @@ import javax.annotation.Resource;
 import java.util.Map;
 
 @Repository
-public class NotifyOrderRepository  implements INotifyOrderRepository {
+public class NotifyOrderRepository implements INotifyOrderRepository {
     @Resource
     StarNftNotifyOrderMapper starNftNotifyOrderMapper;
     @Resource
     private Map<StarConstants.Ids, IIdGenerator> idGeneratorMap;
+
     @Override
     public Integer insertNotifyOrder(NotifyOrderReq notifyOrderReq) {
         long notifyOrderId = idGeneratorMap.get(StarConstants.Ids.SnowFlake).nextId();
-        StarNftNotifyOrder starNftNotifyOrder = new StarNftNotifyOrder( );
+        StarNftNotifyOrder starNftNotifyOrder = new StarNftNotifyOrder();
         starNftNotifyOrder.setId(notifyOrderId);
         starNftNotifyOrder.setUid(notifyOrderReq.getUid());
         starNftNotifyOrder.setOrderSn(notifyOrderReq.getOrderSn());
@@ -31,7 +33,15 @@ public class NotifyOrderRepository  implements INotifyOrderRepository {
         starNftNotifyOrder.setPayTime(notifyOrderReq.getPayTime());
         starNftNotifyOrder.setCreateTime(notifyOrderReq.getCreateTime());
         starNftNotifyOrder.setTotalAmount(notifyOrderReq.getTotalAmount());
-        return  starNftNotifyOrderMapper.insert(starNftNotifyOrder);
+        return starNftNotifyOrderMapper.insert(starNftNotifyOrder);
 
+    }
+
+    @Override
+    public Integer sendStatus(String orderSn, Long statusCode) {
+        StarNftNotifyOrder starNftNotifyOrder = new StarNftNotifyOrder();
+        starNftNotifyOrder.setStatus(statusCode.intValue());
+        int update = starNftNotifyOrderMapper.update(starNftNotifyOrder, new LambdaQueryWrapper<StarNftNotifyOrder>().eq(StarNftNotifyOrder::getOrderSn, orderSn));
+        return update;
     }
 }

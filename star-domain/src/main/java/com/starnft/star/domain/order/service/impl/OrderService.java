@@ -14,7 +14,6 @@ import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.order.model.req.OrderListReq;
 import com.starnft.star.domain.order.model.res.OrderListRes;
-import com.starnft.star.domain.order.model.vo.BuyBoxNum;
 import com.starnft.star.domain.order.model.vo.MarketCancelOrderVo;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.repository.BuyNum;
@@ -158,6 +157,17 @@ public class OrderService implements IOrderService {
     @Override
     public List<OrderVO> queryToPayOrder(Long userId) {
         return this.orderRepository.queryToPayOrder(userId);
+    }
+
+    @Override
+    public OrderVO queryOrder(String orderSn) {
+
+        return orderRepository.queryOrder(orderSn);
+    }
+
+    @Override
+    public OrderVO queryOrderById(Long orderSn) {
+        return orderRepository.queryOrderById(orderSn);
     }
 
     @Override

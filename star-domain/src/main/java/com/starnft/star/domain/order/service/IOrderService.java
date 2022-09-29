@@ -4,7 +4,6 @@ import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.order.model.req.OrderListReq;
 import com.starnft.star.domain.order.model.res.OrderListRes;
-import com.starnft.star.domain.order.model.vo.BuyBoxNum;
 import com.starnft.star.domain.order.model.vo.MarketCancelOrderVo;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.repository.BuyNum;
@@ -36,6 +35,10 @@ public interface IOrderService {
 
     List<OrderVO> queryToPayOrder(Long userId);
 
+    OrderVO queryOrder(String orderSn);
+
+
+    OrderVO queryOrderById(Long orderSn);
 
     List<OrderVO> queryAllSuccessOrder();
 

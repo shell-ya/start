@@ -27,6 +27,9 @@ public class OrderPayReq implements Serializable {
     @ApiModelProperty(value = "主题id")
     private Long themeId;
 
+    @ApiModelProperty(value = "订单id")
+    private Long orderId;
+
     @ApiModelProperty(value = "订单号")
     private String orderSn;
 

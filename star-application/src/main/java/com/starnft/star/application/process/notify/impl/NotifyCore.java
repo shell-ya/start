@@ -24,6 +24,7 @@ public class NotifyCore {
     IMessageSender messageSender;
     @Resource
     NotifyOrderService notifyOrderService;
+
     public NotifyRes handler(String platform, HttpServletRequest request, HttpServletResponse response) {
         NotifyRes transform = payNotifyService.transform(platform, request, response);
         PayCheckRes payCheckRes = transform.getPayCheckRes();
@@ -39,7 +40,9 @@ public class NotifyCore {
                 .uid(Long.parseLong(payCheckRes.getUid()))
                 .build();
         notifyOrderService.saveOrder(req);
-        messageSender.asyncSend(transform.getTopic(), Optional.of(transform.getPayCheckRes()), null, null);
+        messageSender.asyncSend(transform.getTopic(), Optional.of(transform.getPayCheckRes()),
+                sendResult -> notifyOrderService.sendStatus(payCheckRes.getOrderSn(), 1001L),
+                () -> notifyOrderService.sendStatus(payCheckRes.getOrderSn(), 1002L));
         return transform;
     }
 }

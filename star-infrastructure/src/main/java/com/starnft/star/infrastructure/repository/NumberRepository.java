@@ -224,10 +224,13 @@ public class NumberRepository implements INumberRepository {
     public boolean modifyNumberStatus(Long numberId, Long uid, Integer status) {
         LambdaQueryWrapper<StarNftThemeNumber> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Objects.nonNull(numberId), StarNftThemeNumber::getId, numberId);
+        StarNftThemeNumber starNftThemeNumber1 = starNftThemeNumberMapper.selectById(numberId);
+        wrapper.eq(Objects.nonNull(starNftThemeNumber1.getVersion()), StarNftThemeNumber::getVersion, starNftThemeNumber1.getVersion());
 
         StarNftThemeNumber starNftThemeNumber = new StarNftThemeNumber();
         starNftThemeNumber.setStatus(status);
         starNftThemeNumber.setOwnerBy(String.valueOf(uid));
+        starNftThemeNumber.setVersion(starNftThemeNumber1.getVersion() + 1);
 
         return this.starNftThemeNumberMapper.update(starNftThemeNumber, wrapper) == 1;
     }

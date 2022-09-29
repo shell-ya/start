@@ -5,6 +5,8 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.starnft.star.application.mq.constant.TopicConstants;
 import com.starnft.star.application.mq.producer.activity.ActivityEventProducer;
 import com.starnft.star.application.mq.producer.order.OrderProducer;
 import com.starnft.star.application.mq.producer.wallet.WalletProducer;
@@ -33,6 +35,7 @@ import com.starnft.star.common.enums.NumberStatusEnum;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.utils.BeanColverUtil;
+import com.starnft.star.common.utils.secure.AESUtil;
 import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.number.model.dto.NumberDTO;
@@ -46,10 +49,14 @@ import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.service.IOrderService;
 import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
 import com.starnft.star.domain.order.service.stateflow.impl.OrderStateHandler;
+import com.starnft.star.domain.payment.core.IPaymentService;
+import com.starnft.star.domain.payment.model.req.PaymentRich;
+import com.starnft.star.domain.payment.model.res.PaymentRes;
 import com.starnft.star.domain.rank.core.rank.core.IRankService;
 import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.domain.theme.service.ThemeService;
+import com.starnft.star.domain.user.model.vo.UserInfoVO;
 import com.starnft.star.domain.user.service.IUserService;
 import com.starnft.star.domain.wallet.model.req.WalletPayRequest;
 import com.starnft.star.domain.wallet.model.res.WalletPayResult;
@@ -94,6 +101,8 @@ public class OrderProcessor implements IOrderProcessor {
     //    private final RebatesProducer rebatesProducer;
     private final IRankService rankService;
     private final WhiteRuleContext whiteRuleContext;
+
+    private final IPaymentService paymentService;
 
     @Override
     public OrderGrabRes orderGrab(OrderGrabReq orderGrabReq) {
@@ -240,11 +249,12 @@ public class OrderProcessor implements IOrderProcessor {
     public OrderPayDetailRes orderPay(@Validated OrderPayReq orderPayReq) {
 
         log.info("用户发起支付：{}", orderPayReq.toString());
-
-        //验证支付凭证
-        userService.assertPayPwdCheckSuccess(orderPayReq.getUserId(), orderPayReq.getPayToken());
         //规则验证
-        walletService.balanceVerify(orderPayReq.getUserId(), new BigDecimal(orderPayReq.getPayAmount()));
+        if (orderPayReq.getChannel().equals(StarConstants.PayChannel.Balance.name())) {
+            //验证支付凭证
+            userService.assertPayPwdCheckSuccess(orderPayReq.getUserId(), orderPayReq.getPayToken());
+            walletService.balanceVerify(orderPayReq.getUserId(), new BigDecimal(orderPayReq.getPayAmount()));
+        }
 
         verifyOwnerBy(orderPayReq);
 
@@ -252,11 +262,16 @@ public class OrderProcessor implements IOrderProcessor {
         if (orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
             calculateFee(orderPayReq);
         }
-
+        OrderVO orderVO = orderService.queryOrder(orderPayReq.getOrderSn());
+        orderPayReq.setOrderId(orderVO.getId());
 
         String lockKey = String.format(RedisKey.SECKILL_ORDER_TRANSACTION.getKey(), orderPayReq.getOrderSn());
         Boolean lock = redisLockUtils.lock(lockKey, RedisKey.SECKILL_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.SECKILL_ORDER_TRANSACTION.getTime()));
         Assert.isTrue(lock, () -> new StarException(StarError.PAY_PROCESS_ERROR));
+        if (orderPayReq.getChannel().equals(StarConstants.PayChannel.CloudAccount.name())) {
+            PaymentRes results = paymentService.pay(buildPayReq(createWalletPayReq(orderPayReq)));
+            return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn(), results);
+        }
         try {
             Boolean isSuccess = template.execute(status -> {
                 //余额支付
@@ -277,35 +292,35 @@ public class OrderProcessor implements IOrderProcessor {
                     activityProducer.sendScopeMessage(createEventReq(orderPayReq));
                 }
 //                    rebatesProducer.sendRebatesMessage(createRebates(orderPayReq));
-                //todo 后面去掉
-//                    if (!orderPayReq.getThemeId().equals(1002285892654821376L) || !orderPayReq.getThemeId().equals(1009469098485923840L)) {
-//                        String userOrderMapping = String.format(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), orderPayReq.getThemeId());
-//                        String orderInfo = (String) redisUtil.hget(userOrderMapping, String.valueOf(orderPayReq.getUserId()));
-//                        OrderVO orderCache = JSONUtil.toBean(orderInfo, OrderVO.class);
-//                        String startTime = orderCache.getRemark();
-//                        String startTimeTrim = com.starnft.star.common.utils.DateUtil.date2Str(new Date());
-//                        if (Long.parseLong(startTime) > Long.parseLong(startTimeTrim)) {
-//                            Long times = 0L;
-//                            synchronized (this) {
-//                                redisUtil.hincr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L);
-//                                times = redisUtil.hdecr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L);
-//                            }
-//                            if (redisUtil.hdecr(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()), 1L) <= 0) {
-//                                redisUtil.hdel(RedisKey.SECKILL_GOODS_PRIORITY_TIMES.getKey(), String.valueOf(orderPayReq.getUserId()));
-//                            }
-//                        }
-//                    }
-                return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn());
+                return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn(), null);
             }
             throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "订单处理异常！");
         } catch (TransactionException | StarException e) {
             throw new RuntimeException(e);
         } finally {
             walletService.threadClear();
-            redisLockUtils.unlock(lockKey);
         }
     }
 
+    private PaymentRich buildPayReq(WalletPayRequest walletPayRequest) {
+        String encryptOrderSn = AESUtil.encrypt(walletPayRequest.getOrderSn());
+        HashMap<String, Object> valueMap = Maps.newHashMap();
+        valueMap.put("cost", walletPayRequest.getFee().intValue() == 0 ? new BigDecimal("0.01").toString() : walletPayRequest.getFee().abs().toString());
+        valueMap.put("remark", walletPayRequest.getThemeId().toString().concat("#").concat(walletPayRequest.getNumberId().toString()));
+        valueMap.put("accUserId", walletPayRequest.getUserId().toString());
+        UserInfoVO userInfoVO = userService.queryUserInfo(walletPayRequest.getUserId());
+        valueMap.put("nickName", userInfoVO.getNickName());
+        PaymentRich build = PaymentRich.builder()
+                .totalMoney(walletPayRequest.getPayAmount().abs()).payChannel(StarConstants.PayChannel.CloudAccount.name())
+                .frontUrl("https://www.circlemeta.cn/order/payed/" + walletPayRequest.getOrderSn()).clientIp("192.168.1.1")
+                .orderSn(String.valueOf(walletPayRequest.getOrderId())).userId(walletPayRequest.getUserId())
+                .payExtend(valueMap)
+                .multicastTopic(String.format(TopicConstants.WALLER_PAY_DESTINATION.getFormat(), TopicConstants.WALLER_PAY_DESTINATION.getTag()))
+                .orderType(walletPayRequest.getOrderSn().startsWith(StarConstants.OrderPrefix.PublishGoods.getPrefix())
+                        ? StarConstants.OrderType.PUBLISH_GOODS : StarConstants.OrderType.MARKET_GOODS).build();
+        System.out.println(build);
+        return build;
+    }
     private void subPTimes(Long userId, OrderListRes orderListRes) {
         Boolean isSuccess = userService.whiteTimeConsume(userId, orderListRes.getWhiteId());
         if (!isSuccess) userService.whiteTimeConsume(userId, 1L);
@@ -583,6 +598,19 @@ public class OrderProcessor implements IOrderProcessor {
         }
 
         return times.intValue();
+    }
+
+    @Override
+    public OrderListRes payDetails(String orderSn) {
+        String decryptOrderSn = AESUtil.decrypt(orderSn);
+        while (orderService.queryOrder(decryptOrderSn).getStatus().equals(StarConstants.ORDER_STATE.COMPLETED.getCode())) {
+            OrderVO orderVO = orderService.queryOrder(decryptOrderSn);
+            OrderListRes orderListRes = BeanColverUtil.colver(orderVO, OrderListRes.class);
+            NumberDetailVO numberDetail = this.numberService.getNumberDetail(orderListRes.getSeriesThemeId());
+            orderListRes.setOwnerBy(numberDetail.getOwnerBy());
+            return orderListRes;
+        }
+        throw new StarException(StarError.SYSTEM_ERROR, "请求超时");
     }
 
     private OrderListRes buildOrderResp(Long lockTime, ThemeNumberVo numberDetail, Long userId, String orderSn, Long id) {

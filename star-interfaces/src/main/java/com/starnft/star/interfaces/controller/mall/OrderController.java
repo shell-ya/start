@@ -94,6 +94,13 @@ public class OrderController {
         return RopResponse.success(this.orderProcessor.cancelSecOrder(req));
     }
 
+    @ApiOperation("云钱包支付订单详情")
+    @TokenIgnore
+    @PostMapping("/payed/{orderSn}")
+    public RopResponse<OrderListRes> killedCancel(@PathVariable String orderSn) {
+        return RopResponse.success(this.orderProcessor.payDetails(orderSn));
+    }
+
     @PostMapping("/market/grab")
     @ApiOperation("市场下单")
     public RopResponse<OrderListRes> order(@RequestBody MarketOrderReq request) {

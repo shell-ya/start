@@ -33,4 +33,7 @@ public interface IOrderRepository {
     List<BuyNum> queryBuyNum();
 
     Integer queryUserBuyBox(String uid);
+
+    OrderVO queryOrderById(Long orderId);
+    OrderVO queryOrder(String orderSn);
 }

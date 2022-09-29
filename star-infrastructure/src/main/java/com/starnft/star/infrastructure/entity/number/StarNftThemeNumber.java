@@ -116,6 +116,13 @@ public class StarNftThemeNumber implements Serializable {
     @ApiModelProperty(value = "是否删除(0:未删除 1:已删除)")
     private Boolean isDelete;
 
+    /**
+     * 乐观锁
+     */
+    @TableField(value = "version")
+    @ApiModelProperty(value = "乐观锁")
+    private Integer version;
+
     private static final long serialVersionUID = 1L;
 
     public static final String COL_ID = "id";
@@ -143,4 +150,6 @@ public class StarNftThemeNumber implements Serializable {
     public static final String COL_UPDATE_BY = "update_by";
 
     public static final String COL_IS_DELETE = "is_delete";
+
+    public static final String COL_IS_VERSION = "version";
 }

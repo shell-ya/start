@@ -22,6 +22,15 @@ public class WalletPayRequest implements Serializable {
     @ApiModelProperty(value = "to uid")
     private Long toUid;
 
+    @ApiModelProperty(value = "藏品id")
+    private Long numberId;
+
+    @ApiModelProperty(value = "主题id")
+    private Long themeId;
+
+    @ApiModelProperty(value = "订单id")
+    private Long orderId;
+
     @ApiModelProperty(value = "交易流水号")
     private String orderSn;
 
