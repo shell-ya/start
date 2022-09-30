@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 
 @SpringBootTest(classes = {StarApplication.class})
-public class CheckIdCardTest {
+public class CloudAccountTest {
     @Resource
     SwIdentifyStrategy swIdentifyStrategy;
     @Resource
@@ -35,6 +35,7 @@ public class CheckIdCardTest {
         System.out.println(swIdentifyStrategy.checkNameAndIdCard("黄坤煌", "445122199510295218"));
     }
     @Test
+    //用户向平台付款
     public void testC2BPay() {
         HashMap<@Nullable String, @Nullable Object> maps = Maps.newHashMap();
         maps.put("nickName","dasdsad");
@@ -47,11 +48,13 @@ public class CheckIdCardTest {
                 .orderSn(IdUtil.getSnowflake(1, 1).nextIdStr()).userId(1L)
                 .bankNo("6226220647732790")
                 .payExtend(maps)
-                .orderType(StarConstants.OrderType.RECHARGE).build();
+                .orderType(StarConstants.OrderType.PUBLISH_GOODS).build(); //发行商品购买
         PaymentRes union_pay = paymentService.pay(req);
         System.out.println(union_pay);
 
-    }   @Test
+    }
+    @Test
+    //用户向用户付款
     public void testC2CPay() {
         HashMap<@Nullable String, @Nullable Object> maps = Maps.newHashMap();
 
@@ -83,7 +86,7 @@ public class CheckIdCardTest {
                 .frontUrl("https://www.circlemeta.cn").clientIp("192.168.1.1")
                 .orderSn(IdUtil.getSnowflake(1, 1).nextIdStr()).userId(1L)
                 .payExtend(maps)
-                .orderType(StarConstants.OrderType.MARKET_GOODS).build();
+                .orderType(StarConstants.OrderType.MARKET_GOODS).build();//市场商品
         PaymentRes union_pay = paymentService.pay(req);
         System.out.println(union_pay);
 
