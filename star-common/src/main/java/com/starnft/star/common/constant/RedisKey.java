@@ -248,6 +248,11 @@ public enum RedisKey {
     DANGER_LIST_RECORD(1112, StarConstants.SERVICE_NAME.concat(".visit.danger.list"), 5L, TimeUnit.SECONDS),
 
     BLACK_MEMBERS(1113, StarConstants.SERVICE_NAME.concat(".black.list"), 5L, TimeUnit.SECONDS),
+
+    AWARD_BUFF_KEY(802, StarConstants.SERVICE_NAME.concat(".award.buff.id:%s:uid:%s"), 5L, TimeUnit.SECONDS),
+
+    ACTIVITY_JOIN_TIME(803, StarConstants.SERVICE_NAME.concat(".activity.times:%s"), -1L, TimeUnit.SECONDS),
+
     CLOUD_ACCOUNT_STATUS_LIST(1114, StarConstants.SERVICE_NAME.concat(".cloud.account.status.list"), 5L, TimeUnit.SECONDS),
 
 

@@ -14,9 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class ResponsePageResult<T> implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-
-    private List<T> list;
+     private List<T> list;
     private Integer page;
     private Integer size;
     private Long total;

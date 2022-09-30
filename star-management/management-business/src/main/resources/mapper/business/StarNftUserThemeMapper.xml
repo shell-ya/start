@@ -136,11 +136,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select * from star_nft_user_theme
         where series_theme_id = #{seriesThemeId}
         and user_id = #{fromUid}
+        and is_delete = 0
+        and `status` = 0
     </select>
 
     <select id="selecUsertHasTheme" resultType="com.starnft.star.business.domain.vo.UserInfo">
         SELECT
             ut.user_id AS userId,
+            au.nick_name as nickName,
             au.full_name AS userName,
             au.phone AS phone,
             count( ut.series_theme_id ) AS nums
@@ -153,6 +156,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           AND ut.series_theme_info_id = #{seriesThemeInfoId}
         GROUP BY
             userId,
+            nickName,
             userName,
             phone
         ORDER BY

@@ -20,6 +20,10 @@ public enum TopicConstants {
     CREDITS_PROCESS_DESTINATION("STAR-CREDIT:%s", "modify"),
     //订单金额收款
     WALLER_RECEIVABLES_DESTINATION("STAR-RECEIVABLES:%s","callback"),
+
+    //订单支付路由
+    WALLER_PAY_DESTINATION("STAR-PAY:%s","router"),
+
     //返利(元石) topic & tag
     PAY_REBATES_DESTINATION("STAR-REBATES:%s","pay"),
 

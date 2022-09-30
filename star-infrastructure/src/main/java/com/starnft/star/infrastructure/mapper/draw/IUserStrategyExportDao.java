@@ -14,25 +14,29 @@ public interface IUserStrategyExportDao {
 
     /**
      * 新增数据
+     *
      * @param userStrategyExport 用户策略
      */
     void insert(UserStrategyExport userStrategyExport);
 
     /**
      * 查询数据
+     *
      * @param uId 用户ID
      * @return 用户策略
      */
-    List<UserStrategyExport> queryUserStrategyExportByUId(String uId);
+    List<UserStrategyExport> queryUserStrategyExportByUId(String uId, String activityId);
 
     /**
      * 更新发奖状态
+     *
      * @param userStrategyExport 发奖信息
      */
     void updateUserAwardState(UserStrategyExport userStrategyExport);
 
     /**
      * 更新发送MQ状态
+     *
      * @param userStrategyExport 发送消息
      */
     void updateInvoiceMqState(UserStrategyExport userStrategyExport);
@@ -49,5 +53,7 @@ public interface IUserStrategyExportDao {
     List<UserStrategyExport> queryUserStrategyExportList(String uid);
 
 
-    boolean deleteExport(@Param("uId") String uid, @Param("orderId")String orderId);
+    boolean deleteExport(@Param("uId") String uid, @Param("orderId") String orderId);
+
+    List<UserStrategyExport> luckyGuys(@Param("strategyId") Long strategyId);
 }

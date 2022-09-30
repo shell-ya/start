@@ -22,12 +22,24 @@
         <result column="agreement_content" jdbcType="LONGVARCHAR" property="agreementContent"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, agreement_id, agreement_name, agreement_scene, agreement_type, agreement_version, agreement_content,
-    effective_time, submit_status, is_deleted, created_at, created_by, modified_at, modified_by
-  </sql>
+        id,
+        agreement_id,
+        agreement_name,
+        agreement_scene,
+        agreement_type,
+        agreement_version,
+        agreement_content,
+        effective_time,
+        submit_status,
+        is_deleted,
+        created_at,
+        created_by,
+        modified_at,
+        modified_by
+    </sql>
     <sql id="Blob_Column_List">
-    agreement_content
-  </sql>
+        agreement_content
+    </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
         select
         <include refid="Base_Column_List"/>
@@ -39,54 +51,67 @@
 
     <select id="queryAgreementInfoByType"
             resultType="com.starnft.star.infrastructure.entity.user.UserAgreementEntity">
-      select
-      ua.*
-      from
-      (
-        select
-        agreement_type,
-        agreement_scene,
-        MAX(agreement_version+0) AS agreement_version
-        from
-        user_agreement
-        where
-        submit_status = 2
-        and agreement_scene = 1
-        and effective_time &lt;= NOW()
-        and is_deleted = 0
-        and agreement_type = #{agreementType}
-        group by agreement_type , agreement_scene
-        )  as t
-        left join
-        user_agreement as ua on (t.agreement_type = ua.agreement_type
-        and t.agreement_scene = ua.agreement_scene
-        and t.agreement_version  = ua.agreement_version
-        );
+        select ua.id                AS id,
+               ua.agreement_id      AS agreement_id,
+               ua.agreement_name    AS agreement_name,
+               ua.agreement_scene   AS agreement_scene,
+               ua.agreement_type    AS agreement_type,
+               ua.agreement_version AS agreement_version,
+               ua.effective_time    AS effective_time,
+               ua.submit_status     AS submit_status,
+               ua.is_deleted        AS is_deleted,
+               ua.created_at        AS created_at,
+               ua.created_by        AS created_by,
+               ua.modified_at       AS modified_at,
+               ua.modified_by       AS modified_by,
+               ua.agreement_content AS agreement_content
+        from (select agreement_type,
+                     agreement_scene,
+                     MAX(agreement_version + 0) AS agreement_version
+              from user_agreement
+              where submit_status = 2
+                and agreement_scene = 1
+                and effective_time &lt;= NOW()
+                and is_deleted = 0
+                and agreement_type = #{agreementType}
+              group by agreement_type, agreement_scene) as t
+                 left join
+             user_agreement as ua on (t.agreement_type = ua.agreement_type
+                 and t.agreement_scene = ua.agreement_scene
+                 and t.agreement_version = ua.agreement_version
+                 );
     </select>
 
     <select id="queryNewAgreementByScene"
             resultType="com.starnft.star.infrastructure.entity.user.UserAgreementEntity">
-        select
-        ua.*
-        from
-        (
-        select
-        agreement_type,
-        agreement_scene,
-        MAX(agreement_version+0) AS agreement_version
-        from
-         user_agreement
-         where
-         submit_status = 2
-         and agreement_scene = #{scene}
-         and effective_time &lt;= NOW()
-         and is_deleted = 0
-         group by agreement_type , agreement_scene) as t
-         left join
-         user_agreement as ua on(
-            t.agreement_type = ua.agreement_type
-            and t.agreement_scene = ua.agreement_scene
-            and t.agreement_version = ua.agreement_version)
+        select ua.id                AS id,
+               ua.agreement_id      AS agreement_id,
+               ua.agreement_name    AS agreement_name,
+               ua.agreement_scene   AS agreement_scene,
+               ua.agreement_type    AS agreement_type,
+               ua.agreement_version AS agreement_version,
+               ua.effective_time    AS effective_time,
+               ua.submit_status     AS submit_status,
+               ua.is_deleted        AS is_deleted,
+               ua.created_at        AS created_at,
+               ua.created_by        AS created_by,
+               ua.modified_at       AS modified_at,
+               ua.modified_by       AS modified_by,
+               ua.agreement_content AS agreement_content
+        from (select agreement_type,
+                     agreement_scene,
+                     MAX(agreement_version + 0) AS agreement_version
+              from user_agreement
+              where submit_status = 2
+                and agreement_scene = #{scene}
+                and effective_time &lt;= NOW()
+                and is_deleted = 0
+              group by agreement_type, agreement_scene) as t
+                 left join
+             user_agreement as ua on (
+                         t.agreement_type = ua.agreement_type
+                     and t.agreement_scene = ua.agreement_scene
+                     and t.agreement_version = ua.agreement_version)
     </select>
 
     <select id="batchQueryAgreementById"
@@ -99,30 +124,31 @@
             <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
                 #{item}
             </foreach>
-            and submit_status=2
+            and submit_status = 2
             and effective_time &lt;= NOW()
             and is_deleted = 0
         </where>
     </select>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-
-    delete from user_agreement
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
+        delete
+        from user_agreement
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
     <insert id="insert" keyColumn="id" keyProperty="id"
             parameterType="com.starnft.star.infrastructure.entity.user.UserAgreementEntity" useGeneratedKeys="true">
-    insert into user_agreement (agreement_id, agreement_name, agreement_scene, 
-      agreement_type, agreement_version, effective_time, 
-      submit_status, is_deleted, created_at, 
-      created_by, modified_at, modified_by, 
-      agreement_content)
-    values (#{agreementId,jdbcType=VARCHAR}, #{agreementName,jdbcType=VARCHAR}, #{agreementScene,jdbcType=TINYINT}, 
-      #{agreementType,jdbcType=TINYINT}, #{agreementVersion,jdbcType=VARCHAR}, #{effectiveTime,jdbcType=TIMESTAMP}, 
-      #{submitStatus,jdbcType=TINYINT}, #{isDeleted,jdbcType=TINYINT}, #{createdAt,jdbcType=TIMESTAMP}, 
-      #{createdBy,jdbcType=VARCHAR}, #{modifiedAt,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR}, 
-      #{agreementContent,jdbcType=LONGVARCHAR})
-  </insert>
+        insert into user_agreement (agreement_id, agreement_name, agreement_scene,
+                                    agreement_type, agreement_version, effective_time,
+                                    submit_status, is_deleted, created_at,
+                                    created_by, modified_at, modified_by,
+                                    agreement_content)
+        values (#{agreementId,jdbcType=VARCHAR}, #{agreementName,jdbcType=VARCHAR}, #{agreementScene,jdbcType=TINYINT},
+                #{agreementType,jdbcType=TINYINT}, #{agreementVersion,jdbcType=VARCHAR},
+                #{effectiveTime,jdbcType=TIMESTAMP},
+                #{submitStatus,jdbcType=TINYINT}, #{isDeleted,jdbcType=TINYINT}, #{createdAt,jdbcType=TIMESTAMP},
+                #{createdBy,jdbcType=VARCHAR}, #{modifiedAt,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR},
+                #{agreementContent,jdbcType=LONGVARCHAR})
+    </insert>
     <insert id="insertSelective" keyColumn="id" keyProperty="id"
             parameterType="com.starnft.star.infrastructure.entity.user.UserAgreementEntity" useGeneratedKeys="true">
         insert into user_agreement
@@ -257,36 +283,36 @@
     </update>
     <update id="updateByPrimaryKeyWithBLOBs"
             parameterType="com.starnft.star.infrastructure.entity.user.UserAgreementEntity">
-    update user_agreement
-    set agreement_id = #{agreementId,jdbcType=VARCHAR},
-      agreement_name = #{agreementName,jdbcType=VARCHAR},
-      agreement_scene = #{agreementScene,jdbcType=TINYINT},
-      agreement_type = #{agreementType,jdbcType=TINYINT},
-      agreement_version = #{agreementVersion,jdbcType=VARCHAR},
-      effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
-      submit_status = #{submitStatus,jdbcType=TINYINT},
-      is_deleted = #{isDeleted,jdbcType=TINYINT},
-      created_at = #{createdAt,jdbcType=TIMESTAMP},
-      created_by = #{createdBy,jdbcType=VARCHAR},
-      modified_at = #{modifiedAt,jdbcType=TIMESTAMP},
-      modified_by = #{modifiedBy,jdbcType=VARCHAR},
-      agreement_content = #{agreementContent,jdbcType=LONGVARCHAR}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+        update user_agreement
+        set agreement_id      = #{agreementId,jdbcType=VARCHAR},
+            agreement_name    = #{agreementName,jdbcType=VARCHAR},
+            agreement_scene   = #{agreementScene,jdbcType=TINYINT},
+            agreement_type    = #{agreementType,jdbcType=TINYINT},
+            agreement_version = #{agreementVersion,jdbcType=VARCHAR},
+            effective_time    = #{effectiveTime,jdbcType=TIMESTAMP},
+            submit_status     = #{submitStatus,jdbcType=TINYINT},
+            is_deleted        = #{isDeleted,jdbcType=TINYINT},
+            created_at        = #{createdAt,jdbcType=TIMESTAMP},
+            created_by        = #{createdBy,jdbcType=VARCHAR},
+            modified_at       = #{modifiedAt,jdbcType=TIMESTAMP},
+            modified_by       = #{modifiedBy,jdbcType=VARCHAR},
+            agreement_content = #{agreementContent,jdbcType=LONGVARCHAR}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
     <update id="updateByPrimaryKey" parameterType="com.starnft.star.infrastructure.entity.user.UserAgreementEntity">
-    update user_agreement
-    set agreement_id = #{agreementId,jdbcType=VARCHAR},
-      agreement_name = #{agreementName,jdbcType=VARCHAR},
-      agreement_scene = #{agreementScene,jdbcType=TINYINT},
-      agreement_type = #{agreementType,jdbcType=TINYINT},
-      agreement_version = #{agreementVersion,jdbcType=VARCHAR},
-      effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
-      submit_status = #{submitStatus,jdbcType=TINYINT},
-      is_deleted = #{isDeleted,jdbcType=TINYINT},
-      created_at = #{createdAt,jdbcType=TIMESTAMP},
-      created_by = #{createdBy,jdbcType=VARCHAR},
-      modified_at = #{modifiedAt,jdbcType=TIMESTAMP},
-      modified_by = #{modifiedBy,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+        update user_agreement
+        set agreement_id      = #{agreementId,jdbcType=VARCHAR},
+            agreement_name    = #{agreementName,jdbcType=VARCHAR},
+            agreement_scene   = #{agreementScene,jdbcType=TINYINT},
+            agreement_type    = #{agreementType,jdbcType=TINYINT},
+            agreement_version = #{agreementVersion,jdbcType=VARCHAR},
+            effective_time    = #{effectiveTime,jdbcType=TIMESTAMP},
+            submit_status     = #{submitStatus,jdbcType=TINYINT},
+            is_deleted        = #{isDeleted,jdbcType=TINYINT},
+            created_at        = #{createdAt,jdbcType=TIMESTAMP},
+            created_by        = #{createdBy,jdbcType=VARCHAR},
+            modified_at       = #{modifiedAt,jdbcType=TIMESTAMP},
+            modified_by       = #{modifiedBy,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 </mapper>

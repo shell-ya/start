@@ -184,8 +184,22 @@ public class OrderRepository implements IOrderRepository {
     }
 
     @Override
-    public   Integer queryUserBuyBox(String uid){
+    public Integer queryUserBuyBox(String uid) {
         return this.starNftOrderMapper.queryUserBuyBox(uid);
+    }
+
+    @Override
+    public OrderVO queryOrderById(Long orderId) {
+        StarNftOrder starNftOrder = starNftOrderMapper.selectById(orderId);
+        return BeanColverUtil.colver(starNftOrder, OrderVO.class);
+    }
+
+    @Override
+    public OrderVO queryOrder(String orderSn) {
+        StarNftOrder starNftOrder = starNftOrderMapper.selectOne(
+                new LambdaQueryWrapper<StarNftOrder>()
+                        .eq(StringUtils.isNotBlank(orderSn), StarNftOrder::getOrderSn, orderSn));
+        return BeanColverUtil.colver(starNftOrder, OrderVO.class);
     }
 
     private StarNftOrder queryOrder(Long uid, String orderSn) {

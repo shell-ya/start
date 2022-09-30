@@ -10,4 +10,6 @@ public class DrawAwardExportsReq extends RequestPage implements Serializable {
 
     private String uId;
 
+    private String activityId;
+
 }

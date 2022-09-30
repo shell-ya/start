@@ -29,13 +29,19 @@ public class DesensitizedSerialize extends JsonSerializer<String> implements Con
 
     @Override
     public void serialize(String origin, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
-        switch (sensitiveTypeEnum){
-            case BANK_CARD:jsonGenerator.writeString(DesensitizedUtils.backCard(origin));
-            break;
-            case ID_CARD:jsonGenerator.writeString(DesensitizedUtils.backCard(origin));
-            break;
-            case MOBILE_PHONE:jsonGenerator.writeString(DesensitizedUtils.phone(origin));
-            break;
+        switch (sensitiveTypeEnum) {
+            case BANK_CARD:
+                jsonGenerator.writeString(DesensitizedUtils.backCard(origin));
+                break;
+            case ID_CARD:
+                jsonGenerator.writeString(DesensitizedUtils.backCard(origin));
+                break;
+            case MOBILE_PHONE:
+                jsonGenerator.writeString(DesensitizedUtils.phone(origin));
+                break;
+            case ACCOUNT:
+                jsonGenerator.writeString(DesensitizedUtils.account(origin));
+                break;
         }
     }
 

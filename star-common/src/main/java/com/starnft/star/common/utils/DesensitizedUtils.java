@@ -11,6 +11,10 @@ public class DesensitizedUtils{
         return replaceValue(bankCard,4,3);
     }
 
+    public static String account(String account){
+        return replaceValue(account,3,3);
+    }
+
     public static String replaceValue(String value,int left,int right){
         if (value == null || (value.length() < left + right + 1))
             return value;

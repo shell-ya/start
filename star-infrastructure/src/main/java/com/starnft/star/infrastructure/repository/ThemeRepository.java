@@ -11,9 +11,11 @@ import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.theme.model.req.ThemeGoodsReq;
 import com.starnft.star.domain.theme.model.req.ThemeReq;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.domain.theme.model.vo.ThemeDetailVO;
+import com.starnft.star.domain.theme.model.vo.ThemeGoodsVO;
 import com.starnft.star.domain.theme.model.vo.ThemeVO;
 import com.starnft.star.domain.theme.repository.IThemeRepository;
 import com.starnft.star.infrastructure.entity.theme.StarNftThemeInfo;
@@ -74,6 +76,13 @@ public class ThemeRepository implements IThemeRepository {
         pageResult.setTotal(result.getTotal());
         pageResult.setSize(result.getSize());
         return pageResult;
+    }
+
+    @Override
+    public ResponsePageResult<ThemeGoodsVO> themeGoodsList(ThemeGoodsReq themeGoodsReq) {
+        PageInfo<ThemeGoodsVO> result = PageHelper.startPage(themeGoodsReq.getPage(), themeGoodsReq.getSize())
+                .doSelectPageInfo(() -> this.starNftThemeInfoMapper.themeGoodsList(themeGoodsReq));
+        return new ResponsePageResult<>(result.getList(), result.getPageNum(), result.getPageSize(), result.getTotal());
     }
 
     @Override

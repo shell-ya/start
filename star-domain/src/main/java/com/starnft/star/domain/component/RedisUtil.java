@@ -1,6 +1,5 @@
 package com.starnft.star.domain.component;
 
-import cn.hutool.json.JSONUtil;
 import org.springframework.data.redis.core.BoundHashOperations;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisCallback;
@@ -724,6 +723,16 @@ public class RedisUtil {
         //绑定操作
         BoundListOperations<String, Serializable> boundValueOperations = this.redisTemplate.boundListOps(listKey);
         return boundValueOperations.rightPop();
+    }
+    /**
+     * 弹出左边的值 --- 并且移除这个值
+     *
+     * @param listKey
+     */
+    public Serializable leftPop(String listKey) {
+        //绑定操作
+        BoundListOperations<String, Serializable> boundValueOperations = this.redisTemplate.boundListOps(listKey);
+        return boundValueOperations.leftPop();
     }
 
     //=========BoundListOperations 用法 End============

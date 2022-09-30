@@ -1,11 +1,16 @@
 package com.starnft.star.application.mq.consumer;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.starnft.star.application.process.coupon.CouponCore;
 import com.starnft.star.application.process.draw.vo.DrawConsumeVO;
 import com.starnft.star.application.process.scope.IScopeCore;
 import com.starnft.star.application.process.scope.model.ScoreDTO;
+import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.common.enums.CouponGetType;
 import com.starnft.star.common.enums.NumberCirculationTypeEnum;
+import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.coupon.model.dto.CouponHistoryAdd;
 import com.starnft.star.domain.draw.service.draw.IDrawExec;
 import com.starnft.star.domain.number.model.req.HandoverReq;
 import com.starnft.star.domain.number.model.vo.NumberVO;
@@ -34,6 +39,10 @@ public class DrawAwardDeliveryConsumer implements RocketMQListener<DrawConsumeVO
 
     final IDrawExec drawExec;
 
+    final RedisUtil redisUtil;
+
+    final CouponCore couponCore;
+
 
     @Override
     public void onMessage(DrawConsumeVO drawConsumeVO) {
@@ -41,6 +50,7 @@ public class DrawAwardDeliveryConsumer implements RocketMQListener<DrawConsumeVO
         //奖品id
         String awardId = drawConsumeVO.getDrawAwardVO().getAwardId();
         String uId = drawConsumeVO.getDrawAwardVO().getuId();
+        Integer product = drawConsumeVO.getProduct();
 
         // TODO: 2022/8/19 引入规则引擎drools 针对不同情况执行对应的规则
 
@@ -63,6 +73,27 @@ public class DrawAwardDeliveryConsumer implements RocketMQListener<DrawConsumeVO
 
         }
 
+        // 优惠券
+        if (drawConsumeVO.getDrawAwardVO().getAwardType() == 3) {
+            couponCore.addCouponHistory(initCouponReq(uId, drawConsumeVO.getDrawAwardVO().getAwardCategoryId()));
+            drawExec.updateUserAwardState(uId, drawConsumeVO.getDrawOrderVO().getOrderId(), awardId, StarConstants.GrantState.COMPLETE.getCode());
+        }
+
+        //buff
+        if (drawConsumeVO.getDrawAwardVO().getAwardType() == 7) {
+            String buffKey = String.format(RedisKey.AWARD_BUFF_KEY.getKey(), awardId, uId);
+            redisUtil.incr(buffKey, 1);
+        }
+
+    }
+
+    private CouponHistoryAdd initCouponReq(String uId, String awardCategoryId) {
+        CouponHistoryAdd couponHistoryAdd = new CouponHistoryAdd();
+        couponHistoryAdd.setGetType(CouponGetType.ACTIVITY.getType());
+        couponHistoryAdd.setUserId(Long.parseLong(uId));
+        couponHistoryAdd.setCouponId(awardCategoryId);
+
+        return couponHistoryAdd;
     }
 
     private ScoreDTO buildScopeReq(DrawConsumeVO drawConsumeVO) {
@@ -76,7 +107,7 @@ public class DrawAwardDeliveryConsumer implements RocketMQListener<DrawConsumeVO
 
     private HandoverReq buildHandOverReq(DrawConsumeVO drawConsumeVO) {
 
-        Long awardCategoryId = drawConsumeVO.getDrawAwardVO().getAwardCategoryId();
+        Long awardCategoryId = Long.parseLong(drawConsumeVO.getDrawAwardVO().getAwardCategoryId());
         ThemeDetailVO themeDetailVO = themeService.queryThemeDetail(awardCategoryId);
         List<NumberVO> numberVOS = numberService.loadNotSellNumberCollection(awardCategoryId);
 

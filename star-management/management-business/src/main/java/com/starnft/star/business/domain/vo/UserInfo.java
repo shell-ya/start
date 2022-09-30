@@ -7,6 +7,8 @@ import lombok.Data;
 public class UserInfo {
     @Excel(name = "用户id")
     private String userId;
+    @Excel(name = "用户昵称")
+    private String nickName;
     @Excel(name = "用户姓名")
     private String userName;
     @Excel(name = "手机号")

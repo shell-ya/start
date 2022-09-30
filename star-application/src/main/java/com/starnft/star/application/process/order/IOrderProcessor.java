@@ -48,4 +48,6 @@ public interface IOrderProcessor {
     Boolean havingOrder(Long userId);
 
     Integer priorityTimes(Long userId);
+
+    OrderListRes payDetails(String orderSn);
 }

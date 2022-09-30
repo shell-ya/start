@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ser.std.StringSerializer;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.starnft.star.common.annotation.Excel;
 import com.starnft.star.common.core.domain.BaseEntity;
+import com.starnft.star.common.xss.Xss;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -40,6 +41,7 @@ public class StarBulletin
     private String picUrl;
 
     /** 公告内容 */
+    @Xss
     private String content;
 
     /** 公告类型 */
