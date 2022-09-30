@@ -305,9 +305,10 @@ public class OrderProcessor implements IOrderProcessor {
     private PaymentRich buildPayReq(WalletPayRequest walletPayRequest) {
         String encryptOrderSn = AESUtil.encrypt(walletPayRequest.getOrderSn());
         HashMap<String, Object> valueMap = Maps.newHashMap();
-        valueMap.put("cost", walletPayRequest.getFee().intValue() == 0 ? new BigDecimal("0.01").toString() : walletPayRequest.getFee().abs().toString());
-        valueMap.put("remark", walletPayRequest.getThemeId().toString().concat("#").concat(walletPayRequest.getNumberId().toString()));
-        valueMap.put("accUserId", walletPayRequest.getUserId().toString());
+//        valueMap.put("cost", walletPayRequest.getFee().intValue() == 0 ? new BigDecimal("0.01").toString() : walletPayRequest.getFee().abs().toString());
+//        valueMap.put("remark", walletPayRequest.getThemeId().toString().concat("#").concat(walletPayRequest.getNumberId().toString()));
+//        valueMap.put("accUserId", walletPayRequest.getUserId().toString());
+        valueMap.put("userId", walletPayRequest.getUserId().toString());
         UserInfoVO userInfoVO = userService.queryUserInfo(walletPayRequest.getUserId());
         valueMap.put("nickName", userInfoVO.getNickName());
         PaymentRich build = PaymentRich.builder()
@@ -316,11 +317,11 @@ public class OrderProcessor implements IOrderProcessor {
                 .orderSn(String.valueOf(walletPayRequest.getOrderId())).userId(walletPayRequest.getUserId())
                 .payExtend(valueMap)
                 .multicastTopic(String.format(TopicConstants.WALLER_PAY_DESTINATION.getFormat(), TopicConstants.WALLER_PAY_DESTINATION.getTag()))
-                .orderType(walletPayRequest.getOrderSn().startsWith(StarConstants.OrderPrefix.PublishGoods.getPrefix())
-                        ? StarConstants.OrderType.PUBLISH_GOODS : StarConstants.OrderType.MARKET_GOODS).build();
+                .orderType(StarConstants.OrderType.PUBLISH_GOODS).build();
         System.out.println(build);
         return build;
     }
+
     private void subPTimes(Long userId, OrderListRes orderListRes) {
         Boolean isSuccess = userService.whiteTimeConsume(userId, orderListRes.getWhiteId());
         if (!isSuccess) userService.whiteTimeConsume(userId, 1L);
