@@ -121,7 +121,7 @@ public class ThemeCoreImpl implements ThemeCore {
             themeGoodsVO.setPublisherName(publisherVO.getPublisherName());
             //流通量
             Integer circulate = numberService.queryThemeNumberOnSellCount(themeGoodsVO.getId());
-            themeGoodsVO.setCirculate(themeGoodsVO.getPublishNumber());
+            themeGoodsVO.setCirculate(circulate);
             themeGoodsVOS.add(themeGoodsVO);
         }
         return ResponsePageResult.listReplace(themeGoods, themeGoodsVOS);

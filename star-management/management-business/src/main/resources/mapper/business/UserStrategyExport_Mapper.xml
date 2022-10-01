@@ -84,4 +84,128 @@
         and award_name = #{awardName}
         limit 1
     </select>
+
+
+    <resultMap type="UserStrategyExport" id="UserStrategyExportResult">
+        <result property="id"    column="id"    />
+        <result property="uId"    column="u_id"    />
+        <result property="activityId"    column="activity_id"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="strategyId"    column="strategy_id"    />
+        <result property="strategyMode"    column="strategy_mode"    />
+        <result property="grantType"    column="grant_type"    />
+        <result property="grantDate"    column="grant_date"    />
+        <result property="grantState"    column="grant_state"    />
+        <result property="awardId"    column="award_id"    />
+        <result property="awardType"    column="award_type"    />
+        <result property="awardName"    column="award_name"    />
+        <result property="awardContent"    column="award_content"    />
+        <result property="uuid"    column="uuid"    />
+        <result property="mqState"    column="mq_state"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectUserStrategyExportVo">
+        select id, u_id, activity_id, order_id, strategy_id, strategy_mode, grant_type, grant_date, grant_state, award_id, award_type, award_name, award_content, uuid, mq_state, create_time, update_time from user_strategy_export
+    </sql>
+
+    <select id="selectUserStrategyExportList" parameterType="UserStrategyExport" resultMap="UserStrategyExportResult">
+        <include refid="selectUserStrategyExportVo"/>
+        <where>
+            <if test="uId != null  and uId != ''"> and u_id = #{uId}</if>
+            <if test="activityId != null "> and activity_id = #{activityId}</if>
+            <if test="orderId != null "> and order_id = #{orderId}</if>
+            <if test="strategyId != null "> and strategy_id = #{strategyId}</if>
+            <if test="strategyMode != null "> and strategy_mode = #{strategyMode}</if>
+            <if test="grantType != null "> and grant_type = #{grantType}</if>
+            <if test="grantDate != null "> and grant_date = #{grantDate}</if>
+            <if test="grantState != null "> and grant_state = #{grantState}</if>
+            <if test="awardId != null  and awardId != ''"> and award_id = #{awardId}</if>
+            <if test="awardType != null "> and award_type = #{awardType}</if>
+            <if test="awardName != null  and awardName != ''"> and award_name like concat('%', #{awardName}, '%')</if>
+            <if test="awardContent != null  and awardContent != ''"> and award_content = #{awardContent}</if>
+            <if test="uuid != null  and uuid != ''"> and uuid = #{uuid}</if>
+            <if test="mqState != null "> and mq_state = #{mqState}</if>
+        </where>
+    </select>
+
+    <select id="selectUserStrategyExportById" parameterType="Long" resultMap="UserStrategyExportResult">
+        <include refid="selectUserStrategyExportVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertUserStrategyExport" parameterType="UserStrategyExport" useGeneratedKeys="true" keyProperty="id">
+        insert into user_strategy_export
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uId != null">u_id,</if>
+            <if test="activityId != null">activity_id,</if>
+            <if test="orderId != null">order_id,</if>
+            <if test="strategyId != null">strategy_id,</if>
+            <if test="strategyMode != null">strategy_mode,</if>
+            <if test="grantType != null">grant_type,</if>
+            <if test="grantDate != null">grant_date,</if>
+            <if test="grantState != null">grant_state,</if>
+            <if test="awardId != null">award_id,</if>
+            <if test="awardType != null">award_type,</if>
+            <if test="awardName != null">award_name,</if>
+            <if test="awardContent != null">award_content,</if>
+            <if test="uuid != null">uuid,</if>
+            <if test="mqState != null">mq_state,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="uId != null">#{uId},</if>
+            <if test="activityId != null">#{activityId},</if>
+            <if test="orderId != null">#{orderId},</if>
+            <if test="strategyId != null">#{strategyId},</if>
+            <if test="strategyMode != null">#{strategyMode},</if>
+            <if test="grantType != null">#{grantType},</if>
+            <if test="grantDate != null">#{grantDate},</if>
+            <if test="grantState != null">#{grantState},</if>
+            <if test="awardId != null">#{awardId},</if>
+            <if test="awardType != null">#{awardType},</if>
+            <if test="awardName != null">#{awardName},</if>
+            <if test="awardContent != null">#{awardContent},</if>
+            <if test="uuid != null">#{uuid},</if>
+            <if test="mqState != null">#{mqState},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateUserStrategyExport" parameterType="UserStrategyExport">
+        update user_strategy_export
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="uId != null">u_id = #{uId},</if>
+            <if test="activityId != null">activity_id = #{activityId},</if>
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="strategyId != null">strategy_id = #{strategyId},</if>
+            <if test="strategyMode != null">strategy_mode = #{strategyMode},</if>
+            <if test="grantType != null">grant_type = #{grantType},</if>
+            <if test="grantDate != null">grant_date = #{grantDate},</if>
+            <if test="grantState != null">grant_state = #{grantState},</if>
+            <if test="awardId != null">award_id = #{awardId},</if>
+            <if test="awardType != null">award_type = #{awardType},</if>
+            <if test="awardName != null">award_name = #{awardName},</if>
+            <if test="awardContent != null">award_content = #{awardContent},</if>
+            <if test="uuid != null">uuid = #{uuid},</if>
+            <if test="mqState != null">mq_state = #{mqState},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserStrategyExportById" parameterType="Long">
+        delete from user_strategy_export where id = #{id}
+    </delete>
+
+    <delete id="deleteUserStrategyExportByIds" parameterType="String">
+        delete from user_strategy_export where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
 </mapper>
