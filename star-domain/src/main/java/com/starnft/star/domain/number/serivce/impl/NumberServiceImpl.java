@@ -11,6 +11,7 @@ import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.RequestConditionPage;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.Assert;
+import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.number.model.OrderByEnum;
 import com.starnft.star.domain.number.model.dto.*;
 import com.starnft.star.domain.number.model.req.HandoverReq;
@@ -40,6 +41,8 @@ public class NumberServiceImpl implements INumberService {
     TransactionTemplate template;
     @Resource
     RedisTemplate<String, Object> redisTemplate;
+    @Resource
+    RedisLockUtils redisLockUtils;
 
     @Override
     public ResponsePageResult<NumberVO> queryThemeNumber(NumberReq numberReq) {
@@ -50,6 +53,7 @@ public class NumberServiceImpl implements INumberService {
     public NumberDetailVO getNumberDetail(Long id) {
         Assert.notNull(id, () -> new StarException(StarError.PARAETER_UNSUPPORTED, "商品ID不能为空"));
         NumberDetailVO number = this.numberRepository.getNumberDetail(id);
+        number.setIsLock(redisLockUtils.isLock(String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), number.getId())) ? 1 : 0);
         Assert.notNull(number, () -> new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "商品不存在"));
         return number;
     }
