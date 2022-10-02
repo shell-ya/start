@@ -3,6 +3,7 @@ package com.starnft.star.domain.bulletin.repository;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.bulletin.model.dto.BulletinPageDto;
 import com.starnft.star.domain.bulletin.model.vo.BulletinVo;
+import com.starnft.star.domain.number.model.vo.DingBulletinVo;
 
 import java.util.List;
 
@@ -15,4 +16,6 @@ public interface IBulletinRepository {
     public ResponsePageResult<BulletinVo> pageBulletin(BulletinPageDto dto);
 
     BulletinVo queryBulletinById(Long id);
+
+    List<DingBulletinVo> selectDingBulletin();
 }

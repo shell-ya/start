@@ -105,7 +105,7 @@ public class UserCoreImpl implements UserCore {
                 rankEventReq.setParent(InvitationCodeUtil.decode(req.getSc())); //邀请码转化为id //直接获取到了上级
                 rankEventReq.setReqTime(new Date());
                 rankEventReq.setEventSign(StarConstants.EventSign.Register.getSign());
-                rankEventReq.setActivitySign(StringUtils.isBlank(req.getAt()) ? "mla":req.getAt());
+                rankEventReq.setActivitySign(StringUtils.isBlank(req.getAt()) ? "sfmla":req.getAt());
                 activityEventProducer.sendScopeMessage(EventReqAssembly.assembly(rankEventReq));
 
             } catch (Exception e) {

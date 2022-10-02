@@ -14,6 +14,7 @@ import com.starnft.star.domain.bulletin.model.dto.BulletinPageDto;
 import com.starnft.star.domain.bulletin.model.vo.BulletinTypeVo;
 import com.starnft.star.domain.bulletin.model.vo.BulletinVo;
 import com.starnft.star.domain.bulletin.repository.IBulletinRepository;
+import com.starnft.star.domain.number.model.vo.DingBulletinVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -66,6 +67,11 @@ public class BulletinServiceImpl implements IBulletinService {
     public List<BulletinTypeVo> queryBulletinType() {
         //取出枚举封装
         return  Arrays.stream(StarConstants.BulletinType.values()).map(this::bulletinTypeVo).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DingBulletinVo> queryDingBulletin() {
+        return bulletinRepository.selectDingBulletin();
     }
 
     private BulletinTypeVo bulletinTypeVo(StarConstants.BulletinType bulletinType){
