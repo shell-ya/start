@@ -36,4 +36,6 @@ public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
     List<MarketNumberInfoVO> marketNumberList(MarketNumberListReq marketNumberListReq);
 
     BigDecimal avgPrice(Long themeId);
+
+    List<BigDecimal> allPrice(@Param("themeId") Long themeId,@Param("median")BigDecimal median);
 }

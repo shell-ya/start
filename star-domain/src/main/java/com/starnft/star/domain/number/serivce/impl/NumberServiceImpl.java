@@ -1,6 +1,7 @@
 package com.starnft.star.domain.number.serivce.impl;
 
 import cn.hutool.json.JSONUtil;
+import com.google.common.collect.Lists;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.enums.NumberCirculationTypeEnum;
@@ -27,9 +28,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.math.RoundingMode;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -244,6 +244,55 @@ public class NumberServiceImpl implements INumberService {
     @Override
     public BigDecimal avgPrice(Long themeId) {
         return numberRepository.avgPrice(themeId);
+    }
+
+    @Override
+    public BigDecimal medianPrice(Long id) {
+        List<BigDecimal> prices = numberRepository.allPrice(id,null);
+        BigDecimal median = median(prices);
+        List<BigDecimal> outMedianPrice = numberRepository.allPrice(id, median.multiply(new BigDecimal(5)));
+        return getAvg(outMedianPrice);
+    }
+
+    private BigDecimal getAvg(List<BigDecimal> outMedianPrice) {
+        BigDecimal avg = avg(outMedianPrice);
+        boolean over = true;
+        LinkedList<BigDecimal> linkedList = Lists.newLinkedList(outMedianPrice);
+        Collections.sort(linkedList);
+        while (over){
+            linkedList.removeLast();
+            BigDecimal currentAvg = avg(linkedList);
+            int i = avg.divide(currentAvg, RoundingMode.CEILING).compareTo(new BigDecimal("0.3"));
+            avg = currentAvg;
+            if (i <= 0){
+                over = false;
+            }
+
+        }
+        return avg;
+    }
+
+    private BigDecimal avg(List<BigDecimal> list){
+        if (null == list) return  BigDecimal.ZERO;
+        Collections.sort(list);
+        BigDecimal sum = BigDecimal.ZERO;
+        for (BigDecimal b :
+                list) {
+            sum = sum.add(b);
+        }
+        BigDecimal size = new BigDecimal(list.size());
+        return sum.divide(size, RoundingMode.CEILING);
+    }
+
+    private BigDecimal median(List<BigDecimal> list){
+        if (null == list) return  BigDecimal.ZERO;
+        Collections.sort(list);
+        int size = list.size();
+        if (size % 2 == 1){
+            return list.get((size - 1) / 2);
+        }else {
+            return (list.get((size/2)-1).add(list.get(size/2)).divide(new BigDecimal(2), RoundingMode.FLOOR));
+        }
     }
 
     @Override

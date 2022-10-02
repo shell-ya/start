@@ -73,4 +73,6 @@ public interface INumberRepository {
     ResponsePageResult<MarketNumberInfoVO> marketNumberList(MarketNumberListReq marketNumberListReq);
 
     BigDecimal avgPrice(Long themeId);
+
+    List<BigDecimal> allPrice(Long themeId,BigDecimal price);
 }

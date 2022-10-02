@@ -238,4 +238,15 @@
           AND is_delete = 0
           AND series_theme_info_id = #{themeId};
     </select>
+
+    <select id="allPrice" resultType="java.math.BigDecimal">
+        select price
+        from star_nft_theme_number
+        where `status` = 2
+        and is_delete = 0
+        and series_theme_info_id = #{themeId}
+        <if test="median != null">
+           and price &lt;= #{median}
+        </if>
+    </select>
 </mapper>

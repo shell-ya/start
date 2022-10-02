@@ -14,6 +14,7 @@ import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.number.model.req.NumberConsignmentCancelRequest;
 import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
+import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.order.model.res.OrderListRes;
 import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
 import com.starnft.star.domain.user.model.dto.UserLoginDTO;
@@ -53,6 +54,13 @@ public class MarketTest {
     final WhiteRuleContext whiteRuleContext;
 
     final RedisTemplate<String, Object> redisTemplate;
+    final INumberService numberService;
+
+    @Test
+    public void mediam(){
+        BigDecimal bigDecimal = numberService.medianPrice(1009469098485923840L);
+        System.out.println(bigDecimal);
+    }
 
     @Test
     public void add(){

@@ -395,6 +395,11 @@ public class NumberRepository implements INumberRepository {
         return starNftThemeNumberMapper.avgPrice(themeId);
     }
 
+    @Override
+    public List<BigDecimal> allPrice(Long themeId,BigDecimal price) {
+        return starNftThemeNumberMapper.allPrice(themeId,price);
+    }
+
     private List<NumberDetailVO> mappingNumberValues(List<StarNftThemeNumber> starNftThemeNumbers) {
         ArrayList<@Nullable NumberDetailVO> objects = Lists.newArrayList();
         for (StarNftThemeNumber starNftThemeNumber : starNftThemeNumbers) {
