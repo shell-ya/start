@@ -53,4 +53,6 @@ public class NumberDetailVO implements Serializable {
     private String ownerBy;
     @ApiModelProperty("可转售 0暂不可转售 1 可转售")
     private Integer resale;
+    @ApiModelProperty("是否锁定  0:未锁定 1：锁定")
+    private Integer isLock;
 }

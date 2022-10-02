@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.DrawStrategyDetailMapper">
+
+    <resultMap type="DrawStrategyDetail" id="DrawStrategyDetailResult">
+        <result property="id"    column="id"    />
+        <result property="strategyId"    column="strategy_id"    />
+        <result property="awardId"    column="award_id"    />
+        <result property="awardName"    column="award_name"    />
+        <result property="awardCount"    column="award_count"    />
+        <result property="awardSurplusCount"    column="award_surplus_count"    />
+        <result property="awardRate"    column="award_rate"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectDrawStrategyDetailVo">
+        select id, strategy_id, award_id, award_name, award_count, award_surplus_count, award_rate, create_time, update_time from draw_strategy_detail
+    </sql>
+
+    <select id="selectDrawStrategyDetailList" parameterType="DrawStrategyDetail" resultMap="DrawStrategyDetailResult">
+        <include refid="selectDrawStrategyDetailVo"/>
+        <where>
+            <if test="strategyId != null "> and strategy_id = #{strategyId}</if>
+            <if test="awardId != null  and awardId != ''"> and award_id = #{awardId}</if>
+            <if test="awardName != null  and awardName != ''"> and award_name like concat('%', #{awardName}, '%')</if>
+            <if test="awardCount != null "> and award_count = #{awardCount}</if>
+            <if test="awardSurplusCount != null "> and award_surplus_count = #{awardSurplusCount}</if>
+            <if test="awardRate != null "> and award_rate = #{awardRate}</if>
+        </where>
+    </select>
+
+    <select id="selectDrawStrategyDetailById" parameterType="Long" resultMap="DrawStrategyDetailResult">
+        <include refid="selectDrawStrategyDetailVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertDrawStrategyDetail" parameterType="DrawStrategyDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into draw_strategy_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="strategyId != null">strategy_id,</if>
+            <if test="awardId != null">award_id,</if>
+            <if test="awardName != null">award_name,</if>
+            <if test="awardCount != null">award_count,</if>
+            <if test="awardSurplusCount != null">award_surplus_count,</if>
+            <if test="awardRate != null">award_rate,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="strategyId != null">#{strategyId},</if>
+            <if test="awardId != null">#{awardId},</if>
+            <if test="awardName != null">#{awardName},</if>
+            <if test="awardCount != null">#{awardCount},</if>
+            <if test="awardSurplusCount != null">#{awardSurplusCount},</if>
+            <if test="awardRate != null">#{awardRate},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDrawStrategyDetail" parameterType="DrawStrategyDetail">
+        update draw_strategy_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="strategyId != null">strategy_id = #{strategyId},</if>
+            <if test="awardId != null">award_id = #{awardId},</if>
+            <if test="awardName != null">award_name = #{awardName},</if>
+            <if test="awardCount != null">award_count = #{awardCount},</if>
+            <if test="awardSurplusCount != null">award_surplus_count = #{awardSurplusCount},</if>
+            <if test="awardRate != null">award_rate = #{awardRate},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDrawStrategyDetailById" parameterType="Long">
+        delete from draw_strategy_detail where id = #{id}
+    </delete>
+
+    <delete id="deleteDrawStrategyDetailByIds" parameterType="String">
+        delete from draw_strategy_detail where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectDrawStrategyDetailListByStrategyId"
+            resultType="com.starnft.star.business.domain.vo.AwardVo">
+        select
+                award_id as `value`,
+                award_name as label
+        from draw_strategy_detail
+        where strategy_id = #{drawStrategyId}
+    </select>
+</mapper>

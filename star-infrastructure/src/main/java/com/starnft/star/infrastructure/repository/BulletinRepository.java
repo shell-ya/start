@@ -12,10 +12,12 @@ import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.bulletin.model.dto.BulletinPageDto;
 import com.starnft.star.domain.bulletin.model.vo.BulletinVo;
 import com.starnft.star.domain.bulletin.repository.IBulletinRepository;
+import com.starnft.star.domain.number.model.vo.DingBulletinVo;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.infrastructure.entity.BaseEntity;
 import com.starnft.star.infrastructure.entity.bulletin.StarBulletin;
 import com.starnft.star.infrastructure.mapper.bulletin.StarBulletinMapper;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -55,6 +57,14 @@ public class BulletinRepository implements IBulletinRepository {
         return BeanColverUtil.colver(bulletin,BulletinVo.class);
     }
 
+    @Override
+    public List<DingBulletinVo> selectDingBulletin() {
+        LambdaQueryWrapper<StarBulletin> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByDesc(StarBulletin::getPublishTime);
+        List<StarBulletin> starBulletins = this.bulletinMapper.selectList(wrapper);
+        return coverDingBulletin(starBulletins);
+    }
+
     private List<BulletinVo> coverBulletinVo(List<StarBulletin> starBulletins){
         List<BulletinVo> bulletinVos = new ArrayList<>();
         for (StarBulletin bulletin : starBulletins) {
@@ -68,5 +78,19 @@ public class BulletinRepository implements IBulletinRepository {
             bulletinVos.add(bulletinVo);
         }
         return bulletinVos;
+    }
+
+
+    private List<DingBulletinVo> coverDingBulletin(List<StarBulletin> starBulletins){
+        ArrayList<DingBulletinVo> dingBulletinVos = Lists.newArrayList();
+        for (StarBulletin b :
+            starBulletins) {
+            DingBulletinVo dingBulletinVo = new DingBulletinVo();
+            dingBulletinVo.setImage(b.getPicUrl());
+            dingBulletinVo.setLink(b.getLinkUrl());
+            dingBulletinVo.setTitle(b.getTitle());
+            dingBulletinVos.add(dingBulletinVo);
+        }
+        return dingBulletinVos;
     }
 }

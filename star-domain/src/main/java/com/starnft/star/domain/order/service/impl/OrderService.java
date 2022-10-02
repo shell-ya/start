@@ -122,9 +122,9 @@ public class OrderService implements IOrderService {
                 String key = String.format(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), orderVO.getSeriesThemeInfoId());
                 redisUtil.hdel(key, String.valueOf(uid));
             }
-//            else if (orderType.equals(StarConstants.OrderType.MARKET_GOODS)) {
-//                redisLockUtils.unlock(String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), orderVO.getSeriesThemeId()));
-//            }
+            else if (orderType.equals(StarConstants.OrderType.MARKET_GOODS)) {
+                redisLockUtils.unlock(String.format(RedisKey.MARKET_ORDER_TRANSACTION.getKey(), orderVO.getSeriesThemeId()));
+            }
             return new OrderPlaceRes(StarConstants.ORDER_STATE.PAY_CANCEL.getCode(), orderSn);
         }
 
