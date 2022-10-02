@@ -22,6 +22,7 @@ import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.*;
 import com.starnft.star.domain.number.repository.INumberRepository;
 import com.starnft.star.domain.number.serivce.INumberService;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -251,7 +252,7 @@ public class NumberServiceImpl implements INumberService {
         List<BigDecimal> prices = numberRepository.allPrice(id,null);
         BigDecimal median = median(prices);
         List<BigDecimal> outMedianPrice = numberRepository.allPrice(id, median.multiply(new BigDecimal(5)));
-        return getAvg(outMedianPrice);
+        return avg(outMedianPrice);
     }
 
     private BigDecimal getAvg(List<BigDecimal> outMedianPrice) {
@@ -308,7 +309,18 @@ public class NumberServiceImpl implements INumberService {
         if (Objects.nonNull(redisManage)) {
             return JSONUtil.toList(redisManage.toString(), NumberDingVO.class);
         }
-        List<NumberDingVO> numberDingList = this.numberRepository.getNumberDingList();
+        List<ThemeDingVo> themeDingList = this.numberRepository.getThemeDingList();
+        ArrayList<NumberDingVO> numberDingList = Lists.newArrayList();
+        for (ThemeDingVo theme :
+                themeDingList) {
+            NumberDingVO numberDingVO = new NumberDingVO();
+            numberDingVO.setImage(theme.getImage());
+            numberDingVO.setName(theme.getName());
+            BigDecimal price = this.medianPrice(theme.getId());
+            numberDingVO.setPrice(price);
+            numberDingList.add(numberDingVO);
+        }
+
         redisTemplate.opsForValue().set(RedisKey.DING_PRICE_MANAGE.getKey(), JSONUtil.toJsonStr(numberDingList), RedisKey.DING_PRICE_MANAGE.getTime(), TimeUnit.SECONDS);
         return numberDingList;
     }

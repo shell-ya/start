@@ -52,6 +52,8 @@ public interface INumberRepository {
 
     public List<NumberDingVO> getNumberDingList();
 
+    List<ThemeDingVo> getThemeDingList();
+
     Long firstNumber(Long uid, Long seriesThemeInfoId);
 
     Boolean deleteNumber(Long uid, Long seriesThemeId);

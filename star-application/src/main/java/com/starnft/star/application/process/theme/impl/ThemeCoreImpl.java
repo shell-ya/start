@@ -127,7 +127,7 @@ public class ThemeCoreImpl implements ThemeCore {
             //均价
             BigDecimal avgPrice = numberService.avgPrice(themeGoodsVO.getId());
             BigDecimal medianPrice = numberService.medianPrice(themeGoodsVO.getId());
-            themeGoodsVO.setFloor(avgPrice);
+            themeGoodsVO.setFloor(medianPrice);
 
             themeGoodsVOS.add(themeGoodsVO);
         }

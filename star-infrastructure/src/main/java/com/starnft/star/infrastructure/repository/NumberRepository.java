@@ -301,6 +301,12 @@ public class NumberRepository implements INumberRepository {
         return this.starNftThemeNumberMapper.getNumbers2Ding();
     }
 
+
+    @Override
+    public List<ThemeDingVo> getThemeDingList() {
+        return this.starNftThemeNumberMapper.getTheme2Ding();
+    }
+
     @Override
     public Long firstNumber(Long uid, Long seriesThemeInfoId) {
         return this.starNftUserThemeMapper.firstNumber(uid, seriesThemeInfoId);

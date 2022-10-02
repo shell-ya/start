@@ -249,4 +249,13 @@
            and price &lt;= #{median}
         </if>
     </select>
+
+    <select id="getTheme2Ding" resultType="com.starnft.star.domain.number.model.vo.ThemeDingVo">
+        SELECT i.id  as id, i.theme_name as `name`, i.theme_pic as image
+        from star_nft_theme_number as n
+                 LEFT JOIN star_nft_theme_info as i on i.id = series_theme_info_id
+        WHERE n.`status` = 2
+          and n.is_delete = 0
+        GROUP BY series_theme_info_id
+    </select>
 </mapper>

@@ -14,6 +14,7 @@ import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.number.model.req.NumberConsignmentCancelRequest;
 import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
+import com.starnft.star.domain.number.model.vo.NumberDingVO;
 import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.order.model.res.OrderListRes;
 import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
@@ -29,6 +30,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -58,8 +60,30 @@ public class MarketTest {
 
     @Test
     public void mediam(){
-        BigDecimal bigDecimal = numberService.medianPrice(1009469098485923840L);
+        BigDecimal bigDecimal = numberService.medianPrice(1002285892654821376L);
         System.out.println(bigDecimal);
+    }
+
+//    NumberDingVO(price=3773.00, name=Pluviophile 创世, image=https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1659005019651_ca518707.png)
+//            NumberDingVO(price=311.29, name=Pluviophile 白羊座, image=https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1659005277691_289b4c74.jpeg)
+//                         NumberDingVO(price=160.66, name=Pluviophile 金牛座, image=https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1659941490260_5785c94e.png)
+//                         NumberDingVO(price=287.76, name=Pluviophile 巨蟹座, image=https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1659941531275_7143d933.png)
+//                         NumberDingVO(price=369.28, name=Pluviophile 天蝎座, image=https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1659940977182_1ff54a8f.png)
+//                         NumberDingVO(price=46.32, name=星徽盲盒(每人限购10个), image=https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1660717767340_9131d791.jpg)
+//    NumberDingVO(price=481.45, name=Pluviophile 双鱼座, image=https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1662300854877_b634fefb.png)
+//            NumberDingVO(price=211.40, name=荣耀传承 - 荣, image=https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1662964727870_05853558.jpg)
+//                         NumberDingVO(price=208.50, name=荣耀传承 - 耀, image=https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1662964773444_9412ace4.jpg)
+//                         NumberDingVO(price=320.84, name=荣耀传承 - 传, image=https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1662964811223_1d62a1f4.jpg)
+//                         NumberDingVO(price=167.54, name=荣耀传承 - 承, image=https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1662964855906_0ee1949a.jpg)
+//                         NumberDingVO(price=1420.82, name=盘星苍龙, image=https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1663063407533_6f831ac4.jpg)
+
+    @Test
+    public void dingnumber(){
+        List<NumberDingVO> numberDingList = numberService.getNumberDingList();
+        for (NumberDingVO d :
+                numberDingList) {
+            System.out.println(d);
+        }
     }
 
     @Test
