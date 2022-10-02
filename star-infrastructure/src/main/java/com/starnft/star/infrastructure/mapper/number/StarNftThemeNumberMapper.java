@@ -34,4 +34,6 @@ public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
     BigDecimal minPrice(Long themeId);
 
     List<MarketNumberInfoVO> marketNumberList(MarketNumberListReq marketNumberListReq);
+
+    BigDecimal avgPrice(Long themeId);
 }

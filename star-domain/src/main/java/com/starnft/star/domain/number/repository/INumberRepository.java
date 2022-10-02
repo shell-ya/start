@@ -71,4 +71,6 @@ public interface INumberRepository {
     BigDecimal minPrice(Long themeId);
 
     ResponsePageResult<MarketNumberInfoVO> marketNumberList(MarketNumberListReq marketNumberListReq);
+
+    BigDecimal avgPrice(Long themeId);
 }

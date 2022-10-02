@@ -242,6 +242,11 @@ public class NumberServiceImpl implements INumberService {
     }
 
     @Override
+    public BigDecimal avgPrice(Long themeId) {
+        return numberRepository.avgPrice(themeId);
+    }
+
+    @Override
     public List<NumberDetailVO> queryNumberNotOnSell(Long themeId) {
         return this.numberRepository.queryNumberNotOnSell(themeId);
     }

@@ -24,6 +24,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -122,6 +123,11 @@ public class ThemeCoreImpl implements ThemeCore {
             //流通量
             Integer circulate = numberService.queryThemeNumberOnSellCount(themeGoodsVO.getId());
             themeGoodsVO.setCirculate(circulate);
+
+            //均价
+            BigDecimal avgPrice = numberService.avgPrice(themeGoodsVO.getId());
+            themeGoodsVO.setFloor(avgPrice);
+
             themeGoodsVOS.add(themeGoodsVO);
         }
         return ResponsePageResult.listReplace(themeGoods, themeGoodsVOS);

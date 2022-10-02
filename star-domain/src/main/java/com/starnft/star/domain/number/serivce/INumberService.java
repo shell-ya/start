@@ -85,4 +85,7 @@ public interface INumberService {
 //    @CacheRefresh(refresh = 4)
 //    @CachePenetrationProtect
     ResponsePageResult<MarketNumberInfoVO> marketNumberList(MarketNumberListReq marketNumberListReq);
+
+
+    BigDecimal avgPrice(Long themeId);
 }
