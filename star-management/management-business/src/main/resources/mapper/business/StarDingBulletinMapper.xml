@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.StarDingBulletinMapper">
+
+    <resultMap type="StarDingBulletin" id="StarDingBulletinResult">
+        <result property="id"    column="id"    />
+        <result property="image"    column="image"    />
+        <result property="link"    column="link"    />
+        <result property="title"    column="title"    />
+        <result property="createdAt"    column="created_at"    />
+        <result property="createdBy"    column="created_by"    />
+        <result property="updatedAt"    column="updated_at"    />
+        <result property="updatedBy"    column="updated_by"    />
+        <result property="isDeleted"    column="is_deleted"    />
+    </resultMap>
+
+    <sql id="selectStarDingBulletinVo">
+        select id, image, link, title, created_at, created_by, updated_at, updated_by, is_deleted from star_ding_bulletin
+    </sql>
+
+    <select id="selectStarDingBulletinList" parameterType="StarDingBulletin" resultMap="StarDingBulletinResult">
+        <include refid="selectStarDingBulletinVo"/>
+        <where>
+            <if test="image != null  and image != ''"> and image = #{image}</if>
+            <if test="link != null  and link != ''"> and link = #{link}</if>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+            <if test="createdAt != null "> and created_at = #{createdAt}</if>
+            <if test="createdBy != null  and createdBy != ''"> and created_by = #{createdBy}</if>
+            <if test="updatedAt != null "> and updated_at = #{updatedAt}</if>
+            <if test="updatedBy != null  and updatedBy != ''"> and updated_by = #{updatedBy}</if>
+            <if test="isDeleted != null "> and is_deleted = #{isDeleted}</if>
+        </where>
+        order by created_at desc
+    </select>
+
+    <select id="selectStarDingBulletinById" parameterType="Long" resultMap="StarDingBulletinResult">
+        <include refid="selectStarDingBulletinVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertStarDingBulletin" parameterType="StarDingBulletin">
+        insert into star_ding_bulletin
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="image != null">image,</if>
+            <if test="link != null">link,</if>
+            <if test="title != null and title != ''">title,</if>
+            <if test="createdAt != null">created_at,</if>
+            <if test="createdBy != null">created_by,</if>
+            <if test="updatedAt != null">updated_at,</if>
+            <if test="updatedBy != null">updated_by,</if>
+            <if test="isDeleted != null">is_deleted,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="image != null">#{image},</if>
+            <if test="link != null">#{link},</if>
+            <if test="title != null and title != ''">#{title},</if>
+            <if test="createdAt != null">#{createdAt},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="updatedAt != null">#{updatedAt},</if>
+            <if test="updatedBy != null">#{updatedBy},</if>
+            <if test="isDeleted != null">#{isDeleted},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStarDingBulletin" parameterType="StarDingBulletin">
+        update star_ding_bulletin
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="image != null">image = #{image},</if>
+            <if test="link != null">link = #{link},</if>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="createdAt != null">created_at = #{createdAt},</if>
+            <if test="createdBy != null">created_by = #{createdBy},</if>
+            <if test="updatedAt != null">updated_at = #{updatedAt},</if>
+            <if test="updatedBy != null">updated_by = #{updatedBy},</if>
+            <if test="isDeleted != null">is_deleted = #{isDeleted},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="deleteStarDingBulletinById" parameterType="Long">
+        update star_ding_bulletin set  is_deleted = 1 where id = #{id}
+    </update>
+
+    <update id="deleteStarDingBulletinByIds" parameterType="String">
+        update star_ding_bulletin set  is_deleted = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>
