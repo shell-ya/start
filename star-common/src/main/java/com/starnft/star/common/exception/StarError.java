@@ -114,6 +114,7 @@ public enum StarError {
     CONSIGNMENT_NOT_OPEN("600000004","寄售暂未开放，请等待公告通知"),
     AIRDROP_NUMBER_ERROR("600000005","空投编号错误"),
     USER_NOT_HAS_DRAW("60000000006","该用户未中奖"),
+    RANDOM_NUMBER_ERROR("60000000007","分配编号失败"),
     ;
 
     private String NS = "";

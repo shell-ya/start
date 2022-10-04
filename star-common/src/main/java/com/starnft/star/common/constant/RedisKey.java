@@ -231,7 +231,7 @@ public enum RedisKey {
     DRAW_AWARD_STOCK_MAPPING(800, StarConstants.SERVICE_NAME.concat(":draw.award.stock.strategy:%s"), -1L, TimeUnit.SECONDS),
 
     DRAW_AWARD_OPEN_LOCK(801, StarConstants.SERVICE_NAME.concat(":draw.award.open.lock:%s"), 5L, TimeUnit.SECONDS),
-
+    DRAW_AWARD_NUMBER_LOCK(802,StarConstants.SERVICE_NAME.concat(":draw.award.number.lock:%s"),3L,TimeUnit.SECONDS),
     /**
      * 排行榜
      */

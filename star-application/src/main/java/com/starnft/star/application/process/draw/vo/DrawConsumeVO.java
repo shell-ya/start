@@ -5,6 +5,7 @@ import com.starnft.star.domain.activity.model.vo.DrawOrderVO;
 import com.starnft.star.domain.draw.model.vo.DrawAwardVO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
