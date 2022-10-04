@@ -9,6 +9,7 @@ import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.enums.CouponGetType;
 import com.starnft.star.common.enums.NumberCirculationTypeEnum;
+import com.starnft.star.common.utils.RandomUtil;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.coupon.model.dto.CouponHistoryAdd;
 import com.starnft.star.domain.draw.service.draw.IDrawExec;
@@ -24,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -125,7 +127,7 @@ public class DrawAwardDeliveryConsumer implements RocketMQListener<DrawConsumeVO
         handoverReq.setToUid(Long.parseLong(drawConsumeVO.getDrawAwardVO().getuId()));
         handoverReq.setThemeId(awardCategoryId);
         handoverReq.setOrderType(StarConstants.OrderType.PUBLISH_GOODS);
-        handoverReq.setNumberId(numberVOS.get(0).getId());
+        handoverReq.setNumberId(numberVOS.get(RandomUtil.randomInt(numberVOS.size())).getId());
         handoverReq.setItemStatus(1);
 
         return handoverReq;

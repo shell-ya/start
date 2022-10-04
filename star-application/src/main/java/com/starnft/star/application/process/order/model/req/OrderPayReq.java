@@ -52,7 +52,7 @@ public class OrderPayReq implements Serializable {
     private Integer categoryType;
 
     @ApiModelProperty(value = "交易渠道 支付宝 AliPay，云闪付 UNION_PAY，微信 WeChatPay，银行卡 BankCard，" +
-            "快捷绑卡支付 QuickCard，余额 Balance  市场交易 秒杀都仅能用余额支付，剩下的都是扩展预留")
+            "快捷绑卡支付 QuickCard，余额 Balance 云账号 CloudAccount  市场交易 秒杀都仅能用余额支付，剩下的都是扩展预留")
     private String channel;
 
     @ApiModelProperty(value = "支付密码校验凭证")

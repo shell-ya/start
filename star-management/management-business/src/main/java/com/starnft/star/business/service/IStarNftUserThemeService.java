@@ -74,4 +74,6 @@ public interface IStarNftUserThemeService extends IService<StarNftUserTheme>
     Boolean give(GiveReq giveReq);
 
     List<UserInfo> selectHasThemeUser(Long seriesThemeInfoId);
+
+    List<UserInfo> selectHasSeriesUserAndDate(Long seriesId,String createAt);
 }

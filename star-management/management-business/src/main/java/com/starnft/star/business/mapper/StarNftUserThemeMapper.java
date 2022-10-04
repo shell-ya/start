@@ -7,8 +7,11 @@ import com.starnft.star.business.domain.vo.GiveReq;
 import com.starnft.star.business.domain.vo.UserInfo;
 import com.starnft.star.common.enums.UserNumberStatusEnum;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -75,4 +78,6 @@ public interface StarNftUserThemeMapper extends BaseMapper<StarNftUserTheme>
     StarNftUserTheme selectUserThemeBySeriesThemeId(GiveReq giveReq);
 
     List<UserInfo> selecUsertHasTheme(Long seriesThemeInfoId);
+
+    List<UserInfo> selectHasSeriesUserAndDate(@Param("seriesId") Long seriesId, @Param("createdAt")Date createdAt);
 }

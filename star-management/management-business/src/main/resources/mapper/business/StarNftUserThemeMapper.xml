@@ -162,4 +162,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         ORDER BY
             nums DESC;
     </select>
+
+    <select id="selectHasSeriesUserAndDate" resultType="com.starnft.star.business.domain.vo.UserInfo">
+        SELECT
+            ut.user_id AS userId,
+            au.nick_name as nickName,
+            au.full_name AS userName,
+            au.phone AS phone,
+            count( ut.series_theme_id ) AS nums
+        FROM
+            star_nft_user_theme AS ut
+                JOIN account_user AS au ON ut.user_id = au.account
+        WHERE
+            ut.is_delete = 0
+          AND ut.STATUS IN ( 0, 1 )
+          AND ut.series_id = #{seriesId}
+          and au.created_at >= #{createdAt}
+        GROUP BY
+            userId,
+            nickName,
+            userName,
+            phone
+        ORDER BY
+            nums DESC;
+    </select>
 </mapper>

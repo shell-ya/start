@@ -17,9 +17,7 @@ import com.starnft.star.common.enums.NumberStatusEnum;
 import com.starnft.star.common.enums.UserNumberStatusEnum;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
-import com.starnft.star.common.utils.Assert;
-import com.starnft.star.common.utils.BeanColverUtil;
-import com.starnft.star.common.utils.SnowflakeWorker;
+import com.starnft.star.common.utils.*;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -243,6 +241,13 @@ public class StarNftUserThemeServiceImpl extends ServiceImpl<StarNftUserThemeMap
     public List<UserInfo> selectHasThemeUser(Long seriesThemeInfoId) {
 
         return starNftUserThemeMapper.selecUsertHasTheme(seriesThemeInfoId);
+    }
+
+    @Override
+    public List<UserInfo> selectHasSeriesUserAndDate(Long seriesId, String createAt) {
+        Date date = DateUtils.parseDate(createAt);
+
+        return starNftUserThemeMapper.selectHasSeriesUserAndDate(seriesId,date);
     }
 
 

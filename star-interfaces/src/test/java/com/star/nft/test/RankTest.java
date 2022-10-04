@@ -103,6 +103,17 @@ public class RankTest {
     }
 
     @Test
+    public void randomUserId(){
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i=0;i< 100; i++){
+            stringBuilder.append(    RandomUtil.randomLong(9));
+            stringBuilder.append("\n");
+        }
+        String s = stringBuilder.toString();
+        System.out.println(s);
+    }
+
+    @Test
     public void getBuy(){
         Long m_launch_rank = rankService.getBuyNum("m_launch_rank", Long.parseLong("229978589"));
     }

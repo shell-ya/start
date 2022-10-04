@@ -3,6 +3,7 @@ package com.starnft.star.application.process.order.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -75,6 +76,7 @@ import org.springframework.validation.annotation.Validated;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -308,18 +310,34 @@ public class OrderProcessor implements IOrderProcessor {
 //        valueMap.put("cost", walletPayRequest.getFee().intValue() == 0 ? new BigDecimal("0.01").toString() : walletPayRequest.getFee().abs().toString());
 //        valueMap.put("remark", walletPayRequest.getThemeId().toString().concat("#").concat(walletPayRequest.getNumberId().toString()));
 //        valueMap.put("accUserId", walletPayRequest.getUserId().toString());
-        valueMap.put("userId", walletPayRequest.getUserId().toString());
-        UserInfoVO userInfoVO = userService.queryUserInfo(walletPayRequest.getUserId());
-        valueMap.put("nickName", userInfoVO.getNickName());
-        PaymentRich build = PaymentRich.builder()
-                .totalMoney(walletPayRequest.getPayAmount().abs()).payChannel(StarConstants.PayChannel.CloudAccount.name())
-                .frontUrl("https://www.circlemeta.cn/order/payed/" + walletPayRequest.getOrderSn()).clientIp("192.168.1.1")
-                .orderSn(String.valueOf(walletPayRequest.getOrderId())).userId(walletPayRequest.getUserId())
-                .payExtend(valueMap)
-                .multicastTopic(String.format(TopicConstants.WALLER_PAY_DESTINATION.getFormat(), TopicConstants.WALLER_PAY_DESTINATION.getTag()))
-                .orderType(StarConstants.OrderType.PUBLISH_GOODS).build();
-        System.out.println(build);
-        return build;
+        if (walletPayRequest.getOrderSn().startsWith(StarConstants.OrderPrefix.PublishGoods.getPrefix())){
+            valueMap.put("userId", walletPayRequest.getUserId().toString());
+            UserInfoVO userInfoVO = userService.queryUserInfo(walletPayRequest.getUserId());
+            valueMap.put("nickName", userInfoVO.getNickName());
+            PaymentRich build = PaymentRich.builder()
+                    .totalMoney(walletPayRequest.getPayAmount().abs()).payChannel(StarConstants.PayChannel.CloudAccount.name())
+                    .frontUrl("https://www.circlemeta.cn/order/payed/" + walletPayRequest.getOrderSn()).clientIp("192.168.1.1")
+                    .orderSn(String.valueOf(walletPayRequest.getOrderId())).userId(walletPayRequest.getUserId())
+                    .payExtend(valueMap)
+                    .multicastTopic(String.format(TopicConstants.WALLER_PAY_DESTINATION.getFormat(), TopicConstants.WALLER_PAY_DESTINATION.getTag()))
+                    .orderType(StarConstants.OrderType.PUBLISH_GOODS).build();
+            System.out.println(build);
+            return build;
+        }else if (walletPayRequest.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())){
+                valueMap.put("cost",walletPayRequest.getFee().setScale(2, RoundingMode.CEILING).toString());//手续费
+            valueMap.put("remark","市场订单");//备注
+            valueMap.put("accUserId",walletPayRequest.getToUid().toString());//收款账号
+            PaymentRich build = PaymentRich.builder()
+                    .totalMoney(walletPayRequest.getPayAmount().abs()).payChannel(StarConstants.PayChannel.CloudAccount.name())
+                    .frontUrl("https://www.circlemeta.cn/order/payed/" + walletPayRequest.getOrderSn()).clientIp("192.168.1.1")
+                    .orderSn(String.valueOf(walletPayRequest.getOrderId())).userId(walletPayRequest.getUserId())
+                    .payExtend(valueMap)
+                    .multicastTopic(String.format(TopicConstants.WALLER_PAY_DESTINATION.getFormat(), TopicConstants.WALLER_PAY_DESTINATION.getTag()))
+                    .orderType(StarConstants.OrderType.MARKET_GOODS).build();//市场商品
+            System.out.println(build);
+            return build;
+        }
+        throw new StarException(StarError.CLOUD_BUILD_PAY);
     }
 
     private void subPTimes(Long userId, OrderListRes orderListRes) {

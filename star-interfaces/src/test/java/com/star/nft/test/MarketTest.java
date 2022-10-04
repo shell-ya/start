@@ -7,6 +7,7 @@ import com.starnft.star.application.process.order.model.req.OrderCancelReq;
 import com.starnft.star.application.process.order.model.req.OrderGrabReq;
 import com.starnft.star.application.process.order.model.req.OrderPayReq;
 import com.starnft.star.application.process.order.model.res.OrderGrabRes;
+import com.starnft.star.application.process.order.model.res.OrderPayDetailRes;
 import com.starnft.star.application.process.order.white.rule.WhiteRuleContext;
 import com.starnft.star.application.process.task.activity.ActivitiesTask;
 import com.starnft.star.common.constant.RedisKey;
@@ -88,7 +89,8 @@ public class MarketTest {
     public void marketOrder() {
         MarketOrderReq marketOrderReq = new MarketOrderReq();
         marketOrderReq.setUserId(281850262L);
-        marketOrderReq.setNumberId(1006212009283489792L);
+        marketOrderReq.setNumberId(1019309566286630912L);
+        marketOrderReq.setOwnerId(536952750L);
         OrderListRes orderListRes = orderProcessor.marketOrder(marketOrderReq);
         log.info("orderList:{}", orderListRes.toString());
     }
@@ -105,23 +107,24 @@ public class MarketTest {
     @Test
     public void pay() {
         OrderPayReq orderPayReq = new OrderPayReq();
-        orderPayReq.setOrderSn("TS1006694650746142720");
-        orderPayReq.setPayAmount("123");
+        orderPayReq.setOrderSn("TS1026806789070553088");
+        orderPayReq.setPayAmount("1");
         orderPayReq.setUserId(281850262L);
         orderPayReq.setCategoryType(1);
-        orderPayReq.setNumberId(1006212009283489792L);
-        orderPayReq.setChannel("Balance");
+        orderPayReq.setNumberId(1019309566286630912L);
+        orderPayReq.setChannel("CloudAccount");
 //        orderPayReq.setFromUid(0L);
-        orderPayReq.setSeriesId(4L);
+        orderPayReq.setSeriesId(9L);
         orderPayReq.setFee("0");
-        orderPayReq.setThemeId(1002285892654821376L);
-        orderPayReq.setTotalPayAmount("123");
+        orderPayReq.setThemeId(1019307554112081920L);
+        orderPayReq.setTotalPayAmount("1");
         orderPayReq.setType(3);
-//        orderPayReq.setOwnerId(294592515L);
+        orderPayReq.setOwnerId("536952750");
 //        orderPayReq.setToUid(320266671L);
 //        orderPayReq.setPayToken();
 //        orderPayReq.setOutTradeNo();
-        orderProcessor.orderPay(orderPayReq);
+        OrderPayDetailRes orderPayDetailRes = orderProcessor.orderPay(orderPayReq);
+        System.out.println(orderPayDetailRes);
     }
 
     @Test

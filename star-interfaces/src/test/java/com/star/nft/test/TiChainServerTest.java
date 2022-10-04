@@ -9,6 +9,7 @@ import com.starnft.star.common.chain.config.ChainConfiguration;
 import com.starnft.star.common.chain.enums.MethodEnums;
 import com.starnft.star.common.chain.model.req.*;
 import com.starnft.star.common.chain.model.res.*;
+import com.starnft.star.common.utils.SnowflakeWorker;
 import com.starnft.star.interfaces.StarApplication;
 
 import org.apache.poi.ss.formula.functions.T;
@@ -46,24 +47,30 @@ public class TiChainServerTest {
         Map<String,Object> map=new HashMap<>();
 
         List<String> ids=new ArrayList<>();
-        int nums=50;
-        long prifix=2022090900L;
-        for (int i = 1; i <= nums; i++) {
+        int nums=3500;
+        long prifix=202210070000L;
+        for (int i = 3001; i <= nums; i++) {
             ids.add(String.format("%s",prifix+i));
         }
-        map.put("images","https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1662964855906_0ee1949a.jpg");
+        map.put("images","https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1664804648034_d999a25b.jpg");
         PublishGoodsReq publishGoodsReq = new PublishGoodsReq();
         publishGoodsReq.setUserId("951029971223");
         String userKey = SecureUtil.sha1("951029971223".concat("lywc"));
         publishGoodsReq.setUserKey(userKey);
         publishGoodsReq.setAuthor("链元文创");
         publishGoodsReq.setProductIds(ids.toArray(new String[ids.size()]));
-        publishGoodsReq.setPieceCount(nums);
+        publishGoodsReq.setPieceCount(500);
         publishGoodsReq.setInitPrice("0.0");
-        publishGoodsReq.setName("链元文创 荣耀传承 - 承");
+        publishGoodsReq.setContractAddress("0x467d2d2a55eb0a35bc4da40b109c33b0bd0733a1");
+        publishGoodsReq.setName("链元文创 星际探险队 - 普通队员");
         publishGoodsReq.setFeature(JSONUtil.toJsonStr(map));
         PublishGoodsRes createAccountRes = tiChainServer.publishGoods(publishGoodsReq);
         System.out.println(createAccountRes);
+    }
+
+    @Test
+    public void snowflowId(){
+        Long aLong = SnowflakeWorker.generateId();
     }
 
 
