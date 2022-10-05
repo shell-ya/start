@@ -6,17 +6,22 @@ import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.identify.strategy.SwIdentifyStrategy;
 import com.starnft.star.domain.payment.core.IPaymentService;
 import com.starnft.star.domain.payment.handler.ISandPayCloudPayHandler;
+import com.starnft.star.domain.payment.helper.SdKeysHelper;
 import com.starnft.star.domain.payment.model.req.*;
 import com.starnft.star.domain.payment.model.res.*;
 import com.starnft.star.domain.user.model.dto.UserInfoAddDTO;
 import com.starnft.star.infrastructure.repository.UserRepository;
 import com.starnft.star.interfaces.StarApplication;
+import lombok.SneakyThrows;
+import org.apache.commons.codec.binary.Base64;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 @SpringBootTest(classes = {StarApplication.class})
@@ -29,6 +34,9 @@ public class CloudAccountTest {
     UserRepository userRepository;
     @Resource
     ISandPayCloudPayHandler iSandPayCloudPayHandler;
+
+    @Resource
+    SdKeysHelper sdKeysHelper;
     @Test
     public void repoTest() {
         //2022-05-21 17:04:10.372 +0800 [[TID: N/A] [main] INFO  c.s.s.d.i.s.SwIdentifyStrategy- 身份验证回调「{"tradeNo":"977617813713715200","chargeStatus":1,"message":"true","data":{"birthday":"xxxx","country":"饶平县","orderNo":"011653123850766333","handleTime":"2022-05-21 17:04:10","gender":"1","city":"潮州市","remark":"一致","result":"01","province":"广东省","age":"27"},"code":"200000"}
@@ -90,6 +98,20 @@ public class CloudAccountTest {
         PaymentRes union_pay = paymentService.pay(req);
         System.out.println(union_pay);
 
+    }
+
+    @SneakyThrows
+    @Test
+    public void verifySign(){
+
+        String data = "{\"amount\":1,\"feeAmt\":0,\"mid\":\"6888806044846\",\"orderNo\":\"1026959833821249537\",\"orderStatus\":\"00\",\"payeeInfo\":{\"payeeAccName\":\"薛\n" +
+                "明阳\",\"payeeAccNo\":\"200229000020004\",\"payeeMemID\":\"536952750\"},\"payerInfo\":{\"payerAccName\":\"张泽\",\"payerAccNo\":\"200229000040003\",\"payerMemID\":\"281850262\"},\"postscript\":\"市场订单\",\"respCode\":\"00000\",\"respMsg\":\"成功\",\"respTime\":\"20221004205550\",\"sandSerialNo\":\"CEAS22100420380618300000148168\",\"transType\":\"C2C_TRANSFER\",\"userFeeAmt\":0.06}";
+        String sign = "j4T39ReBgVBKHi3YdzC/MDljkG0Q9qymVnTOk8G1KtCOG+tMS0/jr4zk+cDl2GIw1PD2lSenRPex+4hgZKCUY/8+0W7Nuk7PRqcGgJ0U3DCefVTsjHv7w5H3aFLJyH7cuyWmjtfEAf6+C4f0I4apV0/mJvujHVB6BPwNDtjguKXR3q3xXwJhLjYWqzWRyr0t3cR3DxAanRB1nrqxpSGyIfeJ2U2ZBBQJfKUoMhj4aRelwKs+/tE3Eig3AwmBwFpucXWsZyiG8yqis+qEv+4Hevm2Hp06Wk86D7S6zwSdcPazxUeAwBkf/ioZ++Gs7Mbr+AVf5is1VxozQXOHptPT9w==";
+        boolean valid = sdKeysHelper.verifyDigitalSign(
+                data.getBytes(StandardCharsets.UTF_8),
+                Base64.decodeBase64(sign),
+                sdKeysHelper.getProKey(),
+                "SHA1WithRSA");
     }
 
 

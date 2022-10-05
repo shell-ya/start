@@ -90,14 +90,14 @@ public class CloudPayCallBackConsumer implements RocketMQListener<PayCheckRes> {
     private HandoverReq buildHandOverReq(OrderVO orderPayReq) {
         HandoverReq handoverReq = new HandoverReq();
         handoverReq.setUid(orderPayReq.getUserId());
-        NumberDetailVO numberDetail = numberService.getNumberDetail(orderPayReq.getNumberId());
+        NumberDetailVO numberDetail = numberService.getNumberDetail(orderPayReq.getSeriesThemeId());
         handoverReq.setFromUid(Long.parseLong(numberDetail.getOwnerBy()));
         handoverReq.setToUid(orderPayReq.getUserId());
         handoverReq.setPreMoney(orderPayReq.getPayAmount());
         handoverReq.setCurrMoney(orderPayReq.getPayAmount());
         handoverReq.setItemStatus(NumberStatusEnum.SOLD.getCode());
         handoverReq.setThemeId(orderPayReq.getSeriesThemeInfoId());
-        handoverReq.setNumberId(orderPayReq.getNumberId());
+        handoverReq.setNumberId(orderPayReq.getSeriesThemeId());
         handoverReq.setCategoryType(orderPayReq.getThemeType());
         handoverReq.setSeriesId(orderPayReq.getSeriesId());
         handoverReq.setType(NumberCirculationTypeEnum.PURCHASE.getCode());

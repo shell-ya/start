@@ -45,6 +45,8 @@ public class SdKeysHelper {
     public final String PUBLIC_KEY = "public_key";
     public final String PRIVATE_KEY = "private_key";
     public final String CLOUD_KEY = "cloud_key";
+
+    public final String PRO_KEY = "pro_key";
     private final ConcurrentHashMap<String, Object> keys = new ConcurrentHashMap<String, Object>();
 
     public SdKeysHelper(PayConf payConf) throws Exception {
@@ -64,9 +66,33 @@ public class SdKeysHelper {
 
         initCloudKey(sdChannel.getProperties().get("sandCloudPath"));
         log.info("加载公钥成功");
+
+        initProKey(sdChannel.getProperties().get("sandProPath"));
+        log.info("加载公钥成功");
+
         // 加载公钥
         initPrivateKey(sdChannel.getProperties().get("signCertPath"), sdChannel.getProperties().get("signCertPwd"));
         log.info("加载私钥成功");
+    }
+
+    private void initProKey(String sandProPath) throws Exception {
+        String classpathKey = "classpath:";
+        if (sandProPath != null) {
+            try {
+                InputStream inputStream = null;
+                if (sandProPath.startsWith(classpathKey)) {
+                    inputStream = SdKeysHelper.class.getClassLoader().getResourceAsStream(sandProPath.substring(classpathKey.length()));
+                } else {
+                    inputStream = new FileInputStream(sandProPath);
+                }
+                PublicKey publicKey = getPublicKey(inputStream);
+                keys.put(PRO_KEY, publicKey);
+            } catch (Exception e) {
+                log.error("无法加载公钥[{}]", new Object[]{sandProPath});
+                log.error(e.getMessage(), e);
+                throw e;
+            }
+        }
     }
 
     public boolean verifyDigitalSign(byte[] plainBytes, byte[] signBytes, PublicKey publicKey, String signAlgorithm) throws Exception {
@@ -108,6 +134,10 @@ public class SdKeysHelper {
     }
     public PublicKey getCloudKey() {
         return (PublicKey) keys.get(CLOUD_KEY);
+    }
+
+    public PublicKey getProKey() {
+        return (PublicKey) keys.get(PRO_KEY);
     }
 
     public PrivateKey getPrivateKey() {

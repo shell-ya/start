@@ -148,6 +148,9 @@ public class NumberServiceImpl implements INumberService {
                 updated = this.numberRepository.updateUserNumberMapping(this.updateMapping(handoverReq));
             }
             boolean created = this.numberRepository.createUserNumberMapping(this.createMapping(handoverReq));
+            if(!(logged && modified && created && updated)){
+                throw new StarException();
+            }
             return logged && modified && created && updated;
         }));
 

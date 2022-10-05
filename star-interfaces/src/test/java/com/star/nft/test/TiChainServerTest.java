@@ -47,22 +47,22 @@ public class TiChainServerTest {
         Map<String,Object> map=new HashMap<>();
 
         List<String> ids=new ArrayList<>();
-        int nums=3500;
-        long prifix=202210070000L;
-        for (int i = 3001; i <= nums; i++) {
+        int nums=708;
+        long prifix=20221008000L;
+        for (int i = 1; i <= nums; i++) {
             ids.add(String.format("%s",prifix+i));
         }
-        map.put("images","https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1664804648034_d999a25b.jpg");
+        map.put("images","https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1664955735505_4a2d4872.jpg");
         PublishGoodsReq publishGoodsReq = new PublishGoodsReq();
         publishGoodsReq.setUserId("951029971223");
         String userKey = SecureUtil.sha1("951029971223".concat("lywc"));
         publishGoodsReq.setUserKey(userKey);
         publishGoodsReq.setAuthor("链元文创");
         publishGoodsReq.setProductIds(ids.toArray(new String[ids.size()]));
-        publishGoodsReq.setPieceCount(500);
+        publishGoodsReq.setPieceCount(nums);
         publishGoodsReq.setInitPrice("0.0");
         publishGoodsReq.setContractAddress("0x467d2d2a55eb0a35bc4da40b109c33b0bd0733a1");
-        publishGoodsReq.setName("链元文创 星际探险队 - 普通队员");
+        publishGoodsReq.setName("链元文创 星际探索者 - 月球指挥官");
         publishGoodsReq.setFeature(JSONUtil.toJsonStr(map));
         PublishGoodsRes createAccountRes = tiChainServer.publishGoods(publishGoodsReq);
         System.out.println(createAccountRes);
