@@ -171,7 +171,7 @@
     </select>
 
     <select id="getNumbers2Ding" resultType="NumberDingVO">
-        SELECT round(avg(price),2) as price, i.theme_name as `name`, i.theme_pic as image
+        SELECT min(price) as price, i.theme_name as `name`, i.theme_pic as image
         from star_nft_theme_number as n
                  LEFT JOIN star_nft_theme_info as i on i.id = series_theme_info_id
         WHERE n.`status` = 2

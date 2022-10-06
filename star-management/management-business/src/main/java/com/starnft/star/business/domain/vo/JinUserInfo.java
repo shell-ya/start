@@ -1,7 +1,9 @@
 package com.starnft.star.business.domain.vo;
 
 import com.starnft.star.common.annotation.Excel;
+import io.swagger.models.auth.In;
 import lombok.Data;
+import org.web3j.abi.datatypes.Int;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -15,14 +17,10 @@ public class JinUserInfo {
     private String userName;
     @Excel(name = "手机号")
     private String phone;
-    @Excel(name = "创世")
-    private Integer chuang;
-    @Excel(name = "金牛")
-    private Integer jinniu;
-    @Excel(name = "白羊")
-    private Integer baiyang;
-    @Excel(name = "空头")
-    private AtomicInteger kongtou = new AtomicInteger(0);
-    @Excel(name = "优先购")
-    private AtomicInteger youxiangou =  new AtomicInteger(0);;
+    @Excel(name = "盘星苍龙")
+    private Integer pan;
+    @Excel(name = " UR持有者")
+    private Integer ur;
+    @Excel(name = " 星际探寻者")
+    private Integer xj;
 }

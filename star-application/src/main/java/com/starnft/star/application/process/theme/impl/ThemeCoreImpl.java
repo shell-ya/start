@@ -123,11 +123,21 @@ public class ThemeCoreImpl implements ThemeCore {
             //流通量
             Integer circulate = numberService.queryThemeNumberOnSellCount(themeGoodsVO.getId());
             themeGoodsVO.setCirculate(circulate);
-
+            if (1026607869655789568L == themeGoodsVO.getId()){
+                themeGoodsVO.setCirculate(circulate + 2500);
+            } else if (1026610148834017280L == themeGoodsVO.getId() ) {
+                themeGoodsVO.setCirculate(20);
+            } else if (1026610373796405248L == themeGoodsVO.getId()){
+                themeGoodsVO.setCirculate(220);
+            } else if (1026610538225254400L == themeGoodsVO.getId()){
+                themeGoodsVO.setCirculate(860);
+            } else if (1026610757385248768L == themeGoodsVO.getId()){
+                themeGoodsVO.setCirculate(3900);
+            }
             //均价
-            BigDecimal avgPrice = numberService.avgPrice(themeGoodsVO.getId());
-            BigDecimal medianPrice = numberService.medianPrice(themeGoodsVO.getId());
-            themeGoodsVO.setFloor(medianPrice);
+//            BigDecimal avgPrice = numberService.avgPrice(themeGoodsVO.getId());
+//            BigDecimal medianPrice = numberService.medianPrice(themeGoodsVO.getId());
+//            themeGoodsVO.setFloor(medianPrice);
 
             themeGoodsVOS.add(themeGoodsVO);
         }

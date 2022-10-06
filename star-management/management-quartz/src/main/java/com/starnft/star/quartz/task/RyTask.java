@@ -137,64 +137,47 @@ public class RyTask
             userInfo.setUserName(user.getUserName());
             userInfo.setNickName(user.getNickName());
             userInfo.setPhone(user.getPhone());
-            userInfo.setChuang(user.getNums());
+            userInfo.setPan(user.getNums());
             map.put(user.getUserId(),userInfo);
         }
-
         List<UserInfo> niu = userThemeService.selectHasThemeUser(Long.valueOf(split[1]));
         for (UserInfo user :
              niu) {
             if (map.containsKey(user.getUserId())){
                 JinUserInfo userInfo = map.get(user.getUserId());
-                userInfo.setJinniu(user.getNums());
-                if (2 <= user.getNums() ){
-                    int k =   user.getNums() / 2;
-                    userInfo.getYouxiangou().addAndGet(  k);
-                }
+                userInfo.setUr(user.getNums());
             }else {
                 JinUserInfo userInfo = new JinUserInfo();
                 userInfo.setUserId(user.getUserId());
                 userInfo.setUserName(user.getUserName());
                 userInfo.setNickName(user.getNickName());
                 userInfo.setPhone(user.getPhone());
-                userInfo.setJinniu(user.getNums());
-                if ( 2 <= user.getNums()){
-                    int k = user.getNums() / 2;
-                    userInfo.getYouxiangou().addAndGet(  k);
-                }
+                userInfo.setUr(user.getNums());
                 map.put(user.getUserId(),userInfo);
             }
         }
-
         List<UserInfo> yang = userThemeService.selectHasThemeUser(Long.valueOf(split[2]));
         for (UserInfo user :
                 yang) {
             if (map.containsKey(user.getUserId())){
                 JinUserInfo userInfo = map.get(user.getUserId());
-                userInfo.setBaiyang(user.getNums());
-                if (5 <= user.getNums()){
-                  int k =   user.getNums() / 5;
-                  userInfo.getKongtou().addAndGet( k);
-                }
+                userInfo.setXj(user.getNums());
+
             }else {
                 JinUserInfo userInfo = new JinUserInfo();
                 userInfo.setUserId(user.getUserId());
                 userInfo.setUserName(user.getUserName());
                 userInfo.setNickName(user.getNickName());
                 userInfo.setPhone(user.getPhone());
-                userInfo.setBaiyang(user.getNums());
-                if (5 <= user.getNums() ){
-                    int k =   user.getNums() / 5;
-                    userInfo.getKongtou().addAndGet(  k);
-                }
+                userInfo.setXj(user.getNums());
+
                 map.put(user.getUserId(),userInfo);
             }
         }
-
         ArrayList<JinUserInfo> jinUserInfos = new ArrayList<>(map.values());
 
         ExcelUtil<JinUserInfo> util = new ExcelUtil<JinUserInfo>(JinUserInfo.class);
-        util.exportExcel(jinUserInfos, "持仓快照", "持仓快照");
+        util.exportExcel(jinUserInfos, "10.06持仓快照", "10.06持仓快照");
 
 
     }

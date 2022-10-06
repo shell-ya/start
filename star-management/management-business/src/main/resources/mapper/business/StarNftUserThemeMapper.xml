@@ -152,7 +152,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                 JOIN account_user AS au ON ut.user_id = au.account
         WHERE
             ut.is_delete = 0
-          AND ut.STATUS IN ( 0, 1 )
+          AND ut.STATUS = 0
           AND ut.series_theme_info_id = #{seriesThemeInfoId}
         GROUP BY
             userId,

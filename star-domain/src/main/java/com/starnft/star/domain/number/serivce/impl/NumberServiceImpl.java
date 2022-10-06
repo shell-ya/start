@@ -309,17 +309,23 @@ public class NumberServiceImpl implements INumberService {
         if (Objects.nonNull(redisManage)) {
             return JSONUtil.toList(redisManage.toString(), NumberDingVO.class);
         }
-        List<ThemeDingVo> themeDingList = this.numberRepository.getThemeDingList();
-        ArrayList<NumberDingVO> numberDingList = Lists.newArrayList();
-        for (ThemeDingVo theme :
-                themeDingList) {
-            NumberDingVO numberDingVO = new NumberDingVO();
-            numberDingVO.setImage(theme.getImage());
-            numberDingVO.setName(theme.getName());
-            BigDecimal price = this.medianPrice(theme.getId());
-            numberDingVO.setPrice(price);
-            numberDingList.add(numberDingVO);
-        }
+        List<NumberDingVO> numberDingList = this.numberRepository.getNumberDingList();
+//        for (NumberDingVO dingVo :
+//                numberDingList) {
+//            if (dingVo.getName().startsWith("Pluviophile")){
+//                dingVo.setName(dingVo.getName().s);
+//            }
+//
+//        }
+//        for (ThemeDingVo theme :
+//                themeDingList) {
+//            NumberDingVO numberDingVO = new NumberDingVO();
+//            numberDingVO.setImage(theme.getImage());
+//            numberDingVO.setName(theme.getName());
+////            BigDecimal price = this.medianPrice(theme.getId());
+//            numberDingVO.setPrice(minPrice(theme.getId()));
+//            numberDingList.add(numberDingVO);
+//        }
 
         redisTemplate.opsForValue().set(RedisKey.DING_PRICE_MANAGE.getKey(), JSONUtil.toJsonStr(numberDingList), RedisKey.DING_PRICE_MANAGE.getTime(), TimeUnit.SECONDS);
         return numberDingList;
