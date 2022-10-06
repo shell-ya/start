@@ -68,5 +68,5 @@ public interface IStarNftThemeInfoService
 
     public List<StarNftThemeInfoVo> selectStarNftThemeInfoVoList(StarNftThemeInfo starNftThemeInfo);
 
-    public Boolean publishTheme(StarNftThemeInfo themeInfo,Long userId);
+    public Boolean publishTheme(StarNftThemeInfo themeInfo,Long adminId);
 }

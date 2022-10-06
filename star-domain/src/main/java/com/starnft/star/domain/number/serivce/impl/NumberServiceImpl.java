@@ -230,8 +230,8 @@ public class NumberServiceImpl implements INumberService {
     }
 
     @Override
-    public Integer queryThemeNumberOnSellCount(Long themeId) {
-        return numberRepository.queryThemeNumberOnSellCount(themeId);
+    public Integer destroyedPublishNumber(Long themeId) {
+        return numberRepository.destroyedPublishNumber(themeId);
     }
 
     @Override

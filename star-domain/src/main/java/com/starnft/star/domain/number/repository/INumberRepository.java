@@ -66,7 +66,7 @@ public interface INumberRepository {
 
     Boolean modifyNumberStatusVersion(Long id, Long userId, Integer code, Integer version);
 
-    Integer queryThemeNumberOnSellCount(Long themeId);
+    Integer destroyedPublishNumber(Long themeId);
 
     BigDecimal minPrice(Long themeId);
 

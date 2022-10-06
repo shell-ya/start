@@ -7,6 +7,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.page.PageMethod;
 import com.google.common.collect.Lists;
+import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.enums.NumberCirculationTypeEnum;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
@@ -124,6 +125,7 @@ public class NumberRepository implements INumberRepository {
         return template.execute(status -> {
             LambdaQueryWrapper<StarNftThemeNumber> queryWrapper = new LambdaQueryWrapper<>();
             StarNftThemeNumber starNftThemeNumber = new StarNftThemeNumber();
+            starNftThemeNumber.setStatus(3);
             starNftThemeNumber.setOwnerBy("-1");
             int isSuccess = starNftThemeNumberMapper.update(starNftThemeNumber, queryWrapper.eq(StarNftThemeNumber::getId, numberId));
             LambdaQueryWrapper<StarNftUserTheme> utqueryWrapper = new LambdaQueryWrapper<>();
@@ -376,8 +378,8 @@ public class NumberRepository implements INumberRepository {
     }
 
     @Override
-    public Integer queryThemeNumberOnSellCount(Long themeId) {
-        return starNftThemeNumberMapper.countPublishNumber(themeId);
+    public Integer destroyedPublishNumber(Long themeId) {
+        return starNftThemeNumberMapper.destroyedPublishNumber(themeId);
     }
 
     @Override

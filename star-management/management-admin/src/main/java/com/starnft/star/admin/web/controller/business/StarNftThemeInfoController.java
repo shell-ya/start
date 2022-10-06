@@ -104,7 +104,7 @@ public class StarNftThemeInfoController extends BaseController
         return AjaxResult.success(starNftThemeInfoService.selectThemeInfoByPublisherId(publisherId));
     }
 
-//    @PreAuthorize("@ss.hasPremi('business:info:publisher')")
+    @PreAuthorize("@ss.hasPermi('business:info:select')")
     @PostMapping("/theme/publisher")
     public AjaxResult publisher(@RequestBody StarNftThemeInfo starNftThemeInfo){
         return AjaxResult.success(starNftThemeInfoService.publishTheme(starNftThemeInfo,getUserId()));

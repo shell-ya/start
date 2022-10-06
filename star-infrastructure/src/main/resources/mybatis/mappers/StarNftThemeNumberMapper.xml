@@ -188,11 +188,11 @@
           and version = #{version}
     </update>
 
-    <select id="countPublishNumber" resultType="java.lang.Integer">
+    <select id="destroyedPublishNumber" resultType="java.lang.Integer">
         SELECT COUNT(1)
         from star_nft_theme_number
         WHERE series_theme_info_id = #{themeId}
-        and (`status` = 1 or `status` = 2) and owner_by != -1
+        and (`status` = 3 or  owner_by = -1 )
     </select>
 
     <select id="minPrice" resultType="java.math.BigDecimal">

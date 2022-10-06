@@ -120,8 +120,8 @@ public class ThemeCoreImpl implements ThemeCore {
             PublisherVO publisherVO = publisherService.queryPublisher(new PublisherReq(publisherId));
             themeGoodsVO.setPublisherName(publisherVO.getPublisherName());
             //流通量
-            Integer circulate = numberService.queryThemeNumberOnSellCount(themeGoodsVO.getId());
-            themeGoodsVO.setCirculate(circulate);
+            Integer destroy = numberService.destroyedPublishNumber(themeGoodsVO.getId());
+            themeGoodsVO.setCirculate(themeGoodsVO.getPublishNumber() - destroy);
             themeGoodsVOS.add(themeGoodsVO);
         }
         return ResponsePageResult.listReplace(themeGoods, themeGoodsVOS);

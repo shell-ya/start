@@ -28,9 +28,9 @@ public class SeriesServiceImpl implements SeriesService {
 
     @Override
     @Cached(name = StarConstants.SERIES_CACHE_NAME,
-            expire = 3600 * 12,
+            expire = 60,
             cacheType = CacheType.REMOTE)
-    @CacheRefresh(refresh = 3600 * 6, stopRefreshAfterLastAccess = 3600 * 3)
+    @CacheRefresh(refresh = 60)
     @CachePenetrationProtect
     public List<SeriesVO> querySeriesByType(Integer type) {
         return this.seriesRepository.querySeries(CommodityTypeEnum.getCommodityTypeEnum(type));

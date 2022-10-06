@@ -140,7 +140,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="contractAddress != null and contractAddress != ''">contract_address = #{contractAddress},</if>
             <if test="publisherId != null  and publisherId != ''"> publisher_id = #{publisherId},</if>
             <if test="marketOpenTime != null "> market_open_time = #{marketOpenTime},</if>
-            <if test="isResale != null  and isResale != ''">  is_resale = #{isResale},</if>
+            <if test="isResale != null ">  is_resale = #{isResale},</if>
         </trim>
         where id = #{id}
     </update>

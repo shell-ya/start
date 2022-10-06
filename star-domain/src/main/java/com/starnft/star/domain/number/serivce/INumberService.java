@@ -74,7 +74,7 @@ public interface INumberService {
 
     boolean deleteNumber2ReDraw(ReNumberVo numberVo, List<Long> ids);
 
-    Integer queryThemeNumberOnSellCount(Long themeId);
+    Integer destroyedPublishNumber(Long themeId);
 
     BigDecimal minPrice(Long themeId);
 

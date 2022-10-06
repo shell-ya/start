@@ -26,9 +26,9 @@ public class BannerServiceImpl implements IBannerService {
 
     @Override
     @Cached(name = StarConstants.BANNER_CACHE_NAME,
-            expire = 3600 * 12,
+            expire = 60 * 2,
             cacheType = CacheType.REMOTE)
-    @CacheRefresh(refresh = 3600 * 6, stopRefreshAfterLastAccess = 3600 * 3)
+    @CacheRefresh(refresh = 60 * 2)
     @CachePenetrationProtect
     public List<BannerVo> queryBannerVo(BannerReq req) {
         return bannerRepository.queryBanner(req);

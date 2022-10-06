@@ -29,7 +29,7 @@ public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
 
     Boolean updateNumberStatus(@Param("id") Long id, @Param("userId")Long userId, @Param("code")Integer code, @Param("version")Integer version);
 
-    Integer countPublishNumber(Long themeId);
+    Integer destroyedPublishNumber(Long themeId);
 
     BigDecimal minPrice(Long themeId);
 
