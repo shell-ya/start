@@ -17,10 +17,10 @@ public class JinUserInfo {
     private String userName;
     @Excel(name = "手机号")
     private String phone;
-    @Excel(name = "盘星苍龙")
+    @Excel(name = "地球指挥官")
     private Integer pan;
-    @Excel(name = " UR持有者")
-    private Integer ur;
-    @Excel(name = " 星际探寻者")
-    private Integer xj;
+//    @Excel(name = " UR持有者")
+//    private Integer ur;
+//    @Excel(name = " 星际探寻者")
+//    private Integer xj;
 }

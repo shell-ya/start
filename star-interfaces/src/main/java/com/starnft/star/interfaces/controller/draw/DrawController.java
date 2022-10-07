@@ -58,7 +58,7 @@ public class DrawController {
         redisUtil.expire(redisKey, RedisKey.VISIT_TIMES_MAPPING.getTime());
         if (times > 5) {
             redisUtil.hincr(RedisKey.DANGER_LIST_RECORD.getKey(), drawReq.getuId(), 1L);
-            throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
+            throw new StarException(StarError.DRAW_TOO_MUCH_ERROR);
         }
 //        throw new StarException(StarError.SYSTEM_ERROR, "开放时间请关注官方公告");
 

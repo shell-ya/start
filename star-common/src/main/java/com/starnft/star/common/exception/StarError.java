@@ -83,6 +83,7 @@ public enum StarError {
     ORDER_DO_NOT_EXIST("100045", "未找到该订单"),
     ORDER_STATUS_ERROR("100046", "订单状态异常"),
     ORDER_CANCEL_ERROR("100047", "取消订单失败"),
+    DRAW_TOO_MUCH_ERROR("100048", "请5秒后再开启盲盒"),
     ORDER_DONT_SELL_ERROR("100056", "该藏品为赠品， 请参与活动获取！"),
     GOODS_SELF_ERROR("1000148", "禁止购买自己挂售商品"),
 
