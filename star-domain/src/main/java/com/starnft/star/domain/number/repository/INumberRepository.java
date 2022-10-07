@@ -52,6 +52,8 @@ public interface INumberRepository {
 
     public List<NumberDingVO> getNumberDingList();
 
+    List<ThemeDingVo> getThemeDingList();
+
     Long firstNumber(Long uid, Long seriesThemeInfoId);
 
     Boolean deleteNumber(Long uid, Long seriesThemeId);
@@ -71,4 +73,8 @@ public interface INumberRepository {
     BigDecimal minPrice(Long themeId);
 
     ResponsePageResult<MarketNumberInfoVO> marketNumberList(MarketNumberListReq marketNumberListReq);
+
+    BigDecimal avgPrice(Long themeId);
+
+    List<BigDecimal> allPrice(Long themeId,BigDecimal price);
 }

@@ -19,6 +19,8 @@ import com.starnft.star.domain.notify.model.req.NotifyOrderReq;
 import com.starnft.star.domain.notify.service.NotifyOrderService;
 import com.starnft.star.domain.number.model.req.NumberConsignmentCancelRequest;
 import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
+import com.starnft.star.domain.number.model.vo.NumberDingVO;
+import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.order.model.res.OrderListRes;
 import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
 import com.starnft.star.domain.payment.model.res.NotifyRes;
@@ -35,8 +37,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -133,8 +133,7 @@ public class MarketTest {
     public void marketOrder() {
         MarketOrderReq marketOrderReq = new MarketOrderReq();
         marketOrderReq.setUserId(281850262L);
-        marketOrderReq.setNumberId(1019309566286630912L);
-        marketOrderReq.setOwnerId(536952750L);
+        marketOrderReq.setNumberId(1006212009283489792L);
         OrderListRes orderListRes = orderProcessor.marketOrder(marketOrderReq);
         log.info("orderList:{}", orderListRes.toString());
     }
@@ -151,24 +150,23 @@ public class MarketTest {
     @Test
     public void pay() {
         OrderPayReq orderPayReq = new OrderPayReq();
-        orderPayReq.setOrderSn("TS1026806789070553088");
-        orderPayReq.setPayAmount("1");
+        orderPayReq.setOrderSn("TS1006694650746142720");
+        orderPayReq.setPayAmount("123");
         orderPayReq.setUserId(281850262L);
         orderPayReq.setCategoryType(1);
-        orderPayReq.setNumberId(1019309566286630912L);
-        orderPayReq.setChannel("CloudAccount");
+        orderPayReq.setNumberId(1006212009283489792L);
+        orderPayReq.setChannel("Balance");
 //        orderPayReq.setFromUid(0L);
-        orderPayReq.setSeriesId(9L);
+        orderPayReq.setSeriesId(4L);
         orderPayReq.setFee("0");
-        orderPayReq.setThemeId(1019307554112081920L);
-        orderPayReq.setTotalPayAmount("1");
+        orderPayReq.setThemeId(1002285892654821376L);
+        orderPayReq.setTotalPayAmount("123");
         orderPayReq.setType(3);
-        orderPayReq.setOwnerId("536952750");
+//        orderPayReq.setOwnerId(294592515L);
 //        orderPayReq.setToUid(320266671L);
 //        orderPayReq.setPayToken();
 //        orderPayReq.setOutTradeNo();
-        OrderPayDetailRes orderPayDetailRes = orderProcessor.orderPay(orderPayReq);
-        System.out.println(orderPayDetailRes);
+        orderProcessor.orderPay(orderPayReq);
     }
 
     @Test

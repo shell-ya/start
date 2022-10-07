@@ -113,6 +113,39 @@ public class ThemeCoreImpl implements ThemeCore {
 
     @Override
     public ResponsePageResult<ThemeGoodsVO> themeGoodsList(ThemeGoodsReq themeGoodsReq) {
+        try {
+            ResponsePageResult<ThemeGoodsVO> themeGoods = themeService.themeGoodsList(themeGoodsReq);
+            List<ThemeGoodsVO> themeGoodsVOS = Lists.newArrayList();
+            for (ThemeGoodsVO themeGoodsVO : themeGoods.getList()) {
+                Long publisherId = themeGoodsVO.getPublisherId();
+                PublisherVO publisherVO = publisherService.queryPublisher(new PublisherReq(publisherId));
+                themeGoodsVO.setPublisherName(publisherVO.getPublisherName());
+                //流通量
+                Integer circulate = numberService.queryThemeNumberOnSellCount(themeGoodsVO.getId());
+                themeGoodsVO.setCirculate(circulate);
+                if (1026607869655789568L == themeGoodsVO.getId()){
+                    themeGoodsVO.setCirculate(circulate + 2500);
+                } else if (1026610148834017280L == themeGoodsVO.getId() ) {
+                    themeGoodsVO.setCirculate(20);
+                } else if (1026610373796405248L == themeGoodsVO.getId()){
+                    themeGoodsVO.setCirculate(220);
+                } else if (1026610538225254400L == themeGoodsVO.getId()){
+                    themeGoodsVO.setCirculate(860);
+                } else if (1026610757385248768L == themeGoodsVO.getId()){
+                    themeGoodsVO.setCirculate(3900);
+                }
+                //均价
+//            BigDecimal avgPrice = numberService.avgPrice(themeGoodsVO.getId());
+//            BigDecimal medianPrice = numberService.medianPrice(themeGoodsVO.getId());
+//            themeGoodsVO.setFloor(medianPrice);
+
+                themeGoodsVOS.add(themeGoodsVO);
+            }
+            return ResponsePageResult.listReplace(themeGoods, themeGoodsVOS);
+        }catch (Exception e){
+            log.error("市场列表发生错误",e);
+            throw new StarException(StarError.SYSTEM_ERROR);
+        }
         ResponsePageResult<ThemeGoodsVO> themeGoods = themeService.themeGoodsList(themeGoodsReq);
         List<ThemeGoodsVO> themeGoodsVOS = Lists.newArrayList();
         for (ThemeGoodsVO themeGoodsVO : themeGoods.getList()) {

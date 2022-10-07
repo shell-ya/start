@@ -83,6 +83,7 @@ public enum StarError {
     ORDER_DO_NOT_EXIST("100045", "未找到该订单"),
     ORDER_STATUS_ERROR("100046", "订单状态异常"),
     ORDER_CANCEL_ERROR("100047", "取消订单失败"),
+    DRAW_TOO_MUCH_ERROR("100048", "请5秒后再开启盲盒"),
     ORDER_DONT_SELL_ERROR("100056", "该藏品为赠品， 请参与活动获取！"),
     GOODS_SELF_ERROR("1000148", "禁止购买自己挂售商品"),
 
@@ -114,6 +115,7 @@ public enum StarError {
     CONSIGNMENT_NOT_OPEN("600000004","寄售暂未开放，请等待公告通知"),
     AIRDROP_NUMBER_ERROR("600000005","空投编号错误"),
     USER_NOT_HAS_DRAW("60000000006","该用户未中奖"),
+    RANDOM_NUMBER_ERROR("60000000007","分配编号失败"),
 
     CLOUD_BUILD_PAY("700000000001","云账号跳转异常"),
     ;

@@ -306,6 +306,12 @@ public class NumberRepository implements INumberRepository {
         return this.starNftThemeNumberMapper.getNumbers2Ding();
     }
 
+
+    @Override
+    public List<ThemeDingVo> getThemeDingList() {
+        return this.starNftThemeNumberMapper.getTheme2Ding();
+    }
+
     @Override
     public Long firstNumber(Long uid, Long seriesThemeInfoId) {
         return this.starNftUserThemeMapper.firstNumber(uid, seriesThemeInfoId);
@@ -393,6 +399,16 @@ public class NumberRepository implements INumberRepository {
                 .doSelectPageInfo(() -> this.starNftThemeNumberMapper.marketNumberList(marketNumberListReq));
 
         return new ResponsePageResult<>(marketNumList.getList(), marketNumList.getPageNum(), marketNumList.getPageSize(), marketNumList.getTotal());
+    }
+
+    @Override
+    public BigDecimal avgPrice(Long themeId) {
+        return starNftThemeNumberMapper.avgPrice(themeId);
+    }
+
+    @Override
+    public List<BigDecimal> allPrice(Long themeId,BigDecimal price) {
+        return starNftThemeNumberMapper.allPrice(themeId,price);
     }
 
     private List<NumberDetailVO> mappingNumberValues(List<StarNftThemeNumber> starNftThemeNumbers) {

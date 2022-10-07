@@ -16,7 +16,9 @@ import com.starnft.star.domain.number.model.vo.DingBulletinVo;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.infrastructure.entity.BaseEntity;
 import com.starnft.star.infrastructure.entity.bulletin.StarBulletin;
+import com.starnft.star.infrastructure.entity.bulletin.StarDingBulletin;
 import com.starnft.star.infrastructure.mapper.bulletin.StarBulletinMapper;
+import com.starnft.star.infrastructure.mapper.bulletin.StarDingBulletinMapper;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Repository;
 
@@ -35,6 +37,8 @@ public class BulletinRepository implements IBulletinRepository {
     @Resource
     StarBulletinMapper bulletinMapper;
 
+    @Resource
+    StarDingBulletinMapper starDingBulletinMapper;
 
     @Override
     public ResponsePageResult<BulletinVo> pageBulletin(BulletinPageDto dto) {
@@ -59,9 +63,10 @@ public class BulletinRepository implements IBulletinRepository {
 
     @Override
     public List<DingBulletinVo> selectDingBulletin() {
-        LambdaQueryWrapper<StarBulletin> wrapper = new LambdaQueryWrapper<>();
-        wrapper.orderByDesc(StarBulletin::getPublishTime);
-        List<StarBulletin> starBulletins = this.bulletinMapper.selectList(wrapper);
+        LambdaQueryWrapper<StarDingBulletin> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(StarDingBulletin::getIsDeleted,Boolean.FALSE);
+        wrapper.orderByDesc(StarDingBulletin::getCreatedAt);
+        List<StarDingBulletin> starBulletins = this.starDingBulletinMapper.selectList(wrapper);
         return coverDingBulletin(starBulletins);
     }
 
@@ -81,13 +86,13 @@ public class BulletinRepository implements IBulletinRepository {
     }
 
 
-    private List<DingBulletinVo> coverDingBulletin(List<StarBulletin> starBulletins){
+    private List<DingBulletinVo> coverDingBulletin(List<StarDingBulletin> starBulletins){
         ArrayList<DingBulletinVo> dingBulletinVos = Lists.newArrayList();
-        for (StarBulletin b :
+        for (StarDingBulletin b :
             starBulletins) {
             DingBulletinVo dingBulletinVo = new DingBulletinVo();
-            dingBulletinVo.setImage(b.getPicUrl());
-            dingBulletinVo.setLink(b.getLinkUrl());
+            dingBulletinVo.setImage(b.getImage());
+            dingBulletinVo.setLink(b.getLink());
             dingBulletinVo.setTitle(b.getTitle());
             dingBulletinVos.add(dingBulletinVo);
         }

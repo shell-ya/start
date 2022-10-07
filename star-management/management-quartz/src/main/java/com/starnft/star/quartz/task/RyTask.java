@@ -3,12 +3,9 @@ package com.starnft.star.quartz.task;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.starnft.star.business.domain.StarNftOrder;
-import com.starnft.star.business.domain.StarNftSeries;
-import com.starnft.star.business.domain.StarNftThemeInfo;
 import com.starnft.star.business.domain.WhiteListDetail;
 import com.starnft.star.business.domain.vo.ErrorOrder;
 import com.starnft.star.business.domain.vo.JinUserInfo;
-import com.starnft.star.business.domain.vo.RongUserInfo;
 import com.starnft.star.business.domain.vo.UserInfo;
 import com.starnft.star.business.service.*;
 import com.starnft.star.business.support.rank.core.IRankService;
@@ -23,7 +20,6 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
@@ -128,171 +124,77 @@ public class RyTask
             }
         }
     }
-
-    public void seriesKuai(String params){
+    public void kuai(String params){
         String[] split = params.split(",");
-        StarNftSeries starNftSeries = seriesService.selectStarNftSeriesById(Long.parseLong(split[0]));
-        if (Objects.isNull(starNftSeries)){
-            log.error("无该系列：「{}」",split[0]);
-        }
-        List<UserInfo> userInfos = new ArrayList<>();
 
-            //时间
-            userInfos = userThemeService.selectHasSeriesUserAndDate(Long.valueOf(split[0]),split[1]);
-        ExcelUtil<UserInfo> util = new ExcelUtil<UserInfo>(UserInfo.class);
+        List<UserInfo> userInfos = userThemeService.selectHasThemeUser(Long.valueOf(split[0]));
 
-        util.exportExcel(userInfos, String.format("%s持仓快照",starNftSeries.getSeriesName()), String.format("%s持仓快照",starNftSeries.getSeriesName()));
-
-
-    }
-
-    public void rongKuai(String params){
-        String[] split = params.split(",");
-        List<UserInfo> rong = userThemeService.selectHasThemeUser(Long.valueOf(split[0]));
-        List<UserInfo> yao = userThemeService.selectHasThemeUser(Long.valueOf(split[1]));
-        List<UserInfo> cahun = userThemeService.selectHasThemeUser(Long.valueOf(split[2]));
-        List<UserInfo> cheng = userThemeService.selectHasThemeUser(Long.valueOf(split[3]));
-
-        ConcurrentMap<String, RongUserInfo> map = Maps.newConcurrentMap();
+        ConcurrentMap<String, JinUserInfo> map = Maps.newConcurrentMap();
         for (UserInfo user :
-                rong) {
-            RongUserInfo userInfo = new RongUserInfo();
+                userInfos) {
+            JinUserInfo userInfo = new JinUserInfo();
             userInfo.setUserId(user.getUserId());
             userInfo.setUserName(user.getUserName());
             userInfo.setNickName(user.getNickName());
             userInfo.setPhone(user.getPhone());
-            userInfo.setRong(user.getNums());
+            userInfo.setPan(user.getNums());
             map.put(user.getUserId(),userInfo);
         }
-        for (UserInfo user : yao) {
-            if (map.containsKey(user.getUserId())){
-                RongUserInfo userInfo = map.get(user.getUserId());
-                userInfo.setYao(user.getNums());
 
+        List<UserInfo> niu = userThemeService.selectHasThemeUser(Long.valueOf(split[1]));
+        for (UserInfo user :
+             niu) {
+            if (map.containsKey(user.getUserId())){
+                JinUserInfo userInfo = map.get(user.getUserId());
+                userInfo.setJinniu(user.getNums());
+                if (2 <= user.getNums() ){
+                    int k =   user.getNums() / 2;
+                    userInfo.getYouxiangou().addAndGet(  k);
+                }
             }else {
-                RongUserInfo userInfo = new RongUserInfo();
+                JinUserInfo userInfo = new JinUserInfo();
                 userInfo.setUserId(user.getUserId());
                 userInfo.setUserName(user.getUserName());
                 userInfo.setNickName(user.getNickName());
                 userInfo.setPhone(user.getPhone());
-                userInfo.setYao(user.getNums());
+                userInfo.setJinniu(user.getNums());
+                if ( 2 <= user.getNums()){
+                    int k = user.getNums() / 2;
+                    userInfo.getYouxiangou().addAndGet(  k);
+                }
                 map.put(user.getUserId(),userInfo);
             }
         }
-        for (UserInfo user : cahun) {
-            if (map.containsKey(user.getUserId())){
-                RongUserInfo userInfo = map.get(user.getUserId());
-                userInfo.setChuan(user.getNums());
 
+        List<UserInfo> yang = userThemeService.selectHasThemeUser(Long.valueOf(split[2]));
+        for (UserInfo user :
+                yang) {
+            if (map.containsKey(user.getUserId())){
+                JinUserInfo userInfo = map.get(user.getUserId());
+                userInfo.setBaiyang(user.getNums());
+                if (5 <= user.getNums()){
+                  int k =   user.getNums() / 5;
+                  userInfo.getKongtou().addAndGet( k);
+                }
             }else {
-                RongUserInfo userInfo = new RongUserInfo();
+                JinUserInfo userInfo = new JinUserInfo();
                 userInfo.setUserId(user.getUserId());
                 userInfo.setUserName(user.getUserName());
                 userInfo.setNickName(user.getNickName());
                 userInfo.setPhone(user.getPhone());
-                userInfo.setChuan(user.getNums());
-                map.put(user.getUserId(),userInfo);
-            }
-        }
-        for (UserInfo user : cheng) {
-            if (map.containsKey(user.getUserId())){
-                RongUserInfo userInfo = map.get(user.getUserId());
-                userInfo.setCheng(user.getNums());
-
-            }else {
-                RongUserInfo userInfo = new RongUserInfo();
-                userInfo.setUserId(user.getUserId());
-                userInfo.setUserName(user.getUserName());
-                userInfo.setNickName(user.getNickName());
-                userInfo.setPhone(user.getPhone());
-                userInfo.setCheng(user.getNums());
+                userInfo.setBaiyang(user.getNums());
+                if (5 <= user.getNums() ){
+                    int k =   user.getNums() / 5;
+                    userInfo.getKongtou().addAndGet(  k);
+                }
                 map.put(user.getUserId(),userInfo);
             }
         }
 
-        ArrayList<RongUserInfo> seriesUsers = new ArrayList<>(map.values());
+        ArrayList<JinUserInfo> jinUserInfos = new ArrayList<>(map.values());
 
-        ExcelUtil<RongUserInfo> util = new ExcelUtil<RongUserInfo>(RongUserInfo.class);
-        util.exportExcel(seriesUsers, String.format("%s持仓快照","荣耀传承"), String.format("%s持仓快照","荣耀传承"));
-
-    }
-
-    public void kuai(String params){
-        String[] split = params.split(",");
-        StarNftThemeInfo starNftThemeInfo = themeInfoService.selectStarNftThemeInfoById(Long.parseLong(split[0]));
-        if (Objects.isNull(starNftThemeInfo)){
-            log.error("无该主题：「{}」",split[0]);
-        }
-        List<UserInfo> userInfos = userThemeService.selectHasThemeUser(Long.valueOf(split[0]));
-
-
-
-//        ConcurrentMap<String, JinUserInfo> map = Maps.newConcurrentMap();
-//        for (UserInfo user :
-//                userInfos) {
-//            JinUserInfo userInfo = new JinUserInfo();
-//            userInfo.setUserId(user.getUserId());
-//            userInfo.setUserName(user.getUserName());
-//            userInfo.setNickName(user.getNickName());
-//            userInfo.setPhone(user.getPhone());
-//            userInfo.setChuang(user.getNums());
-//            map.put(user.getUserId(),userInfo);
-//        }
-//
-//        List<UserInfo> niu = userThemeService.selectHasThemeUser(Long.valueOf(split[1]));
-//        for (UserInfo user :
-//             niu) {
-//            if (map.containsKey(user.getUserId())){
-//                JinUserInfo userInfo = map.get(user.getUserId());
-//                userInfo.setJinniu(user.getNums());
-//                if (2 <= user.getNums() ){
-//                    int k =   user.getNums() / 2;
-//                    userInfo.getYouxiangou().addAndGet(  k);
-//                }
-//            }else {
-//                JinUserInfo userInfo = new JinUserInfo();
-//                userInfo.setUserId(user.getUserId());
-//                userInfo.setUserName(user.getUserName());
-//                userInfo.setNickName(user.getNickName());
-//                userInfo.setPhone(user.getPhone());
-//                userInfo.setJinniu(user.getNums());
-//                if ( 2 <= user.getNums()){
-//                    int k = user.getNums() / 2;
-//                    userInfo.getYouxiangou().addAndGet(  k);
-//                }
-//                map.put(user.getUserId(),userInfo);
-//            }
-//        }
-//
-//        List<UserInfo> yang = userThemeService.selectHasThemeUser(Long.valueOf(split[2]));
-//        for (UserInfo user :
-//                yang) {
-//            if (map.containsKey(user.getUserId())){
-//                JinUserInfo userInfo = map.get(user.getUserId());
-//                userInfo.setBaiyang(user.getNums());
-//                if (5 <= user.getNums()){
-//                  int k =   user.getNums() / 5;
-//                  userInfo.getKongtou().addAndGet( k);
-//                }
-//            }else {
-//                JinUserInfo userInfo = new JinUserInfo();
-//                userInfo.setUserId(user.getUserId());
-//                userInfo.setUserName(user.getUserName());
-//                userInfo.setNickName(user.getNickName());
-//                userInfo.setPhone(user.getPhone());
-//                userInfo.setBaiyang(user.getNums());
-//                if (5 <= user.getNums() ){
-//                    int k =   user.getNums() / 5;
-//                    userInfo.getKongtou().addAndGet(  k);
-//                }
-//                map.put(user.getUserId(),userInfo);
-//            }
-//        }
-
-//        ArrayList<JinUserInfo> jinUserInfos = new ArrayList<>(map.values());
-
-        ExcelUtil<UserInfo> util = new ExcelUtil<UserInfo>(UserInfo.class);
-        util.exportExcel(userInfos, String.format("%s持仓快照",starNftThemeInfo.getThemeName()), String.format("%s持仓快照",starNftThemeInfo.getThemeName()));
+        ExcelUtil<JinUserInfo> util = new ExcelUtil<JinUserInfo>(JinUserInfo.class);
+        util.exportExcel(jinUserInfos, "持仓快照", "持仓快照");
 
 
     }

@@ -23,6 +23,7 @@ public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
     ThemeNumberVo selectRandomThemeNumber(Long id);
     List<NumberVO>  getNumberListByThemeInfo(NumberQueryDTO numberQueryDTO);
    List<NumberDingVO> getNumbers2Ding();
+   List<ThemeDingVo> getTheme2Ding();
 
    @Select("SELECT * from star_nft_theme_number as n    WHERE LENGTH(owner_by) > 10")
    List<StarNftThemeNumber> getBing();
@@ -34,4 +35,8 @@ public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
     BigDecimal minPrice(Long themeId);
 
     List<MarketNumberInfoVO> marketNumberList(MarketNumberListReq marketNumberListReq);
+
+    BigDecimal avgPrice(Long themeId);
+
+    List<BigDecimal> allPrice(@Param("themeId") Long themeId,@Param("median")BigDecimal median);
 }
