@@ -1,7 +1,6 @@
 package com.starnft.star.application.mq.consumer;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.lang.Assert;
 import com.starnft.star.application.process.coupon.CouponCore;
 import com.starnft.star.application.process.draw.vo.DrawConsumeVO;
 import com.starnft.star.application.process.scope.IScopeCore;
@@ -10,9 +9,12 @@ import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.enums.CouponGetType;
 import com.starnft.star.common.enums.NumberCirculationTypeEnum;
+import com.starnft.star.common.exception.StarError;
+import com.starnft.star.common.exception.StarException;
+import com.starnft.star.common.utils.RandomUtil;
+import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.coupon.model.dto.CouponHistoryAdd;
-import com.starnft.star.domain.draw.model.vo.DrawAwardVO;
 import com.starnft.star.domain.draw.service.draw.IDrawExec;
 import com.starnft.star.domain.number.model.req.HandoverReq;
 import com.starnft.star.domain.number.model.vo.NumberVO;
@@ -20,14 +22,12 @@ import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.theme.model.vo.ThemeDetailVO;
 import com.starnft.star.domain.theme.service.ThemeService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
