@@ -124,10 +124,10 @@ public class ThemeCoreImpl implements ThemeCore {
                 themeGoodsVO.setPublisherName(publisherVO.getPublisherName());
                 //流通量
                 Integer destroy = numberService.destroyedPublishNumber(themeGoodsVO.getId());
-                themeGoodsVO.setCirculate(themeGoodsVO.getPublishNumber() - destroy);
-                if (1026607869655789568L == themeGoodsVO.getId()){
-                    themeGoodsVO.setCirculate(themeGoodsVO.getCirculate() + 2500);
-                }
+                themeGoodsVO.setCirculate(themeGoodsVO.getPublishNumber());
+//                if (1026607869655789568L == themeGoodsVO.getId()){
+//                    themeGoodsVO.setCirculate(themeGoodsVO.getCirculate() + 2500);
+//                }
                 themeGoodsVOS.add(themeGoodsVO);
             }
             return ResponsePageResult.listReplace(themeGoods, themeGoodsVOS);
