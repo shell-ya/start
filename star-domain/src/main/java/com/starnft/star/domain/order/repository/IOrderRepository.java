@@ -3,6 +3,8 @@ package com.starnft.star.domain.order.repository;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 public interface IOrderRepository {
@@ -36,4 +38,6 @@ public interface IOrderRepository {
 
     OrderVO queryOrderById(Long orderId);
     OrderVO queryOrder(String orderSn);
+
+    List<BigDecimal> queryDealOrderPrice(Long themeInfoId, Date date);
 }

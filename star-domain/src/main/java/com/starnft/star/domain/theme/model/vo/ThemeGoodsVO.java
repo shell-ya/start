@@ -92,4 +92,9 @@ public class ThemeGoodsVO implements Serializable {
     @ApiModelProperty(value = "市场最低价")
     private BigDecimal floor;
 
+    @ApiModelProperty(value = "涨停标志 true 涨停")
+    private Boolean  raisingFlag;
+
+    @ApiModelProperty(value = "涨停消息")
+    private String raisingMsg;
 }

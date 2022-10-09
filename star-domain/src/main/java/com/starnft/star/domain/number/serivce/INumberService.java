@@ -90,4 +90,6 @@ public interface INumberService {
     BigDecimal avgPrice(Long themeId);
 
     BigDecimal medianPrice(Long id);
+
+    List<RaisingTheme> nowRaisingTheme();
 }

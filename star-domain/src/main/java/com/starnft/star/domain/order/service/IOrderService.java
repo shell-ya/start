@@ -9,6 +9,8 @@ import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.repository.BuyNum;
 import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 public interface IOrderService {
@@ -43,4 +45,6 @@ public interface IOrderService {
     List<OrderVO> queryAllSuccessOrder();
 
     List<BuyNum>queryUserBuyBoxNumber();
+
+    List<BigDecimal> dealOrderPrice(Long themeInfoId, Date date);
 }

@@ -258,4 +258,16 @@
           and n.is_delete = 0
         GROUP BY series_theme_info_id
     </select>
+
+    <select id="nowRaisingTheme" resultType="com.starnft.star.domain.number.model.vo.RaisingTheme">
+        select series_theme_info_id as themeInfoId,
+               theme_name as themeName,
+               min(price) as floorPrice
+        from star_nft_theme_number as n
+                 left join star_nft_theme_info as t
+                           on n.series_theme_info_id = t.id
+        where  n.status = 2
+          and n.is_delete = 0
+        group by series_theme_info_id
+    </select>
 </mapper>

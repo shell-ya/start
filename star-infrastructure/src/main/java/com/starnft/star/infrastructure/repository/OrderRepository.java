@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -200,6 +201,11 @@ public class OrderRepository implements IOrderRepository {
                 new LambdaQueryWrapper<StarNftOrder>()
                         .eq(StringUtils.isNotBlank(orderSn), StarNftOrder::getOrderSn, orderSn));
         return BeanColverUtil.colver(starNftOrder, OrderVO.class);
+    }
+
+    @Override
+    public List<BigDecimal> queryDealOrderPrice(Long themeInfoId,Date date) {
+        return starNftOrderMapper.dealOrderPrice(themeInfoId,date);
     }
 
     private StarNftOrder queryOrder(Long uid, String orderSn) {

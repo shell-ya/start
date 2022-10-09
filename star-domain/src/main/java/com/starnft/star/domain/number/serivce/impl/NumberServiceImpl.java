@@ -22,7 +22,6 @@ import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.*;
 import com.starnft.star.domain.number.repository.INumberRepository;
 import com.starnft.star.domain.number.serivce.INumberService;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -256,6 +255,11 @@ public class NumberServiceImpl implements INumberService {
         BigDecimal median = median(prices);
         List<BigDecimal> outMedianPrice = numberRepository.allPrice(id, median.multiply(new BigDecimal(5)));
         return avg(outMedianPrice);
+    }
+
+    @Override
+    public List<RaisingTheme> nowRaisingTheme() {
+        return numberRepository.nowRaisingTheme();
     }
 
     private BigDecimal getAvg(List<BigDecimal> outMedianPrice) {

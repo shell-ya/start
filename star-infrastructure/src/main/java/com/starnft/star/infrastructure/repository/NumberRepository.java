@@ -7,7 +7,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.page.PageMethod;
 import com.google.common.collect.Lists;
-import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.enums.NumberCirculationTypeEnum;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
@@ -409,6 +408,11 @@ public class NumberRepository implements INumberRepository {
     @Override
     public List<BigDecimal> allPrice(Long themeId,BigDecimal price) {
         return starNftThemeNumberMapper.allPrice(themeId,price);
+    }
+
+    @Override
+    public List<RaisingTheme> nowRaisingTheme() {
+        return starNftThemeNumberMapper.nowRaisingTheme();
     }
 
     private List<NumberDetailVO> mappingNumberValues(List<StarNftThemeNumber> starNftThemeNumbers) {

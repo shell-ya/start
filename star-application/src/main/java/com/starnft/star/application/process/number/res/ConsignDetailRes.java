@@ -33,4 +33,8 @@ public class ConsignDetailRes implements Serializable {
     private BigDecimal copyrightRate;
     @ApiModelProperty("平台手续费")
     private BigDecimal serviceRate;
+    @ApiModelProperty("涨停价格")
+    private BigDecimal limitPrice;
+    @ApiModelProperty("开盘价格")
+    private BigDecimal openingPrice;
 }

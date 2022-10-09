@@ -125,8 +125,10 @@ public class ThemeCoreImpl implements ThemeCore {
                 //流通量
                 Integer destroy = numberService.destroyedPublishNumber(themeGoodsVO.getId());
                 themeGoodsVO.setCirculate(themeGoodsVO.getPublishNumber() - destroy);
+                themeGoodsVO.setRaisingFlag(Boolean.FALSE);
                 if (1026607869655789568L == themeGoodsVO.getId()){
                     themeGoodsVO.setCirculate(themeGoodsVO.getCirculate() + 2500);
+                    themeGoodsVO.setRaisingFlag(Boolean.TRUE);
                 }
                 themeGoodsVOS.add(themeGoodsVO);
             }

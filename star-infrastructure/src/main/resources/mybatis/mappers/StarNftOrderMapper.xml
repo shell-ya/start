@@ -145,4 +145,13 @@
         AND created_at &lt; DATE_FORMAT( '2022-08-21 00:00:00', '%Y%m%d%H%i%s' )
         and user_id = #{uid}
     </select>
+
+    <select id="dealOrderPrice" resultType="java.math.BigDecimal">
+        select total_amount
+        from star_nft_order
+        where  `status` = 1
+        and series_theme_info_id  = #{themeInfoId}
+        and created_at >= #{date}
+        ORDER BY total_amount asc
+    </select>
 </mapper>

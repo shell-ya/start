@@ -209,6 +209,8 @@ public class NumberCoreImpl implements INumberCore {
                 .price(numberDetail.getPrice())
                 .copyrightRate(config.getCopyrightRate())
                 .serviceRate(config.getServiceRate())
+                .limitPrice(BigDecimal.TEN)
+                .openingPrice(BigDecimal.TEN)
                 .build();
     }
 

@@ -77,4 +77,8 @@ public interface INumberRepository {
     BigDecimal avgPrice(Long themeId);
 
     List<BigDecimal> allPrice(Long themeId,BigDecimal price);
+
+    List<RaisingTheme> nowRaisingTheme();
+
+
 }

@@ -25,6 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -179,6 +181,11 @@ public class OrderService implements IOrderService {
     @Override
     public List<BuyNum> queryUserBuyBoxNumber() {
         return orderRepository.queryBuyNum();
+    }
+
+    @Override
+    public List<BigDecimal> dealOrderPrice(Long themeInfoId, Date date) {
+        return orderRepository.queryDealOrderPrice(themeInfoId,date);
     }
 
 
