@@ -103,6 +103,8 @@ public enum StarError {
     PROP_CAN_BUY_OVERFLOW("4000002", "超出可购买数量"),
     //################# ===  #################
     COMPOSE_PRIZE_EXIST("10000068","超出合成次数或不具备合成名额"),
+    COMPOST_TIME_NOT_START("10000069","合成时间未到"),
+    COMPOST_TIME_IS_END("10000070","合成时间已过"),
     BULLETIN_NOT_FOUND("50000001", "公告不存在"),
 
     BLIND_STOCK_IS_NULL("60000001", "盲盒奖品库存为空！"),
