@@ -1,8 +1,6 @@
 package com.starnft.star.application.process.compose.impl;
 
-import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONUtil;
-import com.starnft.star.application.process.article.IUserArticleCore;
 import com.starnft.star.application.process.compose.IComposeCore;
 import com.starnft.star.application.process.compose.model.req.UserMaterialReq;
 import com.starnft.star.application.process.compose.model.res.ComposeCategoryMaterialRes;
@@ -12,7 +10,6 @@ import com.starnft.star.application.process.compose.strategy.lottery.ComposeDraw
 import com.starnft.star.application.process.compose.strategy.prize.ComposePrizeStrategy;
 import com.starnft.star.application.process.scope.IScopeCore;
 import com.starnft.star.application.process.scope.model.ScoreDTO;
-import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.enums.*;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
@@ -21,7 +18,6 @@ import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.Assert;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.article.model.vo.UserNumbersVO;
-import com.starnft.star.domain.article.repository.IUserThemeRepository;
 import com.starnft.star.domain.article.service.UserThemeService;
 import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
@@ -31,31 +27,25 @@ import com.starnft.star.domain.compose.model.dto.ComposeRecordDTO;
 import com.starnft.star.domain.compose.model.dto.ComposeUserArticleNumberDTO;
 import com.starnft.star.domain.compose.model.req.ComposeManageReq;
 import com.starnft.star.domain.compose.model.res.*;
-import com.starnft.star.domain.compose.repository.IComposePrizeRepository;
 import com.starnft.star.domain.compose.service.IComposeManageService;
 import com.starnft.star.domain.compose.service.IComposeService;
-import com.starnft.star.domain.number.model.dto.NumberBatchUpdateDTO;
 import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
 import com.starnft.star.domain.number.serivce.INumberService;
-import com.starnft.star.domain.scope.service.IUserScopeService;
-import com.starnft.star.domain.theme.service.ThemeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.support.ApplicationObjectSupport;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -132,12 +122,17 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
     public ComposeManageRes composeManage(ComposeManageReq composeManageReq) {
         ComposeRes composeRes = composeService.composeDetails(composeManageReq.getComposeId());
          Assert.isTrue(composeRes.getComposeStatus().equals(ComposeStatusEnum.Running.getCode()),()->new StarException("合成不在开启状态"));
+        //校验合成时间
+
+
+        Assert.isTrue(new Date().after(composeRes.getStartedAt()),() -> new StarException(StarError.COMPOST_TIME_NOT_START));
+        Assert.isTrue(new Date().before(composeRes.getEndAt()),() -> new StarException(StarError.COMPOST_TIME_IS_END));
 
          //true可执行
-        boolean openCompose = redisUtil.hasKey(String.format(RedisKey.OPEN_COMPOSE.getKey(), composeManageReq.getComposeId()));
-        if (!openCompose){
-            throw new StarException(StarError.COMPOSE_PRIZE_EXIST);
-        }
+//        boolean openCompose = redisUtil.hasKey(String.format(RedisKey.OPEN_COMPOSE.getKey(), composeManageReq.getComposeId()));
+//        if (!openCompose){
+//            throw new StarException(StarError.COMPOSE_PRIZE_EXIST);
+//        }
         //        boolean canCompose = redisUtil.sHasKey(String.format(RedisKey.GOLD_COMPOSE.getKey(),composeManageReq.getComposeId()), composeManageReq.getUserId());
 //        //true 不可执行
 //        boolean composeSuccess = redisUtil.sHasKey(String.format(RedisKey.GOLD_COMPOSE_SUCCESS.getKey(),composeManageReq.getComposeId()), composeManageReq.getUserId());
