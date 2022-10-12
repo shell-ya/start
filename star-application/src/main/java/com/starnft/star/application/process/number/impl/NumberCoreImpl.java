@@ -22,11 +22,9 @@ import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.number.model.dto.NumberCirculationAddDTO;
 import com.starnft.star.domain.number.model.dto.NumberUpdateDTO;
 import com.starnft.star.domain.number.model.req.*;
-import com.starnft.star.domain.number.model.vo.MarketNumberInfoVO;
-import com.starnft.star.domain.number.model.vo.NumberDetailVO;
-import com.starnft.star.domain.number.model.vo.NumberVO;
-import com.starnft.star.domain.number.model.vo.ReNumberVo;
+import com.starnft.star.domain.number.model.vo.*;
 import com.starnft.star.domain.number.serivce.INumberService;
+import com.starnft.star.domain.raising.service.IRaisingService;
 import com.starnft.star.domain.theme.model.vo.ThemeDetailVO;
 import com.starnft.star.domain.theme.service.ThemeService;
 import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
@@ -57,6 +55,8 @@ public class NumberCoreImpl implements INumberCore {
     private final TransactionTemplate transactionTemplate;
     private final RedisUtil redisUtil;
     private final RedisLockUtils redisLockUtils;
+
+    private final IRaisingService raisingService;
 
     @Override
     public NumberDetailVO obtainThemeNumberDetail(Long id) {
@@ -94,6 +94,12 @@ public class NumberCoreImpl implements INumberCore {
 
         // 校验是否拥有该藏品
         UserNumbersVO userNumbers = this.checkNumberOwner(uid, request.getNumberId(), UserNumberStatusEnum.PURCHASED);
+
+        //校验藏品是否已涨停
+
+        if(raisingService.themeRaisingFlag(userNumbers.getThemeId())){
+            throw new StarException(StarError.IS_RAISING);
+        }
 
         //校验是否在第三方平台挂售
         if (numberService.queryThirdPlatSell(uid, request.getNumberId())) {
@@ -201,7 +207,9 @@ public class NumberCoreImpl implements INumberCore {
 
         // 获取商品信息
         NumberDetailVO numberDetail = this.numberService.getNumberDetail(id);
-        return ConsignDetailRes.builder()
+        //查询当前主题开盘价与收盘价
+        RaisingTheme raisingTheme = raisingService.nowRaisingTheme(numberDetail.getThemeId());
+        ConsignDetailRes build = ConsignDetailRes.builder()
                 .id(id)
                 .number(numberDetail.getNumber())
                 .name(numberDetail.getName())
@@ -209,9 +217,12 @@ public class NumberCoreImpl implements INumberCore {
                 .price(numberDetail.getPrice())
                 .copyrightRate(config.getCopyrightRate())
                 .serviceRate(config.getServiceRate())
-                .limitPrice(BigDecimal.TEN)
-                .openingPrice(BigDecimal.TEN)
                 .build();
+        if (null != raisingTheme){
+            build.setLimitPrice(raisingTheme.getLimitPrice());
+            build.setOpeningPrice(raisingTheme.getFloorPrice());
+        }
+        return build;
     }
 
     private UserNumbersVO checkNumberOwner(Long uid, Long numberId, UserNumberStatusEnum statusEnum) {

@@ -91,7 +91,7 @@ public class DateUtil {
     /**
      * 获取下一天日期
      *
-     * @return yyyy-MM-dd
+     * @return yyyy-MM-ddn
      */
     public static String getNextDate() {
         return getNextDate(DATE_FORMATTER);

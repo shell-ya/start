@@ -9,4 +9,6 @@ public class RaisingTheme {
     private Long themeInfoId;
     private String themeName;
     private BigDecimal floorPrice;
+    private BigDecimal limitPrice;
+    private Boolean isRaising;
 }

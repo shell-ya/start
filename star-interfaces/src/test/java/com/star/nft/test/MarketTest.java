@@ -4,6 +4,7 @@ import com.starnft.star.application.mq.IMessageSender;
 import com.starnft.star.application.mq.constant.TopicConstants;
 import com.starnft.star.application.process.number.INumberCore;
 import com.starnft.star.application.process.number.req.MarketOrderReq;
+import com.starnft.star.application.process.number.res.ConsignDetailRes;
 import com.starnft.star.application.process.order.impl.OrderProcessor;
 import com.starnft.star.application.process.order.model.req.OrderCancelReq;
 import com.starnft.star.application.process.order.model.req.OrderGrabReq;
@@ -16,6 +17,7 @@ import com.starnft.star.domain.notify.model.req.NotifyOrderReq;
 import com.starnft.star.domain.notify.service.NotifyOrderService;
 import com.starnft.star.domain.number.model.req.NumberConsignmentCancelRequest;
 import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
+import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.order.model.res.OrderListRes;
 import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
 import com.starnft.star.domain.payment.model.res.NotifyRes;
@@ -59,6 +61,18 @@ public class MarketTest {
     @Resource
     NotifyOrderService notifyOrderService;
 
+    final INumberService numberService;
+
+    @Test
+    public void ding(){
+        numberService.getNumberDingList();
+    }
+
+    @Test
+    public void detail(){
+        ConsignDetailRes consignDetailRes = numberCore.obtainConsignDetail(1002368047951077376L);
+
+    }
     @Test
     public void mqNotify(){
 

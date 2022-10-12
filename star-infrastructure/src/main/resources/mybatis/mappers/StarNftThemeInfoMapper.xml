@@ -88,6 +88,7 @@
                             GROUP BY theme_id) AS tn ON ti.id = tn.theme_id
         WHERE
         1 = 1
+        AND ti.market_open_time &lt;= now()
         <if test="seriesId != null">
             AND ti.series_id = #{seriesId}
         </if>

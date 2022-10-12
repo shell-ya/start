@@ -218,4 +218,12 @@
             #{id}
         </foreach>
     </select>
+
+    <update id="takeUserNumber">
+        update star_nft_user_theme
+            set `status` = 0
+        where series_theme_info_id = #{themeId}
+        and is_delete = 0
+        and `status` = 1
+    </update>
 </mapper>

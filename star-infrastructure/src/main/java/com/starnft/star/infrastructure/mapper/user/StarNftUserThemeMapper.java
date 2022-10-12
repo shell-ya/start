@@ -7,7 +7,6 @@ import com.starnft.star.domain.article.model.req.UserHaveSeriesReq;
 import com.starnft.star.domain.article.model.req.UserHaveThemeReq;
 import com.starnft.star.domain.article.model.vo.UserNumbersVO;
 import com.starnft.star.domain.article.model.vo.UserSeriesVO;
-import com.starnft.star.domain.article.model.vo.UserThemeDetailVo;
 import com.starnft.star.domain.article.model.vo.UserThemeVO;
 import com.starnft.star.domain.compose.model.dto.ComposeUserArticleNumberDTO;
 import com.starnft.star.domain.number.model.vo.ReNumberVo;
@@ -39,4 +38,6 @@ public interface StarNftUserThemeMapper extends BaseMapper<StarNftUserTheme> {
     List<Long> queryHasReNumberUser(Long seriesThemeId);
 
     List<UserNumbersVO> queryUserArticleNumberInfoBySeriesIds(@Param("uId")Long userId, @Param("seriesIds")List<Long> seriesIds,  @Param("statusEnum")UserNumberStatusEnum purchased);
+
+    boolean takeUserNumber(Long themeId);
 }

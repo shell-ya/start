@@ -251,23 +251,69 @@
     </select>
 
     <select id="getTheme2Ding" resultType="com.starnft.star.domain.number.model.vo.ThemeDingVo">
-        SELECT i.id  as id, i.theme_name as `name`, i.theme_pic as image
-        from star_nft_theme_number as n
-                 LEFT JOIN star_nft_theme_info as i on i.id = series_theme_info_id
-        WHERE n.`status` = 2
-          and n.is_delete = 0
-        GROUP BY series_theme_info_id
+        SELECT
+        ti.id id,
+        ti.theme_name `name`,
+        ti.theme_pic image,
+        tn.price `price`
+        FROM
+        star_nft_theme_info ti
+        LEFT JOIN ( SELECT series_theme_info_id AS theme_id, min( price ) AS price FROM star_nft_theme_number WHERE STATUS = 2 GROUP BY theme_id ) AS tn ON ti.id = tn.theme_id
+        WHERE
+        ti.market_open_time &lt;= now()
+        AND ti.is_resale = 1
     </select>
 
     <select id="nowRaisingTheme" resultType="com.starnft.star.domain.number.model.vo.RaisingTheme">
-        select series_theme_info_id as themeInfoId,
-               theme_name as themeName,
-               min(price) as floorPrice
-        from star_nft_theme_number as n
-                 left join star_nft_theme_info as t
-                           on n.series_theme_info_id = t.id
-        where  n.status = 2
-          and n.is_delete = 0
-        group by series_theme_info_id
+        SELECT
+            id AS themeInfoId,
+            theme_name AS themeName,
+            lssue_price AS floorPrice
+        FROM
+            star_nft_theme_info
+        WHERE
+            market_open_time &lt;= now()
+          AND is_resale = 1
+        GROUP BY
+            id
+    </select>
+
+    <select id="minConsignNumber" resultType="com.starnft.star.domain.number.model.vo.ThemeNumberVo">
+        SELECT
+            min( price ) AS price,
+            series_theme_info_id AS themeInfoId
+
+        FROM
+            star_nft_theme_number
+        WHERE
+            `status` = 2
+          AND is_delete = 0
+        GROUP BY
+            series_theme_info_id
+    </select>
+
+    <select id="consignNumberByTheme" resultType="com.starnft.star.domain.number.model.vo.ThemeNumberVo">
+        SELECT
+            id AS numberId,
+            owner_by AS ownerBy
+        FROM
+            star_nft_theme_number
+        WHERE
+            series_theme_info_id = #{themeId}
+          AND `status` = 2
+          AND is_delete = 0
+    </select>
+
+    <update id="takeNumber">
+        UPDATE star_nft_theme_number
+        SET `status` = 1
+        WHERE
+            series_theme_info_id = #{themeId}
+          AND is_delete = 0
+          AND `status` = 2;
+    </update>
+
+    <select id="consignMinPrice" resultType="java.math.BigDecimal">
+        select min(price) from star_nft_theme_number where series_theme_info_id = #{themeInfoId} and `status` = 2
     </select>
 </mapper>

@@ -79,6 +79,11 @@ public interface INumberRepository {
     List<BigDecimal> allPrice(Long themeId,BigDecimal price);
 
     List<RaisingTheme> nowRaisingTheme();
+    List<ThemeNumberVo> minConsignNumberDetail();
 
+    List<ThemeNumberVo> getConsignNumberByTheme(Long themeId);
 
+    boolean takeDown(Long themeId);
+
+    BigDecimal consignMinPrice(Long themeInfoId);
 }

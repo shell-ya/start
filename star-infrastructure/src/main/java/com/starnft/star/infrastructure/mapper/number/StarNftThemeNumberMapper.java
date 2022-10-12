@@ -42,4 +42,11 @@ public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
 
     List<RaisingTheme> nowRaisingTheme();
 
+    List<ThemeNumberVo> minConsignNumber();
+
+    List<ThemeNumberVo> consignNumberByTheme(Long themeId);
+
+    boolean takeNumber(Long themeId);
+
+    BigDecimal consignMinPrice(Long themeInfoId);
 }

@@ -13,6 +13,7 @@ import com.starnft.star.application.process.order.model.req.OrderPayReq;
 import com.starnft.star.application.process.order.model.res.OrderPayDetailRes;
 import com.starnft.star.application.process.scope.IScopeCore;
 import com.starnft.star.application.process.scope.model.ScoreDTO;
+import com.starnft.star.application.process.task.activity.RaisingTask;
 import com.starnft.star.application.process.theme.ThemeCore;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
@@ -59,7 +60,7 @@ import java.util.*;
 public class SpringTest {
 
     final IMessageSender messageSender;
-
+    final RaisingTask task;
     final ChannelConf channelConf;
     final FreeMakerTemplateHelper templateHelper;
     final IPaymentRouter paymentRouter;
@@ -102,6 +103,10 @@ public class SpringTest {
 
     }
 
+    @Test
+    public void falg(){
+        task.raising();
+    }
 
 
 

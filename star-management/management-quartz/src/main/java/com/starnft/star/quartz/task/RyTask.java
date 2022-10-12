@@ -137,34 +137,61 @@ public class RyTask
             userInfo.setUserName(user.getUserName());
             userInfo.setNickName(user.getNickName());
             userInfo.setPhone(user.getPhone());
-            userInfo.setPan(user.getNums());
+            userInfo.setChaung(user.getNums());
             map.put(user.getUserId(),userInfo);
         }
 
-//        List<UserInfo> niu = userThemeService.selectHasThemeUser(Long.valueOf(split[1]));
-//        for (UserInfo user :
-//             niu) {
-//            if (map.containsKey(user.getUserId())){
-//                JinUserInfo userInfo = map.get(user.getUserId());
-//                userInfo.setJinniu(user.getNums());
-//                if (2 <= user.getNums() ){
-//                    int k =   user.getNums() / 2;
-//                    userInfo.getYouxiangou().addAndGet(  k);
-//                }
-//            }else {
-//                JinUserInfo userInfo = new JinUserInfo();
-//                userInfo.setUserId(user.getUserId());
-//                userInfo.setUserName(user.getUserName());
-//                userInfo.setNickName(user.getNickName());
-//                userInfo.setPhone(user.getPhone());
-//                userInfo.setJinniu(user.getNums());
-//                if ( 2 <= user.getNums()){
-//                    int k = user.getNums() / 2;
-//                    userInfo.getYouxiangou().addAndGet(  k);
-//                }
-//                map.put(user.getUserId(),userInfo);
-//            }
-//        }
+        List<UserInfo> xing = userThemeService.selectHasThemeUser(Long.valueOf(split[1]));
+        for (UserInfo user :
+             xing) {
+            if (map.containsKey(user.getUserId())){
+                JinUserInfo userInfo = map.get(user.getUserId());
+                userInfo.setChuangyue(user.getNums());
+            }else {
+                JinUserInfo userInfo = new JinUserInfo();
+                userInfo.setUserId(user.getUserId());
+                userInfo.setUserName(user.getUserName());
+                userInfo.setNickName(user.getNickName());
+                userInfo.setPhone(user.getPhone());
+                userInfo.setChuangyue(user.getNums());
+                map.put(user.getUserId(),userInfo);
+            }
+        }
+
+        List<UserInfo> pan = userThemeService.selectHasThemeUser(Long.valueOf(split[2]));
+        for (UserInfo user :
+                pan) {
+            if (map.containsKey(user.getUserId())){
+                JinUserInfo userInfo = map.get(user.getUserId());
+                userInfo.setPan(user.getNums());
+            }else {
+                JinUserInfo userInfo = new JinUserInfo();
+                userInfo.setUserId(user.getUserId());
+                userInfo.setUserName(user.getUserName());
+                userInfo.setNickName(user.getNickName());
+                userInfo.setPhone(user.getPhone());
+                userInfo.setPan(user.getNums());
+                map.put(user.getUserId(),userInfo);
+            }
+        }
+
+
+        List<UserInfo> yue = userThemeService.selectHasThemeUser(Long.valueOf(split[3]));
+        for (UserInfo user :
+                yue) {
+            if (map.containsKey(user.getUserId())){
+                JinUserInfo userInfo = map.get(user.getUserId());
+                userInfo.setYue(user.getNums());
+            }else {
+                JinUserInfo userInfo = new JinUserInfo();
+                userInfo.setUserId(user.getUserId());
+                userInfo.setUserName(user.getUserName());
+                userInfo.setNickName(user.getNickName());
+                userInfo.setPhone(user.getPhone());
+                userInfo.setYue(user.getNums());
+                map.put(user.getUserId(),userInfo);
+            }
+        }
 //
 //        List<UserInfo> yang = userThemeService.selectHasThemeUser(Long.valueOf(split[2]));
 //        for (UserInfo user :
@@ -194,7 +221,7 @@ public class RyTask
         ArrayList<JinUserInfo> jinUserInfos = new ArrayList<>(map.values());
 
         ExcelUtil<JinUserInfo> util = new ExcelUtil<JinUserInfo>(JinUserInfo.class);
-        util.exportExcel(jinUserInfos, "持仓快照", "持仓快照");
+        util.exportExcel(jinUserInfos, "持仓快照", "10.10持仓快照");
 
 
     }

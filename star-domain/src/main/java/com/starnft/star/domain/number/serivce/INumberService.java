@@ -92,4 +92,12 @@ public interface INumberService {
     BigDecimal medianPrice(Long id);
 
     List<RaisingTheme> nowRaisingTheme();
+
+    List<ThemeNumberVo> getMinConsignNumberDetail();
+
+    List<ThemeNumberVo> getConsignNumberByTheme(Long themeId);
+
+    boolean takeDownTheme(Long themeId);
+
+    BigDecimal getconsignMinPrice(Long themeInfoId);
 }

@@ -8,10 +8,13 @@ import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.component.RedisUtil;
+import com.starnft.star.domain.number.model.vo.RaisingTheme;
 import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.publisher.model.req.PublisherReq;
 import com.starnft.star.domain.publisher.model.vo.PublisherVO;
 import com.starnft.star.domain.publisher.service.PublisherService;
+import com.starnft.star.domain.raising.RaisingConfig;
+import com.starnft.star.domain.raising.service.IRaisingService;
 import com.starnft.star.domain.theme.model.req.ThemeGoodsReq;
 import com.starnft.star.domain.theme.model.req.ThemeReq;
 import com.starnft.star.domain.theme.model.res.ThemeDetailRes;
@@ -42,6 +45,9 @@ public class ThemeCoreImpl implements ThemeCore {
 
     @Resource
     private RedisUtil redisUtil;
+
+    @Resource
+    private IRaisingService raisingService;
 
     @Override
     public List<ThemeRes> queryThemesBySeriesId(Long seriesId) {
@@ -129,6 +135,14 @@ public class ThemeCoreImpl implements ThemeCore {
                 if (1026607869655789568L == themeGoodsVO.getId()){
                     themeGoodsVO.setCirculate(themeGoodsVO.getCirculate() + 2500);
                     themeGoodsVO.setRaisingFlag(Boolean.TRUE);
+                }
+                RaisingTheme raisingTheme = raisingService.nowRaisingTheme(themeGoodsVO.getId());
+                if (Objects.nonNull(raisingTheme) && raisingTheme.getIsRaising()){
+                    themeGoodsVO.setRaisingFlag(Boolean.TRUE);
+                    themeGoodsVO.setRaisingMsg(RaisingConfig.getRaisingMsg());
+                }
+                if (null == themeGoodsVO.getFloor()){
+                    themeGoodsVO.setFloor(raisingTheme.getLimitPrice());
                 }
                 themeGoodsVOS.add(themeGoodsVO);
             }

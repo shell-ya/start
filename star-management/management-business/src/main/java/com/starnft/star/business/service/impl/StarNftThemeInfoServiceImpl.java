@@ -18,15 +18,14 @@ import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.utils.DateUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 
 /**
  * 主题Service业务层处理
@@ -234,10 +233,16 @@ public class StarNftThemeInfoServiceImpl implements IStarNftThemeInfoService
                 List<String> currentIds = ids.subList(0,500);
                 publishGoodsReq.setProductIds(currentIds.toArray(new String[500]));
                 publishGoodsReq.setPieceCount(500);
-                ids = ids.subList((i + 1) * 500,ids.size());
+                if (StringUtils.isNotEmpty(contractAddress))
+                    publishGoodsReq.setContractAddress(contractAddress);
+                ids = ids.subList(500,ids.size());
                 createAccountRes = tiChainServer.publishGoods(publishGoodsReq);
                 contractAddress = createAccountRes.getData().getContractAddress();
-                result = createAccountRes.getData();
+                if (0 == i){
+                    result = createAccountRes.getData();
+                }else {
+                    result.getProducts().addAll(createAccountRes.getData().getProducts());
+                }
             }
         }
 

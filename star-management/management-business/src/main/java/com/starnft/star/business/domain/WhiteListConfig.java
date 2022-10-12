@@ -3,9 +3,9 @@ package com.starnft.star.business.domain;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.starnft.star.common.core.domain.BaseEntity;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,6 +22,7 @@ public class WhiteListConfig implements Serializable {
      * id
      */
     @ApiModelProperty(name = "id", notes = "")
+    @JsonSerialize(using = ToStringSerializer.class)
     @TableId
     private Long id;
     /**

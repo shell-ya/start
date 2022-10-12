@@ -11,8 +11,6 @@ import com.starnft.star.business.mapper.WhiteListDetailMapper;
 import com.starnft.star.business.service.IWhiteService;
 import com.starnft.star.common.exception.ServiceException;
 import com.starnft.star.common.exception.StarException;
-import com.starnft.star.common.utils.RandomUtil;
-import com.starnft.star.common.utils.SnowflakeWorker;
 import com.starnft.star.common.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +66,6 @@ public class WhiteServiceImpl implements IWhiteService {
     @Override
     public int insertWhiteConfig(WhiteListConfig whiteListConfig) {
 
-        whiteListConfig.setWhiteType(RandomUtil.randomInt(100));
         whiteListConfig.setCreatedAt(new Date());
         whiteListConfig.setIsDeleted(Boolean.FALSE);
         whiteListConfig.setEffective(1);

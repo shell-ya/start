@@ -22,6 +22,7 @@ import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.*;
 import com.starnft.star.domain.number.repository.INumberRepository;
 import com.starnft.star.domain.number.serivce.INumberService;
+import com.starnft.star.domain.raising.service.IRaisingService;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -43,6 +44,9 @@ public class NumberServiceImpl implements INumberService {
     RedisTemplate<String, Object> redisTemplate;
     @Resource
     RedisLockUtils redisLockUtils;
+
+    @Resource
+    IRaisingService raisingService;
 
     @Override
     public ResponsePageResult<NumberVO> queryThemeNumber(NumberReq numberReq) {
@@ -148,7 +152,7 @@ public class NumberServiceImpl implements INumberService {
                 updated = this.numberRepository.updateUserNumberMapping(this.updateMapping(handoverReq));
             }
             boolean created = this.numberRepository.createUserNumberMapping(this.createMapping(handoverReq));
-            if(!(logged && modified && created && updated)){
+            if (!(logged && modified && created && updated)) {
                 throw new StarException();
             }
             return logged && modified && created && updated;
@@ -251,7 +255,7 @@ public class NumberServiceImpl implements INumberService {
 
     @Override
     public BigDecimal medianPrice(Long id) {
-        List<BigDecimal> prices = numberRepository.allPrice(id,null);
+        List<BigDecimal> prices = numberRepository.allPrice(id, null);
         BigDecimal median = median(prices);
         List<BigDecimal> outMedianPrice = numberRepository.allPrice(id, median.multiply(new BigDecimal(5)));
         return avg(outMedianPrice);
@@ -262,17 +266,38 @@ public class NumberServiceImpl implements INumberService {
         return numberRepository.nowRaisingTheme();
     }
 
+    @Override
+    public List<ThemeNumberVo> getMinConsignNumberDetail() {
+        return numberRepository.minConsignNumberDetail();
+    }
+
+    @Override
+    public List<ThemeNumberVo> getConsignNumberByTheme(Long themeId) {
+        return numberRepository.getConsignNumberByTheme(themeId);
+    }
+
+    @Override
+    public boolean takeDownTheme(Long themeId) {
+
+        return numberRepository.takeDown(themeId);
+    }
+
+    @Override
+    public BigDecimal getconsignMinPrice(Long themeInfoId) {
+        return numberRepository.consignMinPrice(themeInfoId);
+    }
+
     private BigDecimal getAvg(List<BigDecimal> outMedianPrice) {
         BigDecimal avg = avg(outMedianPrice);
         boolean over = true;
         LinkedList<BigDecimal> linkedList = Lists.newLinkedList(outMedianPrice);
         Collections.sort(linkedList);
-        while (over){
+        while (over) {
             linkedList.removeLast();
             BigDecimal currentAvg = avg(linkedList);
             int i = avg.divide(currentAvg, RoundingMode.CEILING).compareTo(new BigDecimal("0.3"));
             avg = currentAvg;
-            if (i <= 0){
+            if (i <= 0) {
                 over = false;
             }
 
@@ -280,8 +305,8 @@ public class NumberServiceImpl implements INumberService {
         return avg;
     }
 
-    private BigDecimal avg(List<BigDecimal> list){
-        if (null == list) return  BigDecimal.ZERO;
+    private BigDecimal avg(List<BigDecimal> list) {
+        if (null == list) return BigDecimal.ZERO;
         Collections.sort(list);
         BigDecimal sum = BigDecimal.ZERO;
         for (BigDecimal b :
@@ -292,14 +317,14 @@ public class NumberServiceImpl implements INumberService {
         return sum.divide(size, RoundingMode.CEILING);
     }
 
-    private BigDecimal median(List<BigDecimal> list){
-        if (null == list) return  BigDecimal.ZERO;
+    private BigDecimal median(List<BigDecimal> list) {
+        if (null == list) return BigDecimal.ZERO;
         Collections.sort(list);
         int size = list.size();
-        if (size % 2 == 1){
+        if (size % 2 == 1) {
             return list.get((size - 1) / 2);
-        }else {
-            return (list.get((size/2)-1).add(list.get(size/2)).divide(new BigDecimal(2), RoundingMode.FLOOR));
+        } else {
+            return (list.get((size / 2) - 1).add(list.get(size / 2)).divide(new BigDecimal(2), RoundingMode.FLOOR));
         }
     }
 
@@ -316,23 +341,29 @@ public class NumberServiceImpl implements INumberService {
         if (Objects.nonNull(redisManage)) {
             return JSONUtil.toList(redisManage.toString(), NumberDingVO.class);
         }
-        List<NumberDingVO> numberDingList = this.numberRepository.getNumberDingList();
+        List<NumberDingVO> numberDingList = new ArrayList<>();
 //        for (NumberDingVO dingVo :
-//                numberDingList) {
+//                numberDingList) {x
 //            if (dingVo.getName().startsWith("Pluviophile")){
 //                dingVo.setName(dingVo.getName().s);
 //            }
 //
 //        }
-//        for (ThemeDingVo theme :
-//                themeDingList) {
-//            NumberDingVO numberDingVO = new NumberDingVO();
-//            numberDingVO.setImage(theme.getImage());
-//            numberDingVO.setName(theme.getName());
-////            BigDecimal price = this.medianPrice(theme.getId());
-//            numberDingVO.setPrice(minPrice(theme.getId()));
-//            numberDingList.add(numberDingVO);
-//        }
+        List<ThemeDingVo> themeDingList = this.numberRepository.getThemeDingList();
+        for (ThemeDingVo theme :
+                themeDingList) {
+            NumberDingVO numberDingVO = new NumberDingVO();
+            numberDingVO.setImage(theme.getImage());
+            numberDingVO.setName(theme.getName().contains("Pluviophile ") ? theme.getName().substring(12) : theme.getName());
+            //返回价格为空 去判断当日是否涨停 涨停显示涨停价 未涨停显示开盘价
+            if (null == theme.getPrice() || BigDecimal.ZERO.compareTo(theme.getPrice()) == 0) {
+                RaisingTheme raisingTheme = raisingService.nowRaisingTheme(theme.getId());
+                numberDingVO.setPrice(raisingTheme.getIsRaising() ? raisingTheme.getLimitPrice() : raisingTheme.getFloorPrice());
+            } else {
+                numberDingVO.setPrice(theme.getPrice());
+            }
+            numberDingList.add(numberDingVO);
+        }
 
         redisTemplate.opsForValue().set(RedisKey.DING_PRICE_MANAGE.getKey(), JSONUtil.toJsonStr(numberDingList), RedisKey.DING_PRICE_MANAGE.getTime(), TimeUnit.SECONDS);
         return numberDingList;
