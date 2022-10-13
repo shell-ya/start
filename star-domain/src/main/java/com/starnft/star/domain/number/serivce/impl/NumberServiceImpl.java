@@ -358,7 +358,7 @@ public class NumberServiceImpl implements INumberService {
             //返回价格为空 去判断当日是否涨停 涨停显示涨停价 未涨停显示开盘价
             if (null == theme.getPrice() || BigDecimal.ZERO.compareTo(theme.getPrice()) == 0) {
                 RaisingTheme raisingTheme = raisingService.nowRaisingTheme(theme.getId());
-                numberDingVO.setPrice(raisingTheme.getIsRaising() ? raisingTheme.getLimitPrice() : raisingTheme.getFloorPrice());
+                numberDingVO.setPrice(raisingTheme.getLimitPrice());
             } else {
                 numberDingVO.setPrice(theme.getPrice());
             }
