@@ -350,14 +350,17 @@ public class NumberServiceImpl implements INumberService {
 //
 //        }
         List<ThemeDingVo> themeDingList = this.numberRepository.getThemeDingList();
-        for (ThemeDingVo theme :
-                themeDingList) {
+        for (ThemeDingVo theme : themeDingList) {
             NumberDingVO numberDingVO = new NumberDingVO();
             numberDingVO.setImage(theme.getImage());
             numberDingVO.setName(theme.getName().contains("Pluviophile ") ? theme.getName().substring(12) : theme.getName());
             //返回价格为空 去判断当日是否涨停 涨停显示涨停价 未涨停显示开盘价
             if (null == theme.getPrice() || BigDecimal.ZERO.compareTo(theme.getPrice()) == 0) {
                 RaisingTheme raisingTheme = raisingService.nowRaisingTheme(theme.getId());
+                // 如果raisingTheme为空，则跳过这个theme，进入下一个主题处理
+                if (Objects.isNull(raisingTheme)) {
+                    continue;
+                }
                 numberDingVO.setPrice(raisingTheme.getLimitPrice());
             } else {
                 numberDingVO.setPrice(theme.getPrice());
