@@ -1,19 +1,14 @@
 package com.starnft.star.infrastructure.repository;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.github.pagehelper.page.PageMethod;
-import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.domain.bulletin.model.dto.BulletinPageDto;
 import com.starnft.star.domain.bulletin.model.vo.BulletinVo;
 import com.starnft.star.domain.bulletin.repository.IBulletinRepository;
 import com.starnft.star.domain.number.model.vo.DingBulletinVo;
-import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.infrastructure.entity.BaseEntity;
 import com.starnft.star.infrastructure.entity.bulletin.StarBulletin;
 import com.starnft.star.infrastructure.entity.bulletin.StarDingBulletin;
@@ -44,33 +39,33 @@ public class BulletinRepository implements IBulletinRepository {
     public ResponsePageResult<BulletinVo> pageBulletin(BulletinPageDto dto) {
         LambdaQueryWrapper<StarBulletin> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(BaseEntity::getIsDeleted, Boolean.FALSE);
-        wrapper.eq(Objects.nonNull(dto.getBulletinType()),StarBulletin::getBulletinType,dto.getBulletinType());
+        wrapper.eq(Objects.nonNull(dto.getBulletinType()), StarBulletin::getBulletinType, dto.getBulletinType());
         wrapper.orderByDesc(StarBulletin::getPublishTime);
         PageInfo<StarBulletin> pageInfo = PageHelper.startPage(dto.getPage(), dto.getSize()).doSelectPageInfo(() -> this.bulletinMapper.selectList(wrapper));
         List<BulletinVo> bulletinVos = coverBulletinVo(pageInfo.getList());
-        return new ResponsePageResult<>(bulletinVos,dto.getPage(), dto.getSize(),pageInfo.getTotal());
+        return new ResponsePageResult<>(bulletinVos, dto.getPage(), dto.getSize(), pageInfo.getTotal());
     }
 
     @Override
     public BulletinVo queryBulletinById(Long id) {
         LambdaQueryWrapper<StarBulletin> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(StarBulletin::getId,id);
-        wrapper.eq(BaseEntity::getIsDeleted,Boolean.FALSE);
+        wrapper.eq(StarBulletin::getId, id);
+        wrapper.eq(BaseEntity::getIsDeleted, Boolean.FALSE);
         StarBulletin bulletin = this.bulletinMapper.selectOne(wrapper);
         if (Objects.isNull(bulletin)) return null;
-        return BeanColverUtil.colver(bulletin,BulletinVo.class);
+        return BeanColverUtil.colver(bulletin, BulletinVo.class);
     }
 
     @Override
     public List<DingBulletinVo> selectDingBulletin() {
         LambdaQueryWrapper<StarDingBulletin> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(StarDingBulletin::getIsDeleted,Boolean.FALSE);
+        wrapper.eq(StarDingBulletin::getIsDeleted, Boolean.FALSE);
         wrapper.orderByDesc(StarDingBulletin::getCreatedAt);
         List<StarDingBulletin> starBulletins = this.starDingBulletinMapper.selectList(wrapper);
         return coverDingBulletin(starBulletins);
     }
 
-    private List<BulletinVo> coverBulletinVo(List<StarBulletin> starBulletins){
+    private List<BulletinVo> coverBulletinVo(List<StarBulletin> starBulletins) {
         List<BulletinVo> bulletinVos = new ArrayList<>();
         for (StarBulletin bulletin : starBulletins) {
             BulletinVo bulletinVo = new BulletinVo();
@@ -86,12 +81,12 @@ public class BulletinRepository implements IBulletinRepository {
     }
 
 
-    private List<DingBulletinVo> coverDingBulletin(List<StarDingBulletin> starBulletins){
+    private List<DingBulletinVo> coverDingBulletin(List<StarDingBulletin> starBulletins) {
         ArrayList<DingBulletinVo> dingBulletinVos = Lists.newArrayList();
-        for (StarDingBulletin b :
-            starBulletins) {
+        for (StarDingBulletin b : starBulletins) {
             DingBulletinVo dingBulletinVo = new DingBulletinVo();
-            dingBulletinVo.setImage(b.getImage());
+            dingBulletinVo.setId(b.getId());
+            dingBulletinVo.setImageUrl(b.getImage());
             dingBulletinVo.setLink(b.getLink());
             dingBulletinVo.setTitle(b.getTitle());
             dingBulletinVos.add(dingBulletinVo);
