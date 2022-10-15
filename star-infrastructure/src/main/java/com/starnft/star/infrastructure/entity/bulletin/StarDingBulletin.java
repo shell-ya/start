@@ -1,15 +1,20 @@
 package com.starnft.star.infrastructure.entity.bulletin;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.starnft.star.infrastructure.entity.BaseEntity;
 import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * 盯链公告DO
+ */
 @Data
 @TableName("star_ding_bulletin")
-public class StarDingBulletin extends BaseEntity {
+public class StarDingBulletin {
+    // 注释继承BaseEntity，因为表字段和BaseEntity属性不一致，以表字段为准
+    // extends BaseEntity
 
     @TableId
     private Long id;
@@ -20,8 +25,17 @@ public class StarDingBulletin extends BaseEntity {
 
     private String link;
 
-    private Date updateAt;
+    @TableField("is_deleted")
+    private Boolean isDeleted;
 
-    private Long updateBy;
+    @TableField("created_at")
+    private Date createdAt;
+
+    @TableField("created_by")
+    private Long createdBy;
+
+    private Date updatedAt;
+
+    private Long updatedBy;
 
 }
