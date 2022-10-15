@@ -360,7 +360,7 @@ public class NumberServiceImpl implements INumberService {
                 if (Objects.isNull(raisingTheme)) {
                     continue;
                 }
-                numberDingVO.setPrice(raisingTheme.getLimitPrice());
+                numberDingVO.setPrice(raisingTheme.getIsRaising() ? raisingTheme.getLimitPrice() : raisingTheme.getFloorPrice());
             } else {
                 numberDingVO.setPrice(theme.getPrice());
             }

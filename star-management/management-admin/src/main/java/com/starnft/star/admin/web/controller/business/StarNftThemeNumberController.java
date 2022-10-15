@@ -119,7 +119,7 @@ public class StarNftThemeNumberController extends BaseController
     public void exportTheme(HttpServletResponse response, StarNftThemeInfo starNftThemeInfo) throws IOException {
         List<UserInfo> userInfos = userThemeService.selectHasThemeUser(starNftThemeInfo.getId());
         ExcelUtil<UserInfo> util = new ExcelUtil<UserInfo>(UserInfo.class);
-        util.exportEasyExcel(response, userInfos, "藏品数据");
+        util.exportExcel(response, userInfos, "藏品数据");
     }
 
     @PostMapping("/importTemplate")

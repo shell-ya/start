@@ -129,13 +129,12 @@ public class ThemeCoreImpl implements ThemeCore {
                 PublisherVO publisherVO = publisherService.queryPublisher(new PublisherReq(publisherId));
                 themeGoodsVO.setPublisherName(publisherVO.getPublisherName());
                 //流通量
-                Integer destroy = numberService.destroyedPublishNumber(themeGoodsVO.getId());
-                themeGoodsVO.setCirculate(themeGoodsVO.getPublishNumber() - destroy);
+//                Integer destroy = numberService.destroyedPublishNumber(themeGoodsVO.getId());
+                themeGoodsVO.setCirculate(themeGoodsVO.getPublishNumber());
                 themeGoodsVO.setRaisingFlag(Boolean.FALSE);
-                if (1026607869655789568L == themeGoodsVO.getId()){
-                    themeGoodsVO.setCirculate(themeGoodsVO.getCirculate() + 2500);
-                    themeGoodsVO.setRaisingFlag(Boolean.TRUE);
-                }
+//                if (1026607869655789568L == themeGoodsVO.getId()){
+//                    themeGoodsVO.setCirculate(themeGoodsVO.getCirculate() + 2500);
+//                }
                 RaisingTheme raisingTheme = raisingService.nowRaisingTheme(themeGoodsVO.getId());
                 if (Objects.nonNull(raisingTheme) && raisingTheme.getIsRaising()){
                     themeGoodsVO.setRaisingFlag(Boolean.TRUE);
