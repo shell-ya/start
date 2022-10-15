@@ -1,5 +1,6 @@
 package com.starnft.star.domain.number.serivce.impl;
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
 import com.starnft.star.common.constant.RedisKey;
@@ -376,7 +377,7 @@ public class NumberServiceImpl implements INumberService {
         // 1、判断基价是否存在，如果不存在，则放入redis，后期直接从redis取
         Object basePriceObj = redisTemplate.opsForValue().get(RedisKey.DING_PRICE_DATA_BASE.getKey());
         if (Objects.isNull(basePriceObj)) {
-            redisTemplate.opsForValue().set(RedisKey.DING_PRICE_DATA_BASE.getKey(), JSONUtil.toJsonStr(numberDingList), RedisKey.DING_PRICE_DATA_BASE.getTime(), TimeUnit.HOURS);
+            redisTemplate.opsForValue().set(RedisKey.DING_PRICE_DATA_BASE.getKey() + DateUtil.today(), JSONUtil.toJsonStr(numberDingList), RedisKey.DING_PRICE_DATA_BASE.getTime(), TimeUnit.HOURS);
             // 1.1、基价不存在，这里直接返回给盯链
             return numberDingList;
         } else {

@@ -244,7 +244,7 @@ public enum RedisKey {
     GIVEN_MANAGE_BIT_CONFIG(333, StarConstants.SERVICE_NAME.concat(".given:manage:bit:%s"), 60L, TimeUnit.SECONDS),
 
     // 盯链价格数据-凌晨首次调用,作为基准价，后续调用和基准价对比，高-涨，低-跌
-    DING_PRICE_DATA_BASE(555, StarConstants.SERVICE_NAME.concat(".ding:price:data:base"), 23L, TimeUnit.HOURS),
+    DING_PRICE_DATA_BASE(555, StarConstants.SERVICE_NAME.concat(".ding:price:data:base:"), 24L, TimeUnit.HOURS),
 
     VISIT_TIMES_MAPPING(1111, StarConstants.SERVICE_NAME.concat(".visit.times.mapping:%s"), 5L, TimeUnit.SECONDS),
 
