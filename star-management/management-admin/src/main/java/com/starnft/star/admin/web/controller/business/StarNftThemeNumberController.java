@@ -1,14 +1,16 @@
 package com.starnft.star.admin.web.controller.business;
 
+import com.starnft.star.business.domain.StarNftThemeInfo;
 import com.starnft.star.business.domain.StarNftThemeNumber;
+import com.starnft.star.business.domain.vo.UserInfo;
 import com.starnft.star.business.service.IStarNftThemeNumberService;
+import com.starnft.star.business.service.IStarNftUserThemeService;
 import com.starnft.star.common.annotation.Log;
 import com.starnft.star.common.core.controller.BaseController;
 import com.starnft.star.common.core.domain.AjaxResult;
 import com.starnft.star.common.core.page.TableDataInfo;
 import com.starnft.star.common.enums.BusinessType;
 import com.starnft.star.common.utils.poi.ExcelUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,7 +32,8 @@ public class StarNftThemeNumberController extends BaseController
 {
     @Resource
     private IStarNftThemeNumberService starNftThemeNumberService;
-
+    @Resource
+    private IStarNftUserThemeService userThemeService;
     /**
      * 查询主题编号列表
      */
@@ -109,6 +112,14 @@ public class StarNftThemeNumberController extends BaseController
         String operName = getUserId().toString();
         String message = starNftThemeNumberService.importThemeNumber(themeNumberList, themeId, operName);
         return AjaxResult.success(message);
+    }
+
+    @PreAuthorize("@ss.hasPermi('business:number:export')")
+    @RequestMapping(value = "/exportByThemeId",method = RequestMethod.POST)
+    public void exportTheme(HttpServletResponse response, StarNftThemeInfo starNftThemeInfo) throws IOException {
+        List<UserInfo> userInfos = userThemeService.selectHasThemeUser(starNftThemeInfo.getId());
+        ExcelUtil<UserInfo> util = new ExcelUtil<UserInfo>(UserInfo.class);
+        util.exportEasyExcel(response, userInfos, "藏品数据");
     }
 
     @PostMapping("/importTemplate")

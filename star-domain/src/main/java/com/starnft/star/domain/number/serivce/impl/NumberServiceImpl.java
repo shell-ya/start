@@ -25,11 +25,9 @@ import com.starnft.star.domain.number.repository.INumberRepository;
 import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.raising.service.IRaisingService;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
-import springfox.documentation.spring.web.json.Json;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -375,7 +373,7 @@ public class NumberServiceImpl implements INumberService {
 
         // ================================= 排序 =================================
         // 1、判断基价是否存在，如果不存在，则放入redis，后期直接从redis取
-        Object basePriceObj = redisTemplate.opsForValue().get(RedisKey.DING_PRICE_DATA_BASE.getKey());
+        Object basePriceObj = redisTemplate.opsForValue().get(RedisKey.DING_PRICE_DATA_BASE.getKey() + DateUtil.today());
         if (Objects.isNull(basePriceObj)) {
             redisTemplate.opsForValue().set(RedisKey.DING_PRICE_DATA_BASE.getKey() + DateUtil.today(), JSONUtil.toJsonStr(numberDingList), RedisKey.DING_PRICE_DATA_BASE.getTime(), TimeUnit.HOURS);
             // 1.1、基价不存在，这里直接返回给盯链
