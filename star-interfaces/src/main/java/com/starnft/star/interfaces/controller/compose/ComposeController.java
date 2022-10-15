@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Api(tags = "合成接口「ComposeController」")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -37,7 +36,7 @@ public class ComposeController {
     @ApiOperation("合成列表")
     @TokenIgnore
     @PostMapping("list")
-    public RopResponse<List<ComposeRes>> list(@RequestBody  ComposeReq composeReq) {
+    public RopResponse<List<ComposeRes>> list(@RequestBody ComposeReq composeReq) {
         return RopResponse.success(composeService.composeList(composeReq));
     }
 
@@ -49,12 +48,13 @@ public class ComposeController {
 
     @ApiOperation("用户素材列表获取")
     @PostMapping("/user/material")
-    public RopResponse<ResponsePageResult<UserNumbersVO>> material(UserResolverInfo userResolverInfo, @RequestBody RequestConditionPage<UserMaterialReq>  reqRequestConditionPage) {
-        return RopResponse.success(composeCore.composeUserMaterial(userResolverInfo.getUserId(),reqRequestConditionPage));
+    public RopResponse<ResponsePageResult<UserNumbersVO>> material(UserResolverInfo userResolverInfo, @RequestBody RequestConditionPage<UserMaterialReq> reqRequestConditionPage) {
+        return RopResponse.success(composeCore.composeUserMaterial(userResolverInfo.getUserId(), reqRequestConditionPage));
     }
+
     @ApiOperation("合成操作")
     @PostMapping("/manage")
-    public RopResponse manage(UserResolverInfo userResolverInfo,@RequestBody ComposeManageReq composeManageReq) {
+    public RopResponse manage(UserResolverInfo userResolverInfo, @RequestBody ComposeManageReq composeManageReq) {
         if (!currentLimiter.tryAcquire()) {
             throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
         }

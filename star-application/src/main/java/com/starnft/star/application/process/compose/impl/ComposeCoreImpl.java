@@ -104,7 +104,9 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
         Long categoryId = userMaterialReq.getCondition().getCategoryId();
         ComposeCategoryRes composeCategoryRes = composeService.composeCategoryByCategoryId(categoryId);
         List<ComposeMaterialDTO> composeMaterials = JSONUtil.toList(composeCategoryRes.getComposeMaterial(), ComposeMaterialDTO.class);
+        //配置项中需要的合成主题id
         List<Long> themeIds = composeMaterials.stream().map(ComposeMaterialDTO::getThemeId).collect(Collectors.toList());
+        //前端传入的合成主题id
         List<Long> filterArray = themeIds.stream().filter(item -> item.equals(userMaterialReq.getCondition().getThemeId())).collect(Collectors.toList());
         Assert.isTrue(!filterArray.isEmpty(),()->new StarException("所选素材不在合成类目中"));
         ResponsePageResult<UserNumbersVO> userNumbersVOResponsePageResult = filterArray.size() == 1 && filterArray.get(0) < 128 ?
@@ -186,11 +188,11 @@ public class ComposeCoreImpl implements IComposeCore, ApplicationContextAware {
 //        try{
             //        //执行商品合成操作
             PrizeRes prizeRes = composePrizeStrategy.composePrize(composeManageReq, composePrizeDTO);
-            //修改藏品的状态
+            //修改藏品的状态 销毁编号
             Boolean modifyStatus = composeManageService.composeModifyUserNumberStatus(composeManageReq.getUserId(), userNumberIds, UserNumberStatusEnum.PURCHASED, UserNumberStatusEnum.DESTROY, NumberStatusEnum.SOLD, NumberStatusEnum.DESTROY, Boolean.TRUE);
             //物品流转状态
             Boolean circulationStatus = numberService.saveBatchNumberCirculationRecord(numberCirculations);
-            // 记录保存
+            // 记录合成保存
             Boolean recordStatus = composeManageService.saveComposeRecord(getComposeRecordDTO(composeManageReq, composeCategoryRes, composeUserNumberArrays, prizeRes));
 //        //封装返回数据
             log.info("prize:{}",prizeRes);

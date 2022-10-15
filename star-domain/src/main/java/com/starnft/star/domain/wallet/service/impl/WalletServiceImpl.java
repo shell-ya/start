@@ -11,7 +11,6 @@ import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.ResponsePageResult;
-import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.common.utils.WalletAddrGenerator;
 import com.starnft.star.domain.component.RedisLockUtils;
@@ -292,6 +291,7 @@ public class WalletServiceImpl implements WalletService {
                     throw new StarException(StarError.BALANCE_NOT_ENOUGH);
                 }
             }
+            //提现申请后用户钱包余额
             curr = new BigDecimal(String.valueOf(walletResult.getBalance().subtract(new BigDecimal(withDrawReq.getMoney()).abs())));
             Boolean isSuccess = template.execute(status -> {
                 //修改钱包余额

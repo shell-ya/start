@@ -37,7 +37,6 @@ public class RaisingTask {
 //    todo 3.昨日无成交记录无挂单无限制挂单
 //    4.涨停后下架该主题藏品，明日才可挂售
 //    5.寄售时返回涨停价
-//    todo 6.新放开寄售的藏品以官方价设为开盘价
 
     @XxlJob("raisingTask")
     public void raising() {
