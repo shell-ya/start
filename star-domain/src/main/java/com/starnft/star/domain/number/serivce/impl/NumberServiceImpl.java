@@ -23,16 +23,21 @@ import com.starnft.star.domain.number.model.vo.*;
 import com.starnft.star.domain.number.repository.INumberRepository;
 import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.raising.service.IRaisingService;
+import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
+import springfox.documentation.spring.web.json.Json;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class NumberServiceImpl implements INumberService {
     @Resource
@@ -337,21 +342,16 @@ public class NumberServiceImpl implements INumberService {
     @Override
     public List<NumberDingVO> getNumberDingList() {
 
-        Object redisManage = redisTemplate.opsForValue().get(RedisKey.DING_PRICE_MANAGE.getKey());
-        if (Objects.nonNull(redisManage)) {
-            return JSONUtil.toList(redisManage.toString(), NumberDingVO.class);
-        }
-        List<NumberDingVO> numberDingList = new ArrayList<>();
-//        for (NumberDingVO dingVo :
-//                numberDingList) {x
-//            if (dingVo.getName().startsWith("Pluviophile")){
-//                dingVo.setName(dingVo.getName().s);
-//            }
-//
+//        Object redisManage = redisTemplate.opsForValue().get(RedisKey.DING_PRICE_MANAGE.getKey());
+//        if (Objects.nonNull(redisManage)) {
+//            return JSONUtil.toList(redisManage.toString(), NumberDingVO.class);
 //        }
+        List<NumberDingVO> numberDingList = new ArrayList<>();
         List<ThemeDingVo> themeDingList = this.numberRepository.getThemeDingList();
+        log.info("themeDingList：{}", JSONUtil.toJsonStr(themeDingList));
         for (ThemeDingVo theme : themeDingList) {
             NumberDingVO numberDingVO = new NumberDingVO();
+            numberDingVO.setId(theme.getId());
             numberDingVO.setImage(theme.getImage());
             numberDingVO.setName(theme.getName().contains("Pluviophile ") ? theme.getName().substring(12) : theme.getName());
             //返回价格为空 去判断当日是否涨停 涨停显示涨停价 未涨停显示开盘价
@@ -368,8 +368,35 @@ public class NumberServiceImpl implements INumberService {
             numberDingList.add(numberDingVO);
         }
 
-        redisTemplate.opsForValue().set(RedisKey.DING_PRICE_MANAGE.getKey(), JSONUtil.toJsonStr(numberDingList), RedisKey.DING_PRICE_MANAGE.getTime(), TimeUnit.SECONDS);
-        return numberDingList;
+        // 跟薛明阳确认过，盯链调用价格接口频率为1分钟一次，所以注释掉上面的缓存逻辑
+        // redisTemplate.opsForValue().set(RedisKey.DING_PRICE_MANAGE.getKey(), JSONUtil.toJsonStr(numberDingList), RedisKey.DING_PRICE_MANAGE.getTime(), TimeUnit.SECONDS);
+
+
+        // ================================= 排序 =================================
+        // 1、判断基价是否存在，如果不存在，则放入redis，后期直接从redis取
+        Object basePriceObj = redisTemplate.opsForValue().get(RedisKey.DING_PRICE_DATA_BASE.getKey());
+        if (Objects.isNull(basePriceObj)) {
+            redisTemplate.opsForValue().set(RedisKey.DING_PRICE_DATA_BASE.getKey(), JSONUtil.toJsonStr(numberDingList), RedisKey.DING_PRICE_DATA_BASE.getTime(), TimeUnit.HOURS);
+            // 1.1、基价不存在，这里直接返回给盯链
+            return numberDingList;
+        } else {
+            // 1.2、基价存在，对比基价，判断涨跌
+            List<NumberDingVO> basePriceList = JSONUtil.toList(basePriceObj.toString(), NumberDingVO.class);
+            log.info("基准价：{}", JSONUtil.toJsonStr(basePriceList));
+            Map<Long, NumberDingVO> basePriceMap = basePriceList.stream().collect(Collectors.toMap(NumberDingVO::getId, o -> o, (k1, k2) -> k1));
+            numberDingList.forEach(item -> {
+                NumberDingVO baseVO = basePriceMap.get(item.getId());
+                BigDecimal basePrice = Optional.ofNullable(baseVO).map(NumberDingVO::getPrice).orElse(BigDecimal.valueOf(0));
+                if (item.getPrice().compareTo(basePrice) > 0) {
+                    item.setRank(2);
+                } else {
+                    item.setRank(1);
+                }
+            });
+            // 1.3、最后按照rank排序
+            numberDingList.sort(Comparator.comparing(NumberDingVO::getRank).reversed());
+            return numberDingList;
+        }
     }
 
     private UserThemeMappingVO createMapping(HandoverReq handoverReq) {

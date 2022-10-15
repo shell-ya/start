@@ -6,6 +6,7 @@ import com.starnft.star.domain.number.model.vo.NumberDingVO;
 import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +34,7 @@ public class DingChainController {
      */
     @GetMapping("panel")
     @TokenIgnore
+    @ApiOperation(value = "01、价格")
     public List<NumberDingVO> panel(){
         return iNumberService.getNumberDingList();
     }
@@ -43,6 +45,7 @@ public class DingChainController {
      */
     @GetMapping("bulletin")
     @TokenIgnore
+    @ApiOperation(value = "02、公告")
     public List<DingBulletinVo> bulletin(){
         return bulletinService.queryDingBulletin();
     }

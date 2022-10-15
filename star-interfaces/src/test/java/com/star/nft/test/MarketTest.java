@@ -1,5 +1,6 @@
 package com.star.nft.test;
 
+import cn.hutool.json.JSONUtil;
 import com.starnft.star.application.mq.IMessageSender;
 import com.starnft.star.application.mq.constant.TopicConstants;
 import com.starnft.star.application.process.article.impl.UserArticleCoreImpl;
@@ -13,12 +14,14 @@ import com.starnft.star.application.process.order.model.req.OrderPayReq;
 import com.starnft.star.application.process.order.white.rule.WhiteRuleContext;
 import com.starnft.star.application.process.task.activity.ActivitiesTask;
 import com.starnft.star.common.constant.RedisKey;
+import com.starnft.star.common.utils.JsonUtil;
 import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.article.model.req.UserHaveNumbersReq;
 import com.starnft.star.domain.notify.model.req.NotifyOrderReq;
 import com.starnft.star.domain.notify.service.NotifyOrderService;
 import com.starnft.star.domain.number.model.req.NumberConsignmentCancelRequest;
 import com.starnft.star.domain.number.model.req.NumberConsignmentRequest;
+import com.starnft.star.domain.number.model.vo.NumberDingVO;
 import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.order.model.res.OrderListRes;
 import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
@@ -37,6 +40,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -67,8 +71,9 @@ public class MarketTest {
 
     @Resource
     private UserArticleCoreImpl userArticleCore;
+
     @Test
-    public void article(){
+    public void article() {
         UserHaveNumbersReq userHaveNumbersReq = new UserHaveNumbersReq();
         userHaveNumbersReq.setUserId(536952750L);
         userHaveNumbersReq.setThemeId(1002287375767941120L);
@@ -78,18 +83,21 @@ public class MarketTest {
         userHaveNumbersReq.setPage(1);
         this.userArticleCore.obtainUserArticleNumberInfo(userHaveNumbersReq);
     }
+
     @Test
-    public void ding(){
-        numberService.getNumberDingList();
+    public void ding() {
+        List<NumberDingVO> numberDingList = numberService.getNumberDingList();
+        log.info("result:{}", JSONUtil.toJsonStr(numberDingList));
     }
 
     @Test
-    public void detail(){
+    public void detail() {
         ConsignDetailRes consignDetailRes = numberCore.obtainConsignDetail(1002368047951077376L);
 
     }
+
     @Test
-    public void mqNotify(){
+    public void mqNotify() {
 
         PayCheckRes payCheckRes = new PayCheckRes();
         payCheckRes.setOrderSn("1026959833821249537");
@@ -121,16 +129,17 @@ public class MarketTest {
                 sendResult -> notifyOrderService.sendStatus(payCheckRes.getOrderSn(), 1001L),
                 () -> notifyOrderService.sendStatus(payCheckRes.getOrderSn(), 1002L));
     }
+
     @Test
-    public void add(){
+    public void add() {
         Long add = redisTemplate.opsForSet().add(RedisKey.GIVEN_MANAGE_CONFIG.getKey(), "1009469098485923840");
 //        redisTemplate.opsForValue().setBit(String.format(RedisKey.GIVEN_MANAGE_BIT_CONFIG.getKey(), 1009469098485923840L), 536952750L, true);
 
     }
 
     @Test
-    public void whihte(){
-        whiteRuleContext.loadRuleClass("1006594638578057216","worldCreationWhiteRule");
+    public void whihte() {
+        whiteRuleContext.loadRuleClass("1006594638578057216", "worldCreationWhiteRule");
     }
 
     @Test
@@ -144,11 +153,11 @@ public class MarketTest {
     }
 
     @Test
-    public void cancelConsigment(){
+    public void cancelConsigment() {
         NumberConsignmentCancelRequest numberConsignmentCancelRequest = new NumberConsignmentCancelRequest();
         numberConsignmentCancelRequest.setNumberId(994398100683149312L);
         numberConsignmentCancelRequest.setUid(409412742L);
-        assert  numberCore.consignmentCancel(numberConsignmentCancelRequest);
+        assert numberCore.consignmentCancel(numberConsignmentCancelRequest);
     }
 
     @Test
@@ -192,16 +201,16 @@ public class MarketTest {
     }
 
     @Test
-    public void task(){
+    public void task() {
         activitiesTask.loadActivities();
     }
 
     @Test
-    public void userlogin(){
+    public void userlogin() {
         UserLoginDTO userLoginDTO = new UserLoginDTO();
         userLoginDTO.setLoginScenes(1);
 
-        userLoginDTO.setPassword(   StarUtils.getSHA256Str("Zz1208084818"));
+        userLoginDTO.setPassword(StarUtils.getSHA256Str("Zz1208084818"));
         userLoginDTO.setPhone("18332204521");
         userService.login(userLoginDTO);
     }
@@ -217,12 +226,12 @@ public class MarketTest {
 //
 //        sleep(15L);
         OrderListRes orderListRes = orderProcessor.obtainSecKillOrder(orderGrabReq);
-        log.info("order:{}",orderListRes.toString());
+        log.info("order:{}", orderListRes.toString());
     }
 
     @Test
-    public void number(){
+    public void number() {
 
-        numberCore.putNumber(1006594638578057216L,"2022081120","2022081121",200,48);
+        numberCore.putNumber(1006594638578057216L, "2022081120", "2022081121", 200, 48);
     }
 }
