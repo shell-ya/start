@@ -21,4 +21,6 @@ public interface IWhiteService {
     String importWhiteDetail(List<WhiteDetailVo> whiteDetailVos, Long whiteId);
 
     WhiteListConfig getOneConfig(Long whiteId);
+
+    int updateWhiteConfig(WhiteListConfig whiteListConfig);
 }

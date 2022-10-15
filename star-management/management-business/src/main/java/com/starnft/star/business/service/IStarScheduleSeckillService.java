@@ -64,4 +64,7 @@ public interface IStarScheduleSeckillService
      * @return 结果
      */
     public int deleteStarScheduleSeckillById(Long id);
+
+    public int takeDownStock(Long id,Integer downType);
+
 }

@@ -3,7 +3,6 @@ package com.starnft.star.admin.web.controller.business;
 
 import com.starnft.star.business.domain.WhiteListConfig;
 import com.starnft.star.business.domain.WhiteListDetail;
-import com.starnft.star.business.domain.vo.StarScheduleSeckillVo;
 import com.starnft.star.business.domain.vo.WhiteDetailVo;
 import com.starnft.star.business.service.IWhiteService;
 import com.starnft.star.common.annotation.Log;
@@ -72,6 +71,12 @@ public class WhiteController extends BaseController {
     @PostMapping("/addWhite")
     public AjaxResult addWhite(@RequestBody WhiteListConfig whiteListConfig){
         return AjaxResult.success(whiteService.insertWhiteConfig(whiteListConfig));
+    }
+
+    @PreAuthorize("@ss.hasPermi('business:white:list')")
+    @PostMapping("/updateWhite")
+    public AjaxResult updateWhite(@RequestBody WhiteListConfig whiteListConfig){
+        return AjaxResult.success(whiteService.updateWhiteConfig(whiteListConfig));
     }
 
 }

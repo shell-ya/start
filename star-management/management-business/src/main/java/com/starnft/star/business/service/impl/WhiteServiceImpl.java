@@ -102,7 +102,7 @@ public class WhiteServiceImpl implements IWhiteService {
                 WhiteListDetail detail = whiteListDetailMapper.selectMappingWhite(whiteId, item.getUserId());
                 if (detail == null){
                     detail = new WhiteListDetail();
-                    detail.setWhiteId(whiteId.intValue());
+                    detail.setWhiteId(whiteId);
                     detail.setUid(item.getUserId().intValue());
                     detail.setVersion(0);
                     detail.setSurplusTimes(item.getSurplusTime());
@@ -139,6 +139,11 @@ public class WhiteServiceImpl implements IWhiteService {
     public WhiteListConfig getOneConfig(Long whiteId){
         WhiteListConfig whiteListConfig = whiteListConfigMapper.queryById(whiteId);
         return whiteListConfig;
+    }
+
+    @Override
+    public int updateWhiteConfig(WhiteListConfig whiteListConfig) {
+        return whiteListConfigMapper.updateById(whiteListConfig);
     }
 
 }

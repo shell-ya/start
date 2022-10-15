@@ -9,7 +9,6 @@ import com.starnft.star.business.domain.vo.RandomAirdrop;
 import com.starnft.star.business.mapper.*;
 import com.starnft.star.business.service.IAirdropThemeRecordService;
 import com.starnft.star.common.constant.RedisKey;
-import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.ServiceException;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
@@ -24,10 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.Serializable;
-import java.lang.reflect.Executable;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -182,7 +178,13 @@ public class AirdropThemeRecordServiceImpl implements IAirdropThemeRecordService
                     if (Objects.isNull(themeInfo)){
                         failureNum++;
                         failureMsg.append("<br/>主题").append(item.getSeriesThemeId()).append("不存在");
+                        continue;
+                    }else if (!themeInfo.getSeriesId().equals(item.getSeriesId())){
+                        failureNum++;
+                        failureMsg.append("<br/>系列id与传入参数不等").append(item.getSeriesThemeId()).append("不存在");
+                        continue;
                     }
+
                     Long numberId= null;
                     Integer themeNumber = null;
 

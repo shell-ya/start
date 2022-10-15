@@ -51,7 +51,6 @@
                end_time
         from white_list_config
         where id = #{id}
-          and effective = 1
         and is_deleted = 0
     </select>
 

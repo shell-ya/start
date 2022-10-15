@@ -101,6 +101,9 @@ public class StarScheduleSeckillVo extends BaseEntity
     @Excel(name = "乐观锁")
     private Long version;
 
+    /** 未售出 */
+    private Integer unsoldNum;
+
     public void setId(Long id)
     {
         this.id = id;
@@ -308,5 +311,13 @@ public class StarScheduleSeckillVo extends BaseEntity
 
     public void setPublisher(String publisher) {
         this.publisher = publisher;
+    }
+
+    public Integer getUnsoldNum() {
+        return unsoldNum;
+    }
+
+    public void setUnsoldNum(Integer unsoldNum) {
+        this.unsoldNum = unsoldNum;
     }
 }

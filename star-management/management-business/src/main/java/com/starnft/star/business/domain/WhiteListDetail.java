@@ -25,7 +25,7 @@ public class WhiteListDetail  implements Serializable {
      * 白名单id
      */
     @ApiModelProperty(name = "白名单id", notes = "")
-    private Integer whiteId;
+    private Long whiteId;
     /**
      * 用户id
      */
