@@ -48,10 +48,13 @@ public class RaisingTask {
             //以当前时间查询昨日成交价
             List<BigDecimal> prices = orderService.dealOrderPrice(theme.getThemeInfoId(), DateUtil.addDateHour(new Date(), -24));
             //昨日成交不为空 取中位值
-            if (!prices.isEmpty()) theme.setFloorPrice(prices.get(prices.size() / 2));
-            //挂售中最低价
-            BigDecimal minPrice = numberService.getconsignMinPrice(theme.getThemeInfoId());
-            if (null != minPrice)  theme.setFloorPrice(minPrice);
+            if (!prices.isEmpty()) {
+                theme.setFloorPrice(prices.get(prices.size() / 2));
+            }else{
+                //挂售中最低价
+                BigDecimal minPrice = numberService.getconsignMinPrice(theme.getThemeInfoId());
+                if (null != minPrice)  theme.setFloorPrice(minPrice);
+            }
             //存藏品开盘价 涨停价 开盘日期
             raisingService.saveRaising(theme);
         }

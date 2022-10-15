@@ -2,6 +2,7 @@ package com.star.nft.test;
 
 import com.starnft.star.application.mq.IMessageSender;
 import com.starnft.star.application.mq.constant.TopicConstants;
+import com.starnft.star.application.process.article.impl.UserArticleCoreImpl;
 import com.starnft.star.application.process.number.INumberCore;
 import com.starnft.star.application.process.number.req.MarketOrderReq;
 import com.starnft.star.application.process.number.res.ConsignDetailRes;
@@ -13,6 +14,7 @@ import com.starnft.star.application.process.order.white.rule.WhiteRuleContext;
 import com.starnft.star.application.process.task.activity.ActivitiesTask;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.utils.StarUtils;
+import com.starnft.star.domain.article.model.req.UserHaveNumbersReq;
 import com.starnft.star.domain.notify.model.req.NotifyOrderReq;
 import com.starnft.star.domain.notify.service.NotifyOrderService;
 import com.starnft.star.domain.number.model.req.NumberConsignmentCancelRequest;
@@ -63,6 +65,19 @@ public class MarketTest {
 
     final INumberService numberService;
 
+    @Resource
+    private UserArticleCoreImpl userArticleCore;
+    @Test
+    public void article(){
+        UserHaveNumbersReq userHaveNumbersReq = new UserHaveNumbersReq();
+        userHaveNumbersReq.setUserId(536952750L);
+        userHaveNumbersReq.setThemeId(1002287375767941120L);
+        userHaveNumbersReq.setStatus(1);
+        userHaveNumbersReq.setThemeType(1);
+        userHaveNumbersReq.setSize(10);
+        userHaveNumbersReq.setPage(1);
+        this.userArticleCore.obtainUserArticleNumberInfo(userHaveNumbersReq);
+    }
     @Test
     public void ding(){
         numberService.getNumberDingList();

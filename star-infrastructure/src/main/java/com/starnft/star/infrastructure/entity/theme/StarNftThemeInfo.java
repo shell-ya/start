@@ -146,6 +146,10 @@ public class StarNftThemeInfo implements Serializable {
     @TableField(value = "is_resale")
     private Integer isResale;
 
+    /** 开放涨停板     */
+    @TableField(value = "raising_flag")
+    private Integer raisingFlag;
+
     private static final long serialVersionUID = 1L;
 
     public static final String COL_ID = "id";

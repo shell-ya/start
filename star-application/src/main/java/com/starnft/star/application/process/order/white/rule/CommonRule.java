@@ -19,7 +19,9 @@ public class CommonRule extends AbstractWhiteRule {
 
     @Override
     public boolean verifyRule(Long uid, Long themeId) {
+        //主题优先购
         WhiteListConfigVO whiteListConfigVO = service.obtainWhiteConfig(themeId);
+        //通用优先购
         WhiteListConfigVO commonWhiteListConfig = service.obtainWhiteConfig(1001L);
 
         if (whiteListConfigVO == null && commonWhiteListConfig == null) {

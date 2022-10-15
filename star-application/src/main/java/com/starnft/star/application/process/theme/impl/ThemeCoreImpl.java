@@ -141,7 +141,7 @@ public class ThemeCoreImpl implements ThemeCore {
                     themeGoodsVO.setRaisingFlag(Boolean.TRUE);
                     themeGoodsVO.setRaisingMsg(RaisingConfig.getRaisingMsg());
                 }
-                if (null == themeGoodsVO.getFloor()){
+                if (null == themeGoodsVO.getFloor() && Objects.nonNull(raisingTheme)){
                     themeGoodsVO.setFloor(raisingTheme.getLimitPrice());
                 }
                 themeGoodsVOS.add(themeGoodsVO);

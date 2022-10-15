@@ -274,6 +274,7 @@
         WHERE
             market_open_time &lt;= now()
           AND is_resale = 1
+          and raising_flag = 1
         GROUP BY
             id
     </select>

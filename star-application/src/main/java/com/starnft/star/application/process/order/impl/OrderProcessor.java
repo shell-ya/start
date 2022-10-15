@@ -3,7 +3,6 @@ package com.starnft.star.application.process.order.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Assert;
-import cn.hutool.core.util.IdUtil;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -270,6 +269,7 @@ public class OrderProcessor implements IOrderProcessor {
         String lockKey = String.format(RedisKey.SECKILL_ORDER_TRANSACTION.getKey(), orderPayReq.getOrderSn());
         Boolean lock = redisLockUtils.lock(lockKey, RedisKey.SECKILL_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.SECKILL_ORDER_TRANSACTION.getTime()));
         Assert.isTrue(lock, () -> new StarException(StarError.PAY_PROCESS_ERROR));
+        //云账号支付
         if (orderPayReq.getChannel().equals(StarConstants.PayChannel.CloudAccount.name())) {
             PaymentRes results = paymentService.pay(buildPayReq(createWalletPayReq(orderPayReq)));
             return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn(), results);
@@ -300,6 +300,7 @@ public class OrderProcessor implements IOrderProcessor {
         } catch (TransactionException | StarException e) {
             throw new RuntimeException(e);
         } finally {
+            redisLockUtils.unlock(lockKey);
             walletService.threadClear();
         }
     }
