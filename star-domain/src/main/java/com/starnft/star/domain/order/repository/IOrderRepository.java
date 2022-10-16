@@ -40,4 +40,6 @@ public interface IOrderRepository {
     OrderVO queryOrder(String orderSn);
 
     List<BigDecimal> queryDealOrderPrice(Long themeInfoId, Date date);
+
+    boolean noSuccessOrderByTheme(Long themeInfoId, Date morning, Date night);
 }

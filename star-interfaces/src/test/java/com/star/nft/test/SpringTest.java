@@ -105,7 +105,7 @@ public class SpringTest {
 
     @Test
     public void falg(){
-        task.raising();
+        task.checkRaisin();
     }
 
 

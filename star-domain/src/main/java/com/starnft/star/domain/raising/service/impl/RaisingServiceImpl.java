@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class RaisingServiceImpl implements IRaisingService {
@@ -31,6 +32,13 @@ public class RaisingServiceImpl implements IRaisingService {
         Date first = DateUtil.toDayStartHour(DateUtil.getDaDate()); //凌晨
         Date late = DateUtil.addDateHour(first, 23);
         return raisingDetailRepository.nowRaisingTheme(themeInfoId, first, late);
+    }
+
+    @Override
+    public List<RaisingTheme> nowRaisingThemeList() {
+        Date first = DateUtil.toDayStartHour(DateUtil.getDaDate()); //凌晨
+        Date late = DateUtil.addDateHour(first, 23);
+        return raisingDetailRepository.nowListRaisingTheme(first,late);
     }
 
     @Override

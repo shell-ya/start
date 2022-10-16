@@ -13,6 +13,7 @@ import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.order.model.vo.OrderVO;
 import com.starnft.star.domain.order.repository.BuyNum;
 import com.starnft.star.domain.order.repository.IOrderRepository;
+import com.starnft.star.infrastructure.entity.BaseEntity;
 import com.starnft.star.infrastructure.entity.order.StarNftOrder;
 import com.starnft.star.infrastructure.mapper.order.StarNftOrderMapper;
 import org.apache.commons.lang3.StringUtils;
@@ -206,6 +207,15 @@ public class OrderRepository implements IOrderRepository {
     @Override
     public List<BigDecimal> queryDealOrderPrice(Long themeInfoId,Date date) {
         return starNftOrderMapper.dealOrderPrice(themeInfoId,date);
+    }
+
+    @Override
+    public boolean noSuccessOrderByTheme(Long themeInfoId, Date morning, Date night) {
+        LambdaQueryWrapper<StarNftOrder> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(StarNftOrder::getSeriesThemeInfoId,themeInfoId);
+        wrapper.eq(StarNftOrder::getStatus,StarConstants.ORDER_STATE.COMPLETED.getCode());
+        wrapper.between(BaseEntity::getCreatedAt,morning,night);
+        return starNftOrderMapper.selectList(wrapper).isEmpty();
     }
 
     private StarNftOrder queryOrder(Long uid, String orderSn) {

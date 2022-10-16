@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class RaisingDetailRepository implements IRaisingDetailRepository {
@@ -81,6 +82,16 @@ public class RaisingDetailRepository implements IRaisingDetailRepository {
     @Override
     public RaisingTheme getNowRaisingByTheme(Long themeInfoId, Date first, Date late) {
         return null;
+    }
+
+    @Override
+    public List<RaisingTheme> nowListRaisingTheme(Date first, Date late) {
+        LambdaQueryWrapper<StarRaisingDetail> wrapper = new LambdaQueryWrapper<>();
+        wrapper.between(StarRaisingDetail::getCreatedAt,first,late);
+        wrapper.orderByDesc(StarRaisingDetail::getCreatedAt);
+        List<StarRaisingDetail> starRaisingDetails = raisingDetailMapper.selectList(wrapper);
+        return starRaisingDetails.stream().map(this::coverTheme).collect(Collectors.toList());
+
     }
 
     public RaisingTheme coverTheme(StarRaisingDetail detail){

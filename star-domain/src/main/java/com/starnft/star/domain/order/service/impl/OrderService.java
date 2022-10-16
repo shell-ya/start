@@ -188,5 +188,10 @@ public class OrderService implements IOrderService {
         return orderRepository.queryDealOrderPrice(themeInfoId,date);
     }
 
+    @Override
+    public boolean noSuccessOrder(Long themeInfoId, Date morning, Date night) {
+        return orderRepository.noSuccessOrderByTheme(themeInfoId,morning,night);
+    }
+
 
 }

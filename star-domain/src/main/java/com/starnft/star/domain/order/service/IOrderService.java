@@ -47,4 +47,6 @@ public interface IOrderService {
     List<BuyNum>queryUserBuyBoxNumber();
 
     List<BigDecimal> dealOrderPrice(Long themeInfoId, Date date);
+
+    boolean noSuccessOrder(Long themeInfoId, Date morning, Date night);
 }

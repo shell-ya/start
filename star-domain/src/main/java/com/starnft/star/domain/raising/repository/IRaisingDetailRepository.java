@@ -4,6 +4,7 @@ import com.starnft.star.domain.number.model.vo.RaisingTheme;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public interface IRaisingDetailRepository {
 
@@ -18,4 +19,6 @@ public interface IRaisingDetailRepository {
     boolean updateFlag(Long themeInfoId, Date first, Date late);
 
     RaisingTheme getNowRaisingByTheme(Long themeInfoId, Date first, Date late);
+
+    List<RaisingTheme> nowListRaisingTheme(Date first, Date late);
 }

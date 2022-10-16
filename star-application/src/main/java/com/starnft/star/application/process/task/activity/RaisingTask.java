@@ -2,7 +2,6 @@ package com.starnft.star.application.process.task.activity;
 
 import com.starnft.star.common.utils.DateUtil;
 import com.starnft.star.domain.number.model.vo.RaisingTheme;
-import com.starnft.star.domain.number.model.vo.ThemeNumberVo;
 import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.order.service.IOrderService;
 import com.starnft.star.domain.raising.service.IRaisingService;
@@ -54,30 +53,36 @@ public class RaisingTask {
                 BigDecimal minPrice = numberService.getconsignMinPrice(theme.getThemeInfoId());
                 if (null != minPrice)  theme.setFloorPrice(minPrice);
             }
+            //昨日无成交记录无挂单无限制挂单
+            if (null == theme.getFloorPrice()) continue;
             //存藏品开盘价 涨停价 开盘日期
             raisingService.saveRaising(theme);
         }
     }
 
-    //挂售中藏品已是当日涨停价
+    //有成交记录后 挂售中藏品已是当日涨停价
     //设置为已涨停 下架该主题市场挂售藏品
     @XxlJob("checkRaisin")
     public void checkRaisin() {
-        //目前挂售最低价
-        List<ThemeNumberVo> minNumbers = numberService.getMinConsignNumberDetail();
-        //查询主题当日涨停价
-        for (ThemeNumberVo numberVo :
-                minNumbers) {
+        //查询当日开启涨停的主题
+        List<RaisingTheme> raisingThemes = raisingService.nowRaisingThemeList();
+        for (RaisingTheme theme :
+                raisingThemes) {
+            //查询该主题当日成交金额
+            Date morning = DateUtil.toDayStartHour(DateUtil.getDaDate());//凌晨
+            Date night = DateUtil.addDateHour(morning, 24);
+            //没有成交不检查低价触发涨停版
+            if(orderService.noSuccessOrder(theme.getThemeInfoId(),morning,night)) continue;
+            BigDecimal consignMinPrice = numberService.getconsignMinPrice(theme.getThemeInfoId());
             //地板价已到涨停价
-            RaisingTheme raisingTheme = raisingService.nowRaisingTheme(numberVo.getThemeInfoId());
-            if (Objects.nonNull(raisingTheme) &&
-                    numberVo.getPrice().compareTo(raisingTheme.getLimitPrice()) >= 0 &&
-                    raisingTheme.getIsRaising().equals(Boolean.FALSE)) {
+            if (Objects.nonNull(consignMinPrice) &&
+                    consignMinPrice.compareTo(theme.getLimitPrice()) >= 0 &&
+                    theme.getIsRaising().equals(Boolean.FALSE)){
                 template.execute(status -> {
                     //更新主题当日涨停涨停标志
-                    boolean flag = raisingService.updateRaisingFlag(numberVo.getThemeInfoId());
+                    boolean flag = raisingService.updateRaisingFlag(theme.getThemeInfoId());
                     //下架挂售藏品
-                    boolean takeDown = numberService.takeDownTheme(numberVo.getThemeInfoId());
+                    boolean takeDown = numberService.takeDownTheme(theme.getThemeInfoId());
                     return flag && takeDown;
                 });
             }

@@ -267,8 +267,7 @@
     <select id="nowRaisingTheme" resultType="com.starnft.star.domain.number.model.vo.RaisingTheme">
         SELECT
             id AS themeInfoId,
-            theme_name AS themeName,
-            lssue_price AS floorPrice
+            theme_name AS themeName
         FROM
             star_nft_theme_info
         WHERE
