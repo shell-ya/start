@@ -10,6 +10,7 @@ import com.starnft.star.business.service.IStarNftUserThemeService;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.utils.redis.RedisUtil;
 import com.starnft.star.quartz.task.RyTask;
+import com.starnft.star.quartz.task.SnapshotTask;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ import java.util.List;
 public class AirdropTest {
 
     private final RyTask task;
+
+    private final SnapshotTask snapshotTask;
     private final IAirdropThemeRecordService airdropThemeRecordService;
     private final INftWalletService walletService;
 
@@ -37,9 +40,10 @@ public class AirdropTest {
 
     private final IStarNftUserThemeService userThemeService;
     @Autowired
-    public AirdropTest(RyTask task, IAirdropThemeRecordService airdropThemeRecordService, INftWalletService walletService,
+    public AirdropTest(RyTask task, SnapshotTask snapshotTask, IAirdropThemeRecordService airdropThemeRecordService, INftWalletService walletService,
                        RedisUtil redisUtil, IStarNftUserThemeService userThemeService) {
         this.task = task;
+        this.snapshotTask = snapshotTask;
         this.airdropThemeRecordService = airdropThemeRecordService;
         this.walletService = walletService;
         this.redisUtil = redisUtil;
@@ -48,8 +52,9 @@ public class AirdropTest {
 
     @Test
     public void kuai(){
-        task.kuai("1002285892654821376");
-        task.kuai("1019307554112081920");
+//        snapshotTask.snapshot("1");
+//        task.kuai("1002285892654821376");
+//        task.kuai("1019307554112081920");
 //        task.seriesKuai("4,2022-10-01 00:00:00");
 //        task.rongKuai("1018893571988279296,1018893757880168448,1018893901310205952,1018894079577243648");
     }

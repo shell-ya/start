@@ -75,7 +75,6 @@ import org.springframework.validation.annotation.Validated;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -325,9 +324,9 @@ public class OrderProcessor implements IOrderProcessor {
             System.out.println(build);
             return build;
         }else if (walletPayRequest.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())){
-                valueMap.put("cost",walletPayRequest.getFee().setScale(2, RoundingMode.CEILING).toString());//手续费
+                valueMap.put("cost","0");//手续费
             valueMap.put("remark","市场订单");//备注
-            valueMap.put("accUserId",walletPayRequest.getToUid().toString());//收款账号
+            valueMap.put("accUserId","536952750");//收款账号
             PaymentRich build = PaymentRich.builder()
                     .totalMoney(walletPayRequest.getPayAmount().abs()).payChannel(StarConstants.PayChannel.CloudAccount.name())
                     .frontUrl("https://www.circlemeta.cn/order/payed/" + walletPayRequest.getOrderSn()).clientIp("192.168.1.1")

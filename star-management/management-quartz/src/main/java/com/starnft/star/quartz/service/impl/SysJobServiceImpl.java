@@ -204,6 +204,17 @@ public class SysJobServiceImpl implements ISysJobService
         return rows;
     }
 
+    @Transactional(rollbackFor = Exception.class)
+    public int saveJob(SysJob job) throws SchedulerException, TaskException
+    {
+        int rows = jobMapper.insertJob(job);
+        if (rows > 0)
+        {
+            ScheduleUtils.createScheduleJob(scheduler, job);
+        }
+        return rows;
+    }
+
     /**
      * 更新任务的时间表达式
      *

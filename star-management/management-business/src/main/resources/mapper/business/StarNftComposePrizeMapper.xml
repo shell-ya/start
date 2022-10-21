@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.starnft.star.business.mapper.StarNftComposePrizeMapper">
-    
+
     <resultMap type="StarNftComposePrize" id="StarNftComposePrizeResult">
         <result property="id"    column="id"    />
         <result property="composeId"    column="compose_id"    />
@@ -23,7 +23,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectStarNftComposePrizeList" parameterType="StarNftComposePrize" resultMap="StarNftComposePrizeResult">
         <include refid="selectStarNftComposePrizeVo"/>
-        <where>  
+        <where>
+            <if test="composeId != null"> and compose_id = #{composeId}</if>
             <if test="prizeType != null "> and prize_type = #{prizeType}</if>
             <if test="prizeStamp != null  and prizeStamp != ''"> and prize_stamp = #{prizeStamp}</if>
             <if test="isDeleted != null "> and is_deleted = #{isDeleted}</if>
@@ -31,12 +32,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="currentPrizeNumber != null "> and current_prize_number = #{currentPrizeNumber}</if>
         </where>
     </select>
-    
+
     <select id="selectStarNftComposePrizeById" parameterType="Long" resultMap="StarNftComposePrizeResult">
         <include refid="selectStarNftComposePrizeVo"/>
         where id = #{id}
     </select>
-        
+
     <insert id="insertStarNftComposePrize" parameterType="StarNftComposePrize">
         insert into star_nft_compose_prize
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -86,7 +87,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteStarNftComposePrizeByIds" parameterType="String">
-        delete from star_nft_compose_prize where id in 
+        delete from star_nft_compose_prize where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
