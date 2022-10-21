@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -39,8 +40,11 @@ public class NewNotifyController {
     @ApiOperation("用户转账（C2C）-04010003 回调")
     @RequestMapping(path = "c2cTransNotify", method = {RequestMethod.GET, RequestMethod.POST})
     public String c2cTransNotify(HttpServletRequest req) {
+
         log.info("[c2cTransNotify]收到回调通知.....");
+        // 1、验签
         Map<String, String[]> parameterMap = req.getParameterMap();
+        C2CTransNotifyBO c2CTransNotifyBO = null;
         if (parameterMap != null && !parameterMap.isEmpty()) {
             String data = req.getParameter("data");
             String sign = req.getParameter("sign");
@@ -49,7 +53,8 @@ public class NewNotifyController {
             log.info("sign====>{}", sign);
             log.info("signType====>{}", signType);
             if (StrUtil.isBlank(data) || StrUtil.isBlank(sign) || StrUtil.isBlank(signType)) {
-                return "参数为空....";
+                log.error("回调参数为空....");
+                return "回调参数为空....";
             }
 
             try {
@@ -66,25 +71,8 @@ public class NewNotifyController {
                 boolean valid = (boolean) method.invoke(o, jsonObject);
                 if (valid) {//验签成功
                     log.info("verify sign success....");
-                    C2CTransNotifyBO c2CTransNotifyBO = JSONUtil.toBean(data, C2CTransNotifyBO.class);
+                    c2CTransNotifyBO = JSONUtil.toBean(data, C2CTransNotifyBO.class);
                     log.info("接收到的异步通知数据为：{}", JSONUtil.toJsonStr(c2CTransNotifyBO));
-
-                    // 唯一锁
-                    String lockKey = "lockKey_" + c2CTransNotifyBO.getSandSerialNo() + "_" + c2CTransNotifyBO.getOrderNo();
-                    String lockId = null;
-                    try {
-                        lockId = redisDistributedLock.lock(lockKey, 10, 10, TimeUnit.SECONDS);
-                        // 这里处理业务逻辑 todo
-
-
-                    } catch (Exception e) {
-                        log.error("系统繁忙，请稍后操作：{}", e.getMessage(), e);
-                        return "系统繁忙，请稍后操作!";
-                    } finally {
-                        redisDistributedLock.releaseLock(lockKey, lockId);
-                    }
-
-                    return "respCode=000000";
                 } else {//如果验签失败
                     log.error("verify sign fail....");
                     log.error("验签失败的签名字符串(data)为：{}", data);
@@ -92,11 +80,31 @@ public class NewNotifyController {
                 }
             } catch (Exception e) {
                 log.error("系统错误：{}", e.getMessage(), e);
+                return "系统错误";
             }
         } else {
             return "未获取到参数...";
         }
-        return "回调异常...";
+        if (Objects.isNull(c2CTransNotifyBO)) {
+            log.error("验签之后BO对象为空，跳过处理...");
+            return "验签失败....";
+        }
+
+        // 2、处理业务逻辑
+        String lockKey = "lockKey_" + c2CTransNotifyBO.getSandSerialNo() + "_" + c2CTransNotifyBO.getOrderNo();
+        String lockId = null;
+        try {
+            lockId = redisDistributedLock.lock(lockKey, 10, 10, TimeUnit.SECONDS);
+            // 这里处理业务逻辑 todo
+
+
+            return "respCode=000000";
+        } catch (Exception e) {
+            log.error("系统繁忙，请稍后操作：{}", e.getMessage(), e);
+            return "系统繁忙，请稍后操作!";
+        } finally {
+            redisDistributedLock.releaseLock(lockKey, lockId);
+        }
     }
 
 

@@ -9,7 +9,10 @@ pay-conf:
         sandCertPath: classpath:keys/sand.cer
         sandCloudPath: classpath:keys/sand_cloud.cer
         sandProPath: classpath:keys/sand_pro.cer
+        # 收银台回调
         notify: https://www.circlemeta.cn/api/trans/notify/sand
+        # C2C转账回调
+        c2cTransNotify: https://www.circlemeta.cn/api/newNotify/c2cTransNotify
         refundNotify: https://www.circlemeta.cn/api/trans/refundNotify/sand
         ###新渠道加密使用的md5
         md5Key: Mvb16HX1dERkURx2049aMmD8iK1v5w68dEwwmoU0fCieS8g6pb381Okrr5TWHR9b/Vmmz6scR/043v2K3BB4ED8cBcNRUfk3HRJQIn57Zk4xpad2fR6DoCUvKgWklkNTtGHiO2ZDIudixuz+UKFTiw==
