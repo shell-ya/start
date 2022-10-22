@@ -42,61 +42,64 @@ public class NewNotifyController {
     public String c2cTransNotify(HttpServletRequest req) {
 
         log.info("[c2cTransNotify]收到回调通知.....");
-        // 1、验签
+
+        // 1、获取参数
         Map<String, String[]> parameterMap = req.getParameterMap();
-        C2CTransNotifyBO c2CTransNotifyBO = null;
-        if (parameterMap != null && !parameterMap.isEmpty()) {
-            String data = req.getParameter("data");
-            String sign = req.getParameter("sign");
-            String signType = req.getParameter("signType");
-            log.info("data====>{}", data);
-            log.info("sign====>{}", sign);
-            log.info("signType====>{}", signType);
-            if (StrUtil.isBlank(data) || StrUtil.isBlank(sign) || StrUtil.isBlank(signType)) {
-                log.error("回调参数为空....");
-                return "回调参数为空....";
-            }
-
-            try {
-                Class ceasClass = Class.forName("cn.com.sand.ceas.sdk.CeasHttpUtil");
-                Object o = ceasClass.newInstance();
-                Method method = ceasClass.getDeclaredMethod("verifySign", JSONObject.class);
-                method.setAccessible(true);
-
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("data", data);
-                jsonObject.put("sign", sign);
-                jsonObject.put("signType", signType);
-                // 验证签名，执行verifySign方法
-                boolean valid = (boolean) method.invoke(o, jsonObject);
-                if (valid) {//验签成功
-                    log.info("verify sign success....");
-                    c2CTransNotifyBO = JSONUtil.toBean(data, C2CTransNotifyBO.class);
-                    log.info("接收到的异步通知数据为：{}", JSONUtil.toJsonStr(c2CTransNotifyBO));
-                } else {//如果验签失败
-                    log.error("verify sign fail....");
-                    log.error("验签失败的签名字符串(data)为：{}", data);
-                    log.error("验签失败的签名值(sign)为：{}", sign);
-                }
-            } catch (Exception e) {
-                log.error("系统错误：{}", e.getMessage(), e);
-                return "系统错误";
-            }
-        } else {
+        if (Objects.isNull(parameterMap) || parameterMap.isEmpty()) {
+            log.error("parameterMap为空，跳过处理...");
             return "未获取到参数...";
         }
+
+        C2CTransNotifyBO c2CTransNotifyBO = null;
+        String data = req.getParameter("data");
+        String sign = req.getParameter("sign");
+        String signType = req.getParameter("signType");
+        log.info("data====>{}", data);
+        log.info("sign====>{}", sign);
+        log.info("signType====>{}", signType);
+        if (StrUtil.isBlank(data) || StrUtil.isBlank(sign) || StrUtil.isBlank(signType)) {
+            log.error("回调参数为空....");
+            return "回调参数为空....";
+        }
+
+        // 2、验签
+        try {
+            Class ceasClass = Class.forName("cn.com.sand.ceas.sdk.CeasHttpUtil");
+            Object o = ceasClass.newInstance();
+            Method method = ceasClass.getDeclaredMethod("verifySign", JSONObject.class);
+            method.setAccessible(true);
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("data", data);
+            jsonObject.put("sign", sign);
+            jsonObject.put("signType", signType);
+            // 验证签名，执行verifySign方法
+            boolean valid = (boolean) method.invoke(o, jsonObject);
+            if (valid) {//验签成功
+                log.info("verify sign success....");
+                c2CTransNotifyBO = JSONUtil.toBean(data, C2CTransNotifyBO.class);
+                log.info("接收到的异步通知数据为：{}", JSONUtil.toJsonStr(c2CTransNotifyBO));
+            } else {//如果验签失败
+                log.error("verify sign fail....");
+                log.error("验签失败的签名字符串(data)为：{}", data);
+                log.error("验签失败的签名值(sign)为：{}", sign);
+            }
+        } catch (Exception e) {
+            log.error("系统错误：{}", e.getMessage(), e);
+            return "系统错误";
+        }
+
         if (Objects.isNull(c2CTransNotifyBO)) {
             log.error("验签之后BO对象为空，跳过处理...");
             return "验签失败....";
         }
 
-        // 2、处理业务逻辑
+        // 3、处理业务逻辑
         String lockKey = "lockKey_" + c2CTransNotifyBO.getSandSerialNo() + "_" + c2CTransNotifyBO.getOrderNo();
         String lockId = null;
         try {
             lockId = redisDistributedLock.lock(lockKey, 10, 10, TimeUnit.SECONDS);
             // 这里处理业务逻辑 todo
-
 
             return "respCode=000000";
         } catch (Exception e) {
