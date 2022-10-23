@@ -144,9 +144,11 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     public UserVerifyCode getVerifyCode(UserVerifyCodeDTO req) {
         log.info("获取短信验证码进入参数「{}」", JSONUtil.toJsonStr(req));
         //校验图像验证码是否通过
-        String imageCaptchaKey = String.format(RedisKey.REDIS_IMAGE_CAPTCHA_CHECK_SUCCESS_TOKEN.getKey(), req.getImageCaptchaId());
-        Assert.isTrue(this.redisUtil.hasKey(imageCaptchaKey), () -> new StarException(StarError.IMAGE_CAPTCHA_CHECK_ERROR));
-        redisUtil.del(imageCaptchaKey);
+        // 这里注释老的校验逻辑================add by fan============
+//        String imageCaptchaKey = String.format(RedisKey.REDIS_IMAGE_CAPTCHA_CHECK_SUCCESS_TOKEN.getKey(), req.getImageCaptchaId());
+//        Assert.isTrue(this.redisUtil.hasKey(imageCaptchaKey), () -> new StarException(StarError.IMAGE_CAPTCHA_CHECK_ERROR));
+//        redisUtil.del(imageCaptchaKey);
+        // 这里注释老的校验逻辑================add by fan============
 
         //发送验证码
         String code = StarUtils.getVerifyCode();
@@ -174,7 +176,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
             //限制短信发送时间
             this.redisTemplate.opsForValue().set(key, req.getPhone(), RedisKey.SMS_CODE_LIFE.getTime(), RedisKey.SMS_CODE_LIFE.getTimeUnit());
         } catch (Exception e) {
-            log.error("sms redis error:{}", e);
+            log.error("sms redis error:{}", e.getMessage(), e);
         }
 
         // 如发送短信则不返回验证码

@@ -20,9 +20,18 @@ public class UserVerifyCodeReq {
     @ApiModelProperty("验证码场景： 1=手机验证码登录 2=不登录修改密码 3=登陆后修改密码 4=修改支付密码 5=发起实名认证")
     private Integer verificationScenes;
 
-    @ApiModelProperty("验证码")
+    // 已弃用
+    @ApiModelProperty("验证码， 已弃用")
     private String code;
 
     @ApiModelProperty("校验图形验证码成功返回的id")
     private String imageCaptchaId;
+
+    /**
+     * 验证码
+     */
+    @ApiModelProperty("验证码")
+    @NotBlank
+    private String captchaVerification;
+
 }

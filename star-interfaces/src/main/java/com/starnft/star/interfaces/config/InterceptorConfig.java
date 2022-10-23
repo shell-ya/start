@@ -43,6 +43,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
         irs.add("/swagger-resources");
         irs.add("/webjars/**");
         irs.add("/swagger-ui.html");
+        irs.add("/captcha/*");
         interceptorRegistration.excludePathPatterns(irs);
     }
 

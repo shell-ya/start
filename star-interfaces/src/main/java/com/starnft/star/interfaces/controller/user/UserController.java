@@ -1,5 +1,8 @@
 package com.starnft.star.interfaces.controller.user;
 
+import com.anji.captcha.model.common.ResponseModel;
+import com.anji.captcha.model.vo.CaptchaVO;
+import com.anji.captcha.service.CaptchaService;
 import com.starnft.star.application.process.user.UserCore;
 import com.starnft.star.application.process.user.req.*;
 import com.starnft.star.application.process.user.res.*;
@@ -13,6 +16,7 @@ import com.starnft.star.interfaces.interceptor.UserContext;
 import com.starnft.star.interfaces.interceptor.UserResolverInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +30,7 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/user")
 @Api(value = "UserController", tags = "用户管理")
+@Slf4j
 public class UserController {
 
     @Autowired
@@ -33,6 +38,9 @@ public class UserController {
 
     @Resource
     private IUserService userService;
+
+    @Autowired
+    private CaptchaService captchaService;
 
     @ApiOperation("短信验证码登录/注册")
     @PostMapping("/userinfo/loginbyphone")
@@ -58,6 +66,15 @@ public class UserController {
     @PostMapping("/userinfo/getverifycode")
     @TokenIgnore
     public RopResponse<UserVerifyCodeRes> getVerifyCode(@Validated @RequestBody UserVerifyCodeReq req) {
+
+        log.info("二次校验入参：{}", req.getCaptchaVerification());
+        CaptchaVO captchaVO = new CaptchaVO();
+        captchaVO.setCaptchaVerification(req.getCaptchaVerification());
+        ResponseModel response = captchaService.verification(captchaVO);
+        if (!response.isSuccess()) {
+            return RopResponse.fail("二次校验失败");
+        }
+
         return RopResponse.success(this.userCore.getVerifyCode(req));
     }
 
