@@ -15,7 +15,6 @@ import com.starnft.star.application.process.order.model.res.OrderPayDetailRes;
 import com.starnft.star.application.process.order.white.rule.WhiteRuleContext;
 import com.starnft.star.application.process.task.activity.ActivitiesTask;
 import com.starnft.star.common.constant.RedisKey;
-import com.starnft.star.common.utils.JsonUtil;
 import com.starnft.star.common.utils.StarUtils;
 import com.starnft.star.domain.article.model.req.UserHaveNumbersReq;
 import com.starnft.star.domain.notify.model.req.NotifyOrderReq;
@@ -165,7 +164,8 @@ public class MarketTest {
     public void marketOrder() {
         MarketOrderReq marketOrderReq = new MarketOrderReq();
         marketOrderReq.setUserId(281850262L);
-        marketOrderReq.setNumberId(1006212009283489792L);
+        marketOrderReq.setNumberId(1027248041604853760L);
+        marketOrderReq.setOwnerId(142120279L);
         OrderListRes orderListRes = orderProcessor.marketOrder(marketOrderReq);
         log.info("orderList:{}", orderListRes.toString());
     }

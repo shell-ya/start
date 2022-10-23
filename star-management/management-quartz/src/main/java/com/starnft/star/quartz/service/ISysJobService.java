@@ -84,6 +84,7 @@ public interface ISysJobService
      * @return 结果
      */
     public int insertJob(SysJob job) throws SchedulerException, TaskException;
+    public int saveJob(SysJob job) throws SchedulerException, TaskException;
 
     /**
      * 更新任务

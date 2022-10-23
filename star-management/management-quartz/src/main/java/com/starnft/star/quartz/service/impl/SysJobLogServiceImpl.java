@@ -6,6 +6,7 @@ import com.starnft.star.quartz.service.ISysJobLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -51,6 +52,7 @@ public class SysJobLogServiceImpl implements ISysJobLogService
     @Override
     public void addJobLog(SysJobLog jobLog)
     {
+        jobLog.setCreateTime(new Date());
         jobLogMapper.insertJobLog(jobLog);
     }
 

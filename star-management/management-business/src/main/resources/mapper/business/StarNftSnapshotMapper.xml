@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.starnft.star.business.mapper.StarNftSnapshotMapper">
+    <resultMap type="StarNftSnapshot" id="StarNftSnapshotResult">
+        <result property="id" column="id"/>
+        <result property="taskName" column="task_name"/>
+        <result property="snapshotMaterial" column="snapshot_material"/>
+        <result property="executionTime" column="execution_time"/>
+        <result property="successful" column="successful"/>
+        <result property="filePath" column="file_path"/>
+        <result property="isDeleted" column="is_deleted"/>
+        <result property="createAt" column="create_at"/>
+        <result property="updateAt" column="update_at"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="taskId" column="task_id"/>
+    </resultMap>
+
+    <sql id="selectStarNftSnapshotVo">
+        select id,
+               task_name,
+               snapshot_material,
+               execution_time,
+               successful,
+               file_path,
+               is_deleted,
+               create_at,
+               update_at,
+               create_by,
+               update_by,
+               task_id
+        from star_nft_snapshot
+    </sql>
+
+    <select id="selectStarNftSnapshotList" parameterType="StarNftSnapshot" resultMap="StarNftSnapshotResult">
+        <include refid="selectStarNftSnapshotVo"/>
+        <where>
+            <if test="taskName != null  and taskName != ''">
+                and task_name like concat('%', #{taskName}, '%')
+            </if>
+            <if test="snapshotMaterial != null  and snapshotMaterial != ''">
+                and snapshot_material = #{snapshotMaterial}
+            </if>
+            <if test="params.beginExecutionTime != null and params.beginExecutionTime != '' and params.endExecutionTime != null and params.endExecutionTime != ''">
+                and execution_time between #{params.beginExecutionTime} and #{params.endExecutionTime}
+            </if>
+            <if test="successful != null ">
+                and successful = #{successful}
+            </if>
+            <if test="isDeleted != null ">
+                and is_deleted = #{isDeleted}
+            </if>
+            <if test="filePath != null  and filePath != ''">
+                and file_path = #{filePath}
+            </if>
+            <if test="createAt != null ">
+                and create_at = #{createAt}
+            </if>
+            <if test="updateAt != null ">
+                and update_at = #{updateAt}
+            </if>
+            <if test="taskId != null ">
+                and task_id = #{taskId}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectStarNftSnapshotById" parameterType="Long" resultMap="StarNftSnapshotResult">
+        <include refid="selectStarNftSnapshotVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertStarNftSnapshot" parameterType="StarNftSnapshot">
+        insert into star_nft_snapshot
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="taskName != null and taskName != ''">
+                task_name,
+            </if>
+            <if test="snapshotMaterial != null and snapshotMaterial != ''">
+                snapshot_material,
+            </if>
+            <if test="executionTime != null">
+                execution_time,
+            </if>
+            <if test="successful != null">
+                successful,
+            </if>
+            <if test="filePath != null">
+                file_path,
+            </if>
+            <if test="isDeleted != null">
+                is_deleted,
+            </if>
+            <if test="createAt != null">
+                create_at,
+            </if>
+            <if test="updateAt != null">
+                update_at,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="taskId != null">
+                task_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id},
+            </if>
+            <if test="taskName != null and taskName != ''">
+                #{taskName},
+            </if>
+            <if test="snapshotMaterial != null and snapshotMaterial != ''">
+                #{snapshotMaterial},
+            </if>
+            <if test="executionTime != null">
+                #{executionTime},
+            </if>
+            <if test="successful != null">
+                #{successful},
+            </if>
+            <if test="filePath != null">
+                #{filePath},
+            </if>
+            <if test="isDeleted != null">
+                #{isDeleted},
+            </if>
+            <if test="createAt != null">
+                #{createAt},
+            </if>
+            <if test="updateAt != null">
+                #{updateAt},
+            </if>
+            <if test="createBy != null">
+                #{createBy},
+            </if>
+            <if test="taskId != null">
+                #{taskId},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateStarNftSnapshot" parameterType="StarNftSnapshot">
+        update star_nft_snapshot
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskName != null and taskName != ''">
+                task_name = #{taskName},
+            </if>
+            <if test="snapshotMaterial != null and snapshotMaterial != ''">
+                snapshot_material = #{snapshotMaterial},
+            </if>
+            <if test="executionTime != null">
+                execution_time = #{executionTime},
+            </if>
+            <if test="successful != null">
+                successful = #{successful},
+            </if>
+            <if test="filePath != null">
+                file_path = #{filePath},
+            </if>
+            <if test="isDeleted != null">
+                is_deleted = #{isDeleted},
+            </if>
+            <if test="createAt != null">
+                create_at = #{createAt},
+            </if>
+            <if test="updateAt != null">
+                update_at = #{updateAt},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy},
+            </if>
+            <if test="taskId != null">
+                task_id = #{taskId},
+            </if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStarNftSnapshotById" parameterType="Long">
+        update star_nft_snapshot
+        set is_deleted = 1
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteStarNftSnapshotByIds" parameterType="String">
+        update star_nft_snapshot set is_deleted = 1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

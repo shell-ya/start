@@ -51,6 +51,7 @@ import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
 import com.starnft.star.domain.order.service.stateflow.impl.OrderStateHandler;
 import com.starnft.star.domain.payment.core.IPaymentService;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
+import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
 import com.starnft.star.domain.rank.core.rank.core.IRankService;
 import com.starnft.star.domain.support.ids.IIdGenerator;
@@ -75,7 +76,6 @@ import org.springframework.validation.annotation.Validated;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -311,7 +311,7 @@ public class OrderProcessor implements IOrderProcessor {
 //        valueMap.put("cost", walletPayRequest.getFee().intValue() == 0 ? new BigDecimal("0.01").toString() : walletPayRequest.getFee().abs().toString());
 //        valueMap.put("remark", walletPayRequest.getThemeId().toString().concat("#").concat(walletPayRequest.getNumberId().toString()));
 //        valueMap.put("accUserId", walletPayRequest.getUserId().toString());
-        if (walletPayRequest.getOrderSn().startsWith(StarConstants.OrderPrefix.PublishGoods.getPrefix())){
+        if (walletPayRequest.getOrderSn().startsWith(StarConstants.OrderPrefix.PublishGoods.getPrefix())) {
             valueMap.put("userId", walletPayRequest.getUserId().toString());
             UserInfoVO userInfoVO = userService.queryUserInfo(walletPayRequest.getUserId());
             valueMap.put("nickName", userInfoVO.getNickName());
@@ -324,10 +324,10 @@ public class OrderProcessor implements IOrderProcessor {
                     .orderType(StarConstants.OrderType.PUBLISH_GOODS).build();
             System.out.println(build);
             return build;
-        }else if (walletPayRequest.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())){
-                valueMap.put("cost",walletPayRequest.getFee().setScale(2, RoundingMode.CEILING).toString());//手续费
-            valueMap.put("remark","市场订单");//备注
-            valueMap.put("accUserId",walletPayRequest.getToUid().toString());//收款账号
+        } else if (walletPayRequest.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
+            valueMap.put("cost", "0");//手续费
+            valueMap.put("remark", "市场订单");//备注
+            valueMap.put("accUserId", "536952750");//收款账号
             PaymentRich build = PaymentRich.builder()
                     .totalMoney(walletPayRequest.getPayAmount().abs()).payChannel(StarConstants.PayChannel.CloudAccount.name())
                     .frontUrl("https://www.circlemeta.cn/order/payed/" + walletPayRequest.getOrderSn()).clientIp("192.168.1.1")
@@ -632,6 +632,72 @@ public class OrderProcessor implements IOrderProcessor {
         }
         throw new StarException(StarError.SYSTEM_ERROR, "请求超时");
     }
+
+    @Override
+    public Boolean marketC2COrder(PayCheckRes payCheckRes) {
+        OrderVO orderVO = null;
+
+        orderVO = orderService.queryOrderById(Long.parseLong(payCheckRes.getOrderSn()));
+        if (orderVO == null) {
+            log.error("uid :[{}] orderId : [{}] 不存在！", payCheckRes.getUid(), payCheckRes.getOrderSn());
+            throw new RuntimeException("订单不存在！");
+        }
+
+        if (!payCheckRes.getStatus().equals(ResultCode.SUCCESS.getCode())) {
+            try {
+                Result result = orderStateHandler.payCancel(orderVO.getUserId(), orderVO.getOrderSn(), StarConstants.ORDER_STATE.WAIT_PAY);
+                return ResultCode.SUCCESS.getCode().equals(result.getCode());
+            }catch (Exception e){
+                throw new RuntimeException("订单处理异常！", e);
+            }
+        }
+
+        try {
+            OrderVO finalOrderVO = orderVO;
+            Boolean isSuccess = template.execute(status -> {
+                //商品发放
+                boolean handover = numberService.handover(buildHandOverReq(finalOrderVO));
+                //订单状态更新
+                Result result = orderStateHandler.payComplete(finalOrderVO.getUserId(), finalOrderVO.getOrderSn(), finalOrderVO.getOrderSn(), StarConstants.ORDER_STATE.WAIT_PAY);
+                return ResultCode.SUCCESS.getCode().equals(result.getCode()) && handover;
+            });
+            return isSuccess;
+        } catch (TransactionException | StarException e) {
+            throw new RuntimeException("订单处理异常！", e);
+        }
+    }
+
+
+    private HandoverReq buildHandOverReq(OrderVO orderPayReq) {
+        HandoverReq handoverReq = new HandoverReq();
+        handoverReq.setUid(orderPayReq.getUserId());
+        NumberDetailVO numberDetail = numberService.getNumberDetail(orderPayReq.getSeriesThemeId());
+        handoverReq.setFromUid(null == numberDetail.getOwnerBy() ? 0L : Long.parseLong(numberDetail.getOwnerBy()));
+        handoverReq.setToUid(orderPayReq.getUserId());
+        handoverReq.setPreMoney(orderPayReq.getPayAmount());
+        handoverReq.setCurrMoney(orderPayReq.getPayAmount());
+        handoverReq.setItemStatus(NumberStatusEnum.SOLD.getCode());
+        handoverReq.setThemeId(orderPayReq.getSeriesThemeInfoId());
+        handoverReq.setNumberId(orderPayReq.getSeriesThemeId());
+        handoverReq.setCategoryType(orderPayReq.getThemeType());
+        handoverReq.setSeriesId(orderPayReq.getSeriesId());
+        handoverReq.setType(NumberCirculationTypeEnum.PURCHASE.getCode());
+        handoverReq.setOrderType(orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.PublishGoods.getPrefix(), 0) ?
+                StarConstants.OrderType.PUBLISH_GOODS : StarConstants.OrderType.MARKET_GOODS);
+        return handoverReq;
+    }
+
+    private ActivityEventReq createEventReq(OrderVO orderPayReq) {
+        BuyActivityEventReq buyActivityEventReq = new BuyActivityEventReq();
+        buyActivityEventReq.setEventSign(StarConstants.EventSign.Buy.getSign());
+        buyActivityEventReq.setUserId(orderPayReq.getUserId());
+        buyActivityEventReq.setReqTime(new Date());
+        buyActivityEventReq.setSeriesId(orderPayReq.getSeriesId());
+        buyActivityEventReq.setThemeId(orderPayReq.getSeriesThemeInfoId());
+        buyActivityEventReq.setMoney(orderPayReq.getPayAmount());
+        return EventReqAssembly.assembly(buyActivityEventReq);
+    }
+
 
     private OrderListRes buildOrderResp(Long lockTime, ThemeNumberVo numberDetail, Long userId, String orderSn, Long id) {
         OrderListRes res = new OrderListRes();
