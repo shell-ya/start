@@ -3,6 +3,11 @@ package com.starnft.star.interfaces.controller.trans;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.starnft.star.application.process.order.IOrderProcessor;
+import com.starnft.star.common.ResultCode;
+import com.starnft.star.domain.notify.model.req.NotifyOrderReq;
+import com.starnft.star.domain.notify.service.NotifyOrderService;
+import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.interfaces.controller.trans.bo.C2CTransNotifyBO;
 import com.starnft.star.interfaces.controller.trans.redis.RedisDistributedLock;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
@@ -10,11 +15,15 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -30,7 +39,10 @@ public class NewNotifyController {
 
     @Autowired
     RedisDistributedLock redisDistributedLock;
-
+    @Autowired
+    IOrderProcessor orderProcessor;
+    @Resource
+    NotifyOrderService notifyOrderService;
     /**
      * 用户转账（C2C）-04010003 回调
      *
@@ -100,6 +112,33 @@ public class NewNotifyController {
         try {
             lockId = redisDistributedLock.lock(lockKey, 10, 10, TimeUnit.SECONDS);
             // 这里处理业务逻辑 todo
+            //存储回调记录
+            NotifyOrderReq orderReq = NotifyOrderReq.builder()
+                    .orderSn(c2CTransNotifyBO.getOrderNo())
+                    .payChannel("CloudAccount")
+                    .createTime(new Date())
+                    .message(c2CTransNotifyBO.getRespMsg())
+                    .payTime(new Date())
+                    .status(c2CTransNotifyBO.getOrderStatus().equals("00") ? ResultCode.SUCCESS.getCode():1)
+                    .totalAmount(BigDecimal.valueOf(c2CTransNotifyBO.getAmount()))
+                    .transSn(c2CTransNotifyBO.getSandSerialNo())
+                    .uid(Long.parseLong(c2CTransNotifyBO.getPayeeInfo().getPayeeMemID()))
+                    .build();
+            notifyOrderService.saveOrder(orderReq);
+
+            PayCheckRes payCheckRes = PayCheckRes
+                    .builder()
+                    .orderSn(c2CTransNotifyBO.getOrderNo())
+                    .transSn(c2CTransNotifyBO.getSandSerialNo())
+                    .uid(c2CTransNotifyBO.getPayeeInfo().getPayeeMemID())
+                    .payChannel("CloudAccount")
+                    .status(c2CTransNotifyBO.getOrderStatus().equals("00") ? ResultCode.SUCCESS.getCode():1)
+                    .message(c2CTransNotifyBO.getRespMsg())
+                    .totalAmount(BigDecimal.valueOf(c2CTransNotifyBO.getAmount()))
+                    .build();
+
+
+            orderProcessor.marketC2COrder(payCheckRes);
 
             return "respCode=000000";
         } catch (Exception e) {
