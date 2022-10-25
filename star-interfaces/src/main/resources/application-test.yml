@@ -1,0 +1,181 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: star
+  shardingsphere:
+    datasource:
+      #数据库分库名
+      names: ds0
+      ds0:
+        #type为数据源，如果是Druid数据库连接池，可以去改
+        type: com.alibaba.druid.pool.DruidDataSource
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://sh-cynosdbmysql-grp-ibkpxd68.sql.tencentcdb.com:23543/star_activity?serverTimezone=GMT%2B8&characterEncoding=utf8
+        username: root
+        password: wqd1234.
+    rules:
+      sharding:
+        sharding-algorithms:
+          # id-inline-database-strategy是自定义的名称，
+          # !!!最好别以下划线分隔，会有问题
+          id-inline-database-strategy:
+            type: INLINE
+            props:
+              # 该表达式是指把 id 值是偶数路由到 ds0，奇数路由到 ds1
+              algorithm-expression: account_user_$->{account%10}
+        binding-tables: account_user
+        tables:
+          # 把 xxxx_xxxx 替换成实际的表名
+          account_user:
+            # 配置t_order的分表的规则
+            actual-data-nodes: ds0.account_user_$->{0..9}
+            table-strategy:
+              standard:
+                sharding-column: account
+                sharding-algorithm-name: id-inline-database-strategy
+      enabled: true
+    props:
+      sql:
+        show: true
+    mode:
+      type: Memory
+
+  redis:
+    host: 146.56.248.96
+    database: 8
+    port: 16379
+    jedis:
+      pool:
+        max-active: 100
+        max-idle: 10
+        max-wait: 100000
+    timeout: 20000
+    password: wqd123456.
+
+wallet:
+  file:
+    path: generator/english
+
+# 发送短信验证码开关
+star:
+  sms:
+    enable: true
+
+#rocketmq配置信息
+rocketmq:
+  # tdmq-rocketmq服务接入地址
+  name-server: rocketmq-8geezgooejbg.rocketmq.ap-gz.public.tencenttdmq.com:9876
+  # 生产者配置
+  producer:
+    # 生产者组名
+    group: star-producer-group
+    # 角色密钥
+    access-key: eyJrZXlJZCI6InJvY2tldG1xLThnZWV6Z29vZWpiZyIsImFsZyI6IkhTMjU2In0.eyJzdWIiOiJyb2NrZXRtcS04Z2Vlemdvb2VqYmdfc3VwZXIifQ.r2CfEbotMkzf8JSc50xX650LkBfXpPAuZiqcZ0F9ijU
+    # 已授权的角色名称
+    secret-key: super
+  # 消费者公共配置
+  consumer:
+    # 角色密钥
+    access-key: eyJrZXlJZCI6InJvY2tldG1xLThnZWV6Z29vZWpiZyIsImFsZyI6IkhTMjU2In0.eyJzdWIiOiJyb2NrZXRtcS04Z2Vlemdvb2VqYmdfc3VwZXIifQ.r2CfEbotMkzf8JSc50xX650LkBfXpPAuZiqcZ0F9ijU
+    # 已授权的角色名称
+    secret-key: super
+
+# 验证码相关配置
+captcha:
+  prefix: star.captcha
+  # 验证码过期时间，默认是2分钟,单位毫秒， 可以根据自身业务进行调整
+  expire:
+    default: 30000
+    # 文字点选验证码 过期时间设置大一点
+    WORD_IMAGE_CLICK: 60000
+  # 使用加载系统自带的资源， 默认是true
+  init-default-resource: true
+  cache:
+    # 缓存控制， 默认为false不开启
+    enabled: true
+    # 验证码会提前缓存一些生成好的验证数据， 默认是20
+    cache-size: 20000
+    # 缓存拉取失败后等待时间 默认是 5秒钟
+    wait-time: 5000
+    # 缓存检查间隔 默认是2秒钟
+    period: 2000
+  secondary:
+    # 二次验证， 默认false 不开启
+    enabled: false
+    # 二次验证过期时间， 默认 2分钟
+    expire: 120000
+    # 二次验证缓存key前缀，默认是 captcha:secondary
+    keyPrefix: star.captcha.secondary
+
+jetcache:
+  # 统计缓存调用相关信息的统计间隔（分钟），0表示不统计
+  statIntervalMinutes: 60
+  # 缓存实例名称cacheName会作为缓存key的前缀，2.4.3以前的版本总是把areaName加在cacheName中，因此areaName也出现在key前缀中。我们一般设置为false。
+  areaInCacheName: false
+  local:
+    default:
+      # 本地缓存类型，支持 linkedhashmap、caffeine
+      type: caffeine
+      # 每个缓存实例存储的缓存数量的全局配置，仅本地缓存需要配置，如果缓存实例没有指定则使用全局配置
+      limit: 100
+      # 缓存key转换器的全局配置
+      keyConvertor: fastjson
+      # 本地缓存超时时间的全局配置（毫秒） 默认无穷大
+      expireAfterWriteInMillis: 600000
+      # 多长时间没访问就让缓存失效的全局配置（毫秒），仅支持本地缓存。0表示不使用这个功能。
+      expireAfterAccessInMillis: 300000
+  remote:
+    default:
+      type: redis
+      keyPrefix: star-service
+      keyConvertor: fastjson
+      valueEncoder: java
+      valueDecoder: java
+      # 远程缓存超时时间的全局配置（毫秒）
+      expireAfterWriteInMillis: 3600000
+      poolConfig:
+        minIdle: 10
+        maxIdle: 20
+        maxTotal: 50
+      host: ${spring.redis.host}
+      database: ${spring.redis.database}
+      port: ${spring.redis.port}
+      password: ${spring.redis.password}
+
+xxl:
+  job:
+    admin:
+      addresses: http://146.56.248.96:8889/xxl-job-admin
+    executor:
+      ### 执行器AppName [选填]：执行器心跳注册分组依据；为空则关闭自动注册
+      appname: nft-star-schedule
+      ### 执行器注册 [选填]：优先使用该配置作为注册地址，为空时使用内嵌服务 ”IP:PORT“ 作为注册地址。从而更灵活的支持容器类型执行器动态IP和动态映射端口问题。
+      address:
+      ### 执行器IP [选填]：默认为空表示自动获取IP，多网卡时可手动设置指定IP，该IP不会绑定Host仅作为通讯实用；地址信息用于 "执行器注册" 和 "调度中心请求并触发任务"；
+      ip:
+      ### 执行器端口号 [选填]：小于等于0则自动获取；默认端口为9999，单机部署多个执行器时，注意要配置不同执行器端口；
+      port: 8911
+      logpath: data/applogs/xxl-job/jobhandler
+      logretentiondays: 50
+    accessToken: xdsl3ewi3al1oehxmo68pqxer
+
+aj:
+  captcha:
+    jigsaw: classpath:images/jigsaw
+    pic-click: classpath:images/pic-click
+    cache-type: redis
+    type: clickWord
+    water-mark: 链元文创
+    slip-offset: 5
+    aes-status: true
+    interference-options: 2
+    font-style: 1
+    font-size: 25
+    history-data-clear-enable: false
+    req-frequency-limit-enable: false
+    req-get-lock-limit: 5
+    req-get-lock-seconds: 360
+    req-get-minute-limit: 30
+    req-check-minute-limit: 60
+    req-verify-minute-limit: 60
