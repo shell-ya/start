@@ -165,7 +165,7 @@ aj:
     jigsaw: classpath:images/jigsaw
     pic-click: classpath:images/pic-click
     cache-type: redis
-    type: default
+    type: clickWord
     water-mark: 链元文创
     slip-offset: 5
     aes-status: true
