@@ -1,6 +1,10 @@
 package com.starnft.star.business.service.impl;
 
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.util.CharUtil;
 import cn.hutool.crypto.SecureUtil;
+import cn.hutool.http.HttpUtil;
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.starnft.star.business.domain.StarNftSeries;
 import com.starnft.star.business.domain.StarNftThemeInfo;
@@ -35,8 +39,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 @Slf4j
 @Service
-public class StarNftThemeInfoServiceImpl implements IStarNftThemeInfoService
-{
+public class StarNftThemeInfoServiceImpl implements IStarNftThemeInfoService {
     @Autowired
     private StarNftThemeInfoMapper starNftThemeInfoMapper;
     @Autowired
@@ -46,6 +49,7 @@ public class StarNftThemeInfoServiceImpl implements IStarNftThemeInfoService
 
     @Autowired
     private StarNftSeriesMapper starNftSeriesMapper;
+
     /**
      * 查询主题
      *
@@ -53,8 +57,7 @@ public class StarNftThemeInfoServiceImpl implements IStarNftThemeInfoService
      * @return 主题
      */
     @Override
-    public StarNftThemeInfo selectStarNftThemeInfoById(Long id)
-    {
+    public StarNftThemeInfo selectStarNftThemeInfoById(Long id) {
         return starNftThemeInfoMapper.selectStarNftThemeInfoById(id);
     }
 
@@ -70,8 +73,7 @@ public class StarNftThemeInfoServiceImpl implements IStarNftThemeInfoService
      * @return 主题
      */
     @Override
-    public List<StarNftThemeInfo> selectStarNftThemeInfoList(StarNftThemeInfo starNftThemeInfo)
-    {
+    public List<StarNftThemeInfo> selectStarNftThemeInfoList(StarNftThemeInfo starNftThemeInfo) {
         return starNftThemeInfoMapper.selectStarNftThemeInfoList(starNftThemeInfo);
     }
 
@@ -82,8 +84,7 @@ public class StarNftThemeInfoServiceImpl implements IStarNftThemeInfoService
      * @return 结果
      */
     @Override
-    public int insertStarNftThemeInfo(StarNftThemeInfo starNftThemeInfo, Long userId)
-    {
+    public int insertStarNftThemeInfo(StarNftThemeInfo starNftThemeInfo, Long userId) {
 
         Long themeInfoId = SnowflakeWorker.generateId();
         starNftThemeInfo.setId(themeInfoId);
@@ -103,8 +104,7 @@ public class StarNftThemeInfoServiceImpl implements IStarNftThemeInfoService
      * @return 结果
      */
     @Override
-    public int updateStarNftThemeInfo(StarNftThemeInfo starNftThemeInfo)
-    {
+    public int updateStarNftThemeInfo(StarNftThemeInfo starNftThemeInfo) {
         return starNftThemeInfoMapper.updateStarNftThemeInfo(starNftThemeInfo);
     }
 
@@ -115,8 +115,7 @@ public class StarNftThemeInfoServiceImpl implements IStarNftThemeInfoService
      * @return 结果
      */
     @Override
-    public int deleteStarNftThemeInfoByIds(Long[] ids)
-    {
+    public int deleteStarNftThemeInfoByIds(Long[] ids) {
         return starNftThemeInfoMapper.deleteStarNftThemeInfoByIds(ids);
     }
 
@@ -127,8 +126,7 @@ public class StarNftThemeInfoServiceImpl implements IStarNftThemeInfoService
      * @return 结果
      */
     @Override
-    public int deleteStarNftThemeInfoById(Long id)
-    {
+    public int deleteStarNftThemeInfoById(Long id) {
         return starNftThemeInfoMapper.deleteStarNftThemeInfoById(id);
     }
 
@@ -144,10 +142,10 @@ public class StarNftThemeInfoServiceImpl implements IStarNftThemeInfoService
 
     @Override
     @Transactional
-    public Boolean publishTheme(StarNftThemeInfo themeInfo,Long adminId) {
+    public Boolean publishTheme(StarNftThemeInfo themeInfo, Long adminId) {
         //500个藏品调用一次接口
         StarNftSeries starNftSeries = starNftSeriesMapper.selectStarNftSeriesById(themeInfo.getSeriesId());
-        PublishGoodsRes.DataDTO dataDTO = publishGoods(themeInfo,starNftSeries);
+        PublishGoodsRes.DataDTO dataDTO = publishGoods(themeInfo, starNftSeries);
         String contractAddress = dataDTO.getContractAddress();
         themeInfo.setContractAddress(contractAddress);
         //设置主题返回数据
@@ -164,13 +162,13 @@ public class StarNftThemeInfoServiceImpl implements IStarNftThemeInfoService
 //        System.out.println(createAccountRes);
         //遍历发行商品，设置发行藏品编号
         List<PublishGoodsRes.DataDTO.ProductsDTO> products = dataDTO.getProducts();
-        long count = products.stream().map(item -> createNumber(item, contractAddress, themeInfo.getId(),adminId)).filter(Boolean.TRUE::equals)
+        long count = products.stream().map(item -> createNumber(item, contractAddress, themeInfo.getId(), adminId)).filter(Boolean.TRUE::equals)
                 .count();
 
         return count == themeInfo.getPublishNumber();
     }
 
-    private Boolean createNumber(PublishGoodsRes.DataDTO.ProductsDTO dto,String contractAddress,Long seriesThemeInfoId,Long adminId){
+    private Boolean createNumber(PublishGoodsRes.DataDTO.ProductsDTO dto, String contractAddress, Long seriesThemeInfoId, Long adminId) {
         StarNftThemeNumber number = new StarNftThemeNumber();
         Long numberId = SnowflakeWorker.generateId();
         number.setId(numberId);
@@ -188,14 +186,49 @@ public class StarNftThemeInfoServiceImpl implements IStarNftThemeInfoService
         return this.themeNumberMapper.insertStarNftThemeNumber(number) == 1;
     }
 
-    public PublishGoodsRes.DataDTO publishGoods(StarNftThemeInfo themeInfo, StarNftSeries starNftSeries){
+    /**
+     * 测试调用天河链接口数字商品发行
+     * @param args
+     */
+    public static void main(String[] args) {
+        int publishNumber = 20;
+        int pageSize = 5;
+
+        // 请求次数
+        int requestTimes = (publishNumber % pageSize) == 0 ? (publishNumber / pageSize) : (publishNumber / pageSize + 1);
+        String today = cn.hutool.core.date.DateUtil.format(new Date(), DatePattern.PURE_DATE_PATTERN);
+        String[] productIds = new String[publishNumber];
+        for (int i = 0; i < publishNumber; i++) {
+            System.out.println("第"+i+"波"+"...");
+            productIds[i]=today+i;
+        }
+        PublishGoodsReq publishGoodsReq = new PublishGoodsReq();
+        publishGoodsReq.setUserId("951029971223");
+        String userKey = SecureUtil.sha1("951029971223".concat("lywc"));
+        publishGoodsReq.setUserKey(userKey);
+        publishGoodsReq.setAuthor("链元文创");
+        publishGoodsReq.setInitPrice("1");
+        publishGoodsReq.setName(String.format("链元文创 %s-%s", "test", "主题"));
+
+        publishGoodsReq.setProductIds(productIds);
+        publishGoodsReq.setPieceCount(publishNumber);
+
+        JSONObject json = JSONUtil.parseObj(publishGoodsReq);
+        json.set("appId", "tichain449113");
+        json.set("appKey", "a070713d25c291127992bf096cbcb3462ca1e33c");
+
+        String result = HttpUtil.post("https://api.tichain.tianhecloud.com/api/v2/nfr/publish", JSONUtil.toJsonStr(json));
+        System.out.println(result);
+    }
+
+    public PublishGoodsRes.DataDTO publishGoods(StarNftThemeInfo themeInfo, StarNftSeries starNftSeries) {
 //        发行数量  第一次调用接口最大发行500个
         PublishGoodsRes.DataDTO result = new PublishGoodsRes.DataDTO();
 
-        int nums= themeInfo.getPublishNumber().intValue();
+        int nums = themeInfo.getPublishNumber().intValue();
         //调用天河链发行商品
-        Map<String,Object> map=new HashMap<>();
-        List<String> ids=new CopyOnWriteArrayList<>();
+        Map<String, Object> map = new HashMap<>();
+        List<String> ids = new CopyOnWriteArrayList<>();
 
         //时间加上发行数量位置
         String pushDay = DateUtil.dateFormat(DateUtil.getDaDate(), "yyyyMMdd");
@@ -204,50 +237,50 @@ public class StarNftThemeInfoServiceImpl implements IStarNftThemeInfoService
         for (int i = 0; i < String.valueOf(nums).length(); i++) {
             prifixTemplate.append(0);
         }
-        long prifix=Long.parseLong(prifixTemplate.toString());
+        long prifix = Long.parseLong(prifixTemplate.toString());
 
         for (int i = 1; i <= nums; i++) {
-            ids.add(String.format("%s",prifix+i));
+            ids.add(String.format("%s", prifix + i));
         }
         String contractAddress = null;
 
         PublishGoodsRes createAccountRes = null;
-        map.put("images",themeInfo.getThemePic());
+        map.put("images", themeInfo.getThemePic());
         PublishGoodsReq publishGoodsReq = new PublishGoodsReq();
         publishGoodsReq.setUserId("951029971223");
         String userKey = SecureUtil.sha1("951029971223".concat("lywc"));
         publishGoodsReq.setUserKey(userKey);
         publishGoodsReq.setAuthor("链元文创");
         publishGoodsReq.setInitPrice(themeInfo.getLssuePrice().toString());
-        publishGoodsReq.setName(String.format("链元文创 %s-%s",starNftSeries.getSeriesName(),themeInfo.getThemeName()));
+        publishGoodsReq.setName(String.format("链元文创 %s-%s", starNftSeries.getSeriesName(), themeInfo.getThemeName()));
         publishGoodsReq.setFeature(JSONUtil.toJsonStr(map));
         int publishNum = ids.size() / 500;
         for (int i = 0; i < publishNum + 1; i++) {
-            if (ids.size() < 500){
+            if (ids.size() < 500) {
                 publishGoodsReq.setProductIds(ids.toArray(new String[ids.size()]));
                 publishGoodsReq.setPieceCount(ids.size());
                 publishGoodsReq.setContractAddress(contractAddress);
                 createAccountRes = tiChainServer.publishGoods(publishGoodsReq);
                 result.getProducts().addAll(createAccountRes.getData().getProducts());
-            }else {
-                List<String> currentIds = ids.subList(0,500);
+            } else {
+                List<String> currentIds = ids.subList(0, 500);
                 publishGoodsReq.setProductIds(currentIds.toArray(new String[500]));
                 publishGoodsReq.setPieceCount(500);
                 if (StringUtils.isNotEmpty(contractAddress))
                     publishGoodsReq.setContractAddress(contractAddress);
-                ids = ids.subList(500,ids.size());
+                ids = ids.subList(500, ids.size());
                 createAccountRes = tiChainServer.publishGoods(publishGoodsReq);
                 contractAddress = createAccountRes.getData().getContractAddress();
-                if (0 == i){
+                if (0 == i) {
                     result = createAccountRes.getData();
-                }else {
+                } else {
                     result.getProducts().addAll(createAccountRes.getData().getProducts());
                 }
             }
         }
 
-        if (nums != result.getProducts().size())  throw new StarException("发行异常");
-        log.info("发行结果：{}",createAccountRes.toString());
+        if (nums != result.getProducts().size()) throw new StarException("发行异常");
+        log.info("发行结果：{}", createAccountRes.toString());
         return result;
     }
 
