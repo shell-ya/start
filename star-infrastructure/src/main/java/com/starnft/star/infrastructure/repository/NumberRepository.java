@@ -253,9 +253,8 @@ public class NumberRepository implements INumberRepository {
     @Override
     public ThemeNumberVo queryNumberExist(Integer themeNumber, Long themeId) {
         LambdaQueryWrapper<StarNftThemeNumber> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Objects.nonNull(themeNumber), StarNftThemeNumber::getThemeNumber, themeNumber);
-        wrapper.eq(Objects.nonNull(themeId), StarNftThemeNumber::getSeriesThemeInfoId, themeId);
-        StarNftThemeNumber starNftThemeNumber = this.starNftThemeNumberMapper.selectOne(wrapper);
+        StarNftThemeNumber starNftThemeNumber = this.starNftThemeNumberMapper.selectOne(wrapper.eq(Objects.nonNull(themeNumber), StarNftThemeNumber::getThemeNumber, themeNumber)
+                .eq(Objects.nonNull(themeId), StarNftThemeNumber::getSeriesThemeInfoId, themeId));
         return this.copyToVO(starNftThemeNumber);
     }
 
