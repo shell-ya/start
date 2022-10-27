@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -24,7 +25,7 @@ public class PublishGoodsRes {
         @JsonProperty("deployTransactionHash")
         private String deployTransactionHash;
         @JsonProperty("products")
-        private List<ProductsDTO> products;
+        private List<ProductsDTO> products = new ArrayList<>();
 
         @NoArgsConstructor
         @Data

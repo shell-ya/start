@@ -53,6 +53,7 @@ public class ScheduleUtils
         Class<? extends Job> jobClass = getQuartzJobClass(job);
         // 构建job信息
         Long jobId = job.getJobId();
+        System.out.println("=============jobId:"+jobId);
         String jobGroup = job.getJobGroup();
         JobDetail jobDetail = JobBuilder.newJob(jobClass).withIdentity(getJobKey(jobId, jobGroup)).build();
 

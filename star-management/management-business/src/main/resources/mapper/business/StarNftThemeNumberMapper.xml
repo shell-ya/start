@@ -79,6 +79,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="isDelete != null">#{isDelete},</if>
          </trim>
     </insert>
+<!--    <insert id="batchInsert" parameterType="StarNftThemeNumber">-->
+<!--        insert into star_nft_theme_number values-->
+<!--        <foreach collection="numberList" open="(" close=")" item="item" >-->
+
+<!--        </foreach>-->
+<!--    </insert>-->
 
     <update id="updateStarNftThemeNumber" parameterType="StarNftThemeNumber">
         update star_nft_theme_number

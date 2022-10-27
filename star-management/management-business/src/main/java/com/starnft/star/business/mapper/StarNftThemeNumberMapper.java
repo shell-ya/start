@@ -84,4 +84,6 @@ public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
     String selectNumberOwberByIsNull(AirdropThemeRecord record);
 
     int modifyNumberOwnerBy(@Param("id") Long id, @Param("userId") Long userId, @Param("status") Integer status);
+
+    // void batchInsert(List<StarNftThemeNumber> item);
 }
