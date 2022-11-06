@@ -73,8 +73,11 @@ public class ActivitiesTask {
         log.info("########### 秒杀商品扫描开始 ###########");
         //1.查询所有时间区间 2小时一个时区
         List<Date> dateMenus = DateUtil.getDateMenus(interval);
+        log.info("dateMenus===========>{}", JSONUtil.toJsonStr(dateMenus));
+
         for (Date startTime : dateMenus) {
             String startTimeTrim = DateUtil.date2Str(startTime);
+            log.info("startTimeTrim=========：{}", startTimeTrim);
             String goodsKey = String.format(RedisKey.SECKILL_GOODS_INFO.getKey(), startTimeTrim);
             Set keys = redisUtil.hashKeys(goodsKey);
             //执行查询 加载时区内待秒杀商品
