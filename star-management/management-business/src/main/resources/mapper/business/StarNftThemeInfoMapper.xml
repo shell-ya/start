@@ -222,6 +222,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="publisherId != null  and publisherId != ''"> and t.publisher_id = #{publisherId}</if>
             <if test="marketOpenTime != null  "> and market_open_time = #{marketOpenTime}</if>
             <if test="isResale != null  and isResale != ''"> and is_resale = #{isResale}</if>
+            order by t.update_at desc
         </where>
     </select>
 
