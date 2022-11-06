@@ -25,4 +25,5 @@ public interface ThemeService {
 
     ResponsePageResult<ThemeGoodsVO> themeGoodsList(ThemeGoodsReq themeGoodsReq);
 
+    List<ThemeDetailVO> getThemeByIdList(List<Long> themeIdList);
 }

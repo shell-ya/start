@@ -72,6 +72,8 @@ public class SecKillGoods implements Serializable {
     @ApiModelProperty(name = "发行商id", notes = "")
     @JsonSerialize(using = ToStringSerializer.class)
     private Long  publisherId;
+
     @ApiModelProperty(name = "售磬", notes = "")
     private Boolean sellOut = false;
+
 }

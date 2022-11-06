@@ -1,6 +1,7 @@
 package com.starnft.star.infrastructure.repository;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
@@ -135,7 +136,7 @@ public class ActivityRepository implements IActivityRepository {
     @Override
     public ResponsePageResult<DrawAwardExportVO> queryUserStrategyExportByUId(DrawAwardExportsReq exportVO) {
         PageInfo<UserStrategyExport> drawAwardExportVOPageInfo = PageHelper.startPage(exportVO.getPage(), exportVO.getSize())
-                .doSelectPageInfo(() -> userStrategyExportDao.queryUserStrategyExportByUId(exportVO.getUId(),exportVO.getActivityId()));
+                .doSelectPageInfo(() -> userStrategyExportDao.queryUserStrategyExportByUId(exportVO.getUId(), exportVO.getActivityId()));
 
         return new ResponsePageResult<DrawAwardExportVO>(drawAwardExportVOPageInfo.getList()
                 .stream()
@@ -183,8 +184,8 @@ public class ActivityRepository implements IActivityRepository {
     }
 
     @Override
-    public boolean deleteExport(String uId,String orderId) {
-        return userStrategyExportDao.deleteExport(uId,orderId);
+    public boolean deleteExport(String uId, String orderId) {
+        return userStrategyExportDao.deleteExport(uId, orderId);
     }
 
     @Override
@@ -231,6 +232,15 @@ public class ActivityRepository implements IActivityRepository {
     public List<ActivityVO> obtainActivities(String startTime, String endTime, List<String> keys) {
         List<StarScheduleSeckill> starScheduleSeckills = starScheduleSeckillMapper.obtainActivities(startTime, endTime, keys);
         return BeanColverUtil.colverList(starScheduleSeckills, ActivityVO.class);
+    }
+
+    @Override
+    public List<ActivityVO> getAllActivity() {
+        QueryWrapper<StarScheduleSeckill> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(StarScheduleSeckill::getIsDeleted, 0);
+        List<StarScheduleSeckill> list = starScheduleSeckillMapper.selectList(wrapper);
+        return BeanColverUtil.colverList(list, ActivityVO.class);
+
     }
 
     @Override

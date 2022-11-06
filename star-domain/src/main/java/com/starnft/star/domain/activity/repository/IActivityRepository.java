@@ -13,6 +13,12 @@ public interface IActivityRepository {
 
     List<ActivityVO> obtainActivities(String startTime, String endTime, List<String> keys);
 
+    /**
+     * 获取所有活动
+     * @return
+     */
+    List<ActivityVO> getAllActivity();
+
     boolean modifyStock(Integer spuId, Integer stock);
 
 

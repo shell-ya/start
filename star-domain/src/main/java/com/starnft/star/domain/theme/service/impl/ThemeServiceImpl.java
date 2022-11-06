@@ -77,4 +77,8 @@ public class ThemeServiceImpl implements ThemeService {
     }
 
 
+    @Override
+    public List<ThemeDetailVO> getThemeByIdList(List<Long> themeIdList) {
+        return this.themeRepository.queryByThemeIdList(themeIdList);
+    }
 }

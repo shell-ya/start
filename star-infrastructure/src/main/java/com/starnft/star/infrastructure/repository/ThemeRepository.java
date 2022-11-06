@@ -1,5 +1,6 @@
 package com.starnft.star.infrastructure.repository;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -21,6 +22,7 @@ import com.starnft.star.domain.theme.repository.IThemeRepository;
 import com.starnft.star.infrastructure.entity.theme.StarNftThemeInfo;
 import com.starnft.star.infrastructure.mapper.theme.StarNftThemeInfoMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
@@ -129,6 +131,36 @@ public class ThemeRepository implements IThemeRepository {
                 .marketOpenDate(repository.getMarketOpenTime())
                 .isResale(repository.getIsResale())
                 .build();
+    }
+
+    @Override
+    public List<ThemeDetailVO> queryByThemeIdList(List<Long> themeIdList) {
+        QueryWrapper<StarNftThemeInfo> wrapper = new QueryWrapper<>();
+        wrapper.lambda().in(StarNftThemeInfo::getId, themeIdList);
+        wrapper.lambda().eq(StarNftThemeInfo::getIsDelete, 0);
+        List<StarNftThemeInfo> starNftThemeInfos = this.starNftThemeInfoMapper.selectList(wrapper);
+        if (CollUtil.isEmpty(starNftThemeInfos)) {
+            return Lists.newArrayList();
+        }
+        return starNftThemeInfos.stream().map(repository ->
+                ThemeDetailVO.builder()
+                        .publisherId(repository.getPublisherId())
+                        .id(repository.getId())
+                        .themeName(repository.getThemeName())
+                        .tags(repository.getTags())
+                        .seriesId(repository.getSeriesId())
+                        .themePic(repository.getThemePic())
+                        .contractAddress(repository.getContractAddress())
+                        .descrption(repository.getDescrption())
+                        .stock(repository.getStock())
+                        .themeType(repository.getThemeType())
+                        .themeLevel(repository.getThemeLevel())
+                        .lssuePrice(repository.getLssuePrice())
+                        .publishNumber(repository.getPublishNumber())
+                        .marketOpenDate(repository.getMarketOpenTime())
+                        .isResale(repository.getIsResale())
+                        .build()
+        ).collect(Collectors.toList());
     }
 
     @Override

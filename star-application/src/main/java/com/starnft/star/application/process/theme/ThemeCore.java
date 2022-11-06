@@ -25,6 +25,12 @@ public interface ThemeCore {
 
     Set<SecKillGoods> querySecKillThemes();
 
+    /**
+     * 新查询秒杀商品方法
+     * @return
+     */
+    List<SecKillGoods> querySecKillThemesNew();
+
     @Cached(name = StarConstants.THEME_IN_MARKET_CACHE_NAME,
             expire = 60,
             cacheType = CacheType.REMOTE)
