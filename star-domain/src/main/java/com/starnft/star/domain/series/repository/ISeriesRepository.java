@@ -13,4 +13,6 @@ public interface ISeriesRepository {
     List<SeriesVO> querySeries(CommodityTypeEnum commodityType);
 
     SeriesVO querySeriesById(Long id);
+
+    List<SeriesVO> querySeriesByIdList(List<Long> idList);
 }

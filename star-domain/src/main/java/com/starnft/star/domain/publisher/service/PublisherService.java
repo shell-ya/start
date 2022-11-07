@@ -11,4 +11,6 @@ public interface PublisherService {
 
     List<PublisherVO> queryPublisherByIds(Set<Long> collect);
 
+    List<PublisherVO> queryPublisherByIdList(List<Long> idList);
+
 }

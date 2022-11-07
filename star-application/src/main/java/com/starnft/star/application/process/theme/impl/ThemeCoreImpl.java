@@ -140,15 +140,49 @@ public class ThemeCoreImpl implements ThemeCore {
         }
         List<Long> themeIdList = activityList.stream().map(ActivityVO::getSpuId).collect(Collectors.toList());
         List<ThemeDetailVO> themeList = themeService.getThemeByIdList(themeIdList);
+        List<Long> publisherIdList = themeList.stream().map(ThemeDetailVO::getPublisherId).distinct().collect(Collectors.toList());
+        List<Long> seriesIdList = themeList.stream().map(ThemeDetailVO::getSeriesId).distinct().collect(Collectors.toList());
+
+        List<PublisherVO> publisherList = publisherService.queryPublisherByIdList(publisherIdList);
+        Map<Long, PublisherVO> publisherMap = publisherList.stream().collect(Collectors.toMap(PublisherVO::getAuthorId, Function.identity()));
+
+        List<SeriesVO> seriesList = seriesService.querySeriesByIdList(seriesIdList);
+        Map<Long, SeriesVO> seriesMap = seriesList.stream().collect(Collectors.toMap(SeriesVO::getId, Function.identity()));
+
         Map<Long, ThemeDetailVO> themeMap = themeList.stream().collect(Collectors.toMap(ThemeDetailVO::getId, Function.identity()));
         List<SecKillGoods> result = new ArrayList<>();
         activityList.forEach(activity -> {
             if (themeMap.containsKey(activity.getSpuId())) {
-                SecKillGoods copy = copy(activity, themeMap.get(activity.getSpuId()));
+                ThemeDetailVO detailVO = themeMap.get(activity.getSpuId());
+                PublisherVO publisherVO = publisherMap.get(detailVO.getPublisherId());
+                SeriesVO seriesVO = seriesMap.get(detailVO.getSeriesId());
+                SecKillGoods copy = copyNew(activity, detailVO, publisherVO, seriesVO.getSeriesName());
                 result.add(copy);
             }
         });
         return result;
+    }
+
+    private SecKillGoods copyNew(ActivityVO activity, ThemeDetailVO detailVO, PublisherVO publisherVO, String seriesName) {
+        SecKillGoods secKillGoods = new SecKillGoods();
+        secKillGoods.setGoodsNum(activity.getGoodsNum());
+        secKillGoods.setDescrption(detailVO.getDescrption());
+        secKillGoods.setSecCost(activity.getSecCost());
+        secKillGoods.setEndTime(activity.getEndTime());
+        secKillGoods.setStock(activity.getStock());
+        secKillGoods.setStartTime(activity.getStartTime());
+        secKillGoods.setThemeId(detailVO.getId());
+        secKillGoods.setSeriesId(detailVO.getSeriesId());
+        secKillGoods.setSeriesName(seriesName);
+        secKillGoods.setThemeLevel(detailVO.getThemeLevel());
+        secKillGoods.setThemeName(detailVO.getThemeName());
+        secKillGoods.setThemePic(detailVO.getThemePic());
+        secKillGoods.setThemeType(detailVO.getThemeType());
+        secKillGoods.setPublisherId(publisherVO.getPublisherId());
+        secKillGoods.setPublisherPic(publisherVO.getPublisherPic());
+        secKillGoods.setPublisherName(publisherVO.getPublisherName());
+        secKillGoods.setSellOut(activity.getStock() > 0);
+        return secKillGoods;
     }
 
     private SecKillGoods copy(ActivityVO activity, ThemeDetailVO detailVO) {

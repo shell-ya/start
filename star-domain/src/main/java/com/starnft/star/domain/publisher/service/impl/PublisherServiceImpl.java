@@ -23,4 +23,9 @@ public class PublisherServiceImpl implements PublisherService {
     public List<PublisherVO> queryPublisherByIds(Set<Long> collect) {
         return publisherRepository.queryPublisherByIds(collect);
     }
+
+    @Override
+    public List<PublisherVO> queryPublisherByIdList(List<Long> idList) {
+        return publisherRepository.queryPublisherByIdList(idList);
+    }
 }

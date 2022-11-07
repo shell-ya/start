@@ -79,4 +79,12 @@ public class SeriesRepository implements ISeriesRepository {
         return BeanColverUtil.colver(starNftSeries, SeriesVO.class);
 
     }
+
+    @Override
+    public List<SeriesVO> querySeriesByIdList(List<Long> idList) {
+        QueryWrapper<StarNftSeries> wrapper = new QueryWrapper<>();
+        wrapper.lambda().in(StarNftSeries::getId, idList);
+        List<StarNftSeries> starNftSeriesList = this.starNftSeriesMapper.selectList(wrapper);
+        return BeanColverUtil.colverList(starNftSeriesList, SeriesVO.class);
+    }
 }

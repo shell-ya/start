@@ -11,4 +11,6 @@ public interface IPublisherRepository {
 
     List<PublisherVO> queryPublisherByIds(Set<Long> collect);
 
+    List<PublisherVO> queryPublisherByIdList(List<Long> collect);
+
 }

@@ -39,4 +39,9 @@ public class SeriesServiceImpl implements SeriesService {
     public SeriesVO querySeriesById(Long id) {
         return this.seriesRepository.querySeriesById(id);
     }
+
+    @Override
+    public List<SeriesVO> querySeriesByIdList(List<Long> idList) {
+        return this.seriesRepository.querySeriesByIdList(idList);
+    }
 }

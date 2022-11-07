@@ -12,4 +12,6 @@ public interface SeriesService {
     List<SeriesVO> querySeriesByType(Integer type);
 
     SeriesVO querySeriesById(Long id);
+
+    List<SeriesVO> querySeriesByIdList(List<Long> idList);
 }

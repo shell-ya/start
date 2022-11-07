@@ -15,4 +15,6 @@ public interface StarNftPublisherMapper extends BaseMapper<StarNftPublisher> {
 
     List<PublisherVO> queryPublisherByIds(@Param("ids") Set<Long> ids);
 
+
+    List<PublisherVO> queryPublisherByIdList(List<Long> idList);
 }
