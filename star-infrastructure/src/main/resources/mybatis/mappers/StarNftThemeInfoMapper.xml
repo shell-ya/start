@@ -99,10 +99,10 @@
         </if>
         AND is_resale = 1
         <if test="sortType == 1">
-            ORDER BY series.rank_num asc , ti.market_open_time
+            ORDER BY series.rank_num asc ,ti.id asc , ti.market_open_time
         </if>
         <if test="sortType == 2">
-            ORDER BY series.rank_num asc , tn.price
+            ORDER BY series.rank_num asc ,ti.id asc , tn.price
         </if>
         <if test="sortOrder == 1">
             ASC
