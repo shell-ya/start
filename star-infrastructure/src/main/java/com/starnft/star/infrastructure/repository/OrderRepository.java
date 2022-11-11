@@ -174,8 +174,10 @@ public class OrderRepository implements IOrderRepository {
 
     @Override
     public List<OrderVO> queryToPayOrder(Long userId) {
-        List<StarNftOrder> starNftOrders = starNftOrderMapper.selectList(new LambdaQueryWrapper<StarNftOrder>().eq(Objects.nonNull(userId), StarNftOrder::getUserId, userId)
-                .eq(StarNftOrder::getStatus, StarConstants.ORDER_STATE.WAIT_PAY.getCode()));
+        LambdaQueryWrapper<StarNftOrder> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Objects.nonNull(userId), StarNftOrder::getUserId, userId);
+        wrapper.eq(StarNftOrder::getStatus, StarConstants.ORDER_STATE.WAIT_PAY.getCode());
+        List<StarNftOrder> starNftOrders = starNftOrderMapper.selectList(wrapper);
         return BeanColverUtil.colverList(starNftOrders, OrderVO.class);
     }
 

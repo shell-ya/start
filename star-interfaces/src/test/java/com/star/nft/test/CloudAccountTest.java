@@ -1,6 +1,7 @@
 package com.star.nft.test;
 
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Maps;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.domain.identify.strategy.SwIdentifyStrategy;
@@ -119,11 +120,14 @@ public class CloudAccountTest {
     @Test
     public void testAccountStatus() {
         CloudAccountStatusReq cloudAccountStatusReq = new CloudAccountStatusReq();
-        cloudAccountStatusReq.setIdCard("445122199510295218");
-        cloudAccountStatusReq.setRealName("黄坤煌");
-        cloudAccountStatusReq.setUserId("1");
+        // cloudAccountStatusReq.setIdCard("420683199209100516");
+        // cloudAccountStatusReq.setRealName("沈凡");
+        // cloudAccountStatusReq.setUserId("977431137");
+        cloudAccountStatusReq.setIdCard("410727198903044938");
+        cloudAccountStatusReq.setRealName("薛明阳");
+        cloudAccountStatusReq.setUserId("536952750");
         CloudAccountStatusRes cloudAccountStatusRes = iSandPayCloudPayHandler.accountStatus(cloudAccountStatusReq);
-
+        System.out.println(JSONUtil.toJsonStr(cloudAccountStatusRes));
     }
     @Test
     public void testAccountOPen() {

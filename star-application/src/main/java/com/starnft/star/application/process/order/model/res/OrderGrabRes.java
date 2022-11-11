@@ -13,6 +13,7 @@ public class OrderGrabRes implements Serializable {
     //抢单状态
     @ApiModelProperty(value = "抢单状态 0 成功")
     private Integer status;
+
     @ApiModelProperty(value = "抢单消息")
     private String message;
 

@@ -1,5 +1,6 @@
 package com.starnft.star.interfaces.controller.mall;
 
+import cn.hutool.json.JSONUtil;
 import com.starnft.star.application.process.limit.ICurrentLimiter;
 import com.starnft.star.application.process.number.req.MarketOrderReq;
 import com.starnft.star.application.process.order.IOrderProcessor;
@@ -17,14 +18,18 @@ import com.starnft.star.domain.order.model.req.OrderListReq;
 import com.starnft.star.domain.order.model.res.OrderListRes;
 import com.starnft.star.domain.order.service.IOrderService;
 import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
+import com.starnft.star.interfaces.controller.trans.redis.RedisDistributedLock;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import com.starnft.star.interfaces.interceptor.UserContext;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * 订单相关接口
@@ -33,6 +38,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @RestController
 @RequestMapping("/order")
+@Slf4j
 public class OrderController {
 
     final IOrderProcessor orderProcessor;
@@ -40,6 +46,8 @@ public class OrderController {
     final IOrderService orderService;
 
     final ICurrentLimiter currentLimiter;
+
+    final RedisDistributedLock redisDistributedLock;
 
     @ApiOperation("下单")
     @PostMapping("/grab")
@@ -49,6 +57,31 @@ public class OrderController {
         }
         req.setUserId(UserContext.getUserId().getUserId());
         return RopResponse.success(this.orderProcessor.orderGrab(req));
+    }
+
+    @ApiOperation("创建订单")
+    @PostMapping("/createOrder")
+    public RopResponse<OrderGrabRes> createOrder(@Validated @RequestBody OrderGrabReq req) {
+        log.info("[createOrder]下单参数：{}", JSONUtil.toJsonStr(req));
+        if (!currentLimiter.tryAcquire()) {
+            throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
+        }
+        String lockKey = "lockKey_" + req.getThemeId();
+        String lockId = null;
+        try {
+            lockId = redisDistributedLock.lock(lockKey, 10, 10, TimeUnit.SECONDS);
+            req.setUserId(UserContext.getUserId().getUserId());
+            OrderGrabRes result = this.orderProcessor.createOrder(req);
+            return RopResponse.success(result);
+        } catch (StarException e) {
+            log.error("StarException,msg:{}", e.getMessage(), e);
+            throw e;
+        } catch (Exception e) {
+            log.error("系统繁忙，请稍后操作：{}", e.getMessage(), e);
+            throw new StarException(StarError.REQUEST_OVERFLOW_ERROR);
+        } finally {
+            redisDistributedLock.releaseLock(lockKey, lockId);
+        }
     }
 
     @ApiOperation("查询订单列表")
@@ -114,8 +147,8 @@ public class OrderController {
     @PostMapping("/orderData/clear")
     @TokenIgnore
     @ApiOperation("清理异常数据")
-    public RopResponse<Boolean> orderDataClear(@RequestParam String themeId,@RequestParam String keySecret) {
-        return RopResponse.success(this.orderProcessor.dataCheck(Long.parseLong(themeId),keySecret));
+    public RopResponse<Boolean> orderDataClear(@RequestParam String themeId, @RequestParam String keySecret) {
+        return RopResponse.success(this.orderProcessor.dataCheck(Long.parseLong(themeId), keySecret));
     }
 
     @PostMapping("/priority/times")

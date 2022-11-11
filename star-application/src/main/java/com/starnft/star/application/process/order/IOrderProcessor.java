@@ -17,6 +17,9 @@ public interface IOrderProcessor {
     //秒杀下单
     OrderGrabRes orderGrab(OrderGrabReq orderGrabReq);
 
+    //秒杀下单
+    OrderGrabRes createOrder(OrderGrabReq orderGrabReq);
+
     //查询秒杀订单
     OrderListRes obtainSecKillOrder(OrderGrabReq orderGrabReq);
 

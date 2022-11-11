@@ -106,6 +106,17 @@ public class OrderProcessor implements IOrderProcessor {
     private final IPaymentService paymentService;
 
     @Override
+    public OrderGrabRes createOrder(OrderGrabReq orderGrabReq) {
+        //1、待支付订单判断
+        if (havingOrder(orderGrabReq.getUserId())) {
+            throw new StarException(StarError.ORDER_DONT_PAY_ERROR);
+        }
+
+
+        return null;
+    }
+
+    @Override
     public OrderGrabRes orderGrab(OrderGrabReq orderGrabReq) {
 
         //待支付订单判断
