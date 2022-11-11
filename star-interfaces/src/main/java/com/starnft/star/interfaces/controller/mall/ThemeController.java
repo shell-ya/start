@@ -62,20 +62,20 @@ public class ThemeController {
     public RopResponse<ThemeDetailRes> seriesTheme(@PathVariable @ApiParam("主题id") Long id) {
         return RopResponse.success(this.themeCore.queryThemeDetail(id));
     }
-    //
-    // @PostMapping("/seckill/list")
-    // @ApiOperation("秒杀商品列表")
-    // @TokenIgnore
-    // public RopResponse<Set<SecKillGoods>> seriesTheme() {
-    //     return RopResponse.success(this.themeCore.querySecKillThemes());
-    // }
-    //
 
     @PostMapping("/seckill/list")
     @ApiOperation("秒杀商品列表")
     @TokenIgnore
-    public RopResponse<List<SecKillGoods>> seriesTheme() {
-        return RopResponse.success(this.themeCore.querySecKillThemesNew());
+    public RopResponse<Set<SecKillGoods>> seriesTheme() {
+        return RopResponse.success(this.themeCore.querySecKillThemes());
     }
+
+    //
+    // @PostMapping("/seckill/list")
+    // @ApiOperation("秒杀商品列表")
+    // @TokenIgnore
+    // public RopResponse<List<SecKillGoods>> seriesTheme() {
+    //     return RopResponse.success(this.themeCore.querySecKillThemesNew());
+    // }
 
 }
