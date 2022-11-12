@@ -784,7 +784,7 @@ public class OrderProcessor implements IOrderProcessor {
         // 2、判断卖家是否开通云账户
         boolean checkSeller = checkSellerIsOpenCloudAccount(req);
 
-        OrderVO orderVO = orderService.queryOrderById(Long.parseLong(req.getOrderSn()));
+        OrderVO orderVO = orderService.queryOrder(req.getOrderSn());
 
         // 3、卖家已开通 -> C2C转账，构建链接
         if (checkSeller) {
@@ -794,6 +794,7 @@ public class OrderProcessor implements IOrderProcessor {
             param.setMer_order_no(orderVO.getOrderSn());
             param.setOrder_amt(String.valueOf(orderVO.getPayAmount()));
             param.setNotify_url(this.C2CTransNotify);
+            param.setReturn_url(req.getReturnUri());
             String c2CTransUrl = SandC2CTrans.buildC2CTransUrl(param);
             paymentRes.setJumpUrl(c2CTransUrl);
             return res;

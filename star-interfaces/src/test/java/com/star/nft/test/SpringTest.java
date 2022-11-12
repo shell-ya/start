@@ -300,9 +300,10 @@ public class SpringTest {
     void cloudAccountPay() {
         OrderPayReq orderPayReq = new OrderPayReq();
         orderPayReq.setUserId(509057525L);
-        orderPayReq.setOrderSn("TS1041106624892309504");
-        orderPayReq.setPayAmount("50.00");
-        orderPayReq.setTotalPayAmount("50.00");
+        orderPayReq.setOwnerId("536952750");
+        orderPayReq.setOrderSn("TS1041023318955855872");
+        orderPayReq.setPayAmount("0.01");
+        orderPayReq.setTotalPayAmount("0.01");
         orderPayReq.setNumberId(1019309563523076096L);
         orderPayReq.setThemeId(1019309563523076096L);
         orderPayReq.setSeriesId(9L);
