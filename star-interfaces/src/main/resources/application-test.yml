@@ -179,3 +179,5 @@ aj:
     req-get-minute-limit: 30
     req-check-minute-limit: 60
     req-verify-minute-limit: 60
+
+C2CTransNotify: https://cmdev.infiart.cn/api/newNotify/c2cTransNotify

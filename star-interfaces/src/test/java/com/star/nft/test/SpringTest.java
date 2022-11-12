@@ -295,6 +295,26 @@ public class SpringTest {
         System.out.println(JSON.toJSONString(orderPayDetailRes));
     }
 
+
+    @Test
+    void cloudAccountPay() {
+        OrderPayReq orderPayReq = new OrderPayReq();
+        orderPayReq.setUserId(509057525L);
+        orderPayReq.setOrderSn("TS1041106624892309504");
+        orderPayReq.setPayAmount("50.00");
+        orderPayReq.setTotalPayAmount("50.00");
+        orderPayReq.setNumberId(1019309563523076096L);
+        orderPayReq.setThemeId(1019309563523076096L);
+        orderPayReq.setSeriesId(9L);
+        orderPayReq.setType(3);
+        orderPayReq.setCategoryType(1);
+        orderPayReq.setReturnUri("https://www.baidu.com");
+        OrderPayDetailRes orderPayDetailRes = orderProcessor.cloudAccountPay(orderPayReq);
+        System.out.println(JSON.toJSONString(orderPayDetailRes));
+    }
+
+
+
     @Test
     public void goods() {
         Set<SecKillGoods> secKillGoods = themeCore.querySecKillThemes();

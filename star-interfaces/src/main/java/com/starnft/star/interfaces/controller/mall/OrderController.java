@@ -119,6 +119,13 @@ public class OrderController {
         return RopResponse.success(this.orderProcessor.orderPay(req));
     }
 
+    @ApiOperation("市场订单云账户支付")
+    @PostMapping("/marketOrder/cloudAccountPay")
+    public RopResponse<OrderPayDetailRes> cloudAccountPay(@RequestBody OrderPayReq req) {
+        req.setUserId(UserContext.getUserId().getUserId());
+        return RopResponse.success(this.orderProcessor.cloudAccountPay(req));
+    }
+
 
     @ApiOperation("取消秒杀订单")
     @PostMapping("/killed/cancel")

@@ -57,4 +57,11 @@ public interface IOrderProcessor {
     OrderListRes payDetails(String orderSn);
 
     Boolean marketC2COrder(PayCheckRes payCheckRes);
+
+    /**
+     * 市场订单云账户支付
+     * @param req
+     * @return
+     */
+    OrderPayDetailRes cloudAccountPay(OrderPayReq req);
 }

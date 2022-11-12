@@ -95,6 +95,8 @@ public class UserRepository implements IUserRepository {
             userInfo.setBriefIntroduction(userInfoEntity.getBriefIntroduction());
             userInfo.setParent(userInfoEntity.getParent());
             userInfo.setCreateAt(userInfoEntity.getCreatedAt());
+            userInfo.setIdNumber(userInfoEntity.getIdNumber());
+            userInfo.setFullName(userInfoEntity.getFullName());
             return userInfo;
         }
         return null;

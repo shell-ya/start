@@ -37,4 +37,8 @@ public class UserInfo {
     private Long parent;
 
     private Date createAt;
+
+    private String fullName;
+
+    private String idNumber;
 }

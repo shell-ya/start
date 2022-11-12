@@ -3,6 +3,7 @@ package com.starnft.star.application.process.order.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -30,6 +31,7 @@ import com.starnft.star.common.Result;
 import com.starnft.star.common.ResultCode;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
+import com.starnft.star.common.constant.YesOrNoStatusEnum;
 import com.starnft.star.common.enums.NumberCirculationTypeEnum;
 import com.starnft.star.common.enums.NumberStatusEnum;
 import com.starnft.star.common.exception.StarError;
@@ -50,13 +52,19 @@ import com.starnft.star.domain.order.service.IOrderService;
 import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
 import com.starnft.star.domain.order.service.stateflow.impl.OrderStateHandler;
 import com.starnft.star.domain.payment.core.IPaymentService;
+import com.starnft.star.domain.payment.handler.ISandPayCloudPayHandler;
+import com.starnft.star.domain.payment.model.req.CloudAccountOPenReq;
+import com.starnft.star.domain.payment.model.req.CloudAccountStatusReq;
 import com.starnft.star.domain.payment.model.req.PaymentRich;
+import com.starnft.star.domain.payment.model.res.CloudAccountOPenRes;
+import com.starnft.star.domain.payment.model.res.CloudAccountStatusRes;
 import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.payment.model.res.PaymentRes;
 import com.starnft.star.domain.rank.core.rank.core.IRankService;
 import com.starnft.star.domain.support.ids.IIdGenerator;
 import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.domain.theme.service.ThemeService;
+import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.domain.user.model.vo.UserInfoVO;
 import com.starnft.star.domain.user.service.IUserService;
 import com.starnft.star.domain.wallet.model.req.WalletPayRequest;
@@ -69,6 +77,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -104,6 +113,11 @@ public class OrderProcessor implements IOrderProcessor {
     private final WhiteRuleContext whiteRuleContext;
 
     private final IPaymentService paymentService;
+
+    private final ISandPayCloudPayHandler iSandPayCloudPayHandler;
+
+    @Value("${C2CTransNotify}")
+    private String C2CTransNotify;
 
     @Override
     public OrderGrabRes createOrder(OrderGrabReq orderGrabReq) {
@@ -658,7 +672,7 @@ public class OrderProcessor implements IOrderProcessor {
             try {
                 Result result = orderStateHandler.payCancel(orderVO.getUserId(), orderVO.getOrderSn(), StarConstants.ORDER_STATE.WAIT_PAY);
                 return ResultCode.SUCCESS.getCode().equals(result.getCode());
-            }catch (Exception e){
+            } catch (Exception e) {
                 throw new RuntimeException("订单处理异常！", e);
             }
         }
@@ -752,5 +766,95 @@ public class OrderProcessor implements IOrderProcessor {
                 .build();
         //创建订单
         return orderService.createOrder(orderVO);
+    }
+
+    @Override
+    public OrderPayDetailRes cloudAccountPay(OrderPayReq req) {
+
+        OrderPayDetailRes res = new OrderPayDetailRes();
+        PaymentRes paymentRes = new PaymentRes();
+        res.setResults(paymentRes);
+        // 1、判断买家是否开通云账户，未开通 -> 构建开户链接
+        String openCloudAccountUrl = checkIsOpenCloudAccount(req);
+        if (StrUtil.isNotBlank(openCloudAccountUrl)) {
+            paymentRes.setJumpUrl(openCloudAccountUrl);
+            return res;
+        }
+
+        // 2、判断卖家是否开通云账户
+        boolean checkSeller = checkSellerIsOpenCloudAccount(req);
+
+        OrderVO orderVO = orderService.queryOrderById(Long.parseLong(req.getOrderSn()));
+
+        // 3、卖家已开通 -> C2C转账，构建链接
+        if (checkSeller) {
+            C2CTransParam param = new C2CTransParam();
+            param.setRecvUserId(req.getOwnerId());
+            param.setPayUserId(String.valueOf(req.getUserId()));
+            param.setMer_order_no(orderVO.getOrderSn());
+            param.setOrder_amt(String.valueOf(orderVO.getPayAmount()));
+            param.setNotify_url(this.C2CTransNotify);
+            String c2CTransUrl = SandC2CTrans.buildC2CTransUrl(param);
+            paymentRes.setJumpUrl(c2CTransUrl);
+            return res;
+        }
+
+        // 3、卖家未开通 -> C2B转账，构建链接
+
+        return null;
+    }
+
+    /**
+     * 校验卖家是否开通云账户
+     *
+     * @param req
+     * @return
+     */
+    private boolean checkSellerIsOpenCloudAccount(OrderPayReq req) {
+        UserInfo userInfo = userService.queryUserInfoAll(Long.valueOf(req.getOwnerId()));
+        if (userInfo.getRealPersonFlag() == 0) {
+            return false;
+        }
+
+        CloudAccountStatusReq cloudAccountStatusReq = new CloudAccountStatusReq();
+        cloudAccountStatusReq.setIdCard(userInfo.getIdNumber());
+        cloudAccountStatusReq.setRealName(userInfo.getFullName());
+        cloudAccountStatusReq.setUserId(String.valueOf(req.getUserId()));
+        CloudAccountStatusRes cloudAccountStatusRes = iSandPayCloudPayHandler.accountStatus(cloudAccountStatusReq);
+        log.info("[checkIsOpenCloudAccount]cloudAccountStatusRes:{}", JSONUtil.toJsonStr(cloudAccountStatusRes));
+        return cloudAccountStatusRes.getStatus();
+    }
+
+
+    /**
+     * 是否开通云账户
+     *
+     * @param req
+     * @return
+     */
+    private String checkIsOpenCloudAccount(OrderPayReq req) {
+        UserInfo userInfo = userService.queryUserInfoAll(req.getUserId());
+        Optional.ofNullable(userInfo.getRealPersonFlag())
+                .filter(a -> Objects.equals(YesOrNoStatusEnum.YES.getCode(), a))
+                .orElseThrow(() -> new StarException(StarError.NOT_AUTHENTICATION));
+
+        CloudAccountStatusReq cloudAccountStatusReq = new CloudAccountStatusReq();
+        cloudAccountStatusReq.setIdCard(userInfo.getIdNumber());
+        cloudAccountStatusReq.setRealName(userInfo.getFullName());
+        cloudAccountStatusReq.setUserId(String.valueOf(req.getUserId()));
+        CloudAccountStatusRes cloudAccountStatusRes = iSandPayCloudPayHandler.accountStatus(cloudAccountStatusReq);
+        log.info("[checkIsOpenCloudAccount]cloudAccountStatusRes:{}", JSONUtil.toJsonStr(cloudAccountStatusRes));
+        if (cloudAccountStatusRes.getStatus()) {
+            return null;
+        }
+
+        CloudAccountOPenReq cloudAccountOPenReq = new CloudAccountOPenReq();
+        cloudAccountOPenReq.setUserId(String.valueOf(req.getUserId()));
+        cloudAccountOPenReq.setIdCard(userInfo.getIdNumber());
+        cloudAccountOPenReq.setRealName(userInfo.getFullName());
+        cloudAccountOPenReq.setReturnUri(req.getReturnUri());
+        CloudAccountOPenRes cloudAccountOPenRes = iSandPayCloudPayHandler.openAccount(cloudAccountOPenReq);
+        log.info("[checkIsOpenCloudAccount]cloudAccountOPenRes:{}", JSONUtil.toJsonStr(cloudAccountOPenRes));
+        return cloudAccountOPenRes.getUri();
     }
 }

@@ -1,5 +1,6 @@
 package com.starnft.star.domain.payment.model.res;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -30,5 +31,8 @@ public class PaymentRes implements Serializable {
      * 接口信息
      */
     private String message;
+
+    @ApiModelProperty(value = "跳转路径")
+    private String jumpUrl;
 
 }

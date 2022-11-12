@@ -58,5 +58,7 @@ public class OrderPayReq implements Serializable {
     @ApiModelProperty(value = "支付密码校验凭证")
     private String payToken;
 
+    @ApiModelProperty(value = "返回路径")
+    private String returnUri;
 
 }
