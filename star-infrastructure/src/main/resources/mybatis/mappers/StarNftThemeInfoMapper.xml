@@ -98,17 +98,14 @@
             AND ti.theme_type = #{themeType}
         </if>
         AND is_resale = 1
-        <if test="sortType == 1">
+        <if test="sortType == 1 and sortOrder ==2 "  >
             ORDER BY series.rank_num asc ,ti.id asc , ti.market_open_time
         </if>
-        <if test="sortType == 2">
-            ORDER BY series.rank_num asc ,ti.id asc , tn.price
+        <if test="sortType == 2 and sortOrder == 1 ">
+            ORDER BY tn.price asc
         </if>
-        <if test="sortOrder == 1">
-            ASC
-        </if>
-        <if test="sortOrder == 2">
-            DESC
+        <if test="sortType == 2 and sortOrder == 2 ">
+            ORDER BY tn.price desc
         </if>
     </select>
 
