@@ -662,7 +662,7 @@ public class OrderProcessor implements IOrderProcessor {
     public Boolean marketC2COrder(PayCheckRes payCheckRes) {
         OrderVO orderVO = null;
 
-        orderVO = orderService.queryOrderById(Long.parseLong(payCheckRes.getOrderSn()));
+        orderVO = orderService.queryOrder(payCheckRes.getOrderSn());
         if (orderVO == null) {
             log.error("uid :[{}] orderId : [{}] 不存在！", payCheckRes.getUid(), payCheckRes.getOrderSn());
             throw new RuntimeException("订单不存在！");
