@@ -836,7 +836,7 @@ public class OrderProcessor implements IOrderProcessor {
         PaymentRes paymentRes = new PaymentRes();
         res.setResults(paymentRes);
         // 1、判断买家是否开通云账户，未开通 -> 构建开户链接
-        String openCloudAccountUrl = checkIsOpenCloudAccount(req);
+        String openCloudAccountUrl = checkBuyerIsOpenCloudAccount(req);
         if (StrUtil.isNotBlank(openCloudAccountUrl)) {
             paymentRes.setJumpUrl(openCloudAccountUrl);
             return res;
@@ -892,9 +892,9 @@ public class OrderProcessor implements IOrderProcessor {
         cloudAccountStatusReq.setIdCard(userInfo.getIdNumber());
         cloudAccountStatusReq.setRealName(userInfo.getFullName());
         cloudAccountStatusReq.setUserId(String.valueOf(req.getOwnerId()));
-        log.info("[checkIsOpenCloudAccount]cloudAccountStatusRes 入参:{}", JSONUtil.toJsonStr(cloudAccountStatusReq));
+        log.info("[checkSellerIsOpenCloudAccount]cloudAccountStatusRes 入参:{}", JSONUtil.toJsonStr(cloudAccountStatusReq));
         CloudAccountStatusRes cloudAccountStatusRes = iSandPayCloudPayHandler.accountStatus(cloudAccountStatusReq);
-        log.info("[checkIsOpenCloudAccount]cloudAccountStatusRes 返回值:{}", JSONUtil.toJsonStr(cloudAccountStatusRes));
+        log.info("[checkSellerIsOpenCloudAccount]cloudAccountStatusRes 返回值:{}", JSONUtil.toJsonStr(cloudAccountStatusRes));
         return cloudAccountStatusRes.getStatus();
     }
 
@@ -905,7 +905,7 @@ public class OrderProcessor implements IOrderProcessor {
      * @param req
      * @return
      */
-    private String checkIsOpenCloudAccount(OrderPayReq req) {
+    private String checkBuyerIsOpenCloudAccount(OrderPayReq req) {
         UserInfo userInfo = userService.queryUserInfoAll(req.getUserId());
         Optional.ofNullable(userInfo.getRealPersonFlag())
                 .filter(a -> Objects.equals(YesOrNoStatusEnum.YES.getCode(), a))
@@ -916,7 +916,7 @@ public class OrderProcessor implements IOrderProcessor {
         cloudAccountStatusReq.setRealName(userInfo.getFullName());
         cloudAccountStatusReq.setUserId(String.valueOf(req.getUserId()));
         CloudAccountStatusRes cloudAccountStatusRes = iSandPayCloudPayHandler.accountStatus(cloudAccountStatusReq);
-        log.info("[checkIsOpenCloudAccount]cloudAccountStatusRes:{}", JSONUtil.toJsonStr(cloudAccountStatusRes));
+        log.info("[checkBuyerIsOpenCloudAccount]cloudAccountStatusRes:{}", JSONUtil.toJsonStr(cloudAccountStatusRes));
         if (cloudAccountStatusRes.getStatus()) {
             return null;
         }
@@ -927,7 +927,7 @@ public class OrderProcessor implements IOrderProcessor {
         cloudAccountOPenReq.setRealName(userInfo.getFullName());
         cloudAccountOPenReq.setReturnUri(req.getReturnUri());
         CloudAccountOPenRes cloudAccountOPenRes = iSandPayCloudPayHandler.openAccount(cloudAccountOPenReq);
-        log.info("[checkIsOpenCloudAccount]cloudAccountOPenRes:{}", JSONUtil.toJsonStr(cloudAccountOPenRes));
+        log.info("[checkBuyerIsOpenCloudAccount]cloudAccountOPenRes:{}", JSONUtil.toJsonStr(cloudAccountOPenRes));
         return cloudAccountOPenRes.getUri();
     }
 }
