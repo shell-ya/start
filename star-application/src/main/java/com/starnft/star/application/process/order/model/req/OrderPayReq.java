@@ -59,6 +59,7 @@ public class OrderPayReq implements Serializable {
     private String payToken;
 
     @ApiModelProperty(value = "返回路径")
+    @NotBlank(message = "returnUri 返回路径 could not be null")
     private String returnUri;
 
 }
