@@ -1,5 +1,7 @@
 package com.starnft.star.application.process.order.impl;
 
+import cn.hutool.json.JSONUtil;
+import com.starnft.star.application.process.order.model.req.OrderPayReq;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URLEncoder;
@@ -15,6 +17,23 @@ import java.util.Map;
  */
 @Slf4j
 public class SandC2CTrans {
+    //
+    // public static void main(String[] args) {
+    //
+    //     OrderPayReq orderPayReq = new OrderPayReq();
+    //     orderPayReq.setUserId(509057525L);
+    //     orderPayReq.setOwnerId("536952750");
+    //     orderPayReq.setOrderSn("TS1041023318955855872");
+    //     orderPayReq.setPayAmount("0.01");
+    //     orderPayReq.setTotalPayAmount("0.01");
+    //     orderPayReq.setNumberId(1019309563523076096L);
+    //     orderPayReq.setThemeId(1019309563523076096L);
+    //     orderPayReq.setSeriesId(9L);
+    //     orderPayReq.setType(3);
+    //     orderPayReq.setCategoryType(1);
+    //     orderPayReq.setReturnUri("https://www.baidu.com");
+    //     System.out.println(JSONUtil.toJsonStr(orderPayReq));
+    // }
 
     /**
      * 构建2C2转账链接

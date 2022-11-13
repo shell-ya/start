@@ -65,7 +65,7 @@ public class C2CTransNotifyBO implements Serializable {
     private Integer userFeeAmt;
 
     /**
-     *
+     * 付款人信息
      */
     private PayerInfoDTO payerInfo;
 
@@ -75,7 +75,7 @@ public class C2CTransNotifyBO implements Serializable {
     private String transType;
 
     /**
-     *
+     * 收款人信息
      */
     private PayeeInfoDTO payeeInfo;
 

@@ -122,7 +122,7 @@ public class NewNotifyController {
                     .status(c2CTransNotifyBO.getOrderStatus().equals("00") ? ResultCode.SUCCESS.getCode():1)
                     .totalAmount(BigDecimal.valueOf(c2CTransNotifyBO.getAmount()))
                     .transSn(c2CTransNotifyBO.getSandSerialNo())
-                    .uid(Long.parseLong(c2CTransNotifyBO.getPayeeInfo().getPayeeMemID()))
+                    .uid(Long.parseLong(c2CTransNotifyBO.getPayerInfo().getPayerMemID()))
                     .build();
             notifyOrderService.saveOrder(orderReq);
 

@@ -1,5 +1,6 @@
 package com.star.nft.test;
 
+import cn.hutool.json.JSONUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -310,6 +311,7 @@ public class SpringTest {
         orderPayReq.setType(3);
         orderPayReq.setCategoryType(1);
         orderPayReq.setReturnUri("https://www.baidu.com");
+        System.out.println(JSONUtil.toJsonStr(orderPayReq));
         OrderPayDetailRes orderPayDetailRes = orderProcessor.cloudAccountPay(orderPayReq);
         System.out.println(JSON.toJSONString(orderPayDetailRes));
     }
