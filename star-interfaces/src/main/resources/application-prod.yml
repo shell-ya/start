@@ -79,3 +79,6 @@ aj:
     req-get-minute-limit: 30
     req-check-minute-limit: 60
     req-verify-minute-limit: 60
+
+C2CTransNotify: https://www.circlemeta.cn/api/newNotify/c2cTransNotify
+C2BTransNotify: https://www.circlemeta.cn/api/newNotify/c2bTransNotify

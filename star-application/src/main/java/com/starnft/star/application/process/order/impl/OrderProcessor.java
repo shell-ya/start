@@ -119,6 +119,9 @@ public class OrderProcessor implements IOrderProcessor {
     @Value("${C2CTransNotify}")
     private String C2CTransNotify;
 
+    @Value("${C2BTransNotify}")
+    private String C2BTransNotify;
+
     @Override
     public OrderGrabRes createOrder(OrderGrabReq orderGrabReq) {
         //1、待支付订单判断
@@ -786,7 +789,7 @@ public class OrderProcessor implements IOrderProcessor {
 
         OrderVO orderVO = orderService.queryOrder(req.getOrderSn());
 
-        // 3、卖家已开通 -> C2C转账，构建链接
+        // 3、卖家已开通 -> 用户转账（C2C），构建链接
         if (checkSeller) {
             C2CTransParam param = new C2CTransParam();
             param.setRecvUserId(req.getOwnerId());
@@ -795,14 +798,21 @@ public class OrderProcessor implements IOrderProcessor {
             param.setOrder_amt(String.valueOf(orderVO.getPayAmount()));
             param.setNotify_url(this.C2CTransNotify);
             param.setReturn_url(req.getReturnUri());
-            String c2CTransUrl = SandC2CTrans.buildC2CTransUrl(param);
-            paymentRes.setJumpUrl(c2CTransUrl);
+            String c2cTransUrl = SandC2CTrans.buildTransUrl(param);
+            paymentRes.setJumpUrl(c2cTransUrl);
             return res;
         }
 
-        // 3、卖家未开通 -> C2B转账，构建链接
-
-        return null;
+        // 4、卖家未开通 -> 用户消费（C2B），构建链接
+        C2BTransParam param = new C2BTransParam();
+        param.setPayUserId(String.valueOf(req.getUserId()));
+        param.setMer_order_no(orderVO.getOrderSn());
+        param.setOrder_amt(String.valueOf(orderVO.getPayAmount()));
+        param.setNotify_url(this.C2BTransNotify);
+        param.setReturn_url(req.getReturnUri());
+        String c2bTransUrl = SandC2BTrans.buildTransUrl(param);
+        paymentRes.setJumpUrl(c2bTransUrl);
+        return res;
     }
 
     /**

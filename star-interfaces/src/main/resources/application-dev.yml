@@ -181,3 +181,4 @@ aj:
     req-verify-minute-limit: 60
 
 C2CTransNotify: https://cmdev.infiart.cn/api/newNotify/c2cTransNotify
+C2BTransNotify: https://cmdev.infiart.cn/api/newNotify/c2bTransNotify
