@@ -602,6 +602,29 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
+    public boolean doC2BTransaction(TransReq transReq) {
+        WalletVO walletVO = walletRepository.queryWallet(new WalletInfoReq(transReq.getUid()));
+        if (walletVO == null) {
+            throw new RuntimeException("未找到钱包");
+        }
+        BigDecimal curr = walletVO.getBalance().add(transReq.getPayAmount());
+        Boolean isSuccess = template.execute(status -> {
+            //记录钱包记录
+            boolean logWrite = walletRepository.createWalletLog(WalletLogReq.builder().walletId(walletVO.getWalletId())
+                    .userId(walletVO.getUid()).offset(transReq.getTotalAmount()).currentMoney(curr).payChannel(transReq.getPayChannel())
+                    .orderNo(transReq.getOrderSn()).build());
+            //修改余额
+            boolean balanceModify = walletRepository.modifyWalletBalance(WalletVO.builder().uid(Long.valueOf(transReq.getUid()))
+                    .balance(curr)
+                    .wallet_income(transReq.getPayAmount().signum() >= 0 ? walletVO.getWallet_income().add(transReq.getPayAmount()) : null)
+                    .wallet_outcome(transReq.getPayAmount().signum() == -1 ? walletVO.getWallet_outcome().add(transReq.getPayAmount()) : null)
+                    .build());
+            return logWrite && balanceModify;
+        });
+        return isSuccess;
+    }
+
+    @Override
     public ReceivablesCalculateResult ReceivablesMoneyCalculate(CalculateReq calculate) {
 
         verifyParam(calculate.getChannel());

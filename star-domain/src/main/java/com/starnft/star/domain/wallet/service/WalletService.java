@@ -73,10 +73,13 @@ public interface WalletService {
     //交易操作
     boolean doTransaction(TransReq transReq);
 
+    // C2B转账之后 -> 给人加钱
+    boolean doC2BTransaction(TransReq transReq);
+
     //到账金额计算
     ReceivablesCalculateResult ReceivablesMoneyCalculate(CalculateReq calculate);
 
-    boolean feeProcess(String recordSn,BigDecimal fee);
+    boolean feeProcess(String recordSn, BigDecimal fee);
 
     List<String> checkPay();
 }

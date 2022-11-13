@@ -242,6 +242,7 @@ public class NewNotifyController {
                     .status(c2CTransNotifyBO.getOrderStatus().equals("00") ? ResultCode.SUCCESS.getCode():1)
                     .message(c2CTransNotifyBO.getRespMsg())
                     .totalAmount(BigDecimal.valueOf(c2CTransNotifyBO.getAmount()))
+                    .sandSerialNo(c2CTransNotifyBO.getSandSerialNo())
                     .build();
 
             orderProcessor.marketC2COrder(payCheckRes);

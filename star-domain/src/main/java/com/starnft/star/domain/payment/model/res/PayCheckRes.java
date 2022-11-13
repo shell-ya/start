@@ -30,4 +30,5 @@ public class PayCheckRes implements Serializable {
 
     //todo 回调相应参数
 
+    private String sandSerialNo;
 }

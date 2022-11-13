@@ -67,6 +67,7 @@ import com.starnft.star.domain.theme.service.ThemeService;
 import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.domain.user.model.vo.UserInfoVO;
 import com.starnft.star.domain.user.service.IUserService;
+import com.starnft.star.domain.wallet.model.req.TransReq;
 import com.starnft.star.domain.wallet.model.req.WalletPayRequest;
 import com.starnft.star.domain.wallet.model.res.WalletPayResult;
 import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
@@ -695,6 +696,63 @@ public class OrderProcessor implements IOrderProcessor {
         }
     }
 
+    @Override
+    public Boolean marketC2BOrder(PayCheckRes payCheckRes) {
+        OrderVO orderVO = null;
+
+        orderVO = orderService.queryOrder(payCheckRes.getOrderSn());
+        if (orderVO == null) {
+            log.error("uid :[{}] orderId : [{}] 不存在！", payCheckRes.getUid(), payCheckRes.getOrderSn());
+            throw new RuntimeException("订单不存在！");
+        }
+
+        if (!payCheckRes.getStatus().equals(ResultCode.SUCCESS.getCode())) {
+            try {
+                Result result = orderStateHandler.payCancel(orderVO.getUserId(), orderVO.getOrderSn(), StarConstants.ORDER_STATE.WAIT_PAY);
+                return ResultCode.SUCCESS.getCode().equals(result.getCode());
+            } catch (Exception e) {
+                throw new RuntimeException("订单处理异常！", e);
+            }
+        }
+
+        try {
+            OrderVO finalOrderVO = orderVO;
+            Boolean isSuccess = template.execute(status -> {
+
+                //商品发放
+                boolean handover = numberService.handover(buildHandOverReq(finalOrderVO));
+
+                //订单状态更新
+                Result result = orderStateHandler.payComplete(finalOrderVO.getUserId(), finalOrderVO.getOrderSn(), finalOrderVO.getOrderSn(), StarConstants.ORDER_STATE.WAIT_PAY);
+
+                // 给卖家钱包加钱
+                TransReq transReq = createMarketTransReq(finalOrderVO.getOrderSn(), payCheckRes.getSandSerialNo(), payCheckRes.getTotalAmount(), finalOrderVO.getSeriesThemeId());
+                walletService.doC2BTransaction(transReq);
+
+                return ResultCode.SUCCESS.getCode().equals(result.getCode()) && handover;
+            });
+            return isSuccess;
+        } catch (TransactionException | StarException e) {
+            throw new RuntimeException("订单处理异常！", e);
+        }
+    }
+
+
+    private TransReq createMarketTransReq(String orderSn, String outTradeNo, BigDecimal payAmount, Long seriesThemeId) {
+        // walletPayRequest.setPayAmount(walletPayRequest.getPayAmount().signum() == -1 ? walletPayRequest.getPayAmount().negate() : walletPayRequest.getPayAmount());
+        // walletPayRequest.setPayAmount(walletPayRequest.getPayAmount().subtract(walletPayRequest.getFee()));
+        // walletPayRequest.setTotalPayAmount(walletPayRequest.getTotalPayAmount().subtract(walletPayRequest.getFee()));
+        NumberDetailVO numberDetail = numberService.getNumberDetail(seriesThemeId);
+        TransReq transReq = new TransReq();
+        transReq.setOrderSn(orderSn);
+        transReq.setUid(Long.valueOf(numberDetail.getOwnerBy()));
+        transReq.setOutTradeNo(outTradeNo);
+        transReq.setPayAmount(payAmount);
+        transReq.setPayChannel("CloudAccount");
+        transReq.setTotalAmount(payAmount);
+        transReq.setTsType(StarConstants.Transaction_Type.Sell.getCode());
+        return transReq;
+    }
 
     private HandoverReq buildHandOverReq(OrderVO orderPayReq) {
         HandoverReq handoverReq = new HandoverReq();
