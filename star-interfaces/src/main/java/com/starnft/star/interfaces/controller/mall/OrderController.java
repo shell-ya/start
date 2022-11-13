@@ -123,7 +123,10 @@ public class OrderController {
     @PostMapping("/marketOrder/cloudAccountPay")
     public RopResponse<OrderPayDetailRes> cloudAccountPay(@RequestBody @Validated OrderPayReq req) {
         req.setUserId(UserContext.getUserId().getUserId());
-        return RopResponse.success(this.orderProcessor.cloudAccountPay(req));
+        log.info("[cloudAccountPay] 入参：{}", JSONUtil.toJsonStr(req));
+        OrderPayDetailRes res = this.orderProcessor.cloudAccountPay(req);
+        log.info("[cloudAccountPay] 返参：{}", JSONUtil.toJsonStr(res));
+        return RopResponse.success(res);
     }
 
 
