@@ -301,13 +301,13 @@ public class SpringTest {
     void cloudAccountPay() {
         OrderPayReq orderPayReq = new OrderPayReq();
         orderPayReq.setUserId(509057525L);
-        orderPayReq.setOwnerId("536952750");
-        orderPayReq.setOrderSn("TS1041023318955855872");
+        orderPayReq.setOwnerId("786172067");
+        orderPayReq.setOrderSn("TS1041483608478650368");
         orderPayReq.setPayAmount("0.01");
         orderPayReq.setTotalPayAmount("0.01");
-        orderPayReq.setNumberId(1019309563523076096L);
-        orderPayReq.setThemeId(1019309563523076096L);
-        orderPayReq.setSeriesId(9L);
+        orderPayReq.setNumberId(1002368672067407872L);
+        orderPayReq.setThemeId(1002287375767941120L);
+        orderPayReq.setSeriesId(4L);
         orderPayReq.setType(3);
         orderPayReq.setCategoryType(1);
         orderPayReq.setReturnUri("https://www.baidu.com");

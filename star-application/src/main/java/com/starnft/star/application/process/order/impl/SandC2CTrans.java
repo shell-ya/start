@@ -79,7 +79,7 @@ public class SandC2CTrans {
         // "payUserId":"付款方会员编号，用户在商户系统中的唯一编号 ；",//必填
         // "userFeeAmt":"用户服务费，商户向用户收取的服务费 ",//非必填
         // "postscript":"附言",// 非必填
-        String pay_extra = "{\"operationType\":\"1\",\"recvUserId\":\"" + param.getRecvUserId() + "\",\"bizType\":\"1\",\"payUserId\":\"" + param.getPayUserId() + "\",\"remark\":\"市场订单支付\"}";
+        String pay_extra = "{\"operationType\":\"1\",\"recvUserId\":\"" + param.getRecvUserId() + "\",\"bizType\":\"2\",\"payUserId\":\"" + param.getPayUserId() + "\",\"remark\":\"市场订单支付\"}";
 
         //md5key
         String key = "Mvb16HX1dERkURx2049aMmD8iK1v5w68dEwwmoU0fCieS8g6pb381Okrr5TWHR9b/Vmmz6scR/043v2K3BB4ED8cBcNRUfk3HRJQIn57Zk4xpad2fR6DoCUvKgWklkNTtGHiO2ZDIudixuz+UKFTiw==";
