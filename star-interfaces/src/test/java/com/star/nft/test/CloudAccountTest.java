@@ -123,9 +123,9 @@ public class CloudAccountTest {
         // cloudAccountStatusReq.setIdCard("420683199209100516");
         // cloudAccountStatusReq.setRealName("沈凡");
         // cloudAccountStatusReq.setUserId("977431137");
-        cloudAccountStatusReq.setIdCard("410727198903044938");
-        cloudAccountStatusReq.setRealName("薛明阳");
-        cloudAccountStatusReq.setUserId("536952750");
+        cloudAccountStatusReq.setIdCard("360731200206258914");
+        cloudAccountStatusReq.setRealName("李鑫辉");
+        cloudAccountStatusReq.setUserId("228626669");
         CloudAccountStatusRes cloudAccountStatusRes = iSandPayCloudPayHandler.accountStatus(cloudAccountStatusReq);
         System.out.println(JSONUtil.toJsonStr(cloudAccountStatusRes));
     }

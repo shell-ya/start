@@ -859,18 +859,21 @@ public class OrderProcessor implements IOrderProcessor {
             String c2cTransUrl = SandC2CTrans.buildTransUrl(param);
             paymentRes.setJumpUrl(c2cTransUrl);
             return res;
+        } else {
+            // 4、卖家未开通 -> 用户消费（C2B），构建链接
+            C2BTransParam param = new C2BTransParam();
+            param.setPayUserId(String.valueOf(req.getUserId()));
+            param.setMer_order_no(orderVO.getOrderSn());
+            param.setOrder_amt(String.valueOf(orderVO.getPayAmount()));
+            param.setNotify_url(this.C2BTransNotify);
+            param.setReturn_url(req.getReturnUri());
+            String c2bTransUrl = SandC2BTrans.buildTransUrl(param);
+            paymentRes.setJumpUrl(c2bTransUrl);
+            return res;
         }
 
-        // 4、卖家未开通 -> 用户消费（C2B），构建链接
-        C2BTransParam param = new C2BTransParam();
-        param.setPayUserId(String.valueOf(req.getUserId()));
-        param.setMer_order_no(orderVO.getOrderSn());
-        param.setOrder_amt(String.valueOf(orderVO.getPayAmount()));
-        param.setNotify_url(this.C2BTransNotify);
-        param.setReturn_url(req.getReturnUri());
-        String c2bTransUrl = SandC2BTrans.buildTransUrl(param);
-        paymentRes.setJumpUrl(c2bTransUrl);
-        return res;
+
+
     }
 
     /**
@@ -889,8 +892,9 @@ public class OrderProcessor implements IOrderProcessor {
         cloudAccountStatusReq.setIdCard(userInfo.getIdNumber());
         cloudAccountStatusReq.setRealName(userInfo.getFullName());
         cloudAccountStatusReq.setUserId(String.valueOf(req.getUserId()));
+        log.info("[checkIsOpenCloudAccount]cloudAccountStatusRes 入参:{}", JSONUtil.toJsonStr(cloudAccountStatusReq));
         CloudAccountStatusRes cloudAccountStatusRes = iSandPayCloudPayHandler.accountStatus(cloudAccountStatusReq);
-        log.info("[checkIsOpenCloudAccount]cloudAccountStatusRes:{}", JSONUtil.toJsonStr(cloudAccountStatusRes));
+        log.info("[checkIsOpenCloudAccount]cloudAccountStatusRes 返回值:{}", JSONUtil.toJsonStr(cloudAccountStatusRes));
         return cloudAccountStatusRes.getStatus();
     }
 
