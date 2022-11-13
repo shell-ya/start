@@ -212,8 +212,8 @@ public class OrderProcessor implements IOrderProcessor {
         Assert.isTrue(lock, () -> new StarException(StarError.ORDER_REPETITION, "您的下单频率太快了,休息一下吧！"));
         if (lock) {
             try {
-                //校验余额
-                walletService.balanceVerify(orderGrabReq.getUserId(), goods.getSecCost());
+                //校验余额  --- 去掉校验余额逻辑
+                // walletService.balanceVerify(orderGrabReq.getUserId(), goods.getSecCost());
                 //用户下单次数验证 防重复下单
                 if (orderGrabReq.getThemeId().equals(1002285892654821376L)) {
                     Long userOrderedCount = redisUtil.hincr(key, String.valueOf(orderGrabReq.getUserId()), 1L);
@@ -536,8 +536,8 @@ public class OrderProcessor implements IOrderProcessor {
 
         //多重检查
         ThemeNumberVo numberDetail = verifyAgain(marketOrderReq);
-        //钱包余额充足
-        walletService.balanceVerify(marketOrderReq.getUserId(), numberDetail.getPrice());
+        //钱包余额充足 -- 去掉余额校验
+        // walletService.balanceVerify(marketOrderReq.getUserId(), numberDetail.getPrice());
         long lockTimes = RedisKey.MARKET_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.MARKET_ORDER_TRANSACTION.getTime());
         Boolean lock = redisLockUtils.lock(isTransaction, lockTimes);
         Assert.isTrue(lock, () -> new RuntimeException("用户 [" + marketOrderReq.getUserId() + "] numberId: [ " + marketOrderReq.getNumberId() + "] 正在交易！"));
