@@ -891,7 +891,7 @@ public class OrderProcessor implements IOrderProcessor {
         CloudAccountStatusReq cloudAccountStatusReq = new CloudAccountStatusReq();
         cloudAccountStatusReq.setIdCard(userInfo.getIdNumber());
         cloudAccountStatusReq.setRealName(userInfo.getFullName());
-        cloudAccountStatusReq.setUserId(String.valueOf(req.getUserId()));
+        cloudAccountStatusReq.setUserId(String.valueOf(req.getOwnerId()));
         log.info("[checkIsOpenCloudAccount]cloudAccountStatusRes 入参:{}", JSONUtil.toJsonStr(cloudAccountStatusReq));
         CloudAccountStatusRes cloudAccountStatusRes = iSandPayCloudPayHandler.accountStatus(cloudAccountStatusReq);
         log.info("[checkIsOpenCloudAccount]cloudAccountStatusRes 返回值:{}", JSONUtil.toJsonStr(cloudAccountStatusRes));
