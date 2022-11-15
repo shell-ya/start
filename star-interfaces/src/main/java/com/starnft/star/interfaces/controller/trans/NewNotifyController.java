@@ -183,31 +183,29 @@ public class NewNotifyController {
             return "回调参数为空....";
         }
 
-        // 2、验签
         try {
-            Class ceasClass = Class.forName("cn.com.sand.ceas.sdk.CeasHttpUtil");
-            Object o = ceasClass.newInstance();
-            Method method = ceasClass.getDeclaredMethod("verifySign", JSONObject.class);
-            method.setAccessible(true);
+            // 2、加载配置文件
+            log.info("加载证书...");
+            SDKConfig.getConfig().loadPropertiesFromSrc();
+            //加载证书
+            CertUtil.init(SDKConfig.getConfig().getSandCertPath(), SDKConfig.getConfig().getSignCertPath(), SDKConfig.getConfig().getSignCertPwd());
+        } catch (Exception e) {
+            log.error("加载证书异常，异常信息:{}", e.getMessage(), e);
+        }
 
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("data", data);
-            jsonObject.put("sign", sign);
-
-            // 验证签名，执行verifySign方法
-            boolean valid = (boolean) method.invoke(o, jsonObject);
-            if (valid) {//验签成功
-                log.info("verify sign success....");
+        // 3、验签
+        try {
+            boolean valid = CryptoUtil.verifyDigitalSign(data.getBytes("utf-8"), Base64.decodeBase64(sign), CertUtil.getPublicKey(), "SHA1WithRSA");
+            if (!valid) {
+                log.error("verify sign fail.");
+                log.error("签名字符串(data)为：" + data);
+                log.error("签名值(sign)为：" + sign);
+            } else {
+                log.info("verify sign success");
                 c2bTransNotifyBO = JSONUtil.toBean(data, C2BTransNotifyBO.class);
-                log.info("接收到的异步通知数据为：{}", JSONUtil.toJsonStr(c2bTransNotifyBO));
-            } else {//如果验签失败
-                log.error("verify sign fail....");
-                log.error("验签失败的签名字符串(data)为：{}", data);
-                log.error("验签失败的签名值(sign)为：{}", sign);
             }
         } catch (Exception e) {
-            log.error("系统错误：{}", e.getMessage(), e);
-            return "系统错误";
+            log.error("验签错误：{}", e.getMessage(), e);
         }
 
         if (Objects.isNull(c2bTransNotifyBO)) {
@@ -215,7 +213,7 @@ public class NewNotifyController {
             return "验签失败....";
         }
 
-        // 3、处理业务逻辑
+        // 4、处理业务逻辑
         String lockKey = "lockKey_" + c2bTransNotifyBO.getBody().getOrderCode();
         String lockId = null;
         try {
@@ -262,42 +260,42 @@ public class NewNotifyController {
 
     public static void C2B() {
 
-        // log.info("加载证书...");
-        // // 加载证书
-        // try {
-        //     //加载配置文件
-        //     SDKConfig.getConfig().loadPropertiesFromSrc();
-        //     //加载证书
-        //     CertUtil.init(SDKConfig.getConfig().getSandCertPath(), SDKConfig.getConfig().getSignCertPath(), SDKConfig.getConfig().getSignCertPwd());
-        // } catch (Exception e) {
-        //     e.printStackTrace();
-        // }
-        //
-        // String data = "{\"head\":{\"version\":\"1.0\",\"respTime\":\"20221115163027\",\"respCode\":\"000000\",\"respMsg\":\"成功\"},\"body\":{\"mid\":\"6888806044846\",\"orderCode\":\"1b2ymykgfzjcckd9a2fi\",\"tradeNo\":\"1b2ymykgfzjcckd9a2fi\",\"clearDate\":\"20221115\",\"totalAmount\":\"000000000014\",\"orderStatus\":\"1\",\"payTime\":\"20221115163026\",\"settleAmount\":\"000000000014\",\"buyerPayAmount\":\"000000000000\",\"discAmount\":\"000000000000\",\"txnCompleteTime\":\"\",\"payOrderCode\":\"20221115sdb56710000006271\",\"accLogonNo\":\"\",\"accNo\":\"\",\"midFee\":\"000000000000\",\"extraFee\":\"000000000000\",\"specialFee\":\"000000000000\",\"plMidFee\":\"000000000000\",\"bankserial\":\"\",\"externalProductCode\":\"\",\"cardNo\":\"\",\"creditFlag\":\"\",\"bid\":\"\",\"benefitAmount\":\"000000000000\",\"remittanceCode\":\"\",\"extend\":\"\",\"accountAmt\":\"000000000014\",\"masterAccount\":\"200229000020004\"}}";
-        // String sign = "UTXP0H1dOFNS9cEU7Mh3oEggRP1sBMUKtHORkufVVk/iWMz5Pa7rTwB4FvEbQigLwekWa+CcCXlLFQmUWN96TvE2HDuTo+PsIH4ZdLyAoSWVjIoVRXZIc6ycnE+NyhmbSnhzZgI+zl+pP4ZzklROv/7TCOj0MibuC+onCDk3fWJyTB36K5MdUTcWgsLyepd65amo3ywneV+AX8faIxgXx3jieAeXyppWRMNypemsP4QeG2lwTUgcWqVIHoFlpzWE6w6LoIa/gMtAehQonhCLnyN1D+qfBiZz3O9CKiJiqn3Flei7LdSJh4IityFCB+U9jRabwbgdxQHmR13hatyFtA==";
-        // // 验证签名
-        // boolean valid;
-        // try {
-        //
-        //     valid = CryptoUtil.verifyDigitalSign(data.getBytes("utf-8"), Base64.decodeBase64(sign),
-        //             CertUtil.getPublicKey(), "SHA1WithRSA");
-        //     if (!valid) {
-        //         log.error("verify sign fail.");
-        //         log.error("签名字符串(data)为：" + data);
-        //         log.error("签名值(sign)为：" + sign);
-        //     } else {
-        //         log.info("verify sign success");
-        //         JSONObject dataJson = JSONObject.parseObject(data);
-        //         if (dataJson != null) {
-        //             log.info("通知业务数据为：" + JSONObject.toJSONString(dataJson, true));
-        //         } else {
-        //             log.error("通知数据异常！！！");
-        //         }
-        //     }
-        //
-        // } catch (Exception e) {
-        //     log.error(e.getMessage());
-        // }
+        log.info("加载证书...");
+        // 加载证书
+        try {
+            //加载配置文件
+            SDKConfig.getConfig().loadPropertiesFromSrc();
+            //加载证书
+            CertUtil.init(SDKConfig.getConfig().getSandCertPath(), SDKConfig.getConfig().getSignCertPath(), SDKConfig.getConfig().getSignCertPwd());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        String data = "{\"head\":{\"version\":\"1.0\",\"respTime\":\"20221115163027\",\"respCode\":\"000000\",\"respMsg\":\"成功\"},\"body\":{\"mid\":\"6888806044846\",\"orderCode\":\"1b2ymykgfzjcckd9a2fi\",\"tradeNo\":\"1b2ymykgfzjcckd9a2fi\",\"clearDate\":\"20221115\",\"totalAmount\":\"000000000014\",\"orderStatus\":\"1\",\"payTime\":\"20221115163026\",\"settleAmount\":\"000000000014\",\"buyerPayAmount\":\"000000000000\",\"discAmount\":\"000000000000\",\"txnCompleteTime\":\"\",\"payOrderCode\":\"20221115sdb56710000006271\",\"accLogonNo\":\"\",\"accNo\":\"\",\"midFee\":\"000000000000\",\"extraFee\":\"000000000000\",\"specialFee\":\"000000000000\",\"plMidFee\":\"000000000000\",\"bankserial\":\"\",\"externalProductCode\":\"\",\"cardNo\":\"\",\"creditFlag\":\"\",\"bid\":\"\",\"benefitAmount\":\"000000000000\",\"remittanceCode\":\"\",\"extend\":\"\",\"accountAmt\":\"000000000014\",\"masterAccount\":\"200229000020004\"}}";
+        String sign = "UTXP0H1dOFNS9cEU7Mh3oEggRP1sBMUKtHORkufVVk/iWMz5Pa7rTwB4FvEbQigLwekWa+CcCXlLFQmUWN96TvE2HDuTo+PsIH4ZdLyAoSWVjIoVRXZIc6ycnE+NyhmbSnhzZgI+zl+pP4ZzklROv/7TCOj0MibuC+onCDk3fWJyTB36K5MdUTcWgsLyepd65amo3ywneV+AX8faIxgXx3jieAeXyppWRMNypemsP4QeG2lwTUgcWqVIHoFlpzWE6w6LoIa/gMtAehQonhCLnyN1D+qfBiZz3O9CKiJiqn3Flei7LdSJh4IityFCB+U9jRabwbgdxQHmR13hatyFtA==";
+        // 验证签名
+        boolean valid;
+        try {
+
+            valid = CryptoUtil.verifyDigitalSign(data.getBytes("utf-8"), Base64.decodeBase64(sign),
+                    CertUtil.getPublicKey(), "SHA1WithRSA");
+            if (!valid) {
+                log.error("verify sign fail.");
+                log.error("签名字符串(data)为：" + data);
+                log.error("签名值(sign)为：" + sign);
+            } else {
+                log.info("verify sign success");
+                JSONObject dataJson = JSONObject.parseObject(data);
+                if (dataJson != null) {
+                    log.info("通知业务数据为：" + JSONObject.toJSONString(dataJson, true));
+                } else {
+                    log.error("通知数据异常！！！");
+                }
+            }
+
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
     }
 
 
