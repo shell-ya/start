@@ -222,6 +222,8 @@ public class NewNotifyController {
             lockId = redisDistributedLock.lock(lockKey, 10, 10, TimeUnit.SECONDS);
             // 这里处理业务逻辑 todo
             //存储回调记录
+            int i = Integer.parseInt(c2bTransNotifyBO.getBody().getSettleAmount());
+            BigDecimal payAmount = BigDecimal.valueOf(i * 0.01);
             NotifyOrderReq orderReq = NotifyOrderReq.builder()
                     .orderSn(c2bTransNotifyBO.getBody().getOrderCode())
                     .payChannel("CloudAccount")
@@ -229,7 +231,7 @@ public class NewNotifyController {
                     .message(JSONUtil.toJsonStr(c2bTransNotifyBO.getBody()))
                     .payTime(new Date())
                     .status(c2bTransNotifyBO.getHead().getRespCode().equals("000000") ? ResultCode.SUCCESS.getCode() : 1)
-                    // .totalAmount(BigDecimal.valueOf(c2CTransNotifyBO.getAmount()))
+                    .totalAmount(payAmount)
                     .transSn(c2bTransNotifyBO.getBody().getTradeNo())
                     // .uid(Long.parseLong(c2CTransNotifyBO.getPayerInfo().getPayerMemID()))
                     .build();
@@ -243,7 +245,7 @@ public class NewNotifyController {
                     .payChannel("CloudAccount")
                     .status(c2bTransNotifyBO.getHead().getRespCode().equals("000000") ? ResultCode.SUCCESS.getCode() : 1)
                     .message(JSONUtil.toJsonStr(c2bTransNotifyBO.getBody()))
-                    // .totalAmount(BigDecimal.valueOf(c2CTransNotifyBO.getAmount()))
+                    .totalAmount(payAmount)
                     .sandSerialNo(c2bTransNotifyBO.getBody().getTradeNo())
                     .build();
 
