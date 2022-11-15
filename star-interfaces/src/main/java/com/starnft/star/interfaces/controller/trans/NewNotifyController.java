@@ -230,7 +230,7 @@ public class NewNotifyController {
                     .payTime(new Date())
                     .status(c2bTransNotifyBO.getHead().getRespCode().equals("000000") ? ResultCode.SUCCESS.getCode() : 1)
                     .totalAmount(payAmount)
-                    .transSn(c2bTransNotifyBO.getBody().getTradeNo())
+                    .transSn(c2bTransNotifyBO.getBody().getPayOrderCode())
                     // .uid(Long.parseLong(c2CTransNotifyBO.getPayerInfo().getPayerMemID()))
                     .build();
             notifyOrderService.saveOrder(orderReq);
@@ -238,7 +238,7 @@ public class NewNotifyController {
             PayCheckRes payCheckRes = PayCheckRes
                     .builder()
                     .orderSn(c2bTransNotifyBO.getBody().getOrderCode())
-                    .transSn(c2bTransNotifyBO.getBody().getTradeNo())
+                    .transSn(c2bTransNotifyBO.getBody().getPayOrderCode())
                     // .uid(c2CTransNotifyBO.getPayeeInfo().getPayeeMemID())
                     .payChannel("CloudAccount")
                     .status(c2bTransNotifyBO.getHead().getRespCode().equals("000000") ? ResultCode.SUCCESS.getCode() : 1)
