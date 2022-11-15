@@ -37,10 +37,10 @@
             <artifactId>star-infrastructure</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.starnft.star</groupId>
-            <artifactId>star-rpc</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.starnft.star</groupId>-->
+<!--            <artifactId>star-rpc</artifactId>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>io.fusionauth</groupId>

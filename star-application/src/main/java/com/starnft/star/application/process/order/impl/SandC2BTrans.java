@@ -30,7 +30,8 @@ public class SandC2BTrans {
         String mer_key = "b5ZRGge5REwLvaBsgvYzIHvWw2yx4+FGTWmKR93Vagm6lSM5Qa5EisCPVf2jNEDDFJoLd+tg+HY=";
 
         //订单号
-        String mer_order_no = RandomUtil.randomString(20);
+        // String mer_order_no = RandomUtil.randomString(20);
+        String mer_order_no = param.mer_order_no;
 
         //回调地址
         // String notify_url = "https://www.baidu.com";
