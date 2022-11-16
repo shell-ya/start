@@ -4,6 +4,8 @@ import com.starnft.star.common.RopResponse;
 import com.starnft.star.domain.banner.model.req.BannerReq;
 import com.starnft.star.domain.banner.model.vo.BannerVo;
 import com.starnft.star.domain.banner.service.IBannerService;
+import com.starnft.star.interfaces.aop.BusinessTypeEnum;
+import com.starnft.star.interfaces.aop.Log;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,6 +33,7 @@ public class BannerController {
     @ApiOperation("获取展示的轮播图")
     @GetMapping(value = "/show")
     @TokenIgnore
+    @Log(title = "获取展示的轮播图", businessType = BusinessTypeEnum.OTHER)
     public RopResponse<List<BannerVo>> show(@ApiParam("展示位置 1：头部  2：中间  3：底部") @RequestParam("type") String type) {
         return RopResponse.success(
                 this.bannerService.queryBannerVo(BannerReq.builder().type(type).build())

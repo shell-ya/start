@@ -18,6 +18,8 @@ import com.starnft.star.domain.order.model.req.OrderListReq;
 import com.starnft.star.domain.order.model.res.OrderListRes;
 import com.starnft.star.domain.order.service.IOrderService;
 import com.starnft.star.domain.order.service.model.res.OrderPlaceRes;
+import com.starnft.star.interfaces.aop.BusinessTypeEnum;
+import com.starnft.star.interfaces.aop.Log;
 import com.starnft.star.interfaces.controller.trans.redis.RedisDistributedLock;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import com.starnft.star.interfaces.interceptor.UserContext;
@@ -114,6 +116,7 @@ public class OrderController {
 
     @ApiOperation("秒杀订单支付")
     @PostMapping("/killed/pay")
+    @Log(title = "秒杀订单支付", businessType = BusinessTypeEnum.OTHER)
     public RopResponse<OrderPayDetailRes> orderPay(@RequestBody OrderPayReq req) {
         req.setUserId(UserContext.getUserId().getUserId());
         return RopResponse.success(this.orderProcessor.orderPay(req));
@@ -121,6 +124,7 @@ public class OrderController {
 
     @ApiOperation("市场订单云账户支付")
     @PostMapping("/marketOrder/cloudAccountPay")
+    @Log(title = "市场订单云账户支付", businessType = BusinessTypeEnum.OTHER)
     public RopResponse<OrderPayDetailRes> cloudAccountPay(@RequestBody @Validated OrderPayReq req) {
         req.setUserId(UserContext.getUserId().getUserId());
         log.info("[cloudAccountPay] 入参：{}", JSONUtil.toJsonStr(req));
