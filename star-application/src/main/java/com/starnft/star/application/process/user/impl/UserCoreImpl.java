@@ -79,6 +79,10 @@ public class UserCoreImpl implements UserCore {
 
         UserLoginDTO userLoginDTO = BeanColverUtil.colver(req, UserLoginDTO.class);
         UserInfoVO userInfo = this.userService.login(userLoginDTO);
+
+        // 登录查询钱包 -> 如果没有就创建
+        walletService.queryWalletInfo(new WalletInfoReq(userInfo.getUserId()));
+
         return BeanColverUtil.colver(userInfo, UserInfoRes.class);
     }
 

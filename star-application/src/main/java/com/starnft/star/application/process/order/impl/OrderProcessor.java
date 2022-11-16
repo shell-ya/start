@@ -729,7 +729,11 @@ public class OrderProcessor implements IOrderProcessor {
                 Result result = orderStateHandler.payComplete(finalOrderVO.getUserId(), finalOrderVO.getOrderSn(), finalOrderVO.getOrderSn(), StarConstants.ORDER_STATE.WAIT_PAY);
 
                 // 给卖家钱包加钱
-                TransReq transReq = createMarketTransReq(finalOrderVO.getOrderSn(), payCheckRes.getSandSerialNo(), payCheckRes.getTotalAmount(), finalOrderVO.getSeriesThemeId());
+                String fee = calFee(finalOrderVO.getPayAmount().toString());
+                BigDecimal feeBig = new BigDecimal(fee);
+                log.info("[marketC2BOrder]给卖家钱包加钱，参数：orderSn-{}, payAmount-{},fee-{}, realAddAmount-{}", finalOrderVO.getOrderSn(), finalOrderVO.getPayAmount(), fee, finalOrderVO.getPayAmount().subtract(feeBig));
+
+                TransReq transReq = createMarketTransReq(finalOrderVO.getOrderSn(), payCheckRes.getSandSerialNo(), finalOrderVO.getPayAmount().subtract(feeBig), finalOrderVO.getSeriesThemeId());
                 walletService.doC2BTransaction(transReq);
 
                 return ResultCode.SUCCESS.getCode().equals(result.getCode()) && handover;
@@ -832,12 +836,34 @@ public class OrderProcessor implements IOrderProcessor {
         return orderService.createOrder(orderVO);
     }
 
+    /**
+     * 计算手续费
+     *
+     * @param payAmount
+     * @return
+     */
+    public String calFee(String payAmount) {
+        WalletConfigVO config = WalletConfig.getConfig(StarConstants.PayChannel.valueOf("CloudAccount"));
+        BigDecimal payMoney = new BigDecimal(payAmount);
+        BigDecimal transRate = payMoney.multiply(config.getServiceRate());
+        BigDecimal copyrightRate = payMoney.multiply(config.getCopyrightRate());
+        BigDecimal fee = transRate.add(copyrightRate);
+        return fee.toString();
+    }
+
     @Override
     public OrderPayDetailRes cloudAccountPay(OrderPayReq req) {
+
+        OrderVO orderVO = orderService.queryOrder(req.getOrderSn());
 
         OrderPayDetailRes res = new OrderPayDetailRes();
         PaymentRes paymentRes = new PaymentRes();
         res.setResults(paymentRes);
+
+        // 0、计算手续费
+        String fee = calFee(orderVO.getPayAmount().toString());
+        req.setFee(fee);
+
         // 1、判断买家是否开通云账户，未开通 -> 构建开户链接
         String openCloudAccountUrl = checkBuyerIsOpenCloudAccount(req);
         if (StrUtil.isNotBlank(openCloudAccountUrl)) {
@@ -848,13 +874,10 @@ public class OrderProcessor implements IOrderProcessor {
         // 2、判断卖家是否开通云账户
         boolean checkSeller = checkSellerIsOpenCloudAccount(req);
 
-        OrderVO orderVO = orderService.queryOrder(req.getOrderSn());
-
-        // 3、卖家已开通 -> 用户转账（C2C），构建链接
-
         // 这里拼接orderSn + uniqueId
         String orderSn = orderVO.getOrderSn() + "_" + uniqueId.getAndIncrement();
         if (checkSeller) {
+            // 3、卖家已开通 -> 用户转账（C2C），构建链接
             C2CTransParam param = new C2CTransParam();
             param.setRecvUserId(req.getOwnerId());
             param.setPayUserId(String.valueOf(req.getUserId()));
@@ -862,6 +885,7 @@ public class OrderProcessor implements IOrderProcessor {
             param.setOrder_amt(String.valueOf(orderVO.getPayAmount()));
             param.setNotify_url(this.C2CTransNotify);
             param.setReturn_url(req.getReturnUri());
+            param.setUserFeeAmt(String.valueOf(req.getFee()));
             String c2cTransUrl = SandC2CTrans.buildTransUrl(param);
             paymentRes.setJumpUrl(c2cTransUrl);
             return res;

@@ -14,6 +14,9 @@ public class C2CTransParam {
 
     String order_amt;
 
+    // 用户服务费，商户向用户收取的服务费
+    String userFeeAmt;
+
 
     // 回调地址
     String notify_url;
