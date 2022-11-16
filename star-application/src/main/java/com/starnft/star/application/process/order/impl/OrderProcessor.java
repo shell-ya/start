@@ -689,8 +689,10 @@ public class OrderProcessor implements IOrderProcessor {
             Boolean isSuccess = template.execute(status -> {
                 //商品发放
                 boolean handover = numberService.handover(buildHandOverReq(finalOrderVO));
+
                 //订单状态更新
                 Result result = orderStateHandler.payComplete(finalOrderVO.getUserId(), finalOrderVO.getOrderSn(), finalOrderVO.getOrderSn(), StarConstants.ORDER_STATE.WAIT_PAY);
+
                 return ResultCode.SUCCESS.getCode().equals(result.getCode()) && handover;
             });
             return isSuccess;
