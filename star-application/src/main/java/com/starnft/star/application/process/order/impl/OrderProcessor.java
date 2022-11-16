@@ -87,6 +87,7 @@ import org.springframework.validation.annotation.Validated;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -122,6 +123,8 @@ public class OrderProcessor implements IOrderProcessor {
 
     @Value("${C2BTransNotify}")
     private String C2BTransNotify;
+
+    public static AtomicInteger uniqueId = new AtomicInteger(1);
 
     @Override
     public OrderGrabRes createOrder(OrderGrabReq orderGrabReq) {
@@ -848,11 +851,14 @@ public class OrderProcessor implements IOrderProcessor {
         OrderVO orderVO = orderService.queryOrder(req.getOrderSn());
 
         // 3、卖家已开通 -> 用户转账（C2C），构建链接
+
+        // 这里拼接orderSn + uniqueId
+        String orderSn = orderVO.getOrderSn() + "_" + uniqueId.getAndIncrement();
         if (checkSeller) {
             C2CTransParam param = new C2CTransParam();
             param.setRecvUserId(req.getOwnerId());
             param.setPayUserId(String.valueOf(req.getUserId()));
-            param.setMer_order_no(orderVO.getOrderSn());
+            param.setMer_order_no(orderSn);
             param.setOrder_amt(String.valueOf(orderVO.getPayAmount()));
             param.setNotify_url(this.C2CTransNotify);
             param.setReturn_url(req.getReturnUri());
@@ -863,7 +869,7 @@ public class OrderProcessor implements IOrderProcessor {
             // 4、卖家未开通 -> 用户消费（C2B），构建链接
             C2BTransParam param = new C2BTransParam();
             param.setPayUserId(String.valueOf(req.getUserId()));
-            param.setMer_order_no(orderVO.getOrderSn());
+            param.setMer_order_no(orderSn);
             param.setOrder_amt(String.valueOf(orderVO.getPayAmount()));
             param.setNotify_url(this.C2BTransNotify);
             param.setReturn_url(req.getReturnUri());
@@ -871,7 +877,6 @@ public class OrderProcessor implements IOrderProcessor {
             paymentRes.setJumpUrl(c2bTransUrl);
             return res;
         }
-
 
 
     }

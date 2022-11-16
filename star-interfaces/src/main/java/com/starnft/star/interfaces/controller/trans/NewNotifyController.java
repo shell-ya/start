@@ -110,14 +110,19 @@ public class NewNotifyController {
         }
 
         // 3、处理业务逻辑
-        String lockKey = "lockKey_" + c2CTransNotifyBO.getSandSerialNo() + "_" + c2CTransNotifyBO.getOrderNo();
+
+        // 截取订单orderSn
+        String orderNo = c2CTransNotifyBO.getOrderNo();
+        orderNo = orderNo.substring(0, orderNo.indexOf("_"));
+
+        String lockKey = "lockKey_" + c2CTransNotifyBO.getSandSerialNo() + "_" + orderNo;
         String lockId = null;
         try {
             lockId = redisDistributedLock.lock(lockKey, 10, 10, TimeUnit.SECONDS);
             // 这里处理业务逻辑 todo
             //存储回调记录
             NotifyOrderReq orderReq = NotifyOrderReq.builder()
-                    .orderSn(c2CTransNotifyBO.getOrderNo())
+                    .orderSn(orderNo)
                     .payChannel("CloudAccount")
                     .createTime(new Date())
                     .message(c2CTransNotifyBO.getRespMsg())
@@ -131,7 +136,7 @@ public class NewNotifyController {
 
             PayCheckRes payCheckRes = PayCheckRes
                     .builder()
-                    .orderSn(c2CTransNotifyBO.getOrderNo())
+                    .orderSn(orderNo)
                     .transSn(c2CTransNotifyBO.getSandSerialNo())
                     .uid(c2CTransNotifyBO.getPayeeInfo().getPayeeMemID())
                     .payChannel("CloudAccount")
@@ -214,7 +219,12 @@ public class NewNotifyController {
         }
 
         // 4、处理业务逻辑
-        String lockKey = "lockKey_" + c2bTransNotifyBO.getBody().getOrderCode();
+
+        // 截取订单orderSn
+        String orderCode = c2bTransNotifyBO.getBody().getOrderCode();
+        orderCode = orderCode.substring(0, orderCode.indexOf("_"));
+
+        String lockKey = "lockKey_" + orderCode;
         String lockId = null;
         try {
             lockId = redisDistributedLock.lock(lockKey, 10, 10, TimeUnit.SECONDS);
@@ -223,10 +233,10 @@ public class NewNotifyController {
             int i = Integer.parseInt(c2bTransNotifyBO.getBody().getSettleAmount());
             BigDecimal payAmount = BigDecimal.valueOf(i * 0.01);
             NotifyOrderReq orderReq = NotifyOrderReq.builder()
-                    .orderSn(c2bTransNotifyBO.getBody().getOrderCode())
+                    .orderSn(orderCode)
                     .payChannel("CloudAccount")
                     .createTime(new Date())
-                    .message(JSONUtil.toJsonStr(c2bTransNotifyBO.getBody()))
+                    .message(c2bTransNotifyBO.getHead().getRespMsg())
                     .payTime(new Date())
                     .status(c2bTransNotifyBO.getHead().getRespCode().equals("000000") ? ResultCode.SUCCESS.getCode() : 1)
                     .totalAmount(payAmount)
@@ -237,12 +247,12 @@ public class NewNotifyController {
 
             PayCheckRes payCheckRes = PayCheckRes
                     .builder()
-                    .orderSn(c2bTransNotifyBO.getBody().getOrderCode())
+                    .orderSn(orderCode)
                     .transSn(c2bTransNotifyBO.getBody().getPayOrderCode())
                     // .uid(c2CTransNotifyBO.getPayeeInfo().getPayeeMemID())
                     .payChannel("CloudAccount")
                     .status(c2bTransNotifyBO.getHead().getRespCode().equals("000000") ? ResultCode.SUCCESS.getCode() : 1)
-                    .message(JSONUtil.toJsonStr(c2bTransNotifyBO.getBody()))
+                    .message(c2bTransNotifyBO.getHead().getRespMsg())
                     .totalAmount(payAmount)
                     .sandSerialNo(c2bTransNotifyBO.getBody().getTradeNo())
                     .build();
@@ -305,9 +315,14 @@ public class NewNotifyController {
      * @param args
      */
     public static void main(String[] args) {
-        C2B();
 
-        C2C();
+        String order = "TS123123_1";
+        String substring = order.substring(0, order.indexOf("_"));
+        System.out.println(substring);
+
+        // C2B();
+        //
+        // C2C();
     }
 
     public static void C2C() {
