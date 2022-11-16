@@ -1,5 +1,7 @@
 package com.starnft.star.application.process.order.impl;
 
+import cn.hutool.json.JSONUtil;
+import com.starnft.star.application.process.order.model.req.OrderPayReq;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URLEncoder;
@@ -15,23 +17,33 @@ import java.util.Map;
  */
 @Slf4j
 public class SandC2CTrans {
-    //
-    // public static void main(String[] args) {
-    //
-    //     OrderPayReq orderPayReq = new OrderPayReq();
-    //     orderPayReq.setUserId(509057525L);
-    //     orderPayReq.setOwnerId("536952750");
-    //     orderPayReq.setOrderSn("TS1041023318955855872");
-    //     orderPayReq.setPayAmount("0.01");
-    //     orderPayReq.setTotalPayAmount("0.01");
-    //     orderPayReq.setNumberId(1019309563523076096L);
-    //     orderPayReq.setThemeId(1019309563523076096L);
-    //     orderPayReq.setSeriesId(9L);
-    //     orderPayReq.setType(3);
-    //     orderPayReq.setCategoryType(1);
-    //     orderPayReq.setReturnUri("https://www.baidu.com");
-    //     System.out.println(JSONUtil.toJsonStr(orderPayReq));
-    // }
+
+    public static void main(String[] args) {
+
+        // OrderPayReq orderPayReq = new OrderPayReq();
+        // orderPayReq.setUserId(509057525L);
+        // orderPayReq.setOwnerId("536952750");
+        // orderPayReq.setOrderSn("TS1041023318955855872");
+        // orderPayReq.setPayAmount("0.01");
+        // orderPayReq.setTotalPayAmount("0.01");
+        // orderPayReq.setNumberId(1019309563523076096L);
+        // orderPayReq.setThemeId(1019309563523076096L);
+        // orderPayReq.setSeriesId(9L);
+        // orderPayReq.setType(3);
+        // orderPayReq.setCategoryType(1);
+        // orderPayReq.setReturnUri("https://www.baidu.com");
+        // System.out.println(JSONUtil.toJsonStr(orderPayReq));
+
+        // C2CTransParam param = new C2CTransParam();
+        // param.setUserFeeAmt("0.01");
+        // param.setNotify_url("wwww.baidu.com");
+        // param.setReturn_url("wwww.baidu.com");
+        // param.setMer_order_no("wwww.baidu.com");
+        // param.setPayUserId("123");
+        // param.setRecvUserId("234");
+        // String res = buildTransUrl(param);
+
+    }
 
     /**
      * 构建2C2转账链接
@@ -81,7 +93,7 @@ public class SandC2CTrans {
         // "userFeeAmt":"用户服务费，商户向用户收取的服务费 ",//非必填
         // "postscript":"附言",// 非必填
         String userFeeAmt = param.getUserFeeAmt();
-        String pay_extra = "{\"operationType\":\"1\",\"recvUserId\":\"" + param.getRecvUserId() + "\",\"bizType\":\"2\",\"payUserId\":\"" + param.getPayUserId() + "\",\"remark\":\"市场订单支付\",\"userFeeAmt\":\"" + userFeeAmt + "}";
+        String pay_extra = "{\"operationType\":\"1\",\"recvUserId\":\"" + param.getRecvUserId() + "\",\"bizType\":\"2\",\"payUserId\":\"" + param.getPayUserId() + "\",\"remark\":\"市场订单支付\",\"userFeeAmt\":\"" + userFeeAmt + "\"}";
 
         //md5key
         String key = "Mvb16HX1dERkURx2049aMmD8iK1v5w68dEwwmoU0fCieS8g6pb381Okrr5TWHR9b/Vmmz6scR/043v2K3BB4ED8cBcNRUfk3HRJQIn57Zk4xpad2fR6DoCUvKgWklkNTtGHiO2ZDIudixuz+UKFTiw==";
