@@ -124,6 +124,7 @@ public class WalletRepository implements IWalletRepository {
         wallet.setFrozen(walletVO.isFrozen() ? 1 : 0);
         wallet.setFrozenFee(walletVO.getFrozen_fee());
         wallet.setVersion(curr.getVersion());
+        wallet.setModifiedAt(new Date());
 
         Integer isSuccess = walletMapper.updateWallet(wallet);
 
