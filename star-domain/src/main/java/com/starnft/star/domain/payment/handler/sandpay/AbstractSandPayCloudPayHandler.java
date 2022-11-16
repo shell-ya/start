@@ -63,12 +63,12 @@ public abstract class AbstractSandPayCloudPayHandler extends AbstractSandPayHand
         sign(encrypt);
         log.info("请求报文：{}", JSONUtil.toJsonStr(encrypt));
         String post = HttpUtil.post(channelConf.getHttpConf().getApiUrl(), JSONUtil.toJsonStr(encrypt));
-        log.info("解密前「{}」", post);
+        log.info("解密前-{}", post);
         if (!verifySign(post)) {
             throw new StarException("验证签名错误");
         }
         JSONObject decrypt = decrypt(post);
-        log.info("解密后「{}」", decrypt);
+        log.info("解密后-{}", decrypt);
         CloudAccountStatusRes openPayStatusAccountVO = new CloudAccountStatusRes();
         if (decrypt.getStr("responseCode").equals("05017")) {
             openPayStatusAccountVO.setStatus(false);
@@ -76,7 +76,8 @@ public abstract class AbstractSandPayCloudPayHandler extends AbstractSandPayHand
         }
         if (decrypt.getStr("responseCode").equals("00000")) {
             String responseStatus = decrypt.getStr("responseStatus");
-            if (Objects.nonNull(responseStatus)) {
+            // 01已激活
+            if (Objects.nonNull(responseStatus) && "01".equals(decrypt.getStr("faceStatus"))) {
                 openPayStatusAccountVO.setStatus(true);
                 return openPayStatusAccountVO;
             } else {
