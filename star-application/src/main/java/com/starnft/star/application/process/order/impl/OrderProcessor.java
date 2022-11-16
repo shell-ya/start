@@ -843,12 +843,14 @@ public class OrderProcessor implements IOrderProcessor {
     }
 
     // public static void main(String[] args) {
-    //     String s = "100";
+    //     String s = "0.2";
     //     BigDecimal payMoney = new BigDecimal(s);
     //     BigDecimal serviceRate = new BigDecimal("0.03");
-    //     BigDecimal transRate = payMoney.multiply(serviceRate).setScale(2, RoundingMode.UP);
-    //     BigDecimal copyrightRate = payMoney.multiply(serviceRate).setScale(2, RoundingMode.UP);
-    //     BigDecimal fee = transRate.add(copyrightRate);
+    //     BigDecimal transRate = payMoney.multiply(serviceRate);
+    //     BigDecimal copyrightRate = payMoney.multiply(serviceRate);
+    //     BigDecimal fee = transRate.add(copyrightRate).setScale(2, RoundingMode.HALF_UP);
+    //     System.out.println(transRate);
+    //     System.out.println(copyrightRate);
     //     System.out.println(fee);
     // }
 
@@ -861,9 +863,9 @@ public class OrderProcessor implements IOrderProcessor {
     public static String calFee(String payAmount) {
         WalletConfigVO config = WalletConfig.getConfig(StarConstants.PayChannel.valueOf("CloudAccount"));
         BigDecimal payMoney = new BigDecimal(payAmount);
-        BigDecimal transRate = payMoney.multiply(config.getServiceRate()).setScale(2, RoundingMode.UP);
-        BigDecimal copyrightRate = payMoney.multiply(config.getCopyrightRate()).setScale(2, RoundingMode.UP);
-        BigDecimal fee = transRate.add(copyrightRate);
+        BigDecimal transRate = payMoney.multiply(config.getServiceRate());
+        BigDecimal copyrightRate = payMoney.multiply(config.getCopyrightRate());
+        BigDecimal fee = transRate.add(copyrightRate).setScale(2, RoundingMode.HALF_UP);
         return fee.toString();
     }
 
