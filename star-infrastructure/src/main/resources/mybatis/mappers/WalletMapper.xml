@@ -149,13 +149,13 @@
             <if test="isDeleted != null and isDeleted != ''">
                 is_deleted = #{isDeleted},
             </if>
-            <if test="createdAt != null and createdAt != ''">
+            <if test="createdAt != null">
                 created_at = #{createdAt},
             </if>
             <if test="createdBy != null and createdBy != ''">
                 created_by = #{createdBy},
             </if>
-            <if test="modifiedAt != null and modifiedAt != ''">
+            <if test="modifiedAt != null">
                 modified_at = #{modifiedAt},
             </if>
             <if test="modifiedBy != null and modifiedBy != ''">
