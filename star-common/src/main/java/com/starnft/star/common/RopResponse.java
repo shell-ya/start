@@ -3,6 +3,7 @@ package com.starnft.star.common;
 import com.starnft.star.common.exception.StarError;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.slf4j.MDC;
 
 @Data
 public class RopResponse<T> {
@@ -15,6 +16,13 @@ public class RopResponse<T> {
 
     @ApiModelProperty("数据")
     private T data;
+
+    @ApiModelProperty("日志跟踪标识")
+    private String traceId;
+
+    public String getTraceId() {
+        return MDC.get("traceId");
+    }
 
     /**
      * 成功，不返回具体数据

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <jmxConfigurator/>
-    <property name="log_pattern" value="%blue(%d{yyyy-MM-dd HH:mm:ss.SSS Z}) %yellow([[%tid]) %red([%thread]) %-5level %green(%logger{36})- %boldMagenta(%msg%n)"/>
+<!--    <property name="log_pattern" value="%blue(%d{yyyy-MM-dd HH:mm:ss.SSS}) %yellow([[%tid]) %red([%thread]) %-5level %green(%logger{36})- %boldMagenta(%msg%n)"/>-->
+    <property name="log_pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %magenta([%thread][%X{traceId}]) %highlight(%-5level) %logger{36}.%M - %msg%n"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">

@@ -1,5 +1,6 @@
 package com.starnft.star.interfaces.interceptor;
 
+import cn.hutool.core.util.IdUtil;
 import com.starnft.star.common.constant.RedisKey;
 import com.starnft.star.common.constant.StarConstants;
 import com.starnft.star.common.exception.StarError;
@@ -9,6 +10,7 @@ import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.domain.user.service.impl.BaseUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,6 +49,13 @@ public class StatInterceptor extends HandlerInterceptorAdapter {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
+        //如果有上层调用就用上层的ID
+        String traceId = request.getHeader("traceId");
+        if (traceId == null) {
+            traceId = IdUtil.fastSimpleUUID();
+        }
+        MDC.put("traceId", traceId);
 
         //接口文档放行
         String requestURI = request.getRequestURI();
@@ -103,6 +112,8 @@ public class StatInterceptor extends HandlerInterceptorAdapter {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         super.afterCompletion(request, response, handler, ex);
         UserContext.removeUserId();
+
+        MDC.clear();
     }
 
     /**
