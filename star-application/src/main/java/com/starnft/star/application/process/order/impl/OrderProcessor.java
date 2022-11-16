@@ -86,6 +86,7 @@ import org.springframework.validation.annotation.Validated;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -841,17 +842,27 @@ public class OrderProcessor implements IOrderProcessor {
         return orderService.createOrder(orderVO);
     }
 
+    // public static void main(String[] args) {
+    //     String s = "100";
+    //     BigDecimal payMoney = new BigDecimal(s);
+    //     BigDecimal serviceRate = new BigDecimal("0.03");
+    //     BigDecimal transRate = payMoney.multiply(serviceRate).setScale(2, RoundingMode.UP);
+    //     BigDecimal copyrightRate = payMoney.multiply(serviceRate).setScale(2, RoundingMode.UP);
+    //     BigDecimal fee = transRate.add(copyrightRate);
+    //     System.out.println(fee);
+    // }
+
     /**
      * 计算手续费
      *
      * @param payAmount
      * @return
      */
-    public String calFee(String payAmount) {
+    public static String calFee(String payAmount) {
         WalletConfigVO config = WalletConfig.getConfig(StarConstants.PayChannel.valueOf("CloudAccount"));
         BigDecimal payMoney = new BigDecimal(payAmount);
-        BigDecimal transRate = payMoney.multiply(config.getServiceRate());
-        BigDecimal copyrightRate = payMoney.multiply(config.getCopyrightRate());
+        BigDecimal transRate = payMoney.multiply(config.getServiceRate()).setScale(2, RoundingMode.UP);
+        BigDecimal copyrightRate = payMoney.multiply(config.getCopyrightRate()).setScale(2, RoundingMode.UP);
         BigDecimal fee = transRate.add(copyrightRate);
         return fee.toString();
     }
