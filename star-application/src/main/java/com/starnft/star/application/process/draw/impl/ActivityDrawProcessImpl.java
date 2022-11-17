@@ -121,6 +121,7 @@ public class ActivityDrawProcessImpl implements IActivityDrawProcess {
             // 6. 返回结果
             return new DrawProcessResult(StarError.SUCCESS_000000.getErrorCode(), StarError.SUCCESS_000000.getErrorMessage(), drawAwardVO);
         } catch (RuntimeException e) {
+            logger.error("抽奖报错:{}", e.getMessage(), e);
             redisLockUtils.unlock(lockKey);
             throw new RuntimeException(e);
         }
