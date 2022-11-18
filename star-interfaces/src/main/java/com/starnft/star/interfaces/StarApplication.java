@@ -29,6 +29,6 @@ public class StarApplication {
 
     @Bean
     public ApplicationRunner runner() {
-        return args -> log.info("Star   server  started！");
+        return args -> log.info("Star server started！");
     }
 }
