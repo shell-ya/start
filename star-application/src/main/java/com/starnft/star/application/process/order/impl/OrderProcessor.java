@@ -874,6 +874,11 @@ public class OrderProcessor implements IOrderProcessor {
 
         OrderVO orderVO = orderService.queryOrder(req.getOrderSn());
 
+        // 幂等判断订单状态是否带支付 -> 抛出异常
+        if(!StarConstants.ORDER_STATE.WAIT_PAY.getCode().equals(orderVO.getStatus())) {
+            throw new StarException(StarError.ORDER_STATUS_REFRESH);
+        }
+
         OrderPayDetailRes res = new OrderPayDetailRes();
         PaymentRes paymentRes = new PaymentRes();
         res.setResults(paymentRes);

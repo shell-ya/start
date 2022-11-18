@@ -122,6 +122,8 @@ public enum StarError {
     RANDOM_NUMBER_ERROR("60000000007","分配编号失败"),
 
     CLOUD_BUILD_PAY("700000000001","云账号跳转异常"),
+
+    ORDER_STATUS_REFRESH("700000000002","当前订单状态已变更，请刷新页面"),
     ;
 
     private String NS = "";
