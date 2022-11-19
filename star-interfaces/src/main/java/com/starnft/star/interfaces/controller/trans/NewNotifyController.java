@@ -321,16 +321,16 @@ public class NewNotifyController {
                 log.error("签名值(sign)为：" + sign);
             } else {
                 log.info("verify sign success");
-                c2bTransNotifyBO = JSONUtil.toBean(data, C2BTransNotifyBO.class);
+                // c2bTransNotifyBO = JSONUtil.toBean(data, C2BTransNotifyBO.class);
             }
         } catch (Exception e) {
             log.error("验签错误：{}", e.getMessage(), e);
         }
 
-        if (Objects.isNull(c2bTransNotifyBO)) {
-            log.error("验签之后BO对象为空，跳过处理...");
-            return "验签失败....";
-        }
+        // if (Objects.isNull(c2bTransNotifyBO)) {
+        //     log.error("验签之后BO对象为空，跳过处理...");
+        //     return "验签失败....";
+        // }
 
         // 4、处理业务逻辑
 
