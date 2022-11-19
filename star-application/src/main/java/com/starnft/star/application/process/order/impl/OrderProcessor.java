@@ -68,8 +68,10 @@ import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.domain.user.model.vo.UserInfoVO;
 import com.starnft.star.domain.user.service.IUserService;
 import com.starnft.star.domain.wallet.model.req.TransReq;
+import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
 import com.starnft.star.domain.wallet.model.req.WalletPayRequest;
 import com.starnft.star.domain.wallet.model.res.WalletPayResult;
+import com.starnft.star.domain.wallet.model.res.WalletResult;
 import com.starnft.star.domain.wallet.model.vo.WalletConfigVO;
 import com.starnft.star.domain.wallet.service.WalletConfig;
 import com.starnft.star.domain.wallet.service.WalletService;
@@ -286,12 +288,6 @@ public class OrderProcessor implements IOrderProcessor {
     public OrderPayDetailRes orderPay(@Validated OrderPayReq orderPayReq) {
 
         log.info("用户发起支付：{}", orderPayReq.toString());
-        //规则验证
-        if (orderPayReq.getChannel().equals(StarConstants.PayChannel.Balance.name())) {
-            //验证支付凭证
-            userService.assertPayPwdCheckSuccess(orderPayReq.getUserId(), orderPayReq.getPayToken());
-            walletService.balanceVerify(orderPayReq.getUserId(), new BigDecimal(orderPayReq.getPayAmount()));
-        }
 
         verifyOwnerBy(orderPayReq);
 
@@ -302,42 +298,50 @@ public class OrderProcessor implements IOrderProcessor {
         OrderVO orderVO = orderService.queryOrder(orderPayReq.getOrderSn());
         orderPayReq.setOrderId(orderVO.getId());
 
-        String lockKey = String.format(RedisKey.SECKILL_ORDER_TRANSACTION.getKey(), orderPayReq.getOrderSn());
-        Boolean lock = redisLockUtils.lock(lockKey, RedisKey.SECKILL_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.SECKILL_ORDER_TRANSACTION.getTime()));
-        Assert.isTrue(lock, () -> new StarException(StarError.PAY_PROCESS_ERROR));
-        //云账号支付
-        if (orderPayReq.getChannel().equals(StarConstants.PayChannel.CloudAccount.name())) {
-            PaymentRes results = paymentService.pay(buildPayReq(createWalletPayReq(orderPayReq)));
-            return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn(), results);
-        }
-        try {
-            Boolean isSuccess = template.execute(status -> {
-                //余额支付
-                WalletPayResult walletPayResult = walletService.doWalletPay(createWalletPayReq(orderPayReq));
-                //商品发放 // TODO: 2022/6/23  市场 如果支付接口响应过慢 该操作可异步化 最终一致性即可
-                boolean handover = numberService.handover(buildHandOverReq(orderPayReq));
-                //订单状态更新
-                Result result = orderStateHandler.payComplete(orderPayReq.getUserId(), orderPayReq.getOrderSn(), orderPayReq.getOrderSn(), StarConstants.ORDER_STATE.WAIT_PAY);
-                return ResultCode.SUCCESS.getCode().equals(walletPayResult.getStatus()) && ResultCode.SUCCESS.getCode().equals(result.getCode()) && handover;
-            });
-            if (isSuccess) {
-                redisUtil.hincr(String.format(RedisKey.SECKILL_BUY_GOODS_NUMBER.getKey(), orderPayReq.getThemeId()), String.valueOf(orderPayReq.getUserId()), 1L);
+        //验证支付凭证
+        userService.assertPayPwdCheckSuccess(orderPayReq.getUserId(), orderPayReq.getPayToken());
 
-                //只有首发订单增加积分
-                if (!orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
-                    OrderListRes orderListRes = orderService.obtainSecKillOrder(orderPayReq.getUserId(), orderPayReq.getThemeId());
-                    if (orderListRes.getPriorityBuy() == 1) subPTimes(orderPayReq.getUserId(), orderListRes);
-                    activityProducer.sendScopeMessage(createEventReq(orderPayReq));
-                }
+        WalletResult walletResult = this.walletService.queryWalletInfo(new WalletInfoReq(orderPayReq.getUserId()));
+
+        if (walletResult.getBalance().compareTo(orderVO.getPayAmount()) >= 0) {
+            // 1、余额充足 -> 扣减余额支付
+
+            String lockKey = String.format(RedisKey.SECKILL_ORDER_TRANSACTION.getKey(), orderPayReq.getOrderSn());
+            Boolean lock = redisLockUtils.lock(lockKey, RedisKey.SECKILL_ORDER_TRANSACTION.getTimeUnit().toSeconds(RedisKey.SECKILL_ORDER_TRANSACTION.getTime()));
+            Assert.isTrue(lock, () -> new StarException(StarError.PAY_PROCESS_ERROR));
+            try {
+                Boolean isSuccess = template.execute(status -> {
+                    //余额支付
+                    WalletPayResult walletPayResult = walletService.doWalletPay(createWalletPayReq(orderPayReq));
+                    //商品发放 // TODO: 2022/6/23  市场 如果支付接口响应过慢 该操作可异步化 最终一致性即可
+                    boolean handover = numberService.handover(buildHandOverReq(orderPayReq));
+                    //订单状态更新
+                    Result result = orderStateHandler.payComplete(orderPayReq.getUserId(), orderPayReq.getOrderSn(), orderPayReq.getOrderSn(), StarConstants.ORDER_STATE.WAIT_PAY);
+                    return ResultCode.SUCCESS.getCode().equals(walletPayResult.getStatus()) && ResultCode.SUCCESS.getCode().equals(result.getCode()) && handover;
+                });
+                if (Boolean.TRUE.equals(isSuccess)) {
+                    redisUtil.hincr(String.format(RedisKey.SECKILL_BUY_GOODS_NUMBER.getKey(), orderPayReq.getThemeId()), String.valueOf(orderPayReq.getUserId()), 1L);
+
+                    //只有首发订单增加积分
+                    if (!orderPayReq.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())) {
+                        OrderListRes orderListRes = orderService.obtainSecKillOrder(orderPayReq.getUserId(), orderPayReq.getThemeId());
+                        if (orderListRes.getPriorityBuy() == 1) subPTimes(orderPayReq.getUserId(), orderListRes);
+                        activityProducer.sendScopeMessage(createEventReq(orderPayReq));
+                    }
 //                    rebatesProducer.sendRebatesMessage(createRebates(orderPayReq));
-                return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn(), null);
+                    return new OrderPayDetailRes(ResultCode.SUCCESS.getCode(), orderPayReq.getOrderSn(), null);
+                }
+                throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "订单处理异常！");
+            } catch (TransactionException | StarException e) {
+                log.error("钱包支付异常，异常信息:{}", e.getMessage(), e);
+                throw new RuntimeException(e);
+            } finally {
+                redisLockUtils.unlock(lockKey);
+                walletService.threadClear();
             }
-            throw new StarException(StarError.DB_RECORD_UNEXPECTED_ERROR, "订单处理异常！");
-        } catch (TransactionException | StarException e) {
-            throw new RuntimeException(e);
-        } finally {
-            redisLockUtils.unlock(lockKey);
-            walletService.threadClear();
+        } else {
+            // 2、余额不足 -> 跳转快捷收银台支付
+            return this.sandCashierPay(orderPayReq);
         }
     }
 
@@ -926,7 +930,7 @@ public class OrderProcessor implements IOrderProcessor {
         OrderVO orderVO = orderService.queryOrder(req.getOrderSn());
 
         // 幂等判断订单状态是否带支付 -> 抛出异常
-        if(!StarConstants.ORDER_STATE.WAIT_PAY.getCode().equals(orderVO.getStatus())) {
+        if (!StarConstants.ORDER_STATE.WAIT_PAY.getCode().equals(orderVO.getStatus())) {
             throw new StarException(StarError.ORDER_STATUS_REFRESH);
         }
 
@@ -990,7 +994,7 @@ public class OrderProcessor implements IOrderProcessor {
         OrderVO orderVO = orderService.queryOrder(req.getOrderSn());
 
         // 2、幂等判断订单状态是否带支付 -> 抛出异常
-        if(!StarConstants.ORDER_STATE.WAIT_PAY.getCode().equals(orderVO.getStatus())) {
+        if (!StarConstants.ORDER_STATE.WAIT_PAY.getCode().equals(orderVO.getStatus())) {
             throw new StarException(StarError.ORDER_STATUS_REFRESH);
         }
 
