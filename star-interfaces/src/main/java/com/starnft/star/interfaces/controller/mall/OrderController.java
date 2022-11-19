@@ -133,18 +133,6 @@ public class OrderController {
         return RopResponse.success(res);
     }
 
-    @ApiOperation("市场订单新收银台支付")
-    @PostMapping("/marketOrder/sandCashierPay")
-    @Log(title = "市场订单新收银台支付", businessType = BusinessTypeEnum.OTHER)
-    public RopResponse<OrderPayDetailRes> sandCashierPay(@RequestBody @Validated OrderPayReq req) {
-        req.setUserId(UserContext.getUserId().getUserId());
-        log.info("[sandCashPay] 入参：{}", JSONUtil.toJsonStr(req));
-        OrderPayDetailRes res = this.orderProcessor.sandCashierPay(req);
-        log.info("[sandCashPay] 返参：{}", JSONUtil.toJsonStr(res));
-        return RopResponse.success(res);
-    }
-
-
     @ApiOperation("取消秒杀订单")
     @PostMapping("/killed/cancel")
     public RopResponse<OrderPlaceRes> killedCancel(@RequestBody OrderCancelReq req) {
