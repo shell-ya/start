@@ -795,7 +795,7 @@ public class OrderProcessor implements IOrderProcessor {
                 BigDecimal feeBig = new BigDecimal(fee);
                 log.info("[marketCashierOrder]给卖家钱包加钱，参数：orderSn-{}, payAmount-{},fee-{}, realAddAmount-{}", finalOrderVO.getOrderSn(), finalOrderVO.getPayAmount(), fee, finalOrderVO.getPayAmount().subtract(feeBig));
 
-                TransReq transReq = createMarketTransReq(finalOrderVO.getOrderSn(), payCheckRes.getSandSerialNo(), finalOrderVO.getPayAmount().subtract(feeBig), Long.valueOf(numberDetail.getOwnerBy()));
+                TransReq transReq = createCashierMarketTransReq(finalOrderVO.getOrderSn(), payCheckRes.getSandSerialNo(), finalOrderVO.getPayAmount().subtract(feeBig), Long.valueOf(numberDetail.getOwnerBy()));
                 walletService.doC2BTransaction(transReq);
 
                 return ResultCode.SUCCESS.getCode().equals(result.getCode()) && handover;
@@ -806,6 +806,21 @@ public class OrderProcessor implements IOrderProcessor {
         }
     }
 
+
+    private TransReq createCashierMarketTransReq(String orderSn, String outTradeNo, BigDecimal payAmount, Long uId) {
+        // walletPayRequest.setPayAmount(walletPayRequest.getPayAmount().signum() == -1 ? walletPayRequest.getPayAmount().negate() : walletPayRequest.getPayAmount());
+        // walletPayRequest.setPayAmount(walletPayRequest.getPayAmount().subtract(walletPayRequest.getFee()));
+        // walletPayRequest.setTotalPayAmount(walletPayRequest.getTotalPayAmount().subtract(walletPayRequest.getFee()));
+        TransReq transReq = new TransReq();
+        transReq.setOrderSn(orderSn);
+        transReq.setUid(uId);
+        transReq.setOutTradeNo(outTradeNo);
+        transReq.setPayAmount(payAmount);
+        transReq.setPayChannel("Balance");
+        transReq.setTotalAmount(payAmount);
+        transReq.setTsType(StarConstants.Transaction_Type.Sell.getCode());
+        return transReq;
+    }
 
     private TransReq createMarketTransReq(String orderSn, String outTradeNo, BigDecimal payAmount, Long uId) {
         // walletPayRequest.setPayAmount(walletPayRequest.getPayAmount().signum() == -1 ? walletPayRequest.getPayAmount().negate() : walletPayRequest.getPayAmount());
