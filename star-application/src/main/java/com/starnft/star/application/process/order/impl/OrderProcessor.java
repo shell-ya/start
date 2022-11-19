@@ -754,6 +754,54 @@ public class OrderProcessor implements IOrderProcessor {
         }
     }
 
+    @Override
+    public Boolean marketCashierOrder(PayCheckRes payCheckRes) {
+        OrderVO orderVO = null;
+
+        orderVO = orderService.queryOrder(payCheckRes.getOrderSn());
+
+        NumberDetailVO numberDetail = numberService.getNumberDetail(orderVO.getSeriesThemeId());
+
+        if (orderVO == null) {
+            log.error("uid :[{}] orderId : [{}] 不存在！", payCheckRes.getUid(), payCheckRes.getOrderSn());
+            throw new RuntimeException("订单不存在！");
+        }
+
+        if (!payCheckRes.getStatus().equals(ResultCode.SUCCESS.getCode())) {
+            try {
+                Result result = orderStateHandler.payCancel(orderVO.getUserId(), orderVO.getOrderSn(), StarConstants.ORDER_STATE.WAIT_PAY);
+                return ResultCode.SUCCESS.getCode().equals(result.getCode());
+            } catch (Exception e) {
+                throw new RuntimeException("订单处理异常！", e);
+            }
+        }
+
+        try {
+            OrderVO finalOrderVO = orderVO;
+            Boolean isSuccess = template.execute(status -> {
+
+                //商品发放
+                boolean handover = numberService.handover(buildHandOverReq(finalOrderVO));
+
+                //订单状态更新
+                Result result = orderStateHandler.payComplete(finalOrderVO.getUserId(), finalOrderVO.getOrderSn(), finalOrderVO.getOrderSn(), StarConstants.ORDER_STATE.WAIT_PAY);
+
+                // 给卖家钱包加钱
+                String fee = calFee(finalOrderVO.getPayAmount().toString());
+                BigDecimal feeBig = new BigDecimal(fee);
+                log.info("[marketCashierOrder]给卖家钱包加钱，参数：orderSn-{}, payAmount-{},fee-{}, realAddAmount-{}", finalOrderVO.getOrderSn(), finalOrderVO.getPayAmount(), fee, finalOrderVO.getPayAmount().subtract(feeBig));
+
+                TransReq transReq = createMarketTransReq(finalOrderVO.getOrderSn(), payCheckRes.getSandSerialNo(), finalOrderVO.getPayAmount().subtract(feeBig), Long.valueOf(numberDetail.getOwnerBy()));
+                walletService.doC2BTransaction(transReq);
+
+                return ResultCode.SUCCESS.getCode().equals(result.getCode()) && handover;
+            });
+            return isSuccess;
+        } catch (TransactionException | StarException e) {
+            throw new RuntimeException("订单处理异常！", e);
+        }
+    }
+
 
     private TransReq createMarketTransReq(String orderSn, String outTradeNo, BigDecimal payAmount, Long uId) {
         // walletPayRequest.setPayAmount(walletPayRequest.getPayAmount().signum() == -1 ? walletPayRequest.getPayAmount().negate() : walletPayRequest.getPayAmount());
@@ -933,7 +981,7 @@ public class OrderProcessor implements IOrderProcessor {
     public OrderPayDetailRes sandCashierPay(OrderPayReq req) {
 
         // 0、是否实名认证
-        UserInfo userInfo = userService.queryUserInfoAll(Long.valueOf(req.getOwnerId()));
+        UserInfo userInfo = userService.queryUserInfoAll(req.getUserId());
         if (userInfo.getRealPersonFlag() == 0) {
             throw new StarException(StarError.IS_REAL_NAME_AUTHENTICATION);
         }

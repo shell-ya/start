@@ -12,6 +12,7 @@ import com.starnft.star.interfaces.aop.BusinessTypeEnum;
 import com.starnft.star.interfaces.aop.Log;
 import com.starnft.star.interfaces.controller.trans.bo.C2BTransNotifyBO;
 import com.starnft.star.interfaces.controller.trans.bo.C2CTransNotifyBO;
+import com.starnft.star.interfaces.controller.trans.bo.SandCashierPayNotifyBO;
 import com.starnft.star.interfaces.controller.trans.redis.RedisDistributedLock;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import io.swagger.annotations.Api;
@@ -290,7 +291,7 @@ public class NewNotifyController {
             return "未获取到参数...";
         }
 
-        C2BTransNotifyBO c2bTransNotifyBO = null;
+        SandCashierPayNotifyBO notifyBO = null;
         String data = req.getParameter("data");
         String sign = req.getParameter("sign");
 
@@ -321,68 +322,65 @@ public class NewNotifyController {
                 log.error("签名值(sign)为：" + sign);
             } else {
                 log.info("verify sign success");
-                // c2bTransNotifyBO = JSONUtil.toBean(data, C2BTransNotifyBO.class);
+                notifyBO = JSONUtil.toBean(data, SandCashierPayNotifyBO.class);
             }
         } catch (Exception e) {
             log.error("验签错误：{}", e.getMessage(), e);
         }
 
-        // if (Objects.isNull(c2bTransNotifyBO)) {
-        //     log.error("验签之后BO对象为空，跳过处理...");
-        //     return "验签失败....";
-        // }
+        if (Objects.isNull(notifyBO)) {
+            log.error("验签之后BO对象为空，跳过处理...");
+            return "验签失败....";
+        }
 
         // 4、处理业务逻辑
 
         // 截取订单orderSn
-        // String orderCode = c2bTransNotifyBO.getBody().getOrderCode();
-        // orderCode = orderCode.substring(0, orderCode.indexOf("_"));
-        //
-        // String lockKey = "lockKey_" + orderCode;
-        // String lockId = null;
-        // try {
-        //     lockId = redisDistributedLock.lock(lockKey, 10, 10, TimeUnit.SECONDS);
-        //     // 这里处理业务逻辑 todo
-        //     //存储回调记录
-        //     int i = Integer.parseInt(c2bTransNotifyBO.getBody().getSettleAmount());
-        //     BigDecimal payAmount = BigDecimal.valueOf(i * 0.01);
-        //     NotifyOrderReq orderReq = NotifyOrderReq.builder()
-        //             .orderSn(orderCode)
-        //             .payChannel("CloudAccount")
-        //             .createTime(new Date())
-        //             .message(c2bTransNotifyBO.getHead().getRespMsg())
-        //             .payTime(new Date())
-        //             .status(c2bTransNotifyBO.getHead().getRespCode().equals("000000") ? ResultCode.SUCCESS.getCode() : 1)
-        //             .totalAmount(payAmount)
-        //             .transSn(c2bTransNotifyBO.getBody().getPayOrderCode())
-        //             // .uid(Long.parseLong(c2CTransNotifyBO.getPayerInfo().getPayerMemID()))
-        //             .build();
-        //     notifyOrderService.saveOrder(orderReq);
-        //
-        //     PayCheckRes payCheckRes = PayCheckRes
-        //             .builder()
-        //             .orderSn(orderCode)
-        //             .transSn(c2bTransNotifyBO.getBody().getPayOrderCode())
-        //             // .uid(c2CTransNotifyBO.getPayeeInfo().getPayeeMemID())
-        //             .payChannel("CloudAccount")
-        //             .status(c2bTransNotifyBO.getHead().getRespCode().equals("000000") ? ResultCode.SUCCESS.getCode() : 1)
-        //             .message(c2bTransNotifyBO.getHead().getRespMsg())
-        //             .totalAmount(payAmount)
-        //             .sandSerialNo(c2bTransNotifyBO.getBody().getTradeNo())
-        //             .build();
-        //
-        //     orderProcessor.marketC2BOrder(payCheckRes);
-        //
-        //     return "respCode=000000";
-        // } catch (Exception e) {
-        //     log.error("系统繁忙，请稍后操作：{}", e.getMessage(), e);
-        //     return "系统繁忙，请稍后操作!";
-        // } finally {
-        //     redisDistributedLock.releaseLock(lockKey, lockId);
-        // }
+        String orderCode = notifyBO.getBody().getOrderCode();
+        orderCode = orderCode.substring(0, orderCode.indexOf("_"));
 
+        String lockKey = "lockKey_" + orderCode;
+        String lockId = null;
+        try {
+            lockId = redisDistributedLock.lock(lockKey, 10, 10, TimeUnit.SECONDS);
+            // 这里处理业务逻辑 todo
+            //存储回调记录
+            int i = Integer.parseInt(notifyBO.getBody().getSettleAmount());
+            BigDecimal payAmount = BigDecimal.valueOf(i * 0.01);
+            NotifyOrderReq orderReq = NotifyOrderReq.builder()
+                    .orderSn(orderCode)
+                    .payChannel("CheckPay")
+                    .createTime(new Date())
+                    .message(notifyBO.getHead().getRespMsg())
+                    .payTime(new Date())
+                    .status(notifyBO.getHead().getRespCode().equals("000000") ? ResultCode.SUCCESS.getCode() : 1)
+                    .totalAmount(payAmount)
+                    .transSn(notifyBO.getBody().getPayOrderCode())
+                    // .uid(Long.parseLong(c2CTransNotifyBO.getPayerInfo().getPayerMemID()))
+                    .build();
+            notifyOrderService.saveOrder(orderReq);
 
-        return "respCode=000000";
+            PayCheckRes payCheckRes = PayCheckRes
+                    .builder()
+                    .orderSn(orderCode)
+                    .transSn(notifyBO.getBody().getPayOrderCode())
+                    // .uid(c2CTransNotifyBO.getPayeeInfo().getPayeeMemID())
+                    .payChannel("CheckPay")
+                    .status(notifyBO.getHead().getRespCode().equals("000000") ? ResultCode.SUCCESS.getCode() : 1)
+                    .message(notifyBO.getHead().getRespMsg())
+                    .totalAmount(payAmount)
+                    .sandSerialNo(notifyBO.getBody().getTradeNo())
+                    .build();
+
+            orderProcessor.marketCashierOrder(payCheckRes);
+
+            return "respCode=000000";
+        } catch (Exception e) {
+            log.error("系统繁忙，请稍后操作：{}", e.getMessage(), e);
+            return "系统繁忙，请稍后操作!";
+        } finally {
+            redisDistributedLock.releaseLock(lockKey, lockId);
+        }
     }
 
     public static void C2B() {

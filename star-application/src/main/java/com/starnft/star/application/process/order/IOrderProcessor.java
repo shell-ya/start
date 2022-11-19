@@ -60,6 +60,8 @@ public interface IOrderProcessor {
 
     Boolean marketC2BOrder(PayCheckRes payCheckRes);
 
+    Boolean marketCashierOrder(PayCheckRes payCheckRes);
+
     /**
      * 市场订单云账户支付
      * @param req
