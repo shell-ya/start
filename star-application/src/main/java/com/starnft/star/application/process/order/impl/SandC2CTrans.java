@@ -164,8 +164,9 @@ public class SandC2CTrans {
                 "&jump_scheme=" +
                 "&sign_type=MD5" +
                 "&sign=" + sign + "";
-        log.info("最终链接：\n\n" + url);
 
+        log.info("SandC2CTrans-最终链接：\n\n" + url);
+        log.info("\n\n");
         return url;
 
     }

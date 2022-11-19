@@ -125,6 +125,9 @@ public class OrderProcessor implements IOrderProcessor {
     @Value("${C2BTransNotify}")
     private String C2BTransNotify;
 
+    @Value("${sandCashierPayNotify}")
+    private String sandCashierPayNotify;
+
     public static AtomicInteger uniqueId = new AtomicInteger(1);
 
     @Override
@@ -924,7 +927,41 @@ public class OrderProcessor implements IOrderProcessor {
             paymentRes.setJumpUrl(c2bTransUrl);
             return res;
         }
+    }
 
+    @Override
+    public OrderPayDetailRes sandCashierPay(OrderPayReq req) {
+
+        // 0、是否实名认证
+        UserInfo userInfo = userService.queryUserInfoAll(Long.valueOf(req.getOwnerId()));
+        if (userInfo.getRealPersonFlag() == 0) {
+            throw new StarException(StarError.IS_REAL_NAME_AUTHENTICATION);
+        }
+
+        // 1、获取订单
+        OrderVO orderVO = orderService.queryOrder(req.getOrderSn());
+
+        // 2、幂等判断订单状态是否带支付 -> 抛出异常
+        if(!StarConstants.ORDER_STATE.WAIT_PAY.getCode().equals(orderVO.getStatus())) {
+            throw new StarException(StarError.ORDER_STATUS_REFRESH);
+        }
+
+        // 3、构建支付链接
+        OrderPayDetailRes res = new OrderPayDetailRes();
+        PaymentRes paymentRes = new PaymentRes();
+        res.setResults(paymentRes);
+        String orderSn = orderVO.getOrderSn() + "_" + uniqueId.getAndIncrement();
+        SandCashierPayParam param = new SandCashierPayParam();
+        param.setMer_order_no(orderSn);
+        param.setOrder_amt(String.valueOf(orderVO.getPayAmount()));
+        param.setNotify_url(this.sandCashierPayNotify);
+        param.setReturn_url(req.getReturnUri());
+        param.setUserId(String.valueOf(userInfo.getAccount()));
+        param.setIdCard(userInfo.getIdNumber());
+        param.setUserName(userInfo.getFullName());
+        String c2cTransUrl = SandCashierPay.buildCashierPayUrl(param);
+        paymentRes.setJumpUrl(c2cTransUrl);
+        return res;
 
     }
 

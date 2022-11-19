@@ -66,4 +66,11 @@ public interface IOrderProcessor {
      * @return
      */
     OrderPayDetailRes cloudAccountPay(OrderPayReq req);
+
+    /**
+     * 市场订单新收银台支付
+     * @param req
+     * @return
+     */
+    OrderPayDetailRes sandCashierPay(OrderPayReq req);
 }

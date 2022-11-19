@@ -8,6 +8,8 @@ import com.starnft.star.common.ResultCode;
 import com.starnft.star.domain.notify.model.req.NotifyOrderReq;
 import com.starnft.star.domain.notify.service.NotifyOrderService;
 import com.starnft.star.domain.payment.model.res.PayCheckRes;
+import com.starnft.star.interfaces.aop.BusinessTypeEnum;
+import com.starnft.star.interfaces.aop.Log;
 import com.starnft.star.interfaces.controller.trans.bo.C2BTransNotifyBO;
 import com.starnft.star.interfaces.controller.trans.bo.C2CTransNotifyBO;
 import com.starnft.star.interfaces.controller.trans.redis.RedisDistributedLock;
@@ -266,6 +268,121 @@ public class NewNotifyController {
         } finally {
             redisDistributedLock.releaseLock(lockKey, lockId);
         }
+    }
+
+    /**
+     * 新收银台支付-06030003 回调
+     *
+     * @return 新收银台支付-06030003 回调
+     */
+    @TokenIgnore
+    @ApiOperation("新收银台支付-06030003 回调")
+    @RequestMapping(path = "sandCashierPayNotify", method = {RequestMethod.GET, RequestMethod.POST})
+    @Log(title = "市场订单新收银台支付回调", businessType = BusinessTypeEnum.OTHER)
+    public String sandCashierPayNotify(HttpServletRequest req) {
+
+        log.info("[sandCashierPayNotify]收到回调通知.....");
+
+        // 1、获取参数
+        Map<String, String[]> parameterMap = req.getParameterMap();
+        if (Objects.isNull(parameterMap) || parameterMap.isEmpty()) {
+            log.error("parameterMap为空，跳过处理...");
+            return "未获取到参数...";
+        }
+
+        C2BTransNotifyBO c2bTransNotifyBO = null;
+        String data = req.getParameter("data");
+        String sign = req.getParameter("sign");
+
+        log.info("data====>{}", data);
+        log.info("sign====>{}", sign);
+
+        if (StrUtil.isBlank(data) || StrUtil.isBlank(sign)) {
+            log.error("回调参数为空....");
+            return "回调参数为空....";
+        }
+
+        try {
+            // 2、加载配置文件
+            log.info("加载证书...");
+            SDKConfig.getConfig().loadPropertiesFromSrc();
+            //加载证书
+            CertUtil.init(SDKConfig.getConfig().getSandCertPath(), SDKConfig.getConfig().getSignCertPath(), SDKConfig.getConfig().getSignCertPwd());
+        } catch (Exception e) {
+            log.error("加载证书异常，异常信息:{}", e.getMessage(), e);
+        }
+
+        // 3、验签
+        try {
+            boolean valid = CryptoUtil.verifyDigitalSign(data.getBytes("utf-8"), Base64.decodeBase64(sign), CertUtil.getPublicKey(), "SHA1WithRSA");
+            if (!valid) {
+                log.error("verify sign fail.");
+                log.error("签名字符串(data)为：" + data);
+                log.error("签名值(sign)为：" + sign);
+            } else {
+                log.info("verify sign success");
+                c2bTransNotifyBO = JSONUtil.toBean(data, C2BTransNotifyBO.class);
+            }
+        } catch (Exception e) {
+            log.error("验签错误：{}", e.getMessage(), e);
+        }
+
+        if (Objects.isNull(c2bTransNotifyBO)) {
+            log.error("验签之后BO对象为空，跳过处理...");
+            return "验签失败....";
+        }
+
+        // 4、处理业务逻辑
+
+        // 截取订单orderSn
+        // String orderCode = c2bTransNotifyBO.getBody().getOrderCode();
+        // orderCode = orderCode.substring(0, orderCode.indexOf("_"));
+        //
+        // String lockKey = "lockKey_" + orderCode;
+        // String lockId = null;
+        // try {
+        //     lockId = redisDistributedLock.lock(lockKey, 10, 10, TimeUnit.SECONDS);
+        //     // 这里处理业务逻辑 todo
+        //     //存储回调记录
+        //     int i = Integer.parseInt(c2bTransNotifyBO.getBody().getSettleAmount());
+        //     BigDecimal payAmount = BigDecimal.valueOf(i * 0.01);
+        //     NotifyOrderReq orderReq = NotifyOrderReq.builder()
+        //             .orderSn(orderCode)
+        //             .payChannel("CloudAccount")
+        //             .createTime(new Date())
+        //             .message(c2bTransNotifyBO.getHead().getRespMsg())
+        //             .payTime(new Date())
+        //             .status(c2bTransNotifyBO.getHead().getRespCode().equals("000000") ? ResultCode.SUCCESS.getCode() : 1)
+        //             .totalAmount(payAmount)
+        //             .transSn(c2bTransNotifyBO.getBody().getPayOrderCode())
+        //             // .uid(Long.parseLong(c2CTransNotifyBO.getPayerInfo().getPayerMemID()))
+        //             .build();
+        //     notifyOrderService.saveOrder(orderReq);
+        //
+        //     PayCheckRes payCheckRes = PayCheckRes
+        //             .builder()
+        //             .orderSn(orderCode)
+        //             .transSn(c2bTransNotifyBO.getBody().getPayOrderCode())
+        //             // .uid(c2CTransNotifyBO.getPayeeInfo().getPayeeMemID())
+        //             .payChannel("CloudAccount")
+        //             .status(c2bTransNotifyBO.getHead().getRespCode().equals("000000") ? ResultCode.SUCCESS.getCode() : 1)
+        //             .message(c2bTransNotifyBO.getHead().getRespMsg())
+        //             .totalAmount(payAmount)
+        //             .sandSerialNo(c2bTransNotifyBO.getBody().getTradeNo())
+        //             .build();
+        //
+        //     orderProcessor.marketC2BOrder(payCheckRes);
+        //
+        //     return "respCode=000000";
+        // } catch (Exception e) {
+        //     log.error("系统繁忙，请稍后操作：{}", e.getMessage(), e);
+        //     return "系统繁忙，请稍后操作!";
+        // } finally {
+        //     redisDistributedLock.releaseLock(lockKey, lockId);
+        // }
+
+
+        return "respCode=000000";
     }
 
     public static void C2B() {
