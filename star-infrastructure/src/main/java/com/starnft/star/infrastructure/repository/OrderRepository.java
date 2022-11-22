@@ -134,7 +134,7 @@ public class OrderRepository implements IOrderRepository {
                 .seriesThemeId(starNftOrder.getSeriesThemeId())
                 .numberId(starNftOrder.getSeriesThemeId())
                 .status(starNftOrder.getStatus())
-                .expire(180L)
+                .expire(300L)
                 .orderType(starNftOrder.getOrderSn().startsWith("PG") ? StarConstants.OrderType.PUBLISH_GOODS.getName() : StarConstants.OrderType.MARKET_GOODS.getName())
                 .build();
     }
