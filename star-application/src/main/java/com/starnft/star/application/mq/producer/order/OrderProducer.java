@@ -35,7 +35,7 @@ public class OrderProducer extends BaseProducer {
 
         String destination = String.format(TopicConstants.ORDER_SEC_KILL_ROLLBACK_DESTINATION.getFormat(), TopicConstants.ORDER_SEC_KILL_ROLLBACK_DESTINATION.getTag());
 
-        messageSender.syncSendDelay(destination, Optional.of(status), 3000L, 7);
+        messageSender.syncSendDelay(destination, Optional.of(status), 3000L, 9);
     }
 
     /**
