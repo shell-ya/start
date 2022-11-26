@@ -114,17 +114,17 @@ public class OrderController {
         return RopResponse.success(this.orderProcessor.obtainSecKillOrder(req));
     }
 
-    @ApiOperation("秒杀订单支付")
+    @ApiOperation("订单支付")
     @PostMapping("/killed/pay")
-    @Log(title = "秒杀订单支付", businessType = BusinessTypeEnum.OTHER)
+    @Log(title = "订单支付", businessType = BusinessTypeEnum.OTHER)
     public RopResponse<OrderPayDetailRes> orderPay(@RequestBody OrderPayReq req) {
         req.setUserId(UserContext.getUserId().getUserId());
         return RopResponse.success(this.orderProcessor.orderPay(req));
     }
 
-    @ApiOperation("市场订单云账户支付")
+    @ApiOperation("订单云账户支付")
     @PostMapping("/marketOrder/cloudAccountPay")
-    @Log(title = "市场订单云账户支付", businessType = BusinessTypeEnum.OTHER)
+    @Log(title = "订单云账户支付", businessType = BusinessTypeEnum.OTHER)
     public RopResponse<OrderPayDetailRes> cloudAccountPay(@RequestBody @Validated OrderPayReq req) {
         req.setUserId(UserContext.getUserId().getUserId());
         log.info("[cloudAccountPay] 入参：{}", JSONUtil.toJsonStr(req));

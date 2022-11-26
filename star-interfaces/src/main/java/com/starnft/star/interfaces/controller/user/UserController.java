@@ -11,6 +11,8 @@ import com.starnft.star.domain.user.model.dto.AuthenticationNameDTO;
 import com.starnft.star.domain.user.model.res.PriorityTimesRes;
 import com.starnft.star.domain.user.model.vo.UserPlyPasswordVO;
 import com.starnft.star.domain.user.service.IUserService;
+import com.starnft.star.interfaces.aop.BusinessTypeEnum;
+import com.starnft.star.interfaces.aop.Log;
 import com.starnft.star.interfaces.interceptor.TokenIgnore;
 import com.starnft.star.interfaces.interceptor.UserContext;
 import com.starnft.star.interfaces.interceptor.UserResolverInfo;
@@ -178,6 +180,7 @@ public class UserController {
 
     @ApiOperation("校验支付密码")
     @PostMapping("/paypass/auth")
+    @Log(title = "校验支付密码", businessType = BusinessTypeEnum.OTHER)
     public RopResponse<PayPwdPreCheckRes> checkPayPassword(UserResolverInfo userResolverInfo, @RequestBody @Validated PayPwdCheckReq req) {
         return RopResponse.success(this.userCore.checkPayPassword(userResolverInfo.getUserId(), req));
     }

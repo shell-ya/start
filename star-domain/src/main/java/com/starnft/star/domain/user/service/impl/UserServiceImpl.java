@@ -362,6 +362,7 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
         String token = RandomUtil.randomString(16);
         String preCheckKey = String.format(RedisKey.REDIS_PRE_PAY_PWD_CHECK_TOKEN.getKey(), req.getUserId());
         this.redisUtil.set(preCheckKey, StarUtils.getSHA256Str(token), RedisKey.REDIS_PRE_PAY_PWD_CHECK_TOKEN.getTime(), RedisKey.REDIS_PRE_PAY_PWD_CHECK_TOKEN.getTimeUnit());
+        log.info("[checkPayPassword]token:{},preCheckKey:{}", token, preCheckKey);
         return token;
     }
 
