@@ -153,7 +153,7 @@ public class WalletServiceImpl implements WalletService {
                 boolean doTransaction = doTransactionNoVerify(createTransReq(walletPayRequest));
                 boolean marketTransaction = true;
                 if (walletPayRequest.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix())){
-                    marketTransaction =  doTransaction(createMarketTransReq(walletPayRequest));
+                    marketTransaction =  doTransactionNoVerify(createMarketTransReq(walletPayRequest));
                 }
 //                boolean marketTransaction = !walletPayRequest.getOrderSn().startsWith(StarConstants.OrderPrefix.TransactionSn.getPrefix()) || doTransaction(createMarketTransReq(walletPayRequest));
 
