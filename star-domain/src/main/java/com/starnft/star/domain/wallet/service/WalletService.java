@@ -73,6 +73,8 @@ public interface WalletService {
     //交易操作
     boolean doTransaction(TransReq transReq);
 
+    boolean doTransactionNoVerify(TransReq transReq);
+
     // C2B转账之后 -> 给人加钱
     boolean doC2BTransaction(TransReq transReq);
 

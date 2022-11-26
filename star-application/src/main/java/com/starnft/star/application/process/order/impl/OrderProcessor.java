@@ -299,11 +299,14 @@ public class OrderProcessor implements IOrderProcessor {
         orderPayReq.setOrderId(orderVO.getId());
 
         //验证支付凭证
+        log.info("ready to assertPayPwdCheckSuccess....begin");
         userService.assertPayPwdCheckSuccess(orderPayReq.getUserId(), orderPayReq.getPayToken());
+        log.info("ready to assertPayPwdCheckSuccess....end");
 
         WalletResult walletResult = this.walletService.queryWalletInfo(new WalletInfoReq(orderPayReq.getUserId()));
 
         if (walletResult.getBalance().compareTo(orderVO.getPayAmount()) >= 0) {
+            log.info("余额充足 -> 扣减余额支付:{}....begin", orderPayReq.getOrderSn());
             // 1、余额充足 -> 扣减余额支付
 
             String lockKey = String.format(RedisKey.SECKILL_ORDER_TRANSACTION.getKey(), orderPayReq.getOrderSn());
@@ -341,6 +344,7 @@ public class OrderProcessor implements IOrderProcessor {
             }
         } else {
             // 2、余额不足 -> 跳转快捷收银台支付
+            log.info("余额不足 -> 跳转快捷收银台支付:{}....begin", orderPayReq.getOrderSn());
             return this.sandCashierPay(orderPayReq);
         }
     }
