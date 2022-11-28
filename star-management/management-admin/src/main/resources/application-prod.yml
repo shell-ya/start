@@ -11,9 +11,9 @@ spring:
         #type为数据源，如果是Druid数据库连接池，可以去改
         type: com.zaxxer.hikari.HikariDataSource
         driver-class-name: com.mysql.cj.jdbc.Driver
-        url: jdbc:mysql://172.16.0.17:3307/star?serverTimezone=GMT%2B8&characterEncoding=utf8
-        username: root
-        password: lywc@2022
+        jdbc-url: jdbc:mysql://gz-cdb-fuwtjurl.sql.tencentcdb.com:57116/star?serverTimezone=GMT%2B8&characterEncoding=utf8
+        username: query
+        password: 123456@#
         connection-test-query: SELECT 1
           # 等待连接池分配连接的最大时长（毫秒），超过这个时长还没可用的连接则发生SQLException， 默认:30秒
         # 生产环境 connect-time 10 s
