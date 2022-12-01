@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @Api(tags = "主题相关接口「ThemeController」")
@@ -67,7 +68,10 @@ public class ThemeController {
     @ApiOperation("秒杀商品列表")
     @TokenIgnore
     public RopResponse<Set<SecKillGoods>> seriesTheme() {
-        return RopResponse.success(this.themeCore.querySecKillThemes());
+        Set<SecKillGoods> t = this.themeCore.querySecKillThemes();
+        // 过滤 1010327729113513984 创世金盲盒
+        Set<SecKillGoods> res = t.stream().filter(item -> !item.getThemeId().equals(1010327729113513984L)).collect(Collectors.toSet());
+        return RopResponse.success(res);
     }
 
     //
