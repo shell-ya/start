@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.starnft.star.infrastructure.entity.BaseEntity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import java.util.Date;
 
 @ApiModel(value = "秒杀活动表", description = "")
 @TableName("star_schedule_seckill")
+@Data
 public class StarScheduleSeckill extends BaseEntity implements Serializable {
     /**
      * id
@@ -46,6 +48,16 @@ public class StarScheduleSeckill extends BaseEntity implements Serializable {
     @ApiModelProperty(name = "秒杀商品数", notes = "")
     private Integer goodsNum;
     /**
+     * 冻结库存
+     */
+    @ApiModelProperty(name = "冻结库存", notes = "")
+    private Integer frozenStock;
+    /**
+     * 已卖库存
+     */
+    @ApiModelProperty(name = "已卖库存", notes = "")
+    private Integer soldStock;
+    /**
      * 秒杀定价
      */
     @ApiModelProperty(name = "秒杀定价", notes = "")
@@ -76,99 +88,5 @@ public class StarScheduleSeckill extends BaseEntity implements Serializable {
     @ApiModelProperty(name = "版本号 乐观锁", notes = "")
     private int version;
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Integer getSellerId() {
-        return sellerId;
-    }
-
-    public void setSellerId(Integer sellerId) {
-        this.sellerId = sellerId;
-    }
-
-    public Long getSpuId() {
-        return spuId;
-    }
-
-    public void setSpuId(Long spuId) {
-        this.spuId = spuId;
-    }
-
-    public Long getSkuId() {
-        return skuId;
-    }
-
-    public void setSkuId(Long skuId) {
-        this.skuId = skuId;
-    }
-
-    public Integer getStock() {
-        return stock;
-    }
-
-    public void setStock(Integer stock) {
-        this.stock = stock;
-    }
-
-    public Integer getGoodsNum() {
-        return goodsNum;
-    }
-
-    public void setGoodsNum(Integer goodsNum) {
-        this.goodsNum = goodsNum;
-    }
-
-    public BigDecimal getSecCost() {
-        return secCost;
-    }
-
-    public void setSecCost(BigDecimal secCost) {
-        this.secCost = secCost;
-    }
-
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
-
-    public Date getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
-    }
-
-    public String getGoodsDesc() {
-        return goodsDesc;
-    }
-
-    public void setGoodsDesc(String goodsDesc) {
-        this.goodsDesc = goodsDesc;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
-    }
 }

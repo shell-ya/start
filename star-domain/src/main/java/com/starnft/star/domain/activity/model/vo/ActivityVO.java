@@ -33,6 +33,18 @@ public class ActivityVO {
      */
     @ApiModelProperty(name = "秒杀商品数", notes = "")
     private Integer goodsNum;
+
+    /**
+     * 冻结库存
+     */
+    @ApiModelProperty(name = "冻结库存", notes = "")
+    private Integer frozenStock;
+    /**
+     * 已卖库存
+     */
+    @ApiModelProperty(name = "已卖库存", notes = "")
+    private Integer soldStock;
+
     /**
      * 秒杀定价
      */

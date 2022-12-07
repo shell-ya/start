@@ -135,9 +135,11 @@ public class ThemeCoreImpl implements ThemeCore {
     @Override
     public List<SecKillGoods> querySecKillThemesNew() {
         List<ActivityVO> activityList = activityRepository.getAllActivity();
+        log.info("[querySecKillThemesNew]activityList:{}", JSONUtil.toJsonStr(activityList));
         if (CollUtil.isEmpty(activityList)) {
             return Lists.newArrayList();
         }
+
         List<Long> themeIdList = activityList.stream().map(ActivityVO::getSpuId).collect(Collectors.toList());
         List<ThemeDetailVO> themeList = themeService.getThemeByIdList(themeIdList);
         List<Long> publisherIdList = themeList.stream().map(ThemeDetailVO::getPublisherId).distinct().collect(Collectors.toList());
@@ -152,14 +154,19 @@ public class ThemeCoreImpl implements ThemeCore {
         Map<Long, ThemeDetailVO> themeMap = themeList.stream().collect(Collectors.toMap(ThemeDetailVO::getId, Function.identity()));
         List<SecKillGoods> result = new ArrayList<>();
         activityList.forEach(activity -> {
-            if (themeMap.containsKey(activity.getSpuId())) {
-                ThemeDetailVO detailVO = themeMap.get(activity.getSpuId());
-                PublisherVO publisherVO = publisherMap.get(detailVO.getPublisherId());
-                SeriesVO seriesVO = seriesMap.get(detailVO.getSeriesId());
-                SecKillGoods copy = copyNew(activity, detailVO, publisherVO, seriesVO.getSeriesName());
-                result.add(copy);
+            if (!themeMap.containsKey(activity.getSpuId())) {
+                log.error("根据spuId未获取到theme，spuId:{}", activity.getSpuId());
+                return;
             }
+
+            ThemeDetailVO detailVO = themeMap.get(activity.getSpuId());
+            PublisherVO publisherVO = publisherMap.get(detailVO.getPublisherId());
+            SeriesVO seriesVO = seriesMap.get(detailVO.getSeriesId());
+            SecKillGoods copy = copyNew(activity, detailVO, publisherVO, seriesVO.getSeriesName());
+            result.add(copy);
+
         });
+        result.sort(Comparator.comparing(SecKillGoods::getSellOut).reversed());
         return result;
     }
 
@@ -181,7 +188,7 @@ public class ThemeCoreImpl implements ThemeCore {
         secKillGoods.setPublisherId(publisherVO.getPublisherId());
         secKillGoods.setPublisherPic(publisherVO.getPublisherPic());
         secKillGoods.setPublisherName(publisherVO.getPublisherName());
-        secKillGoods.setSellOut(activity.getStock() > 0);
+        secKillGoods.setSellOut(activity.getGoodsNum() - activity.getFrozenStock() - activity.getSoldStock() > 0);
         return secKillGoods;
     }
 

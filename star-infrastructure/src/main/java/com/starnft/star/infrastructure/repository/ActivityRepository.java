@@ -239,6 +239,7 @@ public class ActivityRepository implements IActivityRepository {
         QueryWrapper<StarScheduleSeckill> wrapper = new QueryWrapper<>();
         //  审核通过
         wrapper.lambda().eq(StarScheduleSeckill::getStatus, 1);
+        // 未删除
         wrapper.lambda().eq(StarScheduleSeckill::getIsDeleted, 0);
         List<StarScheduleSeckill> list = starScheduleSeckillMapper.selectList(wrapper);
         return BeanColverUtil.colverList(list, ActivityVO.class);

@@ -64,21 +64,21 @@ public class ThemeController {
         return RopResponse.success(this.themeCore.queryThemeDetail(id));
     }
 
-    // @PostMapping("/seckill/list")
-    // @ApiOperation("秒杀商品列表")
-    // @TokenIgnore
-    // public RopResponse<Set<SecKillGoods>> seriesTheme() {
-    //     Set<SecKillGoods> t = this.themeCore.querySecKillThemes();
-    //     // 过滤 1010327729113513984 创世金盲盒
-    //     Set<SecKillGoods> res = t.stream().filter(item -> !item.getThemeId().equals(1010327729113513984L)).collect(Collectors.toSet());
-    //     return RopResponse.success(res);
-    // }
-
-
     @PostMapping("/seckill/list")
     @ApiOperation("秒杀商品列表")
     @TokenIgnore
-    public RopResponse<List<SecKillGoods>> seriesTheme() {
+    public RopResponse<Set<SecKillGoods>> seriesTheme() {
+        Set<SecKillGoods> t = this.themeCore.querySecKillThemes();
+        // 过滤 1010327729113513984 创世金盲盒
+        Set<SecKillGoods> res = t.stream().filter(item -> !item.getThemeId().equals(1010327729113513984L)).collect(Collectors.toSet());
+        return RopResponse.success(res);
+    }
+
+
+    @PostMapping("/seckill/listNew")
+    @ApiOperation("秒杀商品列表")
+    @TokenIgnore
+    public RopResponse<List<SecKillGoods>> seriesThemeNew() {
         return RopResponse.success(this.themeCore.querySecKillThemesNew());
     }
 
