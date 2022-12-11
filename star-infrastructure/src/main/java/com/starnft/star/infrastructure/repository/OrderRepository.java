@@ -207,24 +207,25 @@ public class OrderRepository implements IOrderRepository {
     }
 
     @Override
-    public List<BigDecimal> queryDealOrderPrice(Long themeInfoId,Date date) {
-        return starNftOrderMapper.dealOrderPrice(themeInfoId,date);
+    public List<BigDecimal> queryDealOrderPrice(Long themeInfoId, Date date) {
+        return starNftOrderMapper.dealOrderPrice(themeInfoId, date);
     }
 
     @Override
     public boolean noSuccessOrderByTheme(Long themeInfoId, Date morning, Date night) {
         LambdaQueryWrapper<StarNftOrder> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(StarNftOrder::getSeriesThemeInfoId,themeInfoId);
-        wrapper.eq(StarNftOrder::getStatus,StarConstants.ORDER_STATE.COMPLETED.getCode());
-        wrapper.between(BaseEntity::getCreatedAt,morning,night);
+        wrapper.eq(StarNftOrder::getSeriesThemeInfoId, themeInfoId);
+        wrapper.eq(StarNftOrder::getStatus, StarConstants.ORDER_STATE.COMPLETED.getCode());
+        wrapper.between(BaseEntity::getCreatedAt, morning, night);
         return starNftOrderMapper.selectList(wrapper).isEmpty();
     }
 
     private StarNftOrder queryOrder(Long uid, String orderSn) {
         //找到对应订单
-        return starNftOrderMapper.selectOne(
-                new LambdaQueryWrapper<StarNftOrder>().eq(Objects.nonNull(uid), StarNftOrder::getUserId, uid)
-                        .eq(StringUtils.isNotBlank(orderSn), StarNftOrder::getOrderSn, orderSn));
+        LambdaQueryWrapper<StarNftOrder> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Objects.nonNull(uid), StarNftOrder::getUserId, uid);
+        wrapper.eq(StringUtils.isNotBlank(orderSn), StarNftOrder::getOrderSn, orderSn);
+        return starNftOrderMapper.selectOne(wrapper);
     }
 
 

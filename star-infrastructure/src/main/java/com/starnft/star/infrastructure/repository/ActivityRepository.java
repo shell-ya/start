@@ -61,6 +61,11 @@ public class ActivityRepository implements IActivityRepository {
     @Resource
     private RedisUtil redisUtil;
 
+    @Override
+    public ActivityVO getActivityByThemeId(Long themeId) {
+        StarScheduleSeckill starScheduleSeckill = starScheduleSeckillMapper.queryByThemeId(themeId.intValue());
+        return BeanColverUtil.colver(starScheduleSeckill, ActivityVO.class);
+    }
 
     @Override
     public int subtractionActivityStock(Long activityId) {
@@ -228,6 +233,8 @@ public class ActivityRepository implements IActivityRepository {
         return luckyGuysVOS;
     }
 
+
+
     @Override
     public List<ActivityVO> obtainActivities(String startTime, String endTime, List<String> keys) {
         List<StarScheduleSeckill> starScheduleSeckills = starScheduleSeckillMapper.obtainActivities(startTime, endTime, keys);
@@ -250,6 +257,11 @@ public class ActivityRepository implements IActivityRepository {
     public boolean modifyStock(Integer spuId, Integer stock) {
         StarScheduleSeckill starScheduleSeckill = starScheduleSeckillMapper.queryByThemeId(spuId);
         return starScheduleSeckillMapper.modifyStock(spuId, stock, starScheduleSeckill.getVersion()) == 1;
+    }
+
+    @Override
+    public boolean frozenStock(Integer spuId, Integer stock, Integer version) {
+        return starScheduleSeckillMapper.frozenStock(spuId, stock, version);
     }
 
     @Override

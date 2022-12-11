@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface IActivityRepository {
 
+    ActivityVO getActivityByThemeId(Long themeId);
+
     List<ActivityVO> obtainActivities(String startTime, String endTime, List<String> keys);
 
     /**
@@ -88,4 +90,11 @@ public interface IActivityRepository {
 
     List<LuckyGuysVO> luckyGuys(Long strategyId);
 
+    /**
+     * 冻结库存
+     * @param spuId
+     * @param stock
+     * @return
+     */
+    boolean frozenStock(Integer spuId, Integer stock, Integer version);
 }

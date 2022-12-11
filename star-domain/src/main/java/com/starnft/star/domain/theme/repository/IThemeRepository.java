@@ -29,4 +29,5 @@ public interface IThemeRepository {
 
     Integer obtainThemeIssuedQty(Long themeId);
 
+    SecKillGoods obtainGoods(Long themeId);
 }

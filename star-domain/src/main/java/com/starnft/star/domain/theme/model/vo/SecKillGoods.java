@@ -23,6 +23,17 @@ public class SecKillGoods implements Serializable {
     @ApiModelProperty(name = "发行数量", notes = "")
     private Integer goodsNum;
 
+    /**
+     * 冻结库存
+     */
+    @ApiModelProperty(name = "冻结库存", notes = "")
+    private Integer frozenStock;
+    /**
+     * 已卖库存
+     */
+    @ApiModelProperty(name = "已卖库存", notes = "")
+    private Integer soldStock;
+
     @ApiModelProperty(name = "秒杀定价", notes = "")
     private BigDecimal secCost;
 
@@ -76,4 +87,6 @@ public class SecKillGoods implements Serializable {
     @ApiModelProperty(name = "售磬", notes = "")
     private Boolean sellOut = false;
 
+    @ApiModelProperty(name = "版本号 乐观锁", notes = "")
+    private int version;
 }

@@ -57,6 +57,8 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
     @Override
     public void onMessage(OrderMessageReq message) {
 
+        log.info("[OrderSecKillConsumer]onMessage:{}", JSONUtil.toJsonStr(message));
+
         long userId = message.getUserId();
         String time = message.getTime();
         Long themeId = message.getGoods().getThemeId();
@@ -71,8 +73,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
             //清理排队信息
             redisUtil.hdel(key, String.valueOf(userId));
             //抢单失败
-            redisUtil.hset(String.format(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), themeId),
-                    String.valueOf(userId), JSONUtil.toJsonStr(new OrderGrabStatus(userId, -1, null, time)));
+            redisUtil.hset(String.format(RedisKey.SECKILL_ORDER_USER_STATUS_MAPPING.getKey(), themeId), String.valueOf(userId), JSONUtil.toJsonStr(new OrderGrabStatus(userId, -1, null, time)));
             return;
         }
 
@@ -80,8 +81,7 @@ public class OrderSecKillConsumer implements RocketMQListener<OrderMessageReq> {
         if (goodsKey != null) {
             try {
                 //生成订单流水
-                String orderSn = StarConstants.OrderPrefix.PublishGoods.getPrefix()
-                        .concat(String.valueOf(map.get(StarConstants.Ids.SnowFlake).nextId()));
+                String orderSn = StarConstants.OrderPrefix.PublishGoods.getPrefix().concat(String.valueOf(map.get(StarConstants.Ids.SnowFlake).nextId()));
                 //创建订单
                 if (createPreOrder(orderSn, message, isPriority, (int) stockQueueId)) {
                     //减库存

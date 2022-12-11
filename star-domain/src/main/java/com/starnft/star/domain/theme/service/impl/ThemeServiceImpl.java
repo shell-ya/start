@@ -58,7 +58,10 @@ public class ThemeServiceImpl implements ThemeService {
         return this.themeRepository.obtainGoodsCache(themeId, time);
     }
 
-
+    @Override
+    public SecKillGoods obtainGoodsCache(Long themeId) {
+        return this.themeRepository.obtainGoods(themeId);
+    }
 
     @Override
     public ResponsePageResult<ThemeVO> obtainRecommendTheme(ThemeReq req) {

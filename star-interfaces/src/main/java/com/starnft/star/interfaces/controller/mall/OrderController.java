@@ -63,6 +63,7 @@ public class OrderController {
 
     @ApiOperation("创建订单")
     @PostMapping("/createOrder")
+    @Log(title = "创建订单", businessType = BusinessTypeEnum.OTHER)
     public RopResponse<OrderGrabRes> createOrder(@Validated @RequestBody OrderGrabReq req) {
         log.info("[createOrder]下单参数：{}", JSONUtil.toJsonStr(req));
         if (!currentLimiter.tryAcquire()) {

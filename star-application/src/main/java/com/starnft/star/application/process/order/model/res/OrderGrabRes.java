@@ -1,5 +1,6 @@
 package com.starnft.star.application.process.order.model.res;
 
+import com.starnft.star.domain.order.model.vo.OrderVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -16,6 +17,9 @@ public class OrderGrabRes implements Serializable {
 
     @ApiModelProperty(value = "抢单消息")
     private String message;
+
+    @ApiModelProperty(value = "下单结果")
+    private OrderVO order;
 
     public OrderGrabRes(Integer status, String message) {
         this.status = status;

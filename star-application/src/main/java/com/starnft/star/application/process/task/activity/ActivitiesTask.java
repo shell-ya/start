@@ -153,6 +153,8 @@ public class ActivitiesTask {
         }
         SecKillGoods secKillGoods = new SecKillGoods();
         secKillGoods.setGoodsNum(activity.getGoodsNum());
+        secKillGoods.setFrozenStock(activity.getFrozenStock());
+        secKillGoods.setSoldStock(activity.getSoldStock());
         secKillGoods.setDescrption(detailVO.getDescrption());
         secKillGoods.setSecCost(activity.getSecCost());
         secKillGoods.setEndTime(activity.getEndTime());

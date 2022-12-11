@@ -71,6 +71,24 @@
         and version = #{version}
     </update>
 
+    <update id="frozenStock" parameterType="com.starnft.star.infrastructure.entity.activity.StarScheduleSeckill">
+        update star_schedule_seckill
+        <set>
+            <if test="stock != null and stock >= 0">
+                stock = #{stock},
+            </if>
+            <if test="stock != null and stock >= 0">
+                frozen_stock = frozen_stock + 1,
+            </if>
+            <if test="version != null ">
+                version = #{version} + 1,
+            </if>
+        </set>
+        where
+        spu_id = #{themeId}
+        and version = #{version}
+    </update>
+
     <!-- 批量新增或按主键更新数据 -->
     <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
         insert into

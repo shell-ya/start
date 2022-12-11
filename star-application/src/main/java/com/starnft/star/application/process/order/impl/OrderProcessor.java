@@ -37,7 +37,9 @@ import com.starnft.star.common.enums.NumberStatusEnum;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.utils.BeanColverUtil;
+import com.starnft.star.common.utils.SnowflakeWorker;
 import com.starnft.star.common.utils.secure.AESUtil;
+import com.starnft.star.domain.activity.IActivitiesService;
 import com.starnft.star.domain.component.RedisLockUtils;
 import com.starnft.star.domain.component.RedisUtil;
 import com.starnft.star.domain.number.model.dto.NumberDTO;
@@ -66,6 +68,7 @@ import com.starnft.star.domain.theme.model.vo.SecKillGoods;
 import com.starnft.star.domain.theme.service.ThemeService;
 import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.domain.user.model.vo.UserInfoVO;
+import com.starnft.star.domain.user.model.vo.WhiteListConfigVO;
 import com.starnft.star.domain.user.service.IUserService;
 import com.starnft.star.domain.wallet.model.req.TransReq;
 import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
@@ -86,6 +89,7 @@ import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.validation.annotation.Validated;
 
+import javax.annotation.Resource;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -121,6 +125,8 @@ public class OrderProcessor implements IOrderProcessor {
 
     private final ISandPayCloudPayHandler iSandPayCloudPayHandler;
 
+    private final IActivitiesService activitiesService;
+
     @Value("${C2CTransNotify}")
     private String C2CTransNotify;
 
@@ -129,6 +135,9 @@ public class OrderProcessor implements IOrderProcessor {
 
     @Value("${sandCashierPayNotify}")
     private String sandCashierPayNotify;
+
+    @Resource
+    private Map<StarConstants.Ids, IIdGenerator> map;
 
     public static AtomicInteger uniqueId = new AtomicInteger(1);
 
@@ -139,8 +148,174 @@ public class OrderProcessor implements IOrderProcessor {
             throw new StarException(StarError.ORDER_DONT_PAY_ERROR);
         }
 
+        //是否可购买验证
+        List<Serializable> notOnSellList = redisUtil.lGet(RedisKey.SECKILL_GOODS_NOT_ONSELL.getKey(), 0, -1);
+        for (Serializable serializable : notOnSellList) {
+            Object themeId = serializable;
+            if (orderGrabReq.getThemeId().equals(Long.parseLong(themeId.toString()))) {
+                throw new StarException(StarError.ORDER_DONT_SELL_ERROR);
+            }
+        }
 
-        return null;
+        // 恶意下单校验
+        Object record = redisUtil.get(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), orderGrabReq.getUserId()));
+        if (record != null) {
+            log.error("恶意下单校验 uid: {}， record: {}", orderGrabReq.getUserId(), record);
+            throw new StarException(StarError.ORDER_CANCEL_TIMES_OVERFLOW);
+        }
+
+        Integer breakTimes = (Integer) redisUtil.get(String.format(RedisKey.ORDER_BREAK_COUNT.getKey(), orderGrabReq.getUserId()));
+        if (Objects.nonNull(breakTimes) && breakTimes >= 3) {
+            redisUtil.set(String.format(RedisKey.ORDER_BREAK_RECORD.getKey(), orderGrabReq.getUserId()), orderGrabReq.getUserId(), RedisKey.ORDER_BREAK_RECORD.getTime());
+            log.error("恶意下单校验 uid: {}， breakTimes: {}", orderGrabReq.getUserId(), breakTimes);
+            throw new StarException(StarError.ORDER_CANCEL_TIMES_OVERFLOW);
+        }
+
+        //查询抢购商品信息
+        // SecKillGoods goods = themeService.obtainGoodsCache(orderGrabReq.getThemeId(), orderGrabReq.getTime());
+        SecKillGoods goods = activitiesService.getActivityByThemeId(orderGrabReq.getThemeId());
+        if (goods == null) {
+            log.error("商品信息不存在 themeId:{}，Time:{}", orderGrabReq.getThemeId(), orderGrabReq.getTime());
+            throw new StarException(StarError.GOODS_NOT_FOUND);
+        }
+
+        //是否白名单
+        Boolean isWhite = false;
+        if (orderGrabReq.getIsPriority() == 1) {
+            isWhite = whiteValidation(orderGrabReq.getUserId(), orderGrabReq.getThemeId());
+            log.info("uid ：{}， themeId {}", orderGrabReq.getUserId(), orderGrabReq.getThemeId());
+        }
+        orderGrabReq.setIsPriority(isWhite ? 1 : 0);
+        // 商品售卖时间验证
+        if (!isWhite && DateUtil.date().before(goods.getStartTime())) {
+            log.info("是白名单么：{}", isWhite);
+            throw new StarException(StarError.GOODS_DO_NOT_START_ERROR);
+        }
+
+        // 库存校验
+        int availableStock = goods.getGoodsNum() - goods.getFrozenStock() - goods.getSoldStock();
+        if (availableStock <= 0) {
+            log.error("库存不足,themeId:{},Time:{}, SecKillGoods:{}", orderGrabReq.getThemeId(), orderGrabReq.getTime(), goods);
+            throw new StarException(StarError.STOCK_EMPTY_ERROR);
+        }
+
+        String key = String.format(RedisKey.SECKILL_ORDER_REPETITION_TIMES.getKey(), orderGrabReq.getThemeId());
+        String buyNumKey = String.format(RedisKey.SECKILL_BUY_GOODS_NUMBER.getKey(), orderGrabReq.getThemeId());
+
+        //用户下单次数验证 防重复下单
+        if (orderGrabReq.getThemeId().equals(1002285892654821376L)) {
+            Long userOrderedCount = redisUtil.hincr(key, String.valueOf(orderGrabReq.getUserId()), 1L);
+            if (userOrderedCount > 1) {
+                log.error("防重复下单 uid: {}， themeId : {}， count : {}", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), userOrderedCount);
+                throw new StarException(StarError.ORDER_REPETITION);
+            }
+        }
+
+        if (orderGrabReq.getThemeId().equals(1009469098485923840L)) {
+            Long userOrderedCount = redisUtil.hincr(buyNumKey, String.valueOf(orderGrabReq.getUserId()), 1L);
+            redisUtil.hdecr(buyNumKey, String.valueOf(orderGrabReq.getUserId()), 1L);
+            if (userOrderedCount > 10) {
+                log.error("防重复下单 uid: {}， themeId：{}，count，{}", orderGrabReq.getUserId(), orderGrabReq.getThemeId(), userOrderedCount);
+                throw new StarException(StarError.ORDER_REPETITION);
+            }
+        }
+
+        Object stockQueueId = filterNum(orderGrabReq.getUserId(), orderGrabReq.getThemeId(), orderGrabReq.getTime());
+        if (Objects.isNull(stockQueueId)) {
+            log.error("[filterNum] stockQueueId为空");
+            throw new StarException(StarError.STOCK_QUEUE_NULL);
+        }
+
+        String goodsKey = String.format(RedisKey.SECKILL_GOODS_INFO.getKey(), orderGrabReq.getTime());
+        // 生成订单流水
+        String orderSn = StarConstants.OrderPrefix.PublishGoods.getPrefix().concat(String.valueOf(map.get(StarConstants.Ids.SnowFlake).nextId()));
+
+        //创建订单
+        OrderVO preOrder = createPreOrder(orderSn, goods, orderGrabReq.getIsPriority(), (int) stockQueueId, orderGrabReq.getUserId(), orderGrabReq.getTime());
+
+        // todo 冻结库存
+        boolean modifySuccess = activitiesService.frozeStock(goods.getThemeId().intValue(), goods.getStock(), goods.getVersion());
+
+        //发送延时mq 取消订单
+        OrderGrabStatus orderGrabStatus = new OrderGrabStatus(orderGrabReq.getUserId(), 1, orderSn, orderGrabReq.getTime());
+        orderProducer.secOrderRollback(orderGrabStatus);
+
+        OrderGrabRes orderGrabRes = new OrderGrabRes(0, StarError.SUCCESS_000000.getErrorMessage());
+        orderGrabRes.setOrder(preOrder);
+        return orderGrabRes;
+    }
+
+
+    private OrderVO createPreOrder(String orderSn, SecKillGoods goods, Integer isPriority, int stockQueueId, Long userId, String time) {
+        //查询对应藏品编号是否存在
+        ThemeNumberVo themeNumberVo = numberService.queryNumberExist(stockQueueId, goods.getThemeId());
+
+        if (themeNumberVo == null) {
+            log.error("藏品可能未上架 themeId:[{}] , themeNumber:[{}]", goods.getThemeId(), stockQueueId);
+            throw new RuntimeException("查询藏品失败！");
+        }
+        WhiteListConfigVO whiteListConfigVO = userService.obtainWhiteConfig(goods.getThemeId());
+        OrderVO orderVO = OrderVO.builder()
+                .id(SnowflakeWorker.generateId())
+                .userId(userId)
+                .orderSn(orderSn)
+                .payAmount(goods.getSecCost())
+                .seriesId(goods.getSeriesId())
+                .seriesName(goods.getSeriesName())
+                .seriesThemeInfoId(goods.getThemeId())
+                .numberId(themeNumberVo.getNumberId())
+                .seriesThemeId(themeNumberVo.getNumberId())
+                .themeName(goods.getThemeName())
+                .payAmount(goods.getSecCost())
+                .themePic(goods.getThemePic())
+                .themeType(goods.getThemeType())
+                .totalAmount(goods.getSecCost())
+                .themeNumber(stockQueueId)
+                .publisherId(goods.getPublisherId())
+                .status(0)
+                .createdAt(new Date())
+                .expire(180L)
+                .remark(time) //暂时存储秒杀时间戳
+                .orderType(StarConstants.OrderType.PUBLISH_GOODS.getName())
+                .priorityBuy(isPriority)
+                .whiteId(whiteListConfigVO == null ? null : whiteListConfigVO.getId())
+                .build();
+        //创建订单
+        orderService.createOrder(orderVO);
+        return orderVO;
+        // if (isSuccess) {
+        //     String userOrderMapping = String.format(RedisKey.SECKILL_ORDER_USER_MAPPING.getKey(), goods.getThemeId());
+        //     redisUtil.hset(userOrderMapping, String.valueOf(userId), JSONUtil.toJsonStr(orderVO));
+        //     return true;
+        // }
+        // return false;
+    }
+
+
+    private synchronized Object filterNum(long userId, Long themeId, String time) {
+
+        String poolKey = String.format(RedisKey.SECKILL_GOODS_STOCK_POOL.getKey(), themeId, time);
+        //不存在库存池 生成并加载一百个库存 或 如果库存池大小小于10 扩容加100
+        boolean exists = redisUtil.hasKey(poolKey);
+        if (!exists || redisUtil.sGetSetSize(poolKey) <= 10) {
+            supplyPool(themeId, poolKey, time);
+        }
+
+        Object spop = redisUtil.spop(poolKey);
+        log.info("[{}] 用户：[{}] 获得库存编号 ： [{}]", this.getClass().getSimpleName(), userId, spop);
+        return spop;
+    }
+
+
+    private void supplyPool(Long themeId, String poolKey, String time) {
+        for (int i = 0; i < 100; i++) {
+            Object number = redisUtil.rightPop(String.format(RedisKey.SECKILL_GOODS_STOCK_QUEUE.getKey(), themeId, time));
+            if (number == null) {
+                continue;
+            }
+            Integer num = (int) number;
+            redisUtil.sSet(poolKey, num);
+        }
     }
 
     @Override

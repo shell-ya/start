@@ -70,4 +70,10 @@ public class ActivityVO {
      */
     @ApiModelProperty(name = "审核状态 0未审核 1审核通过", notes = "")
     private int status;
+
+    /**
+     * 版本号 乐观锁
+     */
+    @ApiModelProperty(name = "版本号 乐观锁", notes = "")
+    private int version;
 }
