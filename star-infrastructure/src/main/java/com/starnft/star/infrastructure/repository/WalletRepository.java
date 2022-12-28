@@ -62,6 +62,7 @@ public class WalletRepository implements IWalletRepository {
         return WalletVO.builder()
                 .uid(walletInfo.getUid())
                 .walletId(walletInfo.getwId())
+                .thWId(walletInfo.getThWId())
                 .balance(walletInfo.getBalance())
                 .frozen(walletInfo.getFrozen() == 1)
                 .frozen_fee(walletInfo.getFrozenFee())
@@ -91,6 +92,7 @@ public class WalletRepository implements IWalletRepository {
 
         WalletVO walletVO = WalletVO.builder()
                 .walletId(wallet.getwId())
+                .thWId(wallet.getThWId())
                 .balance(new BigDecimal(BigDecimal.ZERO.intValue()))
                 .frozen(false)
                 .frozen_fee(new BigDecimal(BigDecimal.ZERO.intValue()))
@@ -434,6 +436,11 @@ public class WalletRepository implements IWalletRepository {
         List<Wallet> wallets = walletMapper.selectAllWallet();
 
         return BeanColverUtil.colverList(wallets, WalletVO.class);
+    }
+
+    @Override
+    public void updateUserThWId(Long uid, String address) {
+        walletMapper.updateUserThWId(uid, address);
     }
 
     @Override

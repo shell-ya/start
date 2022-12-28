@@ -169,4 +169,5 @@ public interface IWalletRepository {
 
     List<WalletLogVO> usersBill(Long uid);
 
+    void updateUserThWId(Long uid, String address);
 }

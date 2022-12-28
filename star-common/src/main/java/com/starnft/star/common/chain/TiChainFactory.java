@@ -9,11 +9,13 @@ import com.starnft.star.common.chain.model.req.*;
 import com.starnft.star.common.chain.model.res.*;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.utils.Assert;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
 @Component
+@Slf4j
 public class TiChainFactory {
     @Resource
     ChainConfiguration chainConfiguration;
@@ -77,10 +79,11 @@ public class TiChainFactory {
 
     /**
      * 查询用户信息
+     *
      * @param chainUserInfoReq
      * @return
      */
-  public ChainUserInfoRes userInfo(ChainUserInfoReq chainUserInfoReq) {
+    public ChainUserInfoRes userInfo(ChainUserInfoReq chainUserInfoReq) {
         Assert.notNull(chainUserInfoReq.getUserId(), () -> new StarException("userId不能为空"));
         Assert.notNull(chainUserInfoReq.getUserKey(), () -> new StarException("UserKey不能为空"));
         return JSONUtil.toBean(request(chainUserInfoReq, ChainConstants.user_info), ChainUserInfoRes.class);
@@ -101,7 +104,13 @@ public class TiChainFactory {
         if (!json.containsKey("appKey")) {
             json.set("appKey", chainConfiguration.getAppKey());
         }
-        return HttpUtil.post(chainConfiguration.getGateway().concat(uri), JSONUtil.toJsonStr(json), 5000);
+        String url = chainConfiguration.getGateway().concat(uri);
+        String param = JSONUtil.toJsonStr(json);
+        String result = HttpUtil.post(url, param, 5000);
+        log.info("url:{}", url);
+        log.info("param:{}", param);
+        log.info("result:{}", result);
+        return result;
     }
 
 //    }

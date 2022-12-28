@@ -69,6 +69,11 @@ public class UserCoreImpl implements UserCore {
     IDictionaryRepository dictionaryRepository;
 
     @Override
+    public List<UserInfo> getAllUser() {
+        return userService.getAllUser();
+    }
+
+    @Override
     public UserInfoRes loginByPassword(@Valid UserLoginReq req) {
         Optional.ofNullable(req.getPhone())
                 .orElseThrow(() -> new StarException(StarError.PARAETER_UNSUPPORTED, "phone 不能为空"));

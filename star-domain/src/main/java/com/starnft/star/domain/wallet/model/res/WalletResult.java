@@ -4,7 +4,11 @@ import java.math.BigDecimal;
 
 public class WalletResult {
 
+    private Long uid;
+
     private String walletId;
+
+    private String thWId;
 
     private BigDecimal balance;
 
@@ -15,6 +19,22 @@ public class WalletResult {
     private boolean frozen;
 
     private BigDecimal frozen_fee;
+
+    public Long getUid() {
+        return uid;
+    }
+
+    public void setUid(Long uid) {
+        this.uid = uid;
+    }
+
+    public String getThWId() {
+        return thWId;
+    }
+
+    public void setThWId(String thWId) {
+        this.thWId = thWId;
+    }
 
     public String getWalletId() {
         return walletId;

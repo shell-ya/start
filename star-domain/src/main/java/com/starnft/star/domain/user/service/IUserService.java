@@ -20,6 +20,8 @@ public interface IUserService {
      */
     UserInfoVO login(UserLoginDTO req);
 
+    List<UserInfo> getAllUser();
+
     /**
      * 根据用户id获取用户信息
      *

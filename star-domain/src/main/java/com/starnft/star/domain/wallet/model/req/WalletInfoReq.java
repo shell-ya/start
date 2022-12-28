@@ -4,8 +4,18 @@ public class WalletInfoReq {
 
     /** 钱包id */
     private String walletId;
+
+    private String thWId;
     /** uid */
     private Long uid;
+
+    public String getThWId() {
+        return thWId;
+    }
+
+    public void setThWId(String thWId) {
+        this.thWId = thWId;
+    }
 
     public WalletInfoReq(Long uid) {
         this.uid = uid;

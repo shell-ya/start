@@ -84,4 +84,6 @@ public interface WalletService {
     boolean feeProcess(String recordSn, BigDecimal fee);
 
     List<String> checkPay();
+
+    void updateUserThWId(Long uid, String address);
 }

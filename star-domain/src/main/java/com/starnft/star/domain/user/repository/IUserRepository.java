@@ -31,6 +31,8 @@ public interface IUserRepository {
      */
     UserInfo queryUserInfoByUserId(Long userId);
 
+    List<UserInfo> getAllUser();
+
     /**
      * 新增用户
      *

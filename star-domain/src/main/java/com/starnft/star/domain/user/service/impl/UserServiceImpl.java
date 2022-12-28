@@ -65,6 +65,11 @@ public class UserServiceImpl extends BaseUserService implements IUserService {
     private Boolean smsEnable;
 
     @Override
+    public List<UserInfo> getAllUser() {
+        return userRepository.getAllUser();
+    }
+
+    @Override
     public UserInfoVO login(UserLoginDTO req) {
 
         LoginTypeEnum loginTypeEnum = LoginTypeEnum.getLoginTypeEnum(req.getLoginScenes());

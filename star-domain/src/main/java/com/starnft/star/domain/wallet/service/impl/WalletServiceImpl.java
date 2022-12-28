@@ -125,7 +125,9 @@ public class WalletServiceImpl implements WalletService {
             walletVO = walletRepository.createWallet(walletInfoReq);
         }
         WalletResult walletResult = new WalletResult();
+        walletResult.setUid(walletVO.getUid());
         walletResult.setWalletId(walletVO.getWalletId());
+        walletResult.setThWId(walletVO.getThWId());
         walletResult.setBalance(walletVO.getBalance());
         walletResult.setFrozen(walletVO.isFrozen());
         walletResult.setFrozen_fee(walletVO.getFrozen_fee());
@@ -671,6 +673,11 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public boolean feeProcess(String recordSn, BigDecimal fee) {
         return walletRepository.updateWalletRecordFee(recordSn,fee);
+    }
+
+    @Override
+    public void updateUserThWId(Long uid, String address) {
+        walletRepository.updateUserThWId(uid, address);
     }
 
     @Override

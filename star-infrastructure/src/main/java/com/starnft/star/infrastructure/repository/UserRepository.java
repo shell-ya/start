@@ -1,8 +1,10 @@
 package com.starnft.star.infrastructure.repository;
 
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.google.common.collect.Lists;
 import com.starnft.star.common.enums.LoginStatus;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
@@ -100,6 +102,34 @@ public class UserRepository implements IUserRepository {
             return userInfo;
         }
         return null;
+    }
+
+    @Override
+    public List<UserInfo> getAllUser() {
+        QueryWrapper<UserInfoEntity> wrapper = new QueryWrapper<>();
+        wrapper.lambda().eq(UserInfoEntity::getIsDeleted, 0);
+        List<UserInfoEntity> entityList = this.userInfoMapper.selectList(wrapper);
+        List<UserInfo> result = Lists.newArrayList();
+        entityList.forEach(userInfoEntity -> {
+            UserInfo userInfo = new UserInfo();
+            userInfo.setAccount(userInfoEntity.getAccount());
+            userInfo.setAvatar(userInfoEntity.getAvatar());
+            userInfo.setIsActive(userInfoEntity.getIsActive());
+            userInfo.setNickName(userInfoEntity.getNickName());
+            userInfo.setPhone(userInfoEntity.getPhone());
+            userInfo.setPassword(userInfoEntity.getPassword());
+            userInfo.setPlyPassword(userInfoEntity.getPlyPassword());
+            userInfo.setId(userInfoEntity.getId());
+            userInfo.setRealPersonFlag(userInfoEntity.getRealPersonFlag());
+            userInfo.setBlockchainAddress(userInfoEntity.getBlockchainAddress());
+            userInfo.setBriefIntroduction(userInfoEntity.getBriefIntroduction());
+            userInfo.setParent(userInfoEntity.getParent());
+            userInfo.setCreateAt(userInfoEntity.getCreatedAt());
+            userInfo.setIdNumber(userInfoEntity.getIdNumber());
+            userInfo.setFullName(userInfoEntity.getFullName());
+            result.add(userInfo);
+        });
+        return result;
     }
 
     private UserInfoEntity getUserInfoEntity(Long userId) {

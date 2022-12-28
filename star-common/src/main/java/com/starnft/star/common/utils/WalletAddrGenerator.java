@@ -42,15 +42,15 @@ public class WalletAddrGenerator {
                     "1001", "1010", "1011", "1100", "1101", "1110", "1111"};
     private static String password = "password";
 
-//    public static void main(String[] args) {
-//        WalletAddrGenerator generator = new WalletAddrGenerator();
-//        try {
-//            String generate = generator.generate();
-//            System.out.println(generate);
-//        } catch (CipherException | InvalidKeySpecException | NoSuchAlgorithmException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+   public static void main(String[] args) {
+       WalletAddrGenerator generator = new WalletAddrGenerator();
+       try {
+           String generate = generator.generate();
+           System.out.println(generate);
+       } catch (CipherException | InvalidKeySpecException | NoSuchAlgorithmException e) {
+           throw new RuntimeException(e);
+       }
+   }
 
     public String generate() throws CipherException, InvalidKeySpecException, NoSuchAlgorithmException {
         String entropy = createEntropy();

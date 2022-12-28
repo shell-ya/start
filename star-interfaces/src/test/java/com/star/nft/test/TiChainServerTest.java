@@ -27,6 +27,7 @@ import java.util.Map;
 
 @SpringBootTest(classes = {StarApplication.class})
 public class TiChainServerTest {
+
     @Resource
     TiChainFactory tiChainServer;
     @Resource
@@ -34,8 +35,8 @@ public class TiChainServerTest {
     @Test
     public  void usercreate(){
         CreateAccountReq createAccountReq = new CreateAccountReq();
-        createAccountReq.setUserId("951029971223");
-        String userKey = SecureUtil.sha1("951029971223".concat("lywc"));
+        createAccountReq.setUserId("977431137");
+        String userKey = SecureUtil.sha1("977431137".concat("lywc"));
         createAccountReq.setUserKey(userKey);
         System.out.println(userKey);
         CreateAccountRes account = tiChainServer.createAccount(createAccountReq);
@@ -124,8 +125,9 @@ public class TiChainServerTest {
     public  void userInfo(){
 
         ChainUserInfoReq goodsTransferReq = new ChainUserInfoReq();
-        goodsTransferReq.setUserId("3");
-        String userKey = SecureUtil.sha1("3".concat("dasdasd"));
+        goodsTransferReq.setUserId("977431137");
+        // String userKey = SecureUtil.sha1("3".concat("dasdasd"));
+        String userKey = SecureUtil.sha1("977431137".concat("lywc"));
         goodsTransferReq.setUserKey(userKey);
 
         ChainUserInfoRes chainUserInfoRes = tiChainServer.userInfo(goodsTransferReq);

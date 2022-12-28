@@ -4,6 +4,7 @@ import com.starnft.star.application.process.user.req.*;
 import com.starnft.star.application.process.user.res.*;
 import com.starnft.star.domain.user.model.dto.AuthenticationNameDTO;
 import com.starnft.star.domain.user.model.vo.UserAuthenticationVO;
+import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.domain.user.model.vo.UserPlyPasswordVO;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -121,6 +122,9 @@ public interface UserCore {
      * @return
      */
     AgreementRes queryAgreementContent(String agreementId);
+
+
+    List<UserInfo> getAllUser();
 
     /**
      * 根据协议场景查询协议信息
