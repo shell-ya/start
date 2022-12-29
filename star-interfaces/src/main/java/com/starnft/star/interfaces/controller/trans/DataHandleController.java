@@ -1,38 +1,57 @@
-package com.star.nft.test;
+package com.starnft.star.interfaces.controller.trans;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.json.JSONUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.starnft.star.application.process.order.IOrderProcessor;
 import com.starnft.star.application.process.user.UserCore;
-import com.starnft.star.application.process.user.req.UserLoginReq;
+import com.starnft.star.common.ResultCode;
 import com.starnft.star.common.chain.TiChainFactory;
-import com.starnft.star.common.chain.config.ChainConfiguration;
 import com.starnft.star.common.chain.model.req.ChainUserInfoReq;
 import com.starnft.star.common.chain.model.req.CreateAccountReq;
-import com.starnft.star.common.chain.model.req.GoodsTransferReq;
 import com.starnft.star.common.chain.model.res.ChainUserInfoRes;
 import com.starnft.star.common.chain.model.res.CreateAccountRes;
-import com.starnft.star.common.chain.model.res.GoodsTransferRes;
-import com.starnft.star.common.utils.JsonUtil;
-import com.starnft.star.common.utils.RandomUtil;
+import com.starnft.star.domain.notify.model.req.NotifyOrderReq;
+import com.starnft.star.domain.notify.service.NotifyOrderService;
+import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
 import com.starnft.star.domain.wallet.model.res.WalletResult;
 import com.starnft.star.domain.wallet.service.WalletService;
-import com.starnft.star.interfaces.StarApplication;
+import com.starnft.star.interfaces.aop.BusinessTypeEnum;
+import com.starnft.star.interfaces.aop.Log;
+import com.starnft.star.interfaces.controller.trans.bo.C2BTransNotifyBO;
+import com.starnft.star.interfaces.controller.trans.bo.C2CTransNotifyBO;
+import com.starnft.star.interfaces.controller.trans.bo.SandCashierPayNotifyBO;
+import com.starnft.star.interfaces.controller.trans.redis.RedisDistributedLock;
+import com.starnft.star.interfaces.interceptor.TokenIgnore;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
+@RestController
+@RequestMapping("/dataHandle")
+@Api(tags = "数据处理｜DataHandleController")
 @Slf4j
-@SpringBootTest(classes = {StarApplication.class})
-public class UserCoreTest {
+public class DataHandleController {
 
     @Autowired
     private UserCore userCore;
@@ -40,52 +59,21 @@ public class UserCoreTest {
     @Resource
     TiChainFactory tiChainServer;
 
-    @Resource
-    ChainConfiguration chainConfiguration;
-
     @Autowired
     WalletService walletService;
 
-    @Test
-    public void usercreate() {
-        CreateAccountReq createAccountReq = new CreateAccountReq();
-        createAccountReq.setUserId("977431137");
-        String userKey = SecureUtil.sha1("977431137".concat("lywc"));
-        createAccountReq.setUserKey(userKey);
-        System.out.println(userKey);
-        CreateAccountRes account = tiChainServer.createAccount(createAccountReq);
-        System.out.println(account);
-    }
-
-    @Test
-    public void test() {
-        UserLoginReq userLoginReq = new UserLoginReq();
-        userLoginReq.setLoginScenes(2);
-        userLoginReq.setPhone(RandomUtil.randomPhone());
-        userLoginReq.setPassword("123456");
-        userLoginReq.setSc("BQQMCXKV");
-        userCore.loginByPhoneAndRegister(userLoginReq);
-    }
-
-    @Test
-    public void goodTransferNew() {
-        GoodsTransferReq goodsTransferReq = new GoodsTransferReq();
-        goodsTransferReq.setUserId("951029971223");
-        String userKey = SecureUtil.sha1("951029971223".concat("lywc"));
-        goodsTransferReq.setUserKey(userKey);
-        goodsTransferReq.setFrom("0x58d7d10ac44ceba9a51dfc6baf9f783d61817a96");
-        goodsTransferReq.setTo("0xbeda63cf97aaaa9b982d64a08dc2bdefcd0215d3");
-        goodsTransferReq.setContractAddress("0x68ea67ec38c43acf46d926f939bf5695d0a2e0d8");
-        goodsTransferReq.setTokenId("77");
-        GoodsTransferRes createAccountRes = tiChainServer.goodsTransfer(goodsTransferReq);
-        System.out.println(createAccountRes);
+    @TokenIgnore
+    @ApiOperation("用户链上地址更新")
+    @GetMapping(path = "updateUserChain")
+    public String updateUserChain() {
+        CompletableFuture.runAsync(this::handle);
+        return "success";
     }
 
     /**
-     * 获取所有用户 & 更新用户在天河链上的地址
+     * 异步处理数据
      */
-    @Test
-    public void getAllUserAndUpdateUserTHChainId() {
+    public void handle() {
         try {
             List<UserInfo> allUser = userCore.getAllUser();
             System.out.println(allUser.size());
@@ -125,9 +113,10 @@ public class UserCoreTest {
                     walletService.updateUserThWId(walletResult.getUid(), address);
                 }
             });
+
         } catch (Exception e) {
             log.error("更新用户天河链钱包地址出错,错误信息:{}", e.getMessage(), e);
         }
-
     }
+
 }
