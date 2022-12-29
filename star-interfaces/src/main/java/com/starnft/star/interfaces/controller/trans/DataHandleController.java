@@ -67,7 +67,7 @@ public class DataHandleController {
     @GetMapping(path = "updateUserChain")
     public String updateUserChain() {
         CompletableFuture.runAsync(this::handle);
-        return "success";
+        return "数据处理中.....";
     }
 
     /**
