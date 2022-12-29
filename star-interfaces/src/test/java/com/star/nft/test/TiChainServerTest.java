@@ -3,6 +3,7 @@ package com.star.nft.test;
 import cn.hutool.core.util.HashUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.json.JSONUtil;
+import com.esotericsoftware.minlog.Log;
 import com.starnft.star.common.chain.TiChainFactory;
 
 import com.starnft.star.common.chain.config.ChainConfiguration;
@@ -121,15 +122,45 @@ public class TiChainServerTest {
         TransactionDetailRes transactionDetailRes = tiChainServer.transferDetail(goodsTransferReq);
         System.out.println(transactionDetailRes);
     }
+
+    // url:https://api.tichain.tianhecloud.com/api/v2/user/info
+    // param:{"userId":"951029971223","userKey":"1589abfa7ea9939e0b15443b2abc650e8432d5a0","appId":"tichain449113","appKey":"a070713d25c291127992bf096cbcb3462ca1e33c"}
+    // result:{"code":0,"message":"success","data":{"publicKey":"04bfe777532dc023feefa66ab2fd1131ee65a8c600dd9b8af22c8393eb3e1275dc00db2fe884ab27bb6e8012d7e4ef436e0b09a863b9fd0df40dddc68ae18ed18e",
+    // "address":"0x58d7d10ac44ceba9a51dfc6baf9f783d61817a96"}}
+
+
+    @Test
+    public  void goodTransferNew(){
+        GoodsTransferReq goodsTransferReq = new GoodsTransferReq();
+        goodsTransferReq.setUserId("951029971223");
+        String userKey = SecureUtil.sha1("951029971223".concat("lywc"));
+        goodsTransferReq.setUserKey(userKey);
+        goodsTransferReq.setFrom("0x58d7d10ac44ceba9a51dfc6baf9f783d61817a96");
+        goodsTransferReq.setTo("0xbeda63cf97aaaa9b982d64a08dc2bdefcd0215d3");
+        goodsTransferReq.setContractAddress("0x68ea67ec38c43acf46d926f939bf5695d0a2e0d8");
+        goodsTransferReq.setTokenId("77");
+        GoodsTransferRes createAccountRes = tiChainServer.goodsTransfer(goodsTransferReq);
+        System.out.println(createAccountRes);
+    }
+
+    @Test
+    public void tokenOwner() {
+
+        TokenQueryReq req= new TokenQueryReq();
+        req.setTokenId(77);
+        req.setContractAddress("0x68ea67ec38c43acf46d926f939bf5695d0a2e0d8");
+        TokenQueryRes res = tiChainServer.tokenQuery(req);
+        Log.info(JSONUtil.toJsonStr(res));
+
+    }
+
     @Test
     public  void userInfo(){
 
         ChainUserInfoReq goodsTransferReq = new ChainUserInfoReq();
-        goodsTransferReq.setUserId("977431137");
-        // String userKey = SecureUtil.sha1("3".concat("dasdasd"));
-        String userKey = SecureUtil.sha1("977431137".concat("lywc"));
+        goodsTransferReq.setUserId("951029971223");
+        String userKey = SecureUtil.sha1("951029971223".concat("lywc"));
         goodsTransferReq.setUserKey(userKey);
-
         ChainUserInfoRes chainUserInfoRes = tiChainServer.userInfo(goodsTransferReq);
         System.out.println(chainUserInfoRes);
     }

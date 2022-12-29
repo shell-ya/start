@@ -7,4 +7,7 @@ public class ChainConstants {
     public static final String transaction_detail="/api/v2/transaction/detail";
     public static final String user_info="/api/v2/user/info";
     public static final String user_update_key="/api/v2/user/update";
+
+    // NFR 所属者地址查询
+    public static final String token_query="/api/v2/nfr/token/query";
 }

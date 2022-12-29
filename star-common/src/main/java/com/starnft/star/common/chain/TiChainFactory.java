@@ -64,6 +64,18 @@ public class TiChainFactory {
     }
 
     /**
+     * NFR 所属者地址查询
+     *
+     * @param req
+     * @return
+     */
+    public TokenQueryRes tokenQuery(TokenQueryReq req) {
+        Assert.notNull(req.getContractAddress(), () -> new StarException("ContractAddress不能为空"));
+        Assert.notNull(req.getTokenId(), () -> new StarException("TokenId不能为空"));
+        return JSONUtil.toBean(request(req, ChainConstants.token_query), TokenQueryRes.class);
+    }
+
+    /**
      * h查询交易详情
      *
      * @param transactionDetailReq

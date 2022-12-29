@@ -9,8 +9,10 @@ import com.starnft.star.common.chain.TiChainFactory;
 import com.starnft.star.common.chain.config.ChainConfiguration;
 import com.starnft.star.common.chain.model.req.ChainUserInfoReq;
 import com.starnft.star.common.chain.model.req.CreateAccountReq;
+import com.starnft.star.common.chain.model.req.GoodsTransferReq;
 import com.starnft.star.common.chain.model.res.ChainUserInfoRes;
 import com.starnft.star.common.chain.model.res.CreateAccountRes;
+import com.starnft.star.common.chain.model.res.GoodsTransferRes;
 import com.starnft.star.common.utils.JsonUtil;
 import com.starnft.star.common.utils.RandomUtil;
 import com.starnft.star.domain.user.model.vo.UserInfo;
@@ -66,7 +68,24 @@ public class UserCoreTest {
     }
 
     @Test
-    public void getAllUser() {
+    public void goodTransferNew() {
+        GoodsTransferReq goodsTransferReq = new GoodsTransferReq();
+        goodsTransferReq.setUserId("951029971223");
+        String userKey = SecureUtil.sha1("951029971223".concat("lywc"));
+        goodsTransferReq.setUserKey(userKey);
+        goodsTransferReq.setFrom("0x58d7d10ac44ceba9a51dfc6baf9f783d61817a96");
+        goodsTransferReq.setTo("0xbeda63cf97aaaa9b982d64a08dc2bdefcd0215d3");
+        goodsTransferReq.setContractAddress("0x68ea67ec38c43acf46d926f939bf5695d0a2e0d8");
+        goodsTransferReq.setTokenId("77");
+        GoodsTransferRes createAccountRes = tiChainServer.goodsTransfer(goodsTransferReq);
+        System.out.println(createAccountRes);
+    }
+
+    /**
+     * 获取所有用户 & 更新用户在天河链上的地址
+     */
+    @Test
+    public void getAllUserAndUpdateUserTHChainId() {
         try {
             List<UserInfo> allUser = userCore.getAllUser();
             System.out.println(allUser.size());
@@ -109,7 +128,6 @@ public class UserCoreTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
     }
 }
