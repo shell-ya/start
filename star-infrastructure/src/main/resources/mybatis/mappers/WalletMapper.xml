@@ -16,13 +16,14 @@
         <result property="frozen" column="frozen" jdbcType="TINYINT"/>
         <result property="frozenFee" column="frozen_fee" jdbcType="DECIMAL"/>
         <result property="version" column="version" jdbcType="INTEGER"/>
+        <result property="thWId" column="th_w_id" jdbcType="VARCHAR"/>
     </resultMap>
 
     <!--分页查询指定行数据-->
     <select id="queryWalletByParams" parameterType="com.starnft.star.infrastructure.entity.wallet.Wallet"
             resultMap="NftWalletMap">
         select
-        id,is_deleted,created_at,created_by,modified_at,modified_by,w_id,uid,balance,wallet_income,wallet_outcome,frozen,frozen_fee,version
+        id,is_deleted,created_at,created_by,modified_at,modified_by,w_id,uid,balance,wallet_income,wallet_outcome,frozen,frozen_fee,version, th_w_id
         from nft_wallet
         <where>
             <if test="id != null and id != ''">
