@@ -1,9 +1,15 @@
 package com.starnft.star.domain.wallet.model.vo;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class WalletVO {
 
@@ -22,68 +28,5 @@ public class WalletVO {
 
     private BigDecimal frozen_fee;
 
-    public Long getUid() {
-        return uid;
-    }
 
-    public void setUid(Long uid) {
-        this.uid = uid;
-    }
-
-
-    public String getThWId() {
-        return thWId;
-    }
-
-    public void setThWId(String thWId) {
-        this.thWId = thWId;
-    }
-
-    public String getWalletId() {
-        return walletId;
-    }
-
-    public void setWalletId(String walletId) {
-        this.walletId = walletId;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-
-    public BigDecimal getWallet_income() {
-        return wallet_income;
-    }
-
-    public void setWallet_income(BigDecimal wallet_income) {
-        this.wallet_income = wallet_income;
-    }
-
-    public BigDecimal getWallet_outcome() {
-        return wallet_outcome;
-    }
-
-    public void setWallet_outcome(BigDecimal wallet_outcome) {
-        this.wallet_outcome = wallet_outcome;
-    }
-
-    public boolean isFrozen() {
-        return frozen;
-    }
-
-    public void setFrozen(boolean frozen) {
-        this.frozen = frozen;
-    }
-
-    public BigDecimal getFrozen_fee() {
-        return frozen_fee;
-    }
-
-    public void setFrozen_fee(BigDecimal frozen_fee) {
-        this.frozen_fee = frozen_fee;
-    }
 }

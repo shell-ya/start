@@ -3,11 +3,17 @@ package com.starnft.star.infrastructure.entity.wallet;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.starnft.star.infrastructure.entity.BaseEntity;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
 
 import java.math.BigDecimal;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @TableName("nft_wallet")
 public class Wallet extends BaseEntity {
 
@@ -61,89 +67,4 @@ public class Wallet extends BaseEntity {
     // 天河链上地址
     private String thWId;
 
-    public String getThWId() {
-        return thWId;
-    }
-
-    public void setThWId(String thWId) {
-        this.thWId = thWId;
-    }
-
-    /**
-     * id
-     */
-    public Integer getId() {
-        return this.id;
-    }
-
-    /**
-     * id
-     */
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getwId() {
-        return wId;
-    }
-
-    public void setwId(String wId) {
-        this.wId = wId;
-    }
-
-    public Long getUid() {
-        return uid;
-    }
-
-    public void setUid(Long uid) {
-        this.uid = uid;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
-
-    public BigDecimal getWalletIncome() {
-        return walletIncome;
-    }
-
-    public void setWalletIncome(BigDecimal walletIncome) {
-        this.walletIncome = walletIncome;
-    }
-
-    public BigDecimal getWalletOutcome() {
-        return walletOutcome;
-    }
-
-    public void setWalletOutcome(BigDecimal walletOutcome) {
-        this.walletOutcome = walletOutcome;
-    }
-
-    public Integer getFrozen() {
-        return frozen;
-    }
-
-    public void setFrozen(Integer frozen) {
-        this.frozen = frozen;
-    }
-
-    public BigDecimal getFrozenFee() {
-        return frozenFee;
-    }
-
-    public void setFrozenFee(BigDecimal frozenFee) {
-        this.frozenFee = frozenFee;
-    }
-
-    public Integer getVersion() {
-        return version;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
 }

@@ -124,9 +124,9 @@
     <!--新增数据-->
     <insert id="createWallet" useGeneratedKeys="true">
         insert into nft_wallet(is_deleted, created_at, created_by, modified_at, modified_by, w_id, uid, balance,
-                               wallet_income, wallet_outcome, frozen, frozen_fee, version, th_w_id)
+                               wallet_income, wallet_outcome, frozen, frozen_fee, version)
         values (#{isDeleted}, #{createdAt}, #{createdBy}, #{modifiedAt}, #{modifiedBy}, #{wId}, #{uid},
-                #{balance}, #{walletIncome}, #{walletOutcome}, #{frozen}, #{frozenFee}, #{version}, #{thWId})
+                #{balance}, #{walletIncome}, #{walletOutcome}, #{frozen}, #{frozenFee}, #{version})
     </insert>
 
     <!-- 批量新增数据 -->
@@ -225,6 +225,25 @@
                version,
                th_w_id
         from nft_wallet
+    </select>
+
+    <select id="selectAllWallet2" resultMap="NftWalletMap">
+        select id,
+               is_deleted,
+               created_at,
+               created_by,
+               modified_at,
+               modified_by,
+               w_id,
+               uid,
+               balance,
+               wallet_income,
+               wallet_outcome,
+               frozen,
+               frozen_fee,
+               version,
+               th_w_id
+        from nft_wallet where th_w_id=''
     </select>
 
 </mapper>

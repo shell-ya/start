@@ -26,6 +26,8 @@ import com.starnft.star.domain.number.model.vo.*;
 import com.starnft.star.domain.number.repository.INumberRepository;
 import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.domain.user.repository.IUserRepository;
+import com.starnft.star.domain.wallet.model.vo.WalletVO;
+import com.starnft.star.domain.wallet.repository.IWalletRepository;
 import com.starnft.star.infrastructure.entity.number.StarNftNumberCirculationHist;
 import com.starnft.star.infrastructure.entity.number.StarNftShelvesRecord;
 import com.starnft.star.infrastructure.entity.number.StarNftThemeNumber;
@@ -34,6 +36,7 @@ import com.starnft.star.infrastructure.mapper.number.StarNFtShelvesRecordMapper;
 import com.starnft.star.infrastructure.mapper.number.StarNftNumberCirculationHistMapper;
 import com.starnft.star.infrastructure.mapper.number.StarNftThemeNumberMapper;
 import com.starnft.star.infrastructure.mapper.user.StarNftUserThemeMapper;
+import io.vertx.core.json.Json;
 import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.beans.BeanUtils;
@@ -68,13 +71,15 @@ public class NumberRepository implements INumberRepository {
     @Resource
     TiChainFactory tiChainServer;
 
+    @Resource
+    private IWalletRepository walletRepository;
+
     @Override
     public void transfer() {
-
         try {
-            // 获取全部用户
-            List<UserInfo> allUser = userRepository.getAllUser();
-            Map<Long, UserInfo> userMap = allUser.stream().collect(Collectors.toMap(UserInfo::getAccount, Function.identity()));
+            // 获取全部钱包
+            List<WalletVO> walletList = walletRepository.selectAllWallet();
+            Map<Long, WalletVO> walletMap = walletList.stream().collect(Collectors.toMap(WalletVO::getUid, Function.identity()));
 
             Integer total = starNftThemeNumberMapper.queryCount();
             int pageSize = 10;
@@ -84,31 +89,42 @@ public class NumberRepository implements INumberRepository {
             wrapper.eq(StarNftThemeNumber.COL_IS_DELETE, Boolean.FALSE);
             wrapper.eq(StarNftThemeNumber.COL_HANDLE_FLAG, Boolean.FALSE);
             wrapper.isNotNull(StarNftThemeNumber.COL_OWENR_BY);
+
+            String userId = "951029971223";
+            String userKey = SecureUtil.sha1(userId.concat("lywc"));
+            String from ="0x58d7d10ac44ceba9a51dfc6baf9f783d61817a96";
+
             for (int i = 1; i <= totalPage; i++) {
-                PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, pageSize).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
+                PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, 1).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
+                // PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, pageSize).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
                 log.info("第{}页，结果条数:{}", i, pageInfo.getList().size());
 
-                for (StarNftThemeNumber item : pageInfo.getList()) {
-                    if (!userMap.containsKey(Long.valueOf(item.getOwnerBy()))) {
+                pageInfo.getList().stream().parallel().forEach(item->{
+                    if (!walletMap.containsKey(Long.valueOf(item.getOwnerBy()))) {
                         log.error("根据ownerBy未获取到用户数据,跳过处理，item:{}", JSONUtil.toJsonStr(item));
-                        continue;
+                        return;
                     }
                     GoodsTransferReq goodsTransferReq = new GoodsTransferReq();
-                    goodsTransferReq.setUserId("951029971223");
-                    String userKey = SecureUtil.sha1("951029971223".concat("lywc"));
+                    goodsTransferReq.setUserId(userId);
                     goodsTransferReq.setUserKey(userKey);
-                    goodsTransferReq.setFrom("0x58d7d10ac44ceba9a51dfc6baf9f783d61817a96");
-                    goodsTransferReq.setTo("0xbeda63cf97aaaa9b982d64a08dc2bdefcd0215d3");
-                    goodsTransferReq.setContractAddress("0x68ea67ec38c43acf46d926f939bf5695d0a2e0d8");
-                    goodsTransferReq.setTokenId("77");
+                    goodsTransferReq.setFrom(from);
+                    goodsTransferReq.setTo(walletMap.get(Long.valueOf(item.getOwnerBy())).getThWId());
+                    goodsTransferReq.setContractAddress(item.getContractAddress());
+                    goodsTransferReq.setTokenId(String.valueOf(item.getThemeNumber()));
                     GoodsTransferRes transferRes = tiChainServer.goodsTransfer(goodsTransferReq);
 
+                    if(transferRes.getCode()!=0) {
+                        log.error("处理失败，结果：{}", JSONUtil.toJsonStr(transferRes));
+                        return;
+                    }
                     item.setHandleFlag(1);
                     item.setHandleResult(JSONUtil.toJsonStr(transferRes));
                     starNftThemeNumberMapper.updateById(item);
-
+                });
+                if(i==1) {
+                    log.info("stop.................");
+                    break;
                 }
-                if(i==1) break;
             }
         } catch (Exception e) {
             log.error("藏品转移报错，msg:{}", e.getMessage(), e);

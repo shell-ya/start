@@ -22,6 +22,7 @@ import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
 import com.starnft.star.domain.wallet.model.res.WalletResult;
+import com.starnft.star.domain.wallet.model.vo.WalletVO;
 import com.starnft.star.domain.wallet.service.WalletService;
 import com.starnft.star.interfaces.aop.BusinessTypeEnum;
 import com.starnft.star.interfaces.aop.Log;
@@ -49,6 +50,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -69,11 +71,15 @@ public class DataHandleController {
     @Autowired
     INumberService numberService;
 
+    @Autowired
+    private SpringAsyncConfig asyncConfig;
+
+
     @TokenIgnore
     @ApiOperation("用户链上地址更新")
     @GetMapping(path = "updateUserChain")
     public String updateUserChain() {
-        CompletableFuture.runAsync(this::updateUserChainHandle);
+        asyncConfig.asyncExecutor().submit(this::updateUserChainHandle);
         return "用户链上地址更新中.....";
     }
 
@@ -81,10 +87,13 @@ public class DataHandleController {
     @ApiOperation("藏品转移")
     @GetMapping(path = "nftTransfer")
     public String nftTransfer() {
-        CompletableFuture.runAsync(this::nftTransferHandle);
+        asyncConfig.asyncExecutor().submit(this::nftTransferHandle);
         return "藏品转移数据处理中.....";
     }
 
+    /**
+     * 藏品转移
+     */
     public void nftTransferHandle() {
         numberService.transfer();
     }
@@ -94,22 +103,16 @@ public class DataHandleController {
      */
     public void updateUserChainHandle() {
         try {
-            List<UserInfo> allUser = userCore.getAllUser();
-            log.info("全部用户数据量：{}", allUser.size());
-            allUser.forEach(userInfo -> {
-                // 查询钱包
-                WalletResult walletResult = walletService.queryWalletInfo(new WalletInfoReq(userInfo.getAccount()));
-                log.info("wallet:{}", JSONUtil.toJsonStr(walletResult));
 
-                if (StrUtil.isNotBlank(walletResult.getThWId())) {
-                    log.info("用户天河链上地址不为空，跳过处理");
-                    return;
-                }
+            List<WalletVO> walletVOS = walletService.selectAllWallet2();
+
+            walletVOS.stream().parallel().forEach(wallet -> {
+
                 // 如果天河链上地址为空，则更新
-                if (StrUtil.isEmpty(walletResult.getThWId())) {
+                if (StrUtil.isBlank(wallet.getThWId())) {
                     CreateAccountReq createAccountReq = new CreateAccountReq();
-                    createAccountReq.setUserId(String.valueOf(userInfo.getAccount()));
-                    String userKey = SecureUtil.sha1(String.valueOf(userInfo.getAccount()).concat("lywc"));
+                    createAccountReq.setUserId(String.valueOf(wallet.getUid()));
+                    String userKey = SecureUtil.sha1(String.valueOf(wallet.getUid()).concat("lywc"));
                     createAccountReq.setUserKey(userKey);
 
                     CreateAccountRes account = tiChainServer.createAccount(createAccountReq);
@@ -117,7 +120,7 @@ public class DataHandleController {
                     String address;
                     if (account.getCode().equals(802000)) {
                         ChainUserInfoReq req = new ChainUserInfoReq();
-                        req.setUserId(String.valueOf(userInfo.getAccount()));
+                        req.setUserId(String.valueOf(wallet.getUid()));
                         req.setUserKey(userKey);
                         ChainUserInfoRes chainUserInfoRes = tiChainServer.userInfo(req);
                         address = chainUserInfoRes.getData().getAddress();
@@ -129,7 +132,7 @@ public class DataHandleController {
                         return;
                     }
                     // 更新用户链上地址
-                    walletService.updateUserThWId(walletResult.getUid(), address);
+                    walletService.updateUserThWId(wallet.getUid(), address);
                 }
             });
 

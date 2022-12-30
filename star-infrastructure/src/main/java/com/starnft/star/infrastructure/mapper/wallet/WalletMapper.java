@@ -17,5 +17,7 @@ public interface WalletMapper {
 
     List<Wallet> selectAllWallet();
 
+    List<Wallet> selectAllWallet2();
+
     void updateUserThWId(@Param("uid") Long uid, @Param("address") String address);
 }

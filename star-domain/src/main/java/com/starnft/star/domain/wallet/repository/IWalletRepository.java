@@ -165,6 +165,7 @@ public interface IWalletRepository {
 
 
     List<WalletVO> selectAllWallet();
+    List<WalletVO> selectAllWallet2();
 
 
     List<WalletLogVO> usersBill(Long uid);

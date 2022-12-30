@@ -108,7 +108,6 @@ public class UserRepository implements IUserRepository {
     public List<UserInfo> getAllUser() {
         QueryWrapper<UserInfoEntity> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(UserInfoEntity::getIsDeleted, 0);
-        wrapper.lambda().in(UserInfoEntity::getPhone, "13823117102", "13161895316");
         List<UserInfoEntity> entityList = this.userInfoMapper.selectList(wrapper);
         List<UserInfo> result = Lists.newArrayList();
         entityList.forEach(userInfoEntity -> {

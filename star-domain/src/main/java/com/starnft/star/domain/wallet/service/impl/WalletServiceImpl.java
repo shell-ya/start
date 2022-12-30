@@ -70,6 +70,15 @@ public class WalletServiceImpl implements WalletService {
 
     private ThreadLocal<Boolean> isVerified = new ThreadLocal<>();
 
+    @Override
+    public List<WalletVO> selectAllWallet() {
+        return walletRepository.selectAllWallet();
+    }
+
+    @Override
+    public List<WalletVO> selectAllWallet2() {
+        return walletRepository.selectAllWallet2();
+    }
 
     /**
      * @param channel

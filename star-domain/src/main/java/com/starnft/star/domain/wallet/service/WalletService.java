@@ -3,15 +3,15 @@ package com.starnft.star.domain.wallet.service;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.wallet.model.req.*;
 import com.starnft.star.domain.wallet.model.res.*;
-import com.starnft.star.domain.wallet.model.vo.BankRelationVO;
-import com.starnft.star.domain.wallet.model.vo.RechargeVO;
-import com.starnft.star.domain.wallet.model.vo.WalletRecordVO;
-import com.starnft.star.domain.wallet.model.vo.WithdrawRecordVO;
+import com.starnft.star.domain.wallet.model.vo.*;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 public interface WalletService {
+
+    List<WalletVO> selectAllWallet();
+    List<WalletVO> selectAllWallet2();
 
     //渠道参数验证
     void verifyParam(String channel);

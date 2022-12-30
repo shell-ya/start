@@ -61,7 +61,7 @@ public class WalletRepository implements IWalletRepository {
 
         return WalletVO.builder()
                 .uid(walletInfo.getUid())
-                .walletId(walletInfo.getwId())
+                .walletId(walletInfo.getWId())
                 .thWId(walletInfo.getThWId())
                 .balance(walletInfo.getBalance())
                 .frozen(walletInfo.getFrozen() == 1)
@@ -91,7 +91,7 @@ public class WalletRepository implements IWalletRepository {
         walletMapper.createWallet(wallet);
 
         WalletVO walletVO = WalletVO.builder()
-                .walletId(wallet.getwId())
+                .walletId(wallet.getWId())
                 .thWId(wallet.getThWId())
                 .balance(new BigDecimal(BigDecimal.ZERO.intValue()))
                 .frozen(false)
@@ -119,7 +119,7 @@ public class WalletRepository implements IWalletRepository {
             throw new RuntimeException("修改的钱包为空：uid:" + walletVO.getUid());
         }
         wallet.setUid(walletVO.getUid());
-        wallet.setwId(walletVO.getWalletId());
+        wallet.setWId(walletVO.getWalletId());
         wallet.setBalance(walletVO.getBalance());
         wallet.setWalletOutcome(walletVO.getWallet_outcome());
         wallet.setWalletIncome(walletVO.getWallet_income());
@@ -439,6 +439,12 @@ public class WalletRepository implements IWalletRepository {
     }
 
     @Override
+    public List<WalletVO> selectAllWallet2() {
+        List<Wallet> wallets = walletMapper.selectAllWallet2();
+        return BeanColverUtil.colverList(wallets, WalletVO.class);
+    }
+
+    @Override
     public void updateUserThWId(Long uid, String address) {
         walletMapper.updateUserThWId(uid, address);
     }
@@ -496,7 +502,7 @@ public class WalletRepository implements IWalletRepository {
     private Wallet initWallet(WalletInfoReq walletInfoReq) {
         Wallet wallet = new Wallet();
         wallet.setUid(walletInfoReq.getUid());
-        wallet.setwId(walletInfoReq.getWalletId());
+        wallet.setWId(walletInfoReq.getWalletId());
         wallet.setCreatedBy(walletInfoReq.getUid());
         wallet.setBalance(new BigDecimal(BigDecimal.ZERO.intValue()));
         wallet.setFrozen(0);
