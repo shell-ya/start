@@ -1,5 +1,6 @@
 package com.starnft.star.domain.number.repository;
 
+import com.starnft.star.common.page.RequestPage;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.number.model.dto.*;
 import com.starnft.star.domain.number.model.req.MarketNumberListReq;
@@ -11,6 +12,8 @@ import java.util.List;
 
 public interface INumberRepository {
     ResponsePageResult<NumberVO> queryNumber(NumberReq numberReq);
+
+    void transfer();
 
     NumberDetailVO getNumberDetail(Long id);
 

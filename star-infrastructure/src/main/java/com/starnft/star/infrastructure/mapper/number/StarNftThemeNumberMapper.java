@@ -17,6 +17,8 @@ import java.util.List;
 public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber> {
     NumberDetailVO selectNumberDetailById(@Param("id") Long id);
 
+    Integer queryCount();
+
     List<NumberVO> selectNumberList(NumberQueryDTO numberQuery);
 
     ThemeNumberVo selectConsignThemeNumberDetail(NumberDTO dto);

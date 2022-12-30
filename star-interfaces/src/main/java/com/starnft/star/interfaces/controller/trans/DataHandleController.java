@@ -12,8 +12,12 @@ import com.starnft.star.common.chain.model.req.ChainUserInfoReq;
 import com.starnft.star.common.chain.model.req.CreateAccountReq;
 import com.starnft.star.common.chain.model.res.ChainUserInfoRes;
 import com.starnft.star.common.chain.model.res.CreateAccountRes;
+import com.starnft.star.common.page.RequestPage;
+import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.notify.model.req.NotifyOrderReq;
 import com.starnft.star.domain.notify.service.NotifyOrderService;
+import com.starnft.star.domain.number.model.vo.NumberVO;
+import com.starnft.star.domain.number.serivce.INumberService;
 import com.starnft.star.domain.payment.model.res.PayCheckRes;
 import com.starnft.star.domain.user.model.vo.UserInfo;
 import com.starnft.star.domain.wallet.model.req.WalletInfoReq;
@@ -62,21 +66,36 @@ public class DataHandleController {
     @Autowired
     WalletService walletService;
 
+    @Autowired
+    INumberService numberService;
+
     @TokenIgnore
     @ApiOperation("用户链上地址更新")
     @GetMapping(path = "updateUserChain")
     public String updateUserChain() {
-        CompletableFuture.runAsync(this::handle);
-        return "数据处理中.....";
+        CompletableFuture.runAsync(this::updateUserChainHandle);
+        return "用户链上地址更新中.....";
+    }
+
+    @TokenIgnore
+    @ApiOperation("藏品转移")
+    @GetMapping(path = "nftTransfer")
+    public String nftTransfer() {
+        CompletableFuture.runAsync(this::nftTransferHandle);
+        return "藏品转移数据处理中.....";
+    }
+
+    public void nftTransferHandle() {
+        numberService.transfer();
     }
 
     /**
      * 异步处理数据
      */
-    public void handle() {
+    public void updateUserChainHandle() {
         try {
             List<UserInfo> allUser = userCore.getAllUser();
-            System.out.println(allUser.size());
+            log.info("全部用户数据量：{}", allUser.size());
             allUser.forEach(userInfo -> {
                 // 查询钱包
                 WalletResult walletResult = walletService.queryWalletInfo(new WalletInfoReq(userInfo.getAccount()));

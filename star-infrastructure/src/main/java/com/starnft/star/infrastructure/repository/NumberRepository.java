@@ -1,5 +1,8 @@
 package com.starnft.star.infrastructure.repository;
 
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -7,8 +10,12 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.page.PageMethod;
 import com.google.common.collect.Lists;
+import com.starnft.star.common.chain.TiChainFactory;
+import com.starnft.star.common.chain.model.req.GoodsTransferReq;
+import com.starnft.star.common.chain.model.res.GoodsTransferRes;
 import com.starnft.star.common.enums.NumberCirculationTypeEnum;
 import com.starnft.star.common.exception.StarException;
+import com.starnft.star.common.page.RequestPage;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.BeanColverUtil;
 import com.starnft.star.common.utils.SnowflakeWorker;
@@ -17,6 +24,8 @@ import com.starnft.star.domain.number.model.req.MarketNumberListReq;
 import com.starnft.star.domain.number.model.req.NumberReq;
 import com.starnft.star.domain.number.model.vo.*;
 import com.starnft.star.domain.number.repository.INumberRepository;
+import com.starnft.star.domain.user.model.vo.UserInfo;
+import com.starnft.star.domain.user.repository.IUserRepository;
 import com.starnft.star.infrastructure.entity.number.StarNftNumberCirculationHist;
 import com.starnft.star.infrastructure.entity.number.StarNftShelvesRecord;
 import com.starnft.star.infrastructure.entity.number.StarNftThemeNumber;
@@ -25,17 +34,21 @@ import com.starnft.star.infrastructure.mapper.number.StarNFtShelvesRecordMapper;
 import com.starnft.star.infrastructure.mapper.number.StarNftNumberCirculationHistMapper;
 import com.starnft.star.infrastructure.mapper.number.StarNftThemeNumberMapper;
 import com.starnft.star.infrastructure.mapper.user.StarNftUserThemeMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Repository
+@Slf4j
 public class NumberRepository implements INumberRepository {
     @Resource
     StarNftThemeNumberMapper starNftThemeNumberMapper;
@@ -48,6 +61,61 @@ public class NumberRepository implements INumberRepository {
 
     @Resource
     TransactionTemplate template;
+
+    @Autowired
+    private IUserRepository userRepository;
+
+    @Resource
+    TiChainFactory tiChainServer;
+
+    @Override
+    public void transfer() {
+
+        try {
+            // 获取全部用户
+            List<UserInfo> allUser = userRepository.getAllUser();
+            Map<Long, UserInfo> userMap = allUser.stream().collect(Collectors.toMap(UserInfo::getAccount, Function.identity()));
+
+            Integer total = starNftThemeNumberMapper.queryCount();
+            int pageSize = 10;
+            int totalPage = total % pageSize == 0 ? total / pageSize : total / pageSize + 1;
+
+            QueryWrapper<StarNftThemeNumber> wrapper = new QueryWrapper<>();
+            wrapper.eq(StarNftThemeNumber.COL_IS_DELETE, Boolean.FALSE);
+            wrapper.eq(StarNftThemeNumber.COL_HANDLE_FLAG, Boolean.FALSE);
+            wrapper.isNotNull(StarNftThemeNumber.COL_OWENR_BY);
+            for (int i = 1; i <= totalPage; i++) {
+                PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, pageSize).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
+                log.info("第{}页，结果条数:{}", i, pageInfo.getList().size());
+
+                for (StarNftThemeNumber item : pageInfo.getList()) {
+                    if (!userMap.containsKey(Long.valueOf(item.getOwnerBy()))) {
+                        log.error("根据ownerBy未获取到用户数据,跳过处理，item:{}", JSONUtil.toJsonStr(item));
+                        continue;
+                    }
+                    GoodsTransferReq goodsTransferReq = new GoodsTransferReq();
+                    goodsTransferReq.setUserId("951029971223");
+                    String userKey = SecureUtil.sha1("951029971223".concat("lywc"));
+                    goodsTransferReq.setUserKey(userKey);
+                    goodsTransferReq.setFrom("0x58d7d10ac44ceba9a51dfc6baf9f783d61817a96");
+                    goodsTransferReq.setTo("0xbeda63cf97aaaa9b982d64a08dc2bdefcd0215d3");
+                    goodsTransferReq.setContractAddress("0x68ea67ec38c43acf46d926f939bf5695d0a2e0d8");
+                    goodsTransferReq.setTokenId("77");
+                    GoodsTransferRes transferRes = tiChainServer.goodsTransfer(goodsTransferReq);
+
+                    item.setHandleFlag(1);
+                    item.setHandleResult(JSONUtil.toJsonStr(transferRes));
+                    starNftThemeNumberMapper.updateById(item);
+
+                }
+                if(i==1) break;
+            }
+        } catch (Exception e) {
+            log.error("藏品转移报错，msg:{}", e.getMessage(), e);
+        }
+
+
+    }
 
     @Override
     public ResponsePageResult<NumberVO> queryNumber(NumberReq numberReq) {

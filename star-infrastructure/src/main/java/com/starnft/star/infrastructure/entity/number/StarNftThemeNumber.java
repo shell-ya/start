@@ -123,6 +123,10 @@ public class StarNftThemeNumber implements Serializable {
     @ApiModelProperty(value = "乐观锁")
     private Integer version;
 
+    private Integer handleFlag;
+
+    private String handleResult;
+
     private static final long serialVersionUID = 1L;
 
     public static final String COL_ID = "id";
@@ -139,7 +143,7 @@ public class StarNftThemeNumber implements Serializable {
 
     public static final String COL_STATUS = "status";
 
-    public static final String COL_OWENR_BY = "owenr_by";
+    public static final String COL_OWENR_BY = "owner_by";
 
     public static final String COL_CREATE_AT = "create_at";
 
@@ -152,4 +156,8 @@ public class StarNftThemeNumber implements Serializable {
     public static final String COL_IS_DELETE = "is_delete";
 
     public static final String COL_IS_VERSION = "version";
+
+    public static final String COL_HANDLE_FLAG = "handle_flag";
+
+    public static final String COL_HANDLE_RESULT = "handle_result";
 }

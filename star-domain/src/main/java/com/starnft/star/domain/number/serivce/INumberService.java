@@ -1,6 +1,7 @@
 package com.starnft.star.domain.number.serivce;
 
 import com.starnft.star.common.page.RequestConditionPage;
+import com.starnft.star.common.page.RequestPage;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.domain.number.model.dto.*;
 import com.starnft.star.domain.number.model.req.HandoverReq;
@@ -13,6 +14,9 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface INumberService {
+
+    void transfer();
+
     ResponsePageResult<NumberVO> queryThemeNumber(NumberReq numberReq);
 
     NumberDetailVO getNumberDetail(Long id);

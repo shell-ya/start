@@ -11,6 +11,7 @@ import com.starnft.star.common.enums.UserNumberStatusEnum;
 import com.starnft.star.common.exception.StarError;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.RequestConditionPage;
+import com.starnft.star.common.page.RequestPage;
 import com.starnft.star.common.page.ResponsePageResult;
 import com.starnft.star.common.utils.Assert;
 import com.starnft.star.domain.component.RedisLockUtils;
@@ -51,6 +52,11 @@ public class NumberServiceImpl implements INumberService {
 
     @Resource
     IRaisingService raisingService;
+
+    @Override
+    public void transfer() {
+        this.numberRepository.transfer();
+    }
 
     @Override
     public ResponsePageResult<NumberVO> queryThemeNumber(NumberReq numberReq) {

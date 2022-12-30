@@ -316,4 +316,7 @@
     <select id="consignMinPrice" resultType="java.math.BigDecimal">
         select min(price) from star_nft_theme_number where series_theme_info_id = #{themeInfoId} and `status` = 2
     </select>
+    <select id="queryCount" resultType="java.lang.Integer">
+        select count(*) from star_nft_theme_number where owner_by is not null AND is_delete = 0
+    </select>
 </mapper>
