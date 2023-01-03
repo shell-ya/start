@@ -74,16 +74,15 @@ public class TiChainServerTest {
     @Test
     public void goodsPublish() {
         Map<String, Object> map = new HashMap<>();
-        int nums = 10;
-        map.put("images", "https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1658137769270_a417611e.jpg");
+        map.put("images", "https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1658216372585_a44170ed.jpg");
         PublishGoodsReq publishGoodsReq = new PublishGoodsReq();
         publishGoodsReq.setUserId("951029971223");
         String userKey = SecureUtil.sha1("951029971223".concat("lywc"));
         publishGoodsReq.setUserKey(userKey);
         publishGoodsReq.setAuthor("链元文创");
-        publishGoodsReq.setPieceCount(nums);
-        publishGoodsReq.setInitPrice("1.9");
-        publishGoodsReq.setName("新人勋章");
+        publishGoodsReq.setPieceCount(1);
+        publishGoodsReq.setInitPrice("1.99");
+        publishGoodsReq.setName("新人徽章(每人限购一枚)");
         publishGoodsReq.setFeature(JSONUtil.toJsonStr(map));
         PublishGoodsRes publishGoods = tiChainServer.publishGoods(publishGoodsReq);
         System.out.println(publishGoods);

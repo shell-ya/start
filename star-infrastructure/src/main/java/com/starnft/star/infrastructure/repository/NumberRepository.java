@@ -80,14 +80,36 @@ public class NumberRepository implements INumberRepository {
     public void rePublishNFT(Integer type) {
         QueryWrapper<StarNftThemeNumber> wrapper = new QueryWrapper<>();
         wrapper.isNotNull(StarNftThemeNumber.COL_OWENR_BY);
+
+        // 新人勋章
+        String contractAddress = null;
         if (type == 1) {
             wrapper.eq(StarNftThemeNumber.COL_SERIES_THEME_INFO_ID, "998647856403001344");
         }
-        List<StarNftThemeNumber> starNftThemeNumbers = starNftThemeNumberMapper.selectList(wrapper);
-        log.info("重新发布商品条数:{}", starNftThemeNumbers.size());
 
-        for (StarNftThemeNumber themeNumber : starNftThemeNumbers) {
+        // 新人徽章(每人限购一枚)
+        if (type == 2) {
+            wrapper.eq(StarNftThemeNumber.COL_SERIES_THEME_INFO_ID, "998977713737334784");
+            contractAddress = "0x90ec1cc98486a9569abe8089efef951842b5df82";
+        }
 
+        int pageSize = 1000;
+        int totalPage = 14;
+        for (int i = 1; i <= totalPage; i++) {
+            PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, pageSize).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
+            log.info("第{}页，结果条数:{}", i, pageInfo.getList().size());
+            PublishGoodsRes publishGoodsRes = goodsPublish2(pageInfo.getList().size(), contractAddress);
+            if (publishGoodsRes.getData().getProducts().size() != pageInfo.getList().size()) {
+                log.error("发布商品返回的结果和当前查询返回的结果size不匹配，跳过处理");
+                break;
+            }
+            for (StarNftThemeNumber starNftThemeNumber : pageInfo.getList()) {
+                for (PublishGoodsRes.DataDTO.ProductsDTO product : publishGoodsRes.getData().getProducts()) {
+                    starNftThemeNumber.setThemeNumber(Long.valueOf(product.getTokenId()));
+                    starNftThemeNumber.setContractAddress(contractAddress);
+                    this.starNftThemeNumberMapper.updateById(starNftThemeNumber);
+                }
+            }
         }
 
     }
@@ -95,21 +117,21 @@ public class NumberRepository implements INumberRepository {
     /**
      * 藏品发布
      */
-    public void goodsPublish() {
+    public PublishGoodsRes goodsPublish2(int size, String contractAddress) {
         Map<String, Object> map = new HashMap<>();
-        int nums = 10;
-        map.put("images", "https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1658137769270_a417611e.jpg");
+        map.put("images", "https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1658216372585_a44170ed.jpg");
         PublishGoodsReq publishGoodsReq = new PublishGoodsReq();
         publishGoodsReq.setUserId("951029971223");
         String userKey = SecureUtil.sha1("951029971223".concat("lywc"));
         publishGoodsReq.setUserKey(userKey);
         publishGoodsReq.setAuthor("链元文创");
-        publishGoodsReq.setPieceCount(nums);
-        publishGoodsReq.setInitPrice("1.9");
-        publishGoodsReq.setName("新人勋章");
+        publishGoodsReq.setPieceCount(size);
+        publishGoodsReq.setInitPrice("1.99");
+        publishGoodsReq.setName("新人徽章(每人限购一枚)");
+        publishGoodsReq.setContractAddress(contractAddress);
         publishGoodsReq.setFeature(JSONUtil.toJsonStr(map));
         PublishGoodsRes publishGoods = tiChainServer.publishGoods(publishGoodsReq);
-        System.out.println(publishGoods);
+        return publishGoods;
     }
 
     @Override
