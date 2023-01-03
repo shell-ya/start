@@ -93,7 +93,9 @@ public class NumberRepository implements INumberRepository {
             contractAddress = "0x90ec1cc98486a9569abe8089efef951842b5df82";
         }
 
-        int pageSize = 1000;
+        wrapper.eq(StarNftThemeNumber.COL_HANDLE_FLAG, 0);
+
+        int pageSize = 10;
         int totalPage = 14;
         for (int i = 1; i <= totalPage; i++) {
             PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, pageSize).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
@@ -103,12 +105,17 @@ public class NumberRepository implements INumberRepository {
                 log.error("发布商品返回的结果和当前查询返回的结果size不匹配，跳过处理");
                 break;
             }
+
+            int takeId=0;
             for (StarNftThemeNumber starNftThemeNumber : pageInfo.getList()) {
-                for (PublishGoodsRes.DataDTO.ProductsDTO product : publishGoodsRes.getData().getProducts()) {
-                    starNftThemeNumber.setThemeNumber(Long.valueOf(product.getTokenId()));
-                    starNftThemeNumber.setContractAddress(contractAddress);
-                    this.starNftThemeNumberMapper.updateById(starNftThemeNumber);
-                }
+                PublishGoodsRes.DataDTO.ProductsDTO productsDTO = publishGoodsRes.getData().getProducts().get(takeId);
+                starNftThemeNumber.setThemeNumber(Long.valueOf(productsDTO.getTokenId()));
+                starNftThemeNumber.setContractAddress(contractAddress);
+                this.starNftThemeNumberMapper.updateById(starNftThemeNumber);
+                takeId++;
+            }
+            if (i==1) {
+                break;
             }
         }
 
