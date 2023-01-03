@@ -120,7 +120,7 @@ public class NumberRepository implements INumberRepository {
             Map<Long, WalletVO> walletMap = walletList.stream().collect(Collectors.toMap(WalletVO::getUid, Function.identity()));
 
             Integer total = starNftThemeNumberMapper.queryCount();
-            int pageSize = 10;
+            int pageSize = 1000;
             int totalPage = total % pageSize == 0 ? total / pageSize : total / pageSize + 1;
 
             QueryWrapper<StarNftThemeNumber> wrapper = new QueryWrapper<>();
@@ -133,8 +133,8 @@ public class NumberRepository implements INumberRepository {
             String from = "0x58d7d10ac44ceba9a51dfc6baf9f783d61817a96";
 
             for (int i = 1; i <= totalPage; i++) {
-                PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, 1).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
-                // PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, pageSize).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
+                // PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, 1).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
+                PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, pageSize).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
                 log.info("第{}页，结果条数:{}", i, pageInfo.getList().size());
 
                 pageInfo.getList().stream().parallel().forEach(item -> {
@@ -159,10 +159,10 @@ public class NumberRepository implements INumberRepository {
                     item.setHandleResult(JSONUtil.toJsonStr(transferRes));
                     starNftThemeNumberMapper.updateById(item);
                 });
-                if (i == 1) {
-                    log.info("stop.................");
-                    break;
-                }
+                // if (i == 1) {
+                //     log.info("stop.................");
+                //     break;
+                // }
             }
         } catch (Exception e) {
             log.error("藏品转移报错，msg:{}", e.getMessage(), e);
