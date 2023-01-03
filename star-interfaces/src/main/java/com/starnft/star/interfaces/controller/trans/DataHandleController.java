@@ -84,7 +84,7 @@ public class DataHandleController {
     @ApiOperation("藏品转移")
     @GetMapping(path = "nftTransfer")
     public String nftTransfer() {
-        asyncConfig.asyncExecutor().submit(this::nftTransferHandle);
+        asyncConfig.asyncExecutor().submit(()->numberService.transfer());
         return "藏品转移数据处理中.....";
     }
 
@@ -92,22 +92,8 @@ public class DataHandleController {
     @ApiOperation("重新发布")
     @GetMapping(path = "rePublishNFT")
     public String rePublishNFT(@RequestParam("type") Integer type) {
-        asyncConfig.asyncExecutor().submit(() -> rePublishNFTHandle(type));
+        asyncConfig.asyncExecutor().submit(() -> numberService.rePublishNFT(type));
         return "重新发布数据处理中.....";
-    }
-
-    /**
-     * 藏品转移
-     */
-    public void nftTransferHandle() {
-        numberService.transfer();
-    }
-
-    /**
-     * 重新发布
-     */
-    public void rePublishNFTHandle(Integer type) {
-        numberService.rePublishNFT(type);
     }
 
     /**
