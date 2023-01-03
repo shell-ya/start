@@ -95,7 +95,7 @@ public class NumberRepository implements INumberRepository {
 
         wrapper.eq(StarNftThemeNumber.COL_HANDLE_FLAG, 0);
 
-        int pageSize = 10;
+        int pageSize = 1000;
         int totalPage = 14;
         for (int i = 1; i <= totalPage; i++) {
             PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, pageSize).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
@@ -113,9 +113,6 @@ public class NumberRepository implements INumberRepository {
                 starNftThemeNumber.setContractAddress(contractAddress);
                 this.starNftThemeNumberMapper.updateById(starNftThemeNumber);
                 takeId++;
-            }
-            if (i==1) {
-                break;
             }
         }
 
