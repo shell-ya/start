@@ -123,8 +123,10 @@ public class StarNftThemeNumber implements Serializable {
     @ApiModelProperty(value = "乐观锁")
     private Integer version;
 
+    @TableField(value = "handle_flag")
     private Integer handleFlag;
 
+    @TableField(value = "handle_result")
     private String handleResult;
 
     private static final long serialVersionUID = 1L;

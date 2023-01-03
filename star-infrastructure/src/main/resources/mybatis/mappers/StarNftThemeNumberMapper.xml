@@ -18,6 +18,8 @@
         <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
         <result column="is_delete" jdbcType="BOOLEAN" property="isDelete"/>
         <result column="version" jdbcType="INTEGER" property="version"/>
+        <result column="handle_flag" jdbcType="INTEGER" property="handleFlag"/>
+        <result column="handle_result" jdbcType="INTEGER" property="handleResult"/>
     </resultMap>
     <sql id="Base_Column_List">
         <!--@mbg.generated-->
@@ -34,7 +36,9 @@
         update_at,
         update_by,
         is_delete,
-        version
+        version,
+        handle_flag,
+        handle_result
     </sql>
 
     <select id="selectNumberDetailById" resultType="com.starnft.star.domain.number.model.vo.NumberDetailVO">
