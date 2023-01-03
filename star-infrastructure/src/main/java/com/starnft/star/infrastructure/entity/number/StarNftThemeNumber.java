@@ -129,6 +129,9 @@ public class StarNftThemeNumber implements Serializable {
     @TableField(value = "handle_result")
     private String handleResult;
 
+    @TableField(value = "handle_num_flag")
+    private Integer handleNumFlag;
+
     private static final long serialVersionUID = 1L;
 
     public static final String COL_ID = "id";
@@ -162,4 +165,6 @@ public class StarNftThemeNumber implements Serializable {
     public static final String COL_HANDLE_FLAG = "handle_flag";
 
     public static final String COL_HANDLE_RESULT = "handle_result";
+
+    public static final String COL_HANDLE_NUM_FLAG = "handle_num_flag";
 }

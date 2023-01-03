@@ -78,41 +78,49 @@ public class NumberRepository implements INumberRepository {
 
     @Override
     public void rePublishNFT(Integer type) {
-        QueryWrapper<StarNftThemeNumber> wrapper = new QueryWrapper<>();
-        wrapper.isNotNull(StarNftThemeNumber.COL_OWENR_BY);
+        try{
+            QueryWrapper<StarNftThemeNumber> wrapper = new QueryWrapper<>();
+            wrapper.isNotNull(StarNftThemeNumber.COL_OWENR_BY);
 
-        // 新人勋章
-        String contractAddress = null;
-        if (type == 1) {
-            wrapper.eq(StarNftThemeNumber.COL_SERIES_THEME_INFO_ID, "998647856403001344");
-        }
-
-        // 新人徽章(每人限购一枚)
-        if (type == 2) {
-            wrapper.eq(StarNftThemeNumber.COL_SERIES_THEME_INFO_ID, "998977713737334784");
-            contractAddress = "0x90ec1cc98486a9569abe8089efef951842b5df82";
-        }
-
-        int pageSize = 1000;
-        int totalPage = 14;
-        for (int i = 1; i <= totalPage; i++) {
-            PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, pageSize).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
-            log.info("第{}页，结果条数:{}", i, pageInfo.getList().size());
-            PublishGoodsRes publishGoodsRes = goodsPublish2(pageInfo.getList().size(), contractAddress);
-            if (publishGoodsRes.getData().getProducts().size() != pageInfo.getList().size()) {
-                log.error("发布商品返回的结果和当前查询返回的结果size不匹配，跳过处理");
-                break;
+            // 新人勋章
+            String contractAddress = null;
+            if (type == 1) {
+                wrapper.eq(StarNftThemeNumber.COL_SERIES_THEME_INFO_ID, "998647856403001344");
             }
 
-            int takeId=0;
-            for (StarNftThemeNumber starNftThemeNumber : pageInfo.getList()) {
-                PublishGoodsRes.DataDTO.ProductsDTO productsDTO = publishGoodsRes.getData().getProducts().get(takeId);
-                starNftThemeNumber.setThemeNumber(Long.valueOf(productsDTO.getTokenId()));
-                starNftThemeNumber.setContractAddress(contractAddress);
-                this.starNftThemeNumberMapper.updateById(starNftThemeNumber);
-                takeId++;
+            // 新人徽章(每人限购一枚)
+            if (type == 2) {
+                wrapper.eq(StarNftThemeNumber.COL_SERIES_THEME_INFO_ID, "998977713737334784");
+                contractAddress = "0xfca653bd9f1b20d89a7a281e813101284fd14b81";
             }
+
+            wrapper.eq(StarNftThemeNumber.COL_HANDLE_NUM_FLAG, false);
+
+            int pageSize = 1000;
+            int totalPage = 14;
+            for (int i = 1; i <= totalPage; i++) {
+                PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, pageSize).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
+                log.info("第{}页，结果条数:{}", i, pageInfo.getList().size());
+                PublishGoodsRes publishGoodsRes = goodsPublish2(pageInfo.getList().size(), contractAddress);
+                if (publishGoodsRes.getData().getProducts().size() != pageInfo.getList().size()) {
+                    log.error("发布商品返回的结果和当前查询返回的结果size不匹配，跳过处理");
+                    break;
+                }
+
+                int takeId=0;
+                for (StarNftThemeNumber starNftThemeNumber : pageInfo.getList()) {
+                    PublishGoodsRes.DataDTO.ProductsDTO productsDTO = publishGoodsRes.getData().getProducts().get(takeId);
+                    starNftThemeNumber.setThemeNumber(Long.valueOf(productsDTO.getTokenId()));
+                    starNftThemeNumber.setContractAddress(contractAddress);
+                    starNftThemeNumber.setHandleNumFlag(1);
+                    this.starNftThemeNumberMapper.updateById(starNftThemeNumber);
+                    takeId++;
+                }
+            }
+        }catch (Exception e) {
+            log.error("rePublishNFT报错，msg:{}", e.getMessage(), e);
         }
+
 
     }
 
