@@ -12,7 +12,9 @@ import com.github.pagehelper.page.PageMethod;
 import com.google.common.collect.Lists;
 import com.starnft.star.common.chain.TiChainFactory;
 import com.starnft.star.common.chain.model.req.GoodsTransferReq;
+import com.starnft.star.common.chain.model.req.PublishGoodsReq;
 import com.starnft.star.common.chain.model.res.GoodsTransferRes;
+import com.starnft.star.common.chain.model.res.PublishGoodsRes;
 import com.starnft.star.common.enums.NumberCirculationTypeEnum;
 import com.starnft.star.common.exception.StarException;
 import com.starnft.star.common.page.RequestPage;
@@ -75,6 +77,42 @@ public class NumberRepository implements INumberRepository {
     private IWalletRepository walletRepository;
 
     @Override
+    public void rePublishNFT(Integer type) {
+        QueryWrapper<StarNftThemeNumber> wrapper = new QueryWrapper<>();
+        wrapper.isNotNull(StarNftThemeNumber.COL_OWENR_BY);
+        if (type == 1) {
+            wrapper.eq(StarNftThemeNumber.COL_SERIES_THEME_INFO_ID, "998647856403001344");
+        }
+        List<StarNftThemeNumber> starNftThemeNumbers = starNftThemeNumberMapper.selectList(wrapper);
+        log.info("重新发布商品条数:{}", starNftThemeNumbers.size());
+
+        for (StarNftThemeNumber themeNumber : starNftThemeNumbers) {
+
+        }
+
+    }
+
+    /**
+     * 藏品发布
+     */
+    public void goodsPublish() {
+        Map<String, Object> map = new HashMap<>();
+        int nums = 10;
+        map.put("images", "https://banner-1302318928.cos.ap-shanghai.myqcloud.com/theme/1658137769270_a417611e.jpg");
+        PublishGoodsReq publishGoodsReq = new PublishGoodsReq();
+        publishGoodsReq.setUserId("951029971223");
+        String userKey = SecureUtil.sha1("951029971223".concat("lywc"));
+        publishGoodsReq.setUserKey(userKey);
+        publishGoodsReq.setAuthor("链元文创");
+        publishGoodsReq.setPieceCount(nums);
+        publishGoodsReq.setInitPrice("1.9");
+        publishGoodsReq.setName("新人勋章");
+        publishGoodsReq.setFeature(JSONUtil.toJsonStr(map));
+        PublishGoodsRes publishGoods = tiChainServer.publishGoods(publishGoodsReq);
+        System.out.println(publishGoods);
+    }
+
+    @Override
     public void transfer() {
         try {
             // 获取全部钱包
@@ -92,14 +130,14 @@ public class NumberRepository implements INumberRepository {
 
             String userId = "951029971223";
             String userKey = SecureUtil.sha1(userId.concat("lywc"));
-            String from ="0x58d7d10ac44ceba9a51dfc6baf9f783d61817a96";
+            String from = "0x58d7d10ac44ceba9a51dfc6baf9f783d61817a96";
 
             for (int i = 1; i <= totalPage; i++) {
                 PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, 1).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
                 // PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, pageSize).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
                 log.info("第{}页，结果条数:{}", i, pageInfo.getList().size());
 
-                pageInfo.getList().stream().parallel().forEach(item->{
+                pageInfo.getList().stream().parallel().forEach(item -> {
                     if (!walletMap.containsKey(Long.valueOf(item.getOwnerBy()))) {
                         log.error("根据ownerBy未获取到用户数据,跳过处理，item:{}", JSONUtil.toJsonStr(item));
                         return;
@@ -113,7 +151,7 @@ public class NumberRepository implements INumberRepository {
                     goodsTransferReq.setTokenId(String.valueOf(item.getThemeNumber()));
                     GoodsTransferRes transferRes = tiChainServer.goodsTransfer(goodsTransferReq);
 
-                    if(transferRes.getCode()!=0) {
+                    if (transferRes.getCode() != 0) {
                         log.error("处理失败，结果：{}", JSONUtil.toJsonStr(transferRes));
                         return;
                     }
@@ -121,7 +159,7 @@ public class NumberRepository implements INumberRepository {
                     item.setHandleResult(JSONUtil.toJsonStr(transferRes));
                     starNftThemeNumberMapper.updateById(item);
                 });
-                if(i==1) {
+                if (i == 1) {
                     log.info("stop.................");
                     break;
                 }

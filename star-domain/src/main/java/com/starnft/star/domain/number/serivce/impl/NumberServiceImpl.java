@@ -59,6 +59,11 @@ public class NumberServiceImpl implements INumberService {
     }
 
     @Override
+    public void rePublishNFT(Integer type) {
+        this.numberRepository.rePublishNFT(type);
+    }
+
+    @Override
     public ResponsePageResult<NumberVO> queryThemeNumber(NumberReq numberReq) {
         return this.numberRepository.queryNumber(numberReq);
     }

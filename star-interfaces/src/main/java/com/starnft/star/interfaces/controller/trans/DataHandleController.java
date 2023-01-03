@@ -36,10 +36,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -91,11 +88,26 @@ public class DataHandleController {
         return "藏品转移数据处理中.....";
     }
 
+    @TokenIgnore
+    @ApiOperation("重新发布")
+    @GetMapping(path = "rePublishNFT")
+    public String rePublishNFT(@RequestParam("type") Integer type) {
+        asyncConfig.asyncExecutor().submit(() -> rePublishNFT(type));
+        return "藏品转移数据处理中.....";
+    }
+
     /**
      * 藏品转移
      */
     public void nftTransferHandle() {
         numberService.transfer();
+    }
+
+    /**
+     * 重新发布
+     */
+    public void rePublishNFTHandle(Integer type) {
+        numberService.rePublishNFT(type);
     }
 
     /**

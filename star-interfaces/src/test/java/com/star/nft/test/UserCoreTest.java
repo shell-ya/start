@@ -74,9 +74,9 @@ public class UserCoreTest {
         String userKey = SecureUtil.sha1("951029971223".concat("lywc"));
         goodsTransferReq.setUserKey(userKey);
         goodsTransferReq.setFrom("0x58d7d10ac44ceba9a51dfc6baf9f783d61817a96");
-        goodsTransferReq.setTo("0xbeda63cf97aaaa9b982d64a08dc2bdefcd0215d3");
+        goodsTransferReq.setTo("0x0666af9f051e2f4e1e580a036d4e0682e1996f2c");
         goodsTransferReq.setContractAddress("0x68ea67ec38c43acf46d926f939bf5695d0a2e0d8");
-        goodsTransferReq.setTokenId("77");
+        goodsTransferReq.setTokenId("78");
         GoodsTransferRes createAccountRes = tiChainServer.goodsTransfer(goodsTransferReq);
         System.out.println(createAccountRes);
     }

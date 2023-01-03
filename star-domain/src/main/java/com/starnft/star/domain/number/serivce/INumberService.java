@@ -104,4 +104,6 @@ public interface INumberService {
     boolean takeDownTheme(Long themeId);
 
     BigDecimal getconsignMinPrice(Long themeInfoId);
+
+    void rePublishNFT(Integer type);
 }

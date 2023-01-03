@@ -89,4 +89,7 @@ public interface INumberRepository {
     boolean takeDown(Long themeId);
 
     BigDecimal consignMinPrice(Long themeInfoId);
+
+    void rePublishNFT(Integer type);
+
 }
