@@ -92,8 +92,8 @@ public class DataHandleController {
     @ApiOperation("重新发布")
     @GetMapping(path = "rePublishNFT")
     public String rePublishNFT(@RequestParam("type") Integer type) {
-        asyncConfig.asyncExecutor().submit(() -> rePublishNFT(type));
-        return "藏品转移数据处理中.....";
+        asyncConfig.asyncExecutor().submit(() -> rePublishNFTHandle(type));
+        return "重新发布数据处理中.....";
     }
 
     /**
