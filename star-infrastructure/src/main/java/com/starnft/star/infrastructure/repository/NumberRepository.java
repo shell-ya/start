@@ -93,8 +93,6 @@ public class NumberRepository implements INumberRepository {
             contractAddress = "0x90ec1cc98486a9569abe8089efef951842b5df82";
         }
 
-        wrapper.eq(StarNftThemeNumber.COL_HANDLE_FLAG, 0);
-
         int pageSize = 1000;
         int totalPage = 14;
         for (int i = 1; i <= totalPage; i++) {
