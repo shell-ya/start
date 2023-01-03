@@ -79,7 +79,6 @@ public class NumberRepository implements INumberRepository {
     @Override
     public void rePublishNFT(Integer type) {
         try {
-
             // 新人徽章(每人限购一枚)
             String contractAddress = null;
             Long themeInfoId = null;
@@ -90,8 +89,9 @@ public class NumberRepository implements INumberRepository {
 
             Integer totalCount = this.starNftThemeNumberMapper.querySomeCount(themeInfoId);
             int pageSize = 500;
+            log.info("rePublishNFT.totalCount:{}",totalCount);
             int totalPage = totalCount % pageSize == 0 ? totalCount / pageSize : totalCount / pageSize + 1;
-            for (int i = 1; i <= totalPage; i++) {
+            for (int i = 0; i < totalPage; i++) {
                 List<StarNftThemeNumber> list = this.starNftThemeNumberMapper.pageQuery(i * pageSize, pageSize, themeInfoId);
                 log.info("第{}页，结果条数:{}", i, list.size());
                 PublishGoodsRes publishGoodsRes = goodsPublish2(list.size(), contractAddress);
