@@ -179,9 +179,12 @@ public class NumberRepository implements INumberRepository {
 
                     if (transferRes.getCode() != 0) {
                         log.error("处理失败，结果：{}", JSONUtil.toJsonStr(transferRes));
-                        return;
+                        // 失败
+                        item.setHandleFlag(2);
+                    } else {
+                        // 成功
+                        item.setHandleFlag(1);
                     }
-                    item.setHandleFlag(1);
                     item.setHandleResult(JSONUtil.toJsonStr(transferRes));
                     starNftThemeNumberMapper.updateById(item);
                 });
