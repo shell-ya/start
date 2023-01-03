@@ -96,8 +96,8 @@ public class NumberRepository implements INumberRepository {
 
             wrapper.eq(StarNftThemeNumber.COL_HANDLE_NUM_FLAG, false);
 
-            int pageSize = 1000;
-            int totalPage = 14;
+            int pageSize = 500;
+            int totalPage = 200;
             for (int i = 1; i <= totalPage; i++) {
                 PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, pageSize).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
                 log.info("第{}页，结果条数:{}", i, pageInfo.getList().size());
@@ -107,6 +107,7 @@ public class NumberRepository implements INumberRepository {
                     break;
                 }
 
+                // 更新藏品编号
                 int takeId=0;
                 for (StarNftThemeNumber starNftThemeNumber : pageInfo.getList()) {
                     PublishGoodsRes.DataDTO.ProductsDTO productsDTO = publishGoodsRes.getData().getProducts().get(takeId);
