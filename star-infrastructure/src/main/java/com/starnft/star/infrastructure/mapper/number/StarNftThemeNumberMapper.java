@@ -19,6 +19,8 @@ public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
 
     Integer queryCount();
 
+    Integer querySomeCount(@Param("themeInfoId") Long themeInfoId);
+
     List<NumberVO> selectNumberList(NumberQueryDTO numberQuery);
 
     ThemeNumberVo selectConsignThemeNumberDetail(NumberDTO dto);
@@ -51,4 +53,8 @@ public interface StarNftThemeNumberMapper extends BaseMapper<StarNftThemeNumber>
     boolean takeNumber(Long themeId);
 
     BigDecimal consignMinPrice(Long themeInfoId);
+
+    List<StarNftThemeNumber> pageQuery(@Param("pageNum") int i, @Param("pageSize") int pageSize, @Param("themeInfoId") Long themeInfoId);
+
+    List<StarNftThemeNumber> pageQueryTransfer(@Param("pageNum") int i, @Param("pageSize") int pageSize);
 }

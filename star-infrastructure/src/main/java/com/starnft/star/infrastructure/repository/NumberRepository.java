@@ -78,38 +78,31 @@ public class NumberRepository implements INumberRepository {
 
     @Override
     public void rePublishNFT(Integer type) {
-        try{
-            QueryWrapper<StarNftThemeNumber> wrapper = new QueryWrapper<>();
-            wrapper.isNotNull(StarNftThemeNumber.COL_OWENR_BY);
-
-            // 新人勋章
-            String contractAddress = null;
-            if (type == 1) {
-                wrapper.eq(StarNftThemeNumber.COL_SERIES_THEME_INFO_ID, "998647856403001344");
-            }
+        try {
 
             // 新人徽章(每人限购一枚)
-            if (type == 2) {
-                wrapper.eq(StarNftThemeNumber.COL_SERIES_THEME_INFO_ID, "998977713737334784");
+            String contractAddress = null;
+            Long themeInfoId = null;
+            if (type == 1) {
                 contractAddress = "0xfca653bd9f1b20d89a7a281e813101284fd14b81";
+                themeInfoId = 998977713737334784L;
             }
 
-            wrapper.eq(StarNftThemeNumber.COL_HANDLE_NUM_FLAG, false);
-
+            Integer totalCount = this.starNftThemeNumberMapper.querySomeCount(themeInfoId);
             int pageSize = 500;
-            int totalPage = 200;
+            int totalPage = totalCount % pageSize == 0 ? totalCount / pageSize : totalCount / pageSize + 1;
             for (int i = 1; i <= totalPage; i++) {
-                PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, pageSize).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
-                log.info("第{}页，结果条数:{}", i, pageInfo.getList().size());
-                PublishGoodsRes publishGoodsRes = goodsPublish2(pageInfo.getList().size(), contractAddress);
-                if (publishGoodsRes.getData().getProducts().size() != pageInfo.getList().size()) {
+                List<StarNftThemeNumber> list = this.starNftThemeNumberMapper.pageQuery(i * pageSize, pageSize, themeInfoId);
+                log.info("第{}页，结果条数:{}", i, list.size());
+                PublishGoodsRes publishGoodsRes = goodsPublish2(list.size(), contractAddress);
+                if (publishGoodsRes.getData().getProducts().size() != list.size()) {
                     log.error("发布商品返回的结果和当前查询返回的结果size不匹配，跳过处理");
                     break;
                 }
 
                 // 更新藏品编号
-                int takeId=0;
-                for (StarNftThemeNumber starNftThemeNumber : pageInfo.getList()) {
+                int takeId = 0;
+                for (StarNftThemeNumber starNftThemeNumber : list) {
                     PublishGoodsRes.DataDTO.ProductsDTO productsDTO = publishGoodsRes.getData().getProducts().get(takeId);
                     starNftThemeNumber.setThemeNumber(Long.valueOf(productsDTO.getTokenId()));
                     starNftThemeNumber.setContractAddress(contractAddress);
@@ -118,7 +111,7 @@ public class NumberRepository implements INumberRepository {
                     takeId++;
                 }
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("rePublishNFT报错，msg:{}", e.getMessage(), e);
         }
 
@@ -155,22 +148,23 @@ public class NumberRepository implements INumberRepository {
             Integer total = starNftThemeNumberMapper.queryCount();
             int pageSize = 1000;
             int totalPage = total % pageSize == 0 ? total / pageSize : total / pageSize + 1;
-
-            QueryWrapper<StarNftThemeNumber> wrapper = new QueryWrapper<>();
-            wrapper.eq(StarNftThemeNumber.COL_IS_DELETE, Boolean.FALSE);
-            wrapper.eq(StarNftThemeNumber.COL_HANDLE_FLAG, Boolean.FALSE);
-            wrapper.isNotNull(StarNftThemeNumber.COL_OWENR_BY);
+            //
+            // QueryWrapper<StarNftThemeNumber> wrapper = new QueryWrapper<>();
+            // wrapper.eq(StarNftThemeNumber.COL_IS_DELETE, Boolean.FALSE);
+            // wrapper.eq(StarNftThemeNumber.COL_HANDLE_FLAG, Boolean.FALSE);
+            // wrapper.isNotNull(StarNftThemeNumber.COL_OWENR_BY);
 
             String userId = "951029971223";
             String userKey = SecureUtil.sha1(userId.concat("lywc"));
             String from = "0x58d7d10ac44ceba9a51dfc6baf9f783d61817a96";
 
-            for (int i = 1; i <= totalPage; i++) {
+            for (int i =0; i < totalPage; i++) {
                 // PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, 1).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
-                PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, pageSize).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
-                log.info("第{}页，结果条数:{}", i, pageInfo.getList().size());
+                // PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, pageSize).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
+                List<StarNftThemeNumber> list = this.starNftThemeNumberMapper.pageQueryTransfer(i * pageSize, pageSize);
+                log.info("第{}页，结果条数:{}", i, list.size());
 
-                pageInfo.getList().stream().parallel().forEach(item -> {
+                list.stream().parallel().forEach(item -> {
                     if (!walletMap.containsKey(Long.valueOf(item.getOwnerBy()))) {
                         log.error("根据ownerBy未获取到用户数据,跳过处理，item:{}", JSONUtil.toJsonStr(item));
                         return;
