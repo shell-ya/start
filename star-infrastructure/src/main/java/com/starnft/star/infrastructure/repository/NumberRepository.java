@@ -89,7 +89,7 @@ public class NumberRepository implements INumberRepository {
 
             Integer totalCount = this.starNftThemeNumberMapper.querySomeCount(themeInfoId);
             int pageSize = 500;
-            log.info("rePublishNFT.totalCount:{}",totalCount);
+            log.info("rePublishNFT.totalCount:{}", totalCount);
             int totalPage = totalCount % pageSize == 0 ? totalCount / pageSize : totalCount / pageSize + 1;
             for (int i = 0; i < totalPage; i++) {
                 List<StarNftThemeNumber> list = this.starNftThemeNumberMapper.pageQuery(i * pageSize, pageSize, themeInfoId);
@@ -145,10 +145,11 @@ public class NumberRepository implements INumberRepository {
             List<WalletVO> walletList = walletRepository.selectAllWallet();
             Map<Long, WalletVO> walletMap = walletList.stream().collect(Collectors.toMap(WalletVO::getUid, Function.identity()));
 
+            log.info("walletList结果集数量：{}", walletList.size());
             Integer total = starNftThemeNumberMapper.queryCount();
             int pageSize = 1000;
             int totalPage = total % pageSize == 0 ? total / pageSize : total / pageSize + 1;
-            //
+
             // QueryWrapper<StarNftThemeNumber> wrapper = new QueryWrapper<>();
             // wrapper.eq(StarNftThemeNumber.COL_IS_DELETE, Boolean.FALSE);
             // wrapper.eq(StarNftThemeNumber.COL_HANDLE_FLAG, Boolean.FALSE);
@@ -158,7 +159,7 @@ public class NumberRepository implements INumberRepository {
             String userKey = SecureUtil.sha1(userId.concat("lywc"));
             String from = "0x58d7d10ac44ceba9a51dfc6baf9f783d61817a96";
 
-            for (int i =0; i < totalPage; i++) {
+            for (int i = 0; i < totalPage; i++) {
                 // PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, 1).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
                 // PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, pageSize).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
                 List<StarNftThemeNumber> list = this.starNftThemeNumberMapper.pageQueryTransfer(i * pageSize, pageSize);
