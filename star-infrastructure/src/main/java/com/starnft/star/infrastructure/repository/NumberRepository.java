@@ -104,6 +104,9 @@ public class NumberRepository implements INumberRepository {
                 // 更新藏品编号
                 int takeId = 0;
                 for (StarNftThemeNumber starNftThemeNumber : list) {
+                    if(starNftThemeNumber.getHandleFlag()==1) {
+                        continue;
+                    }
                     PublishGoodsRes.DataDTO.ProductsDTO productsDTO = publishGoodsRes.getData().getProducts().get(takeId);
                     starNftThemeNumber.setThemeNumber(Long.valueOf(productsDTO.getTokenId()));
                     starNftThemeNumber.setContractAddress(contractAddress);
@@ -175,7 +178,7 @@ public class NumberRepository implements INumberRepository {
                         continue;
                     }
                     if (item.getHandleFlag() == 1) {
-                        log.error("已处理，跳过item:{}", JSONUtil.toJsonStr(item));
+                        log.info("已处理，跳过item:{}", JSONUtil.toJsonStr(item));
                         continue;
                     }
                     GoodsTransferReq goodsTransferReq = new GoodsTransferReq();
