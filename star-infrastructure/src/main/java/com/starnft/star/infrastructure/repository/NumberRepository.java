@@ -107,6 +107,7 @@ public class NumberRepository implements INumberRepository {
                     starNftThemeNumber.setThemeNumber(Long.valueOf(productsDTO.getTokenId()));
                     starNftThemeNumber.setContractAddress(contractAddress);
                     starNftThemeNumber.setHandleNumFlag(1);
+                    starNftThemeNumber.setUpdateAt(new Date());
                     this.starNftThemeNumberMapper.updateById(starNftThemeNumber);
                     takeId++;
                 }
