@@ -89,11 +89,11 @@ public class NumberRepository implements INumberRepository {
 
             Integer totalCount = this.starNftThemeNumberMapper.querySomeCount(themeInfoId);
             int pageSize = 500;
-            log.info("rePublishNFT.totalCount:{}", totalCount);
             int totalPage = totalCount % pageSize == 0 ? totalCount / pageSize : totalCount / pageSize + 1;
+            log.info("rePublishNFT.totalCount:{},totalPage:{}", totalCount, totalPage);
             for (int i = 0; i < totalPage; i++) {
                 List<StarNftThemeNumber> list = this.starNftThemeNumberMapper.pageQuery(i * pageSize, pageSize, themeInfoId);
-                log.info("第{}页，结果条数:{}", i, list.size());
+                log.info("第{}页，结果条数:{},开始处理....", i + 1, list.size());
                 PublishGoodsRes publishGoodsRes = goodsPublish2(list.size(), contractAddress);
                 if (publishGoodsRes.getData().getProducts().size() != list.size()) {
                     log.error("发布商品返回的结果和当前查询返回的结果size不匹配，跳过处理");
@@ -110,6 +110,7 @@ public class NumberRepository implements INumberRepository {
                     this.starNftThemeNumberMapper.updateById(starNftThemeNumber);
                     takeId++;
                 }
+                log.info("第{}页，结果条数:{},处理完成....", i + 1, list.size());
             }
         } catch (Exception e) {
             log.error("rePublishNFT报错，msg:{}", e.getMessage(), e);
