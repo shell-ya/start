@@ -329,7 +329,6 @@
     <select id="querySomeCount" resultType="java.lang.Integer">
         select count(*) from star_nft_theme_number
         where series_theme_info_id = #{themeInfoId}
-          and handle_num_flag = 0
           AND is_delete = 0
             order by id asc
     </select>
@@ -337,7 +336,6 @@
     <select id="pageQuery" resultType="com.starnft.star.infrastructure.entity.number.StarNftThemeNumber">
         select * from star_nft_theme_number
         where series_theme_info_id = #{themeInfoId}
-          and handle_num_flag = 0
           AND is_delete = 0
         order by id asc
         limit #{pageNum}, #{pageSize}
@@ -346,8 +344,7 @@
     <select id="pageQueryTransfer"
             resultType="com.starnft.star.infrastructure.entity.number.StarNftThemeNumber">
         select * from star_nft_theme_number
-        where owner_by is not null
-          and handle_flag = 0
+        where owner_by is not null AND owner_by!=''
           AND is_delete = 0
         order by id asc
         limit #{pageNum}, #{pageSize}

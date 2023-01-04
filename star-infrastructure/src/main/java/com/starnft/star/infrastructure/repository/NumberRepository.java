@@ -151,26 +151,22 @@ public class NumberRepository implements INumberRepository {
             Integer total = starNftThemeNumberMapper.queryCount();
             int pageSize = 1000;
             int totalPage = total % pageSize == 0 ? total / pageSize : total / pageSize + 1;
-
-            // QueryWrapper<StarNftThemeNumber> wrapper = new QueryWrapper<>();
-            // wrapper.eq(StarNftThemeNumber.COL_IS_DELETE, Boolean.FALSE);
-            // wrapper.eq(StarNftThemeNumber.COL_HANDLE_FLAG, Boolean.FALSE);
-            // wrapper.isNotNull(StarNftThemeNumber.COL_OWENR_BY);
-
             String userId = "951029971223";
             String userKey = SecureUtil.sha1(userId.concat("lywc"));
             String from = "0x58d7d10ac44ceba9a51dfc6baf9f783d61817a96";
 
             for (int i = 0; i < totalPage; i++) {
-                // PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, 1).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
-                // PageInfo<StarNftThemeNumber> pageInfo = PageMethod.startPage(i, pageSize).doSelectPageInfo(() -> this.starNftThemeNumberMapper.selectList(wrapper));
                 List<StarNftThemeNumber> list = this.starNftThemeNumberMapper.pageQueryTransfer(i * pageSize, pageSize);
                 log.info("第{}页，结果条数:{}", i, list.size());
 
-                list.stream().parallel().forEach(item -> {
+                for (StarNftThemeNumber item : list) {
                     if (!walletMap.containsKey(Long.valueOf(item.getOwnerBy()))) {
                         log.error("根据ownerBy未获取到用户数据,跳过处理，item:{}", JSONUtil.toJsonStr(item));
-                        return;
+                        continue;
+                    }
+                    if(item.getHandleFlag()==1) {
+                        log.error("已处理，跳过item:{}", JSONUtil.toJsonStr(item));
+                        continue;
                     }
                     GoodsTransferReq goodsTransferReq = new GoodsTransferReq();
                     goodsTransferReq.setUserId(userId);
@@ -191,7 +187,7 @@ public class NumberRepository implements INumberRepository {
                     }
                     item.setHandleResult(JSONUtil.toJsonStr(transferRes));
                     starNftThemeNumberMapper.updateById(item);
-                });
+                }
                 // if (i == 1) {
                 //     log.info("stop.................");
                 //     break;
