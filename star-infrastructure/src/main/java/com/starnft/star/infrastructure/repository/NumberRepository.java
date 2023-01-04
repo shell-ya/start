@@ -1,5 +1,6 @@
 package com.starnft.star.infrastructure.repository;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
@@ -140,6 +141,13 @@ public class NumberRepository implements INumberRepository {
         return publishGoods;
     }
 
+    public static void main(String[] args) {
+        String s = "381776122\n";
+        String res = s.replaceAll("\\\\s*|\\r|\\n|\\t", "");
+        System.out.println(s);
+        System.out.println(res);
+    }
+
     @Override
     public void transfer() {
         try {
@@ -160,11 +168,13 @@ public class NumberRepository implements INumberRepository {
                 log.info("第{}页，结果条数:{}", i, list.size());
 
                 for (StarNftThemeNumber item : list) {
-                    if (!walletMap.containsKey(Long.valueOf(item.getOwnerBy()))) {
+                    String ownerBy = item.getOwnerBy();
+                    ownerBy = ownerBy.replaceAll("\\\\s*|\\r|\\n|\\t", "");
+                    if (!walletMap.containsKey(Long.valueOf(StrUtil.trim(ownerBy)))) {
                         log.error("根据ownerBy未获取到用户数据,跳过处理，item:{}", JSONUtil.toJsonStr(item));
                         continue;
                     }
-                    if(item.getHandleFlag()==1) {
+                    if (item.getHandleFlag() == 1) {
                         log.error("已处理，跳过item:{}", JSONUtil.toJsonStr(item));
                         continue;
                     }
@@ -172,7 +182,7 @@ public class NumberRepository implements INumberRepository {
                     goodsTransferReq.setUserId(userId);
                     goodsTransferReq.setUserKey(userKey);
                     goodsTransferReq.setFrom(from);
-                    goodsTransferReq.setTo(walletMap.get(Long.valueOf(item.getOwnerBy())).getThWId());
+                    goodsTransferReq.setTo(walletMap.get(Long.valueOf(ownerBy)).getThWId());
                     goodsTransferReq.setContractAddress(item.getContractAddress());
                     goodsTransferReq.setTokenId(String.valueOf(item.getThemeNumber()));
                     GoodsTransferRes transferRes = tiChainServer.goodsTransfer(goodsTransferReq);
